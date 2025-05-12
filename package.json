@@ -1,0 +1,12 @@
+{
+  "name": "teawithsand",
+  "workspaces": [
+    "blob-store"
+  ],
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "vitest": "^3.1.3"
+  }
+}
