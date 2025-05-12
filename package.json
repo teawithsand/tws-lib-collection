@@ -1,7 +1,8 @@
 {
   "name": "teawithsand",
   "workspaces": [
-    "blob-store"
+    "blob-store",
+    "player"
   ],
   "scripts": {
     "prepare": "husky"

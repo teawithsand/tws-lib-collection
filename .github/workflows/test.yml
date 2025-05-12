@@ -16,9 +16,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-
       - name: Install dependencies
-        run: npm install --save-dev
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
       - name: Run tests
-        run: npm run test
+        run: npm run test --workspaces

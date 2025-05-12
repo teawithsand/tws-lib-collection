@@ -1,0 +1,339 @@
+import { proxy } from "valtio/vanilla"
+import { EventBus } from "../event/bus"
+import {
+	HtmlMediaElementState,
+	getHtmlMediaElementState,
+} from "../html/nativeState" // Adjust import path accordingly
+import { PlayerEntry, PlayerEntryType } from "./entry"
+import {
+	Player,
+	PlayerEventType,
+	PlayerEventTypes,
+	PlayerState,
+} from "./player"
+
+export class HTMLPlayer implements Player {
+	private element: HTMLMediaElement
+	private readonly innerState: PlayerState
+
+	public readonly on
+	public readonly off
+
+	private freeSourceCallback: (() => void) | null = null
+
+	private afterLoadSeekTarget: number = 0
+	private lastPositionLoadSeekStarted: number = -2
+
+	private readonly bus
+
+	private readonly eventListeners: Array<[string, any]> = []
+
+	constructor(mediaElement: HTMLMediaElement) {
+		this.element = mediaElement
+
+		this.bus = new EventBus<PlayerEventTypes>()
+		this.on = this.bus.on
+		this.off = this.bus.off
+
+		this.innerState = proxy({
+			isUserWantsToPlay: false,
+			isPlaying: false,
+
+			currentEntryDuration: 0,
+			currentEntryPosition: 0,
+			currentEntryIndex: 0,
+
+			entries: [],
+
+			isEntryEnded: false,
+			isEnded: false,
+			isSeeking: false,
+			isSeekable: false,
+			isBuffering: false,
+			isReadyToPlay: false,
+
+			loadingError: null,
+			mediaError: null,
+
+			error: null,
+
+			speed: 1,
+			volume: 1,
+			preservePitchForSpeed: true,
+			isPositionUpdatedAfterSeek: true,
+		})
+
+		// Register event listeners and store them
+		this.eventListeners.push(["timeupdate", this.updateStateFromMedia])
+		this.element.addEventListener("timeupdate", this.updateStateFromMedia)
+
+		this.eventListeners.push(["ended", this.updateStateFromMedia])
+		this.element.addEventListener("ended", this.updateStateFromMedia)
+
+		this.eventListeners.push(["error", this.handleMediaError])
+		this.element.addEventListener("error", this.handleMediaError)
+
+		this.eventListeners.push(["seeking", this.updateStateFromMedia])
+		this.element.addEventListener("seeking", this.updateStateFromMedia)
+
+		this.eventListeners.push(["seeked", this.updateStateFromMedia])
+		this.element.addEventListener("seeked", this.updateStateFromMedia)
+
+		this.eventListeners.push(["ended", this.handleEnded])
+		this.element.addEventListener("ended", this.handleEnded)
+
+		this.eventListeners.push(["volumechange", this.handleEnded])
+		this.element.addEventListener("volumechange", this.handleEnded)
+
+		this.eventListeners.push(["statechange", this.handleEnded])
+		this.element.addEventListener("statechange", this.handleEnded)
+
+		this.eventListeners.push(["pause", this.handlePause])
+		this.element.addEventListener("pause", this.handlePause)
+
+		this.eventListeners.push(["loadeddata", this.handleLoaded])
+		this.element.addEventListener("loadeddata", this.handleLoaded)
+	}
+
+	public readonly release = () => {
+		this.element.pause()
+		this.element.src = ""
+
+		this.eventListeners.forEach(([event, callback]) => {
+			this.element.removeEventListener(event, callback)
+		})
+		this.eventListeners.splice(0)
+	}
+
+	get state(): Readonly<PlayerState> {
+		return this.innerState
+	}
+
+	private readonly handleMediaError = (event: ErrorEvent) => {
+		this.bus.emit(PlayerEventType.ERROR, {
+			type: PlayerEventType.ERROR,
+			error: event.error,
+		})
+		this.updateStateFromMedia()
+	}
+
+	private readonly handleEnded = () => {
+		this.bus.emit(PlayerEventType.ENTRY_ENDED, {
+			type: PlayerEventType.ENTRY_ENDED,
+		})
+		this.updateStateFromMedia()
+	}
+
+	private readonly handleLoaded = () => {
+		this.updateStateFromMedia()
+	}
+
+	private readonly handlePause = () => {
+		if (
+			!this.element.error &&
+			this.innerState.isUserWantsToPlay &&
+			this.innerState.entries[this.innerState.currentEntryIndex]
+		) {
+			this.bus.emit(PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE, {
+				type: PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE,
+			})
+		}
+		this.updateStateFromMedia()
+	}
+
+	private updateStateFromMedia = () => {
+		const mediaState: HtmlMediaElementState = getHtmlMediaElementState(
+			this.element,
+		)
+
+		// Check if current entry is ended, and if so, update isEntryEnded and isEnded flags
+		const isEntryEnded = mediaState.isEnded
+		const isEnded =
+			(isEntryEnded ||
+				!this.innerState.entries[this.innerState.currentEntryIndex]) &&
+			this.innerState.currentEntryIndex >=
+				this.innerState.entries.length - 1
+
+		// Valtio batches multiple updates in single event loop tick
+		this.innerState.currentEntryDuration = mediaState.currentEntryDuration
+		this.innerState.currentEntryPosition = mediaState.currentEntryPosition
+		this.innerState.isEntryEnded = isEntryEnded
+		this.innerState.isEnded = isEnded
+		this.innerState.isPlaying = mediaState.isPlaying
+		this.innerState.speed = mediaState.speed
+		this.innerState.volume = mediaState.volume
+		this.innerState.preservePitchForSpeed = mediaState.preservePitchForSpeed
+		this.innerState.error = !this.innerState.entries[
+			this.innerState.currentEntryIndex
+		]
+			? null
+			: mediaState.error
+		this.innerState.isSeeking = mediaState.isSeeking
+		this.innerState.isSeekable = mediaState.isSeekable
+		this.innerState.isBuffering = mediaState.isBuffering
+		this.innerState.isReadyToPlay =
+			!!this.innerState.entries[this.innerState.currentEntryIndex] &&
+			mediaState.isReadyToPlay
+
+		if (this.afterLoadSeekTarget) {
+			if (mediaState.isSeekable) {
+				if (
+					this.afterLoadSeekTarget !== mediaState.currentEntryPosition
+				) {
+					this.element.currentTime = this.afterLoadSeekTarget
+					this.lastPositionLoadSeekStarted =
+						mediaState.currentEntryPosition
+				}
+
+				this.afterLoadSeekTarget = 0
+			}
+		} else {
+			if (
+				mediaState.currentEntryPosition >= 0 &&
+				!mediaState.isSeeking &&
+				mediaState.currentEntryPosition !==
+					this.lastPositionLoadSeekStarted
+			) {
+				this.innerState.isPositionUpdatedAfterSeek = true
+			}
+		}
+
+		if (
+			this.innerState.entries[this.innerState.currentEntryIndex] &&
+			mediaState.isPlayable &&
+			mediaState.isPlaying !== this.innerState.isUserWantsToPlay
+		) {
+			this.synchronizePlayingState()
+		}
+	}
+
+	public readonly forceLoadPlayerState = () => {
+		this.updateStateFromMedia()
+	}
+
+	enterDebugMode = () => {
+		this.element.muted = true
+	}
+
+	setUserWantsToPlay(isUserWantsToPlay: boolean) {
+		this.innerState.isUserWantsToPlay = isUserWantsToPlay
+		this.synchronizePlayingState()
+	}
+
+	seek = (position: number, targetEntryIndex?: number) => {
+		if (targetEntryIndex !== undefined) {
+			if (targetEntryIndex !== this.innerState.currentEntryIndex) {
+				this.innerState.currentEntryIndex = targetEntryIndex
+				const entry = this.state.entries[targetEntryIndex]
+				this.loadEntry(entry ?? null, position)
+			} else {
+				this.innerState.isPositionUpdatedAfterSeek = false
+				this.element.currentTime = position
+			}
+		} else {
+			this.innerState.isPositionUpdatedAfterSeek = false
+			this.element.currentTime = position
+		}
+	}
+
+	setSpeed = (speed: number) => {
+		this.element.playbackRate = speed
+		this.innerState.speed = speed
+	}
+
+	setVolume = (volume: number) => {
+		this.element.volume = volume
+		this.innerState.volume = volume
+	}
+
+	setPreservePitchForSpeed = (preservePitchForSpeed: boolean) => {
+		if ("preservesPitch" in this.element) {
+			this.element.preservesPitch = preservePitchForSpeed
+		}
+		this.innerState.preservePitchForSpeed = preservePitchForSpeed
+	}
+
+	setEntries = (entries: PlayerEntry[]) => {
+		this.innerState.entries = entries
+		this.loadEntry(entries[this.state.currentEntryIndex] ?? null)
+	}
+
+	reloadEntry = () => {
+		const entry = this.innerState.entries[this.innerState.currentEntryIndex]
+		this.loadEntry(entry ?? null)
+	}
+
+	private readonly synchronizePlayingState = () => {
+		if (!this.afterLoadSeekTarget) {
+			this.setElementPlaying(
+				!!(
+					!this.innerState.isEntryEnded && // Required, since play when ended in chrome causes item to be played once more from the start
+					this.innerState.isUserWantsToPlay && // Don't play when user does not want to play
+					this.innerState.entries[this.innerState.currentEntryIndex] // Do not play when no source
+				),
+			)
+		}
+	}
+
+	private readonly setElementPlaying = (play: boolean) => {
+		if (play) {
+			this.element.play().catch(() => {
+				// ignore
+			})
+		} else {
+			this.element.pause()
+		}
+	}
+
+	private readonly enqueueSeekAfterLoad = (targetPosition: number) => {
+		this.afterLoadSeekTarget = targetPosition
+		this.innerState.isPositionUpdatedAfterSeek = false
+	}
+
+	private readonly loadEntry = (
+		entry: PlayerEntry | null,
+		targetPosition = 0,
+	) => {
+		if (this.freeSourceCallback) {
+			this.freeSourceCallback()
+			this.freeSourceCallback = null
+		}
+
+		this.afterLoadSeekTarget = 0
+
+		if (entry) {
+			if (entry.type === PlayerEntryType.URL) {
+				this.element.src = entry.url
+				try {
+					this.element.load()
+				} catch (_e) {
+					// ignore
+				}
+			} else if (entry.type === PlayerEntryType.BLOB) {
+				const url = URL.createObjectURL(entry.blob)
+				this.freeSourceCallback = () => {
+					URL.revokeObjectURL(url)
+				}
+
+				this.element.src = url
+				try {
+					this.element.load()
+				} catch (_e) {
+					// ignore
+				}
+			}
+
+			if (targetPosition > 0) {
+				// Make sure it's paused, so we won't start playing
+				//  for short bit until after seek is done
+				this.setElementPlaying(false)
+				this.enqueueSeekAfterLoad(targetPosition)
+			} else {
+				this.synchronizePlayingState()
+			}
+		} else {
+			this.setElementPlaying(false)
+			this.element.src = ""
+		}
+	}
+}
