@@ -30,6 +30,7 @@ export interface PlayerState {
 }
 
 export enum PlayerEventType {
+	STATE_CHANGE = "state-change",
 	ENTRY_ENDED = "entry-ended",
 	ERROR = "error",
 	EXTERNAL_IS_PLAYING_CHANGE = "external-is-playing-change",
@@ -46,6 +47,10 @@ export type PlayerEvent =
 	| {
 			type: PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE
 	  }
+	| {
+			state: Readonly<PlayerState>
+			type: PlayerEventType.STATE_CHANGE
+	  }
 
 export type PlayerEventTypes = {
 	[PlayerEventType.ERROR]: Extract<
@@ -59,6 +64,10 @@ export type PlayerEventTypes = {
 	[PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE]: Extract<
 		PlayerEvent,
 		{ type: PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE }
+	>
+	[PlayerEventType.STATE_CHANGE]: Extract<
+		PlayerEvent,
+		{ type: PlayerEventType.STATE_CHANGE }
 	>
 }
 

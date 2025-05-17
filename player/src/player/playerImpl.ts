@@ -1,4 +1,3 @@
-import { proxy } from "valtio/vanilla"
 import { EventBus } from "../event/bus"
 import {
 	HtmlMediaElementState,
@@ -35,7 +34,7 @@ export class HTMLPlayer implements Player {
 		this.on = this.bus.on
 		this.off = this.bus.off
 
-		this.innerState = proxy({
+		this.innerState = {
 			isUserWantsToPlay: false,
 			isPlaying: false,
 
@@ -61,7 +60,7 @@ export class HTMLPlayer implements Player {
 			volume: 1,
 			preservePitchForSpeed: true,
 			isPositionUpdatedAfterSeek: true,
-		})
+		}
 
 		// Register event listeners and store them
 		this.eventListeners.push(["timeupdate", this.updateStateFromMedia])
@@ -109,6 +108,19 @@ export class HTMLPlayer implements Player {
 		return this.innerState
 	}
 
+	/**
+	 * Private method to update the state.
+	 * Accepts a callback that receives the mutable state to modify.
+	 */
+	private updateState = (updater: (state: PlayerState) => void) => {
+		updater(this.innerState)
+
+		this.bus.emit(PlayerEventType.STATE_CHANGE, {
+			type: PlayerEventType.STATE_CHANGE,
+			state: this.state,
+		})
+	}
+
 	private readonly handleMediaError = (event: ErrorEvent) => {
 		this.bus.emit(PlayerEventType.ERROR, {
 			type: PlayerEventType.ERROR,
@@ -154,49 +166,49 @@ export class HTMLPlayer implements Player {
 			this.innerState.currentEntryIndex >=
 				this.innerState.entries.length - 1
 
-		// Valtio batches multiple updates in single event loop tick
-		this.innerState.currentEntryDuration = mediaState.currentEntryDuration
-		this.innerState.currentEntryPosition = mediaState.currentEntryPosition
-		this.innerState.isEntryEnded = isEntryEnded
-		this.innerState.isEnded = isEnded
-		this.innerState.isPlaying = mediaState.isPlaying
-		this.innerState.speed = mediaState.speed
-		this.innerState.volume = mediaState.volume
-		this.innerState.preservePitchForSpeed = mediaState.preservePitchForSpeed
-		this.innerState.error = !this.innerState.entries[
-			this.innerState.currentEntryIndex
-		]
-			? null
-			: mediaState.error
-		this.innerState.isSeeking = mediaState.isSeeking
-		this.innerState.isSeekable = mediaState.isSeekable
-		this.innerState.isBuffering = mediaState.isBuffering
-		this.innerState.isReadyToPlay =
-			!!this.innerState.entries[this.innerState.currentEntryIndex] &&
-			mediaState.isReadyToPlay
+		this.updateState((state) => {
+			state.currentEntryDuration = mediaState.currentEntryDuration
+			state.currentEntryPosition = mediaState.currentEntryPosition
+			state.isEntryEnded = isEntryEnded
+			state.isEnded = isEnded
+			state.isPlaying = mediaState.isPlaying
+			state.speed = mediaState.speed
+			state.volume = mediaState.volume
+			state.preservePitchForSpeed = mediaState.preservePitchForSpeed
+			state.error = !state.entries[state.currentEntryIndex]
+				? null
+				: mediaState.error
+			state.isSeeking = mediaState.isSeeking
+			state.isSeekable = mediaState.isSeekable
+			state.isBuffering = mediaState.isBuffering
+			state.isReadyToPlay =
+				!!state.entries[state.currentEntryIndex] &&
+				mediaState.isReadyToPlay
 
-		if (this.afterLoadSeekTarget) {
-			if (mediaState.isSeekable) {
-				if (
-					this.afterLoadSeekTarget !== mediaState.currentEntryPosition
-				) {
-					this.element.currentTime = this.afterLoadSeekTarget
-					this.lastPositionLoadSeekStarted =
+			if (this.afterLoadSeekTarget) {
+				if (mediaState.isSeekable) {
+					if (
+						this.afterLoadSeekTarget !==
 						mediaState.currentEntryPosition
-				}
+					) {
+						this.element.currentTime = this.afterLoadSeekTarget
+						this.lastPositionLoadSeekStarted =
+							mediaState.currentEntryPosition
+					}
 
-				this.afterLoadSeekTarget = 0
+					this.afterLoadSeekTarget = 0
+				}
+			} else {
+				if (
+					mediaState.currentEntryPosition >= 0 &&
+					!mediaState.isSeeking &&
+					mediaState.currentEntryPosition !==
+						this.lastPositionLoadSeekStarted
+				) {
+					state.isPositionUpdatedAfterSeek = true
+				}
 			}
-		} else {
-			if (
-				mediaState.currentEntryPosition >= 0 &&
-				!mediaState.isSeeking &&
-				mediaState.currentEntryPosition !==
-					this.lastPositionLoadSeekStarted
-			) {
-				this.innerState.isPositionUpdatedAfterSeek = true
-			}
-		}
+		})
 
 		if (
 			this.innerState.entries[this.innerState.currentEntryIndex] &&
@@ -211,51 +223,70 @@ export class HTMLPlayer implements Player {
 		this.updateStateFromMedia()
 	}
 
+	/**
+	 * Enters debug mode by causing element to run muted.
+	 */
 	enterDebugMode = () => {
 		this.element.muted = true
 	}
 
 	setUserWantsToPlay(isUserWantsToPlay: boolean) {
-		this.innerState.isUserWantsToPlay = isUserWantsToPlay
+		this.updateState((state) => {
+			state.isUserWantsToPlay = isUserWantsToPlay
+		})
 		this.synchronizePlayingState()
 	}
 
 	seek = (position: number, targetEntryIndex?: number) => {
 		if (targetEntryIndex !== undefined) {
 			if (targetEntryIndex !== this.innerState.currentEntryIndex) {
-				this.innerState.currentEntryIndex = targetEntryIndex
+				this.updateState((state) => {
+					state.currentEntryIndex = targetEntryIndex
+				})
 				const entry = this.state.entries[targetEntryIndex]
 				this.loadEntry(entry ?? null, position)
 			} else {
-				this.innerState.isPositionUpdatedAfterSeek = false
+				this.updateState((state) => {
+					state.isPositionUpdatedAfterSeek = false
+				})
 				this.element.currentTime = position
 			}
 		} else {
-			this.innerState.isPositionUpdatedAfterSeek = false
+			this.updateState((state) => {
+				state.isPositionUpdatedAfterSeek = false
+			})
 			this.element.currentTime = position
 		}
 	}
 
 	setSpeed = (speed: number) => {
 		this.element.playbackRate = speed
-		this.innerState.speed = speed
+		this.updateState((state) => {
+			state.speed = speed
+		})
 	}
 
 	setVolume = (volume: number) => {
 		this.element.volume = volume
-		this.innerState.volume = volume
+		this.updateState((state) => {
+			state.volume = volume
+		})
 	}
 
 	setPreservePitchForSpeed = (preservePitchForSpeed: boolean) => {
 		if ("preservesPitch" in this.element) {
 			this.element.preservesPitch = preservePitchForSpeed
 		}
-		this.innerState.preservePitchForSpeed = preservePitchForSpeed
+		this.updateState((state) => {
+			state.preservePitchForSpeed = preservePitchForSpeed
+		})
 	}
 
 	setEntries = (entries: PlayerEntry[]) => {
-		this.innerState.entries = entries
-		this.loadEntry(entries[this.state.currentEntryIndex] ?? null)
+		this.updateState((state) => {
+			state.entries = entries
+		})
+		this.loadEntry(this.state.entries[this.state.currentEntryIndex] ?? null)
 	}
 
 	reloadEntry = () => {
@@ -287,7 +318,9 @@ export class HTMLPlayer implements Player {
 
 	private readonly enqueueSeekAfterLoad = (targetPosition: number) => {
 		this.afterLoadSeekTarget = targetPosition
-		this.innerState.isPositionUpdatedAfterSeek = false
+		this.updateState((state) => {
+			state.isPositionUpdatedAfterSeek = false
+		})
 	}
 
 	private readonly loadEntry = (
