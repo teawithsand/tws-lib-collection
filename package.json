@@ -2,7 +2,8 @@
   "name": "teawithsand",
   "workspaces": [
     "blob-store",
-    "player"
+    "player",
+    "fstate"
   ],
   "scripts": {
     "prepare": "husky"
