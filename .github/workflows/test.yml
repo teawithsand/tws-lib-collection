@@ -5,22 +5,29 @@ on:
   pull_request:
 
 jobs:
-  test:
+  rush-build-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Setup Node.js LTS
+      - name: Setup Node.js 22 and Rush
         uses: actions/setup-node@v3
         with:
-          node-version: "lts/*"
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers
+          node-version: "22"
+      - name: Setup Node.js and Rush
+        run: |
+          npm install -g @microsoft/rush
+          npm install -g playwright
+        shell: bash
+      - name: Install playwright
         run: npx playwright install --with-deps
+      - name: Install dependencies
+        run: rush install
 
-      - name: Run tests
-        run: npm run test --workspaces
+      - name: Build all packages
+        run: rush build
+
+      - name: Run tests for all Rush projects
+        run: ./runTests.sh
+        

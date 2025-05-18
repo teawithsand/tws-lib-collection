@@ -1,7 +1,7 @@
 {
-  "name": "@teawithsand/player",
+  "name": "@teawithsand/fstate",
   "version": "0.0.1",
-  "description": "Audio player with some utilities to make it easier to play playlists",
+  "description": "Tools for state management including, but not limited to, event busses and utils for jotai",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,13 +9,14 @@
     "format:check": "prettier ./src --check",
     "lint": "eslint ./src --max-warnings 0",
     "lint:fix": "eslint ./src --fix",
+    "drizzle:generate": "drizzle-kit generate",
     "test:mutate": "stryker run",
-    "test": "./fixDeps.sh && vitest",
-    "test:ss": "./fixDeps.sh && vitest -u",
-    "build": "tsc --project tsconfig.prod.json",
+    "test": "vitest",
+    "test:ss": "vitest -u",
+    "build": "tsc --build --clean && tsc",
     "build:check": "tsc --noEmit",
     "fix": "npm run format:fix && npm run lint:fix",
-    "pre-commit-check": " npm run build:check && npm run lint && npm run format:check",
+    "pre-commit-check": "npm run build:check && npm run lint && npm run format:check && npm run test",
     "prepublishOnly": "npm run build && npm run lint && npm run format:check && npm run test"
   },
   "author": "teawithsand",
@@ -23,14 +24,10 @@
   "devDependencies": {
     "@stryker-mutator/vitest-runner": "^8.7.1",
     "@typescript-eslint/parser": "^8.32.0",
-    "@vitest/browser": "^3.1.3",
     "@vitest/coverage-istanbul": "^3.1.3",
     "eslint": "^9.26.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.1.0",
-    "husky": "^9.1.7",
-    "jsdom": "^26.1.0",
-    "playwright": "^1.52.0",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
     "typescript": "^5.8.3",
@@ -38,6 +35,8 @@
     "vitest": "^3.1.3"
   },
   "dependencies": {
-    "@teawithsand/fstate": "^0.0.1"
+    "immer": "^10.1.1",
+    "jotai": "^2.12.4",
+    "jotai-immer": "^0.4.1"
   }
 }

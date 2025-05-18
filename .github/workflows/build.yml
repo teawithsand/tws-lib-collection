@@ -5,16 +5,25 @@ on:
   pull_request:
 
 jobs:
-  build:
+  rush-build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Setup Node.js LTS
+
+      - name: Setup Node.js 22 and Rush
         uses: actions/setup-node@v3
         with:
-          node-version: "lts/*"
+          node-version: "22"
+
+      - name: Setup Node.js and Rush
+        run: |
+          npm install -g @microsoft/rush
+        shell: bash
+
       - name: Install dependencies
-        run: npm ci
-      - name: Build project
-        run: npm run build --workspaces
+        run: rush install
+
+      - name: Build all packages
+        run: rush build

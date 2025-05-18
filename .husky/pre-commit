@@ -1,1 +1,3 @@
-npm run pre-commit-check --workspaces
+#!/bin/bash
+
+./runPreCommit.sh

@@ -1,5 +1,4 @@
 import tsParser from "@typescript-eslint/parser"
-import valtio from "eslint-plugin-valtio"
 import { defineConfig, globalIgnores } from "eslint/config"
 import globals from "globals"
 import tseslint from "typescript-eslint"
@@ -11,13 +10,6 @@ export default defineConfig([
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
 	},
 	tseslint.configs.recommended,
-	valtio.configs["flat/recommended"],
-	{
-		rules: {
-			"valtio/state-snapshot-rule": ["warn"],
-			"valtio/avoid-this-in-proxy": ["warn"],
-		},
-	},
 	{
 		languageOptions: {
 			parser: tsParser,
