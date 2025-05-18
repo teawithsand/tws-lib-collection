@@ -132,20 +132,18 @@ describe("HTMLPlayer", () => {
 
 	test("events are emitted correctly", async () => {
 		let errorEventCount = 0
-		player.on(PlayerEventType.ERROR, () => {
-			errorEventCount++
-		})
-
 		let entryEndedCount = 0
-		player.on(PlayerEventType.ENTRY_ENDED, () => {
-			entryEndedCount++
-		})
-
 		let externalPlayingChangeCount = 0
-		player.on(PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE, () => {
-			externalPlayingChangeCount++
-		})
 
+		player.eventBus.addSubscriber((e) => {
+			if (e.type === PlayerEventType.ENTRY_ENDED) {
+				entryEndedCount++
+			} else if (e.type === PlayerEventType.ERROR) {
+				errorEventCount++
+			} else if (e.type === PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE) {
+				externalPlayingChangeCount++
+			}
+		})
 		// Instead of manual dispatch, rely on natural events triggered by player actions
 		player.setEntries([{ type: PlayerEntryType.URL, url: AUDIO_10S_URL }])
 		player.setUserWantsToPlay(true)
@@ -160,8 +158,10 @@ describe("HTMLPlayer", () => {
 
 	test("loads URL duration without error", async () => {
 		let errorOccurred = false
-		player.on(PlayerEventType.ERROR, () => {
-			errorOccurred = true
+		player.eventBus.addSubscriber((e) => {
+			if (e.type === PlayerEventType.ERROR) {
+				errorOccurred = true
+			}
 		})
 
 		player.setEntries([{ type: PlayerEntryType.URL, url: AUDIO_10S_URL }])
@@ -212,8 +212,10 @@ describe("HTMLPlayer", () => {
 			{ type: PlayerEntryType.URL, url: AUDIO_1S_URL },
 		]
 
-		player.on(PlayerEventType.ENTRY_ENDED, () => {
-			player.seek(0, player.state.currentEntryIndex + 1)
+		player.eventBus.addSubscriber((e) => {
+			if (e.type === PlayerEventType.ENTRY_ENDED) {
+				player.seek(0, player.state.currentEntryIndex + 1)
+			}
 		})
 
 		player.setEntries(entries)

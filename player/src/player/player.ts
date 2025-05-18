@@ -1,3 +1,4 @@
+import { StickySubscribable, Subscribable } from "@teawithsand/fstate"
 import { PlayerEntry } from "./entry"
 
 export interface PlayerState {
@@ -72,17 +73,9 @@ export type PlayerEventTypes = {
 }
 
 export interface Player {
+	readonly eventBus: Subscribable<PlayerEvent>
+	readonly stateBus: StickySubscribable<Readonly<PlayerState>>
 	readonly state: Readonly<PlayerState>
-
-	on: <K extends keyof PlayerEventTypes>(
-		event: K,
-		callback: (e: PlayerEventTypes[K]) => void,
-	) => void
-
-	off: <K extends keyof PlayerEventTypes>(
-		event: K,
-		callback: (e: PlayerEventTypes[K]) => void,
-	) => void
 
 	setUserWantsToPlay: (isUserWantsToPlay: boolean) => void
 	seek: (position: number, targetEntryIndex?: number) => void

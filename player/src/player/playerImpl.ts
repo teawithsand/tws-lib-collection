@@ -1,38 +1,31 @@
-import { EventBus } from "../event/bus"
+import {
+	DefaultEventBus,
+	DefaultStickyEventBus,
+	SubscribableUtil,
+} from "@teawithsand/fstate"
 import {
 	HtmlMediaElementState,
 	getHtmlMediaElementState,
 } from "../html/nativeState" // Adjust import path accordingly
 import { PlayerEntry, PlayerEntryType } from "./entry"
-import {
-	Player,
-	PlayerEventType,
-	PlayerEventTypes,
-	PlayerState,
-} from "./player"
+import { Player, PlayerEvent, PlayerEventType, PlayerState } from "./player"
 
 export class HTMLPlayer implements Player {
 	private element: HTMLMediaElement
-	private readonly innerState: PlayerState
-
-	public readonly on
-	public readonly off
+	private readonly innerState: Readonly<PlayerState>
 
 	private freeSourceCallback: (() => void) | null = null
 
 	private afterLoadSeekTarget: number = 0
 	private lastPositionLoadSeekStarted: number = -2
 
-	private readonly bus
+	private readonly innerStateBus
+	private readonly innerPlayerBus
 
 	private readonly eventListeners: Array<[string, any]> = []
 
 	constructor(mediaElement: HTMLMediaElement) {
 		this.element = mediaElement
-
-		this.bus = new EventBus<PlayerEventTypes>()
-		this.on = this.bus.on
-		this.off = this.bus.off
 
 		this.innerState = {
 			isUserWantsToPlay: false,
@@ -61,6 +54,8 @@ export class HTMLPlayer implements Player {
 			preservePitchForSpeed: true,
 			isPositionUpdatedAfterSeek: true,
 		}
+		this.innerPlayerBus = new DefaultEventBus<PlayerEvent>()
+		this.innerStateBus = new DefaultStickyEventBus(this.innerState)
 
 		// Register event listeners and store them
 		this.eventListeners.push(["timeupdate", this.updateStateFromMedia])
@@ -94,20 +89,32 @@ export class HTMLPlayer implements Player {
 		this.element.addEventListener("loadeddata", this.handleLoaded)
 	}
 
+	get state() {
+		return this.stateBus.lastEvent
+	}
+
+	get stateBus() {
+		return SubscribableUtil.hideStickyEmitter(this.innerStateBus)
+	}
+
+	get eventBus() {
+		return SubscribableUtil.hideEmitter(this.innerPlayerBus)
+	}
+
 	public readonly release = () => {
 		this.element.pause()
 		this.element.src = ""
+
+		if (this.freeSourceCallback) {
+			this.freeSourceCallback()
+			this.freeSourceCallback = null
+		}
 
 		this.eventListeners.forEach(([event, callback]) => {
 			this.element.removeEventListener(event, callback)
 		})
 		this.eventListeners.splice(0)
 	}
-
-	get state(): Readonly<PlayerState> {
-		return this.innerState
-	}
-
 	/**
 	 * Private method to update the state.
 	 * Accepts a callback that receives the mutable state to modify.
@@ -115,14 +122,14 @@ export class HTMLPlayer implements Player {
 	private updateState = (updater: (state: PlayerState) => void) => {
 		updater(this.innerState)
 
-		this.bus.emit(PlayerEventType.STATE_CHANGE, {
+		this.innerPlayerBus.emitEvent({
 			type: PlayerEventType.STATE_CHANGE,
-			state: this.state,
+			state: this.innerState,
 		})
 	}
 
 	private readonly handleMediaError = (event: ErrorEvent) => {
-		this.bus.emit(PlayerEventType.ERROR, {
+		this.innerPlayerBus.emitEvent({
 			type: PlayerEventType.ERROR,
 			error: event.error,
 		})
@@ -130,7 +137,7 @@ export class HTMLPlayer implements Player {
 	}
 
 	private readonly handleEnded = () => {
-		this.bus.emit(PlayerEventType.ENTRY_ENDED, {
+		this.innerPlayerBus.emitEvent({
 			type: PlayerEventType.ENTRY_ENDED,
 		})
 		this.updateStateFromMedia()
@@ -146,7 +153,7 @@ export class HTMLPlayer implements Player {
 			this.innerState.isUserWantsToPlay &&
 			this.innerState.entries[this.innerState.currentEntryIndex]
 		) {
-			this.bus.emit(PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE, {
+			this.innerPlayerBus.emitEvent({
 				type: PlayerEventType.EXTERNAL_IS_PLAYING_CHANGE,
 			})
 		}
@@ -243,7 +250,7 @@ export class HTMLPlayer implements Player {
 				this.updateState((state) => {
 					state.currentEntryIndex = targetEntryIndex
 				})
-				const entry = this.state.entries[targetEntryIndex]
+				const entry = this.innerState.entries[targetEntryIndex]
 				this.loadEntry(entry ?? null, position)
 			} else {
 				this.updateState((state) => {
@@ -286,7 +293,9 @@ export class HTMLPlayer implements Player {
 		this.updateState((state) => {
 			state.entries = entries
 		})
-		this.loadEntry(this.state.entries[this.state.currentEntryIndex] ?? null)
+		this.loadEntry(
+			this.innerState.entries[this.innerState.currentEntryIndex] ?? null,
+		)
 	}
 
 	reloadEntry = () => {
