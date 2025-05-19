@@ -147,6 +147,9 @@ describe("AsyncTaskQueue", () => {
 					)
 				},
 			),
+			{
+				numRuns: 10,
+			},
 		)
 	})
 
