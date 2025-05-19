@@ -322,6 +322,10 @@
     {
       "packageName": "@teawithsand/mintay-core",
       "projectFolder": "packages/mintay-core"
+    },
+    {
+      "packageName": "@teawithsand/booklibr",
+      "projectFolder": "packages/booklibr"
     }
 
     // {
