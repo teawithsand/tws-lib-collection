@@ -1,12 +1,7 @@
 import { defineConfig } from "vitest/config"
-import path from 'path'
 
 export default defineConfig({
-	server: {
-		fs: {
-			// allow: [path.resolve(__dirname, '..')],
-		}
-	},
+	
 	test: {
 		globals: true,
 		environment: "jsdom",

@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SdelkaCardEventSerializer > deserialize > deserialize snapshot 1`] = `
+{
+  "answer": 3,
+  "timestamp": 1234567890,
+  "type": 0,
+}
+`;
+
+exports[`SdelkaCardEventSerializer > serialize > serialize snapshot 1`] = `
+{
+  "data": {
+    "answer": 3,
+    "timestamp": 1234567890,
+    "type": 0,
+  },
+  "version": 1,
+}
+`;

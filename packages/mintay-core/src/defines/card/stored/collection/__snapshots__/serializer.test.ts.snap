@@ -1,0 +1,24 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StoredSdelkaCollectionDataSerializer > deserialize returns correct SdelkaCollectionData for version 1 1`] = `
+{
+  "createdAtTimestamp": 1234567890,
+  "description": "A description of the example collection",
+  "globalId": "col123",
+  "lastUpdatedAtTimestamp": 1234567899,
+  "title": "Example Collection",
+}
+`;
+
+exports[`StoredSdelkaCollectionDataSerializer > serialize returns correct structure with version 1 1`] = `
+{
+  "data": {
+    "createdAtTimestamp": 1234567890,
+    "description": "A description of the example collection",
+    "globalId": "col123",
+    "lastUpdatedAtTimestamp": 1234567899,
+    "title": "Example Collection",
+  },
+  "version": 1,
+}
+`;

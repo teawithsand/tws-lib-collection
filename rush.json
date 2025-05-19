@@ -318,7 +318,12 @@
     {
       "packageName": "@teawithsand/blob-store",
       "projectFolder": "packages/blob-store"
+    },
+    {
+      "packageName": "@teawithsand/mintay-core",
+      "projectFolder": "packages/mintay-core"
     }
+
     // {
     //   /**
     //    * The NPM package name of the project (must match package.json)

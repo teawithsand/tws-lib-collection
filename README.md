@@ -7,8 +7,11 @@
 ### [blob-store](./packages/blob-store)
 - Description: Web utilities to store large binary objects, using object-store like syntax.
 
-### [player](./packages/fstate)
-- Description: Misc utilities for jotai and state management
+### [fstate](./packages/fstate)
+- Description: Misc utilities for state mangement
 
 ### [player](./packages/player)
 - Description: Advanced player using valtio for state management.
+
+### [mintay-core](./packages/mintay-core)
+- Description: Mintay SRS engine as NPM package

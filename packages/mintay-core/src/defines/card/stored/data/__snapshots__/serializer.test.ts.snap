@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StoredSdelkaCardDataSerializer > deserialize returns correct SdelkaCardData for version 1 1`] = `
+{
+  "content": "example content",
+  "createdAtTimestamp": 1234567890,
+  "globalId": "abc123",
+  "lastUpdatedAtTimestamp": 1234567899,
+}
+`;
+
+exports[`StoredSdelkaCardDataSerializer > serialize returns correct structure with version 1 1`] = `
+{
+  "data": {
+    "content": "example content",
+    "createdAtTimestamp": 1234567890,
+    "globalId": "abc123",
+    "lastUpdatedAtTimestamp": 1234567899,
+  },
+  "version": 1,
+}
+`;

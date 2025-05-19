@@ -16,7 +16,8 @@
     "build": "tsc --build --clean && tsc",
     "build:check": "tsc --noEmit",
     "fix": "npm run format:fix && npm run lint:fix",
-    "pre-commit-check": "npm run build:check && npm run lint && npm run format:check && npm run test",
+    "pre-commit-check": "npm run build:check && npm run lint && npm run format:check",
+    "pre-push-check": "npm run build:check && npm run lint && npm run format:check && npm run test",
     "prepublishOnly": "npm run build && npm run lint && npm run format:check && npm run test"
   },
   "author": "teawithsand",

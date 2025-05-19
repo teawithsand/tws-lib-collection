@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SdelkaCardStateSerializer > deserialize snapshot 1`] = `
+{
+  "fsrs": {
+    "difficulty": 0.5,
+    "dueTimestamp": 1234567890,
+    "elapsedDays": 10,
+    "lapses": 2,
+    "lastReviewTimestamp": 1234560000,
+    "reps": 20,
+    "scheduledDays": 5,
+    "stability": 0.8,
+    "state": 1,
+  },
+}
+`;
+
+exports[`SdelkaCardStateSerializer > serialize snapshot 1`] = `
+{
+  "data": {
+    "fsrs": {
+      "difficulty": 0.5,
+      "dueTimestamp": 1234567890,
+      "elapsedDays": 10,
+      "lapses": 2,
+      "lastReviewTimestamp": 1234560000,
+      "reps": 20,
+      "scheduledDays": 5,
+      "stability": 0.8,
+      "state": 1,
+    },
+  },
+  "version": 1,
+}
+`;
