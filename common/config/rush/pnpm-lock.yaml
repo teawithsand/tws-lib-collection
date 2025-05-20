@@ -61,6 +61,9 @@ importers:
       '@teawithsand/blob-store':
         specifier: workspace:*
         version: link:../blob-store
+      '@teawithsand/lngext':
+        specifier: workspace:*
+        version: link:../lngext
       immer:
         specifier: ^10.1.1
         version: 10.1.1

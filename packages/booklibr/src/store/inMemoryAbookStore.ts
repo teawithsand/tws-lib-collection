@@ -1,7 +1,7 @@
 import { ABook } from "../defines/abook/abook";
-import { deepCopy } from "../utils/deepCopy";
 import { Id, WithId } from "../utils/withId";
 import { ABookStore } from "./abookStore";
+import { deepCopy } from "@teawithsand/lngext";
 
 export class InMemoryAbookStore implements ABookStore {
 	private store = new Map<Id, ABook>();
