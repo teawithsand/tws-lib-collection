@@ -7,8 +7,6 @@ const config = {
 	plugins: ['@stryker-mutator/vitest-runner'],
 	coverageAnalysis: "perTest",
 	mutate: [
-		"src/defines/abook/stored/index.ts",
-		"src/defines/entry/stored/index.ts"
 	],
 }
 export default config

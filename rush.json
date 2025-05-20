@@ -326,6 +326,10 @@
     {
       "packageName": "@teawithsand/booklibr",
       "projectFolder": "packages/booklibr"
+    },
+    {
+      "packageName": "@teawithsand/lngext",
+      "projectFolder": "packages/lngext"
     }
 
     // {

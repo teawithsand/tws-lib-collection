@@ -1,0 +1,73 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ABookEntrySerializer > deserialize produces stable snapshots for all dispositions 1`] = `
+{
+  "disposition": 1,
+  "locator": {
+    "id": "abc",
+    "type": 1,
+  },
+  "metadata": {
+    "audioMetadata": {
+      "duration": {
+        "type": 1,
+        "value": 42,
+      },
+    },
+    "uploadMetadata": {
+      "fileName": "file.mp3",
+      "fileSize": 456,
+      "lastModifiedTimestamp": 123,
+      "path": "/tmp/file.mp3",
+    },
+  },
+}
+`;
+
+exports[`ABookEntrySerializer > deserialize produces stable snapshots for all dispositions 2`] = `
+{
+  "disposition": 2,
+  "locator": {
+    "id": "abc",
+    "type": 1,
+  },
+  "metadata": {
+    "audioMetadata": {
+      "duration": {
+        "type": 1,
+        "value": 42,
+      },
+    },
+    "uploadMetadata": {
+      "fileName": "file.mp3",
+      "fileSize": 456,
+      "lastModifiedTimestamp": 123,
+      "path": "/tmp/file.mp3",
+    },
+  },
+}
+`;
+
+exports[`ABookEntrySerializer > deserialize produces stable snapshots for all dispositions 3`] = `
+{
+  "disposition": 3,
+  "locator": {
+    "id": "abc",
+    "type": 1,
+  },
+  "metadata": {
+    "audioMetadata": {
+      "duration": {
+        "type": 1,
+        "value": 42,
+      },
+    },
+    "uploadMetadata": {
+      "fileName": "file.mp3",
+      "fileSize": 456,
+      "lastModifiedTimestamp": 123,
+      "path": "/tmp/file.mp3",
+    },
+  },
+}
+`;
