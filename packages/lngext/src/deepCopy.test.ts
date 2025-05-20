@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { deepCopy } from "./deepCopy"
+import { deepCopy, deepCopyable } from "./deepCopy"
 
 describe("deepCopy", () => {
 	// Test primitive values
@@ -10,6 +10,140 @@ describe("deepCopy", () => {
 		expect(deepCopy("hello")).toBe("hello")
 		expect(deepCopy(true)).toBe(true)
 		expect(deepCopy(false)).toBe(false)
+	})
+
+	test("should handle additional primitive types correctly", () => {
+		expect(deepCopy(0)).toBe(0)
+		expect(deepCopy(-0)).toBe(-0)
+		expect(deepCopy(NaN)).toBeNaN()
+		expect(deepCopy(Infinity)).toBe(Infinity)
+		expect(deepCopy(-Infinity)).toBe(-Infinity)
+		expect(deepCopy(Symbol.for("test"))).toBe(Symbol.for("test"))
+		expect(deepCopy(BigInt(9007199254740991))).toBe(
+			BigInt(9007199254740991),
+		)
+	})
+
+	test("should handle special number cases", () => {
+		expect(deepCopy(Number.MAX_SAFE_INTEGER)).toBe(Number.MAX_SAFE_INTEGER)
+		expect(deepCopy(Number.MIN_SAFE_INTEGER)).toBe(Number.MIN_SAFE_INTEGER)
+		expect(deepCopy(Number.MAX_VALUE)).toBe(Number.MAX_VALUE)
+		expect(deepCopy(Number.MIN_VALUE)).toBe(Number.MIN_VALUE)
+		expect(deepCopy(Number.EPSILON)).toBe(Number.EPSILON)
+	})
+
+	test("should handle empty and special strings", () => {
+		expect(deepCopy("")).toBe("")
+		expect(deepCopy(" ")).toBe(" ")
+		expect(deepCopy("𝄞")).toBe("𝄞") // Unicode musical symbol
+		expect(deepCopy("\u0000")).toBe("\u0000") // Null character
+		expect(deepCopy("a\nb")).toBe("a\nb") // String with newline
+	})
+
+	test("should deep copy named class instances with deepCopyable symbol", () => {
+		class TestClass {
+			public value: number
+			private secretValue: string;
+			[deepCopyable] = true
+
+			constructor(value: number, secretValue: string) {
+				this.value = value
+				this.secretValue = secretValue
+			}
+
+			public readonly getValue = (): number => {
+				return this.value
+			}
+
+			public readonly getSecretValue = (): string => {
+				return this.secretValue
+			}
+		}
+
+		const original = new TestClass(42, "secret")
+		const copy = deepCopy(original)
+
+		// Check that we have a proper copy
+		expect(copy).toBeInstanceOf(TestClass)
+		expect(copy).not.toBe(original)
+		expect(copy.getValue()).toBe(42)
+		expect(copy.getSecretValue()).toBe("secret")
+
+		// Modify the copy and verify original remains unchanged
+		copy.value = 100
+		expect(original.getValue()).toBe(42)
+	})
+
+	test("should not deep copy named class instances without deepCopyable symbol", () => {
+		class TestClass {
+			public value: number
+			private secretValue: string
+
+			constructor(value: number, secretValue: string) {
+				this.value = value
+				this.secretValue = secretValue
+			}
+
+			public readonly getValue = (): number => {
+				return this.value
+			}
+
+			public readonly getSecretValue = (): string => {
+				return this.secretValue
+			}
+		}
+
+		const original = new TestClass(42, "secret")
+		const copy = deepCopy(original)
+
+		// Check that we copied by reference
+		expect(copy).toBe(original)
+	})
+
+	test("should deep copy nested class instances", () => {
+		class InnerClass {
+			public readonly data: string;
+			[deepCopyable] = true
+
+			constructor(data: string) {
+				this.data = data
+			}
+
+			public readonly getData = (): string => {
+				return this.data
+			}
+		}
+
+		class OuterClass {
+			public readonly inner: InnerClass
+			public readonly items: InnerClass[];
+			[deepCopyable] = true
+
+			constructor(inner: InnerClass, items: InnerClass[]) {
+				this.inner = inner
+				this.items = items
+			}
+		}
+
+		const innerInstance = new InnerClass("test data")
+		const itemsArray = [new InnerClass("item1"), new InnerClass("item2")]
+		const original = new OuterClass(innerInstance, itemsArray)
+
+		const copy = deepCopy(original)
+
+		// Check structure
+		expect(copy).toBeInstanceOf(OuterClass)
+		expect(copy).not.toBe(original)
+		expect(copy.inner).toBeInstanceOf(InnerClass)
+		expect(copy.inner).not.toBe(original.inner)
+		expect(copy.inner.getData()).toBe("test data")
+
+		// Check array of class instances
+		expect(copy.items).not.toBe(original.items)
+		expect(copy.items.length).toBe(2)
+		expect(copy.items[0]).toBeInstanceOf(InnerClass)
+		expect(copy.items[0]).not.toBe(original.items[0])
+		expect(copy.items[0].getData()).toBe("item1")
 	})
 
 	test("should deep copy Date objects", () => {
@@ -224,5 +358,121 @@ describe("deepCopy", () => {
 		const copiedObjWithFunc = deepCopy(objWithFunc)
 
 		expect(copiedObjWithFunc.method).toBe(func)
+	})
+
+	test("should handle classes with inheritance", () => {
+		class BaseClass {
+			public readonly baseValue: string;
+			[deepCopyable] = true
+
+			constructor(baseValue: string) {
+				this.baseValue = baseValue
+			}
+
+			public readonly getBaseValue = (): string => {
+				return this.baseValue
+			}
+		}
+
+		class DerivedClass extends BaseClass {
+			public readonly derivedValue: number
+
+			constructor(baseValue: string, derivedValue: number) {
+				super(baseValue)
+				this.derivedValue = derivedValue
+			}
+
+			public readonly getDerivedValue = (): number => {
+				return this.derivedValue
+			}
+		}
+
+		const original = new DerivedClass("base", 100)
+		const copy = deepCopy(original)
+
+		// Check inheritance structure
+		expect(copy).toBeInstanceOf(DerivedClass)
+		expect(copy).toBeInstanceOf(BaseClass)
+		expect(copy).not.toBe(original)
+		expect(copy.getBaseValue()).toBe("base")
+		expect(copy.getDerivedValue()).toBe(100)
+	})
+
+	test("should deep copy class with static members and prototype methods", () => {
+		class ComplexClass {
+			[deepCopyable] = true
+
+			public value: number
+			private internalValue: string
+			static readonly CONSTANT = "CONSTANT"
+
+			constructor(value: number, internalValue: string) {
+				this.value = value
+				this.internalValue = internalValue
+			}
+
+			public readonly getValue = (): number => {
+				return this.value
+			}
+
+			public readonly getInternalValue = (): string => {
+				return this.internalValue
+			}
+
+			public readonly combinedValue = (): string => {
+				return `${this.value}-${this.internalValue}-${ComplexClass.CONSTANT}`
+			}
+		}
+
+		const original = new ComplexClass(42, "secret")
+		const copy = deepCopy(original)
+
+		expect(copy).toBeInstanceOf(ComplexClass)
+		expect(copy).not.toBe(original)
+		expect(copy.getValue()).toBe(42)
+		expect(copy.getInternalValue()).toBe("secret")
+		expect(copy.combinedValue()).toBe("42-secret-CONSTANT")
+
+		// Verify static members are accessible through the copied instance
+		expect(ComplexClass.CONSTANT).toBe("CONSTANT")
+	})
+
+	test("should deep copy class with getters and setters", () => {
+		class PropertyClass {
+			private _value: number;
+			[deepCopyable] = true
+
+			constructor(value: number) {
+				this._value = value
+			}
+
+			public get value(): number {
+				return this._value
+			}
+
+			public set value(newValue: number) {
+				this._value = newValue
+			}
+
+			public doubleValue(): number {
+				return this._value * 2
+			}
+		}
+
+		const original = new PropertyClass(50)
+		const copy = deepCopy(original)
+
+		expect(copy).toBeInstanceOf(PropertyClass)
+		expect(copy).not.toBe(original)
+		expect(copy.value).toBe(50)
+
+		// Test setter on copy
+		copy.value = 100
+		expect(copy.value).toBe(100)
+		expect(copy.doubleValue()).toBe(200)
+
+		// Original should be unchanged
+		expect(original.value).toBe(50)
+		expect(original.doubleValue()).toBe(100)
 	})
 })
