@@ -22,7 +22,7 @@ export const cardsTable = sqliteTable(
 	"cards",
 	{
 		id: integer("id").primaryKey({ autoIncrement: true }),
-		collectionId: integer("collection_id"),
+		collectionId: integer("collection_id").notNull(),
 
 		cardData: text("cardData", { mode: "json" }).notNull(),
 

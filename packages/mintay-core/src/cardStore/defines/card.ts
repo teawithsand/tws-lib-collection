@@ -13,7 +13,6 @@ export interface CardHandle<T extends StorageTypeSpec> {
 	setCollection: (id: CardId) => Promise<void>
 }
 
-// Note: this type is not used any where at the moment, which should be fixed.
 export interface CardStore<T extends StorageTypeSpec> {
-	get: (id: CardId) => CardHandle<T>
+	getCardById: (id: CardId) => Promise<CardHandle<T> | null>
 }
