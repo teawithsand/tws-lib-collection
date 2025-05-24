@@ -74,6 +74,12 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 	public readonly getCards = async (
 		params?: CollectionGetCardsParams,
 	): Promise<CardHandle<T>[]> => {
+		if (params?.offset && params.offset < 0) {
+			throw new Error("Offset cannot be negative")
+		}
+		if (params?.limit && params.limit < 0) {
+			throw new Error("Limit cannot be negative")
+		}
 		const allCards = this.db.getAllCardIds()
 		const filteredCards = allCards.filter((cardId) => {
 			const card = this.db.getCardById(cardId)

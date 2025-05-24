@@ -146,6 +146,12 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 	public readonly getCards = async (
 		params?: CollectionGetCardsParams,
 	): Promise<CardHandle<T>[]> => {
+		if (params?.offset && params.offset < 0) {
+			throw new Error("Offset cannot be negative")
+		}
+		if (params?.limit && params.limit < 0) {
+			throw new Error("Limit cannot be negative")
+		}
 		const cards = await this.db
 			.select()
 			.from(cardsTable)
