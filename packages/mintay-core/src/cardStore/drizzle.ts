@@ -45,10 +45,12 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 					eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)),
 				)
 				.get()
+			const serializedData =
+				this.serializer.serializeCollectionHeader(data)
 			if (existing) {
 				await tx
 					.update(cardCollectionsTable)
-					.set({ collectionHeader: data })
+					.set({ collectionHeader: serializedData })
 					.where(
 						eq(
 							cardCollectionsTable.id,
@@ -60,7 +62,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 				await tx
 					.insert(cardCollectionsTable)
 					.values({
-						collectionHeader: data,
+						collectionHeader: serializedData,
 						id: CardIdUtil.toNumber(this.id),
 					})
 					.run()
@@ -78,17 +80,20 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 			.get()
 		if (!collection) throw new Error("Collection not found")
 
-		const updated = {
+		const updatedOwnedData = {
 			...this.serializer.deserializeCollectionHeader(
 				collection.collectionHeader,
 			),
 			...partial,
 		}
+		const serializedUpdatedData =
+			this.serializer.serializeCollectionHeader(updatedOwnedData)
 
 		await this.db
 			.update(cardCollectionsTable)
-			.set({ collectionHeader: updated })
+			.set({ collectionHeader: serializedUpdatedData })
 			.where(eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)))
+			.run()
 	}
 
 	public readonly read = async (): Promise<T["collectionData"]> => {
@@ -382,11 +387,13 @@ export class DrizzleCollectionStore<T extends StorageTypeSpec>
 
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
 		const header = this.defaultCollectionHeader
+		const serializedHeader =
+			this.serializer.serializeCollectionHeader(header)
 		const insertedCollection = await this.db.transaction(async (tx) => {
 			await tx
 				.insert(cardCollectionsTable)
 				.values({
-					collectionHeader: header,
+					collectionHeader: serializedHeader,
 				})
 				.run()
 
