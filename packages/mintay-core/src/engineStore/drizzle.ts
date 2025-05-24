@@ -151,6 +151,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 			const lastEvent = await tx
 				.select()
 				.from(cardEventsTable)
+				.where(eq(cardEventsTable.collectionId, this.collectionId))
 				.orderBy(desc(cardEventsTable.ordinalNumber))
 				.limit(1)
 				.get()
