@@ -1,5 +1,5 @@
 import { CardStateReducer } from "../defines/reducer/defines"
-import { CardId } from "../defines/typings/cardId"
+import { CardId, CardIdUtil } from "../defines/typings/cardId"
 import { CardStateExtractor } from "../defines/typings/defines"
 import { StorageTypeSpec } from "../defines/typings/typeSpec"
 import { InMemoryDb } from "../inMemoryDb/db"
@@ -17,39 +17,54 @@ export class InMemoryEngineStore<
 		Queue
 	>
 	private readonly lastPushedCardIds: CardId[] = []
+	private readonly collectionId: CardId
 
 	constructor({
 		reducer,
 		priorityExtractor,
 		db,
+		collectionId,
 	}: {
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
 		priorityExtractor: CardStateExtractor<T["cardState"], Queue>
 		db: InMemoryDb<T>
+		collectionId: CardId
 	}) {
 		this.reducer = reducer
 		this.priorityExtractor = priorityExtractor
 		this.db = db
+		this.collectionId = collectionId
 	}
 
 	private readonly getCard = (id: CardId) => {
 		const card = this.db.getCardById(id)
-		if (!card) throw new Error("Card not found")
+		if (!card) throw new Error(`Card not found: ${id}`)
+		if (card.collection !== this.collectionId) {
+			throw new Error(
+				`Card ${CardIdUtil.toString(id)} does not belong to collection ${CardIdUtil.toString(this.collectionId)}`,
+			)
+		}
 		return card
 	}
 
 	public readonly pop = async (): Promise<void> => {
-		if (this.lastPushedCardIds.length > 0) {
-			const lastPushedCardId = this.lastPushedCardIds.pop()!
-			const card = this.getCard(lastPushedCardId)
-			if (card.states.length === 0) {
-				throw new Error("Unreachable")
+		while (this.lastPushedCardIds.length > 0) {
+			const lastPushedCardId =
+				this.lastPushedCardIds[this.lastPushedCardIds.length - 1]!
+			const card = this.db.getCardById(lastPushedCardId)
+
+			if (!card || card.collection !== this.collectionId) {
+				this.lastPushedCardIds.pop()
+				continue
 			}
-			card.states.pop()
-			if (card.states.length === 0) {
-				this.db.upsertCard(lastPushedCardId, { ...card, states: [] })
-			} else {
+
+			if (card.states.length > 0) {
+				card.states.pop()
 				this.db.upsertCard(lastPushedCardId, card)
+				this.lastPushedCardIds.pop()
+				return
+			} else {
+				this.lastPushedCardIds.pop()
 			}
 		}
 	}
@@ -88,7 +103,10 @@ export class InMemoryEngineStore<
 		let highestPriority = -Infinity
 		for (const cardId of this.db.getAllCardIds()) {
 			const card = this.db.getCardById(cardId)
-			if (!card || card.states.length === 0) {
+			if (!card || card.collection !== this.collectionId) {
+				continue
+			}
+			if (card.states.length === 0) {
 				continue
 			}
 			const state = card.states[card.states.length - 1]!.state

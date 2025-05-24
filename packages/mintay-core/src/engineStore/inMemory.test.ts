@@ -32,15 +32,15 @@ const priorityExtractor: CardStateExtractor<DummySpec["cardState"], number> = {
 	getStats: (state) => ({ lapses: 0, repeats: 0 }),
 }
 
-let cards: Record<string, InMemoryCard<DummySpec>> = {}
+const collectionId = "collection1"
 
 const createStore = () => {
-	cards = {}
 	const db = new InMemoryDb<DummySpec>()
 	const store = new InMemoryEngineStore<DummySpec, number>({
 		reducer: dummyReducer,
 		priorityExtractor,
 		db,
+		collectionId,
 	})
 
 	db.upsertCard("card1", { data: {}, collection: "collection1", states: [] })
@@ -294,5 +294,170 @@ describe("InMemoryEngineStore", () => {
 		// No filter (undefined), should return card2, card4 or card5 (priority 3)
 		topCard = await store.getTopCard(undefined)
 		expect(["card2", "card4", "card5"]).toContain(topCard)
+	})
+})
+
+const collectionId2 = "collection2"
+
+describe("InMemoryEngineStore - Mixed Collection Tests", () => {
+	let db: InMemoryDb<DummySpec>
+	let store1: InMemoryEngineStore<DummySpec, number>
+	let store2: InMemoryEngineStore<DummySpec, number>
+
+	beforeEach(() => {
+		db = new InMemoryDb<DummySpec>()
+		store1 = new InMemoryEngineStore<DummySpec, number>({
+			reducer: dummyReducer,
+			priorityExtractor,
+			db,
+			collectionId: collectionId, // "collection1"
+		})
+		store2 = new InMemoryEngineStore<DummySpec, number>({
+			reducer: dummyReducer,
+			priorityExtractor,
+			db,
+			collectionId: collectionId2, // "collection2"
+		})
+
+		// Add cards to the db for both collections
+		db.upsertCard("card1_coll1", {
+			data: {},
+			collection: collectionId,
+			states: [],
+		})
+		db.upsertCard("card2_coll1", {
+			data: {},
+			collection: collectionId,
+			states: [],
+		})
+		db.upsertCard("card1_coll2", {
+			data: {},
+			collection: collectionId2,
+			states: [],
+		})
+		db.upsertCard("card2_coll2", {
+			data: {},
+			collection: collectionId2,
+			states: [],
+		})
+	})
+
+	test("push to different collections updates them independently", async () => {
+		await store1.push("card1_coll1", { priority: 10 })
+		await store2.push("card1_coll2", { priority: 20 })
+
+		const data1 = await store1.getCardData("card1_coll1")
+		expect(data1.priority).toBe(10)
+
+		const data2 = await store2.getCardData("card1_coll2")
+		expect(data2.priority).toBe(20)
+
+		// Expect getCardData to throw if accessing a card from another collection via the wrong store
+		await expect(store1.getCardData("card1_coll2")).rejects.toThrow()
+		await expect(store2.getCardData("card1_coll1")).rejects.toThrow()
+	})
+
+	test("pop operates only on the specific collection's push history", async () => {
+		await store1.push("card1_coll1", { priority: 1 })
+		await store1.push("card1_coll1", { priority: 2 }) // card1_coll1 state: prio 2 (via store1)
+		await store2.push("card1_coll2", { priority: 3 }) // card1_coll2 state: prio 3 (via store2)
+
+		await store1.pop() // Should pop from store1's history (card1_coll1: prio 2 -> prio 1)
+
+		const data1_after_pop1 = await store1.getCardData("card1_coll1")
+		expect(data1_after_pop1.priority).toBe(1)
+
+		const data2_after_pop1 = await store2.getCardData("card1_coll2")
+		expect(data2_after_pop1.priority).toBe(3) // Unchanged
+
+		await store2.pop() // Should pop from store2's history (card1_coll2: prio 3 -> default)
+
+		const data1_after_pop2 = await store1.getCardData("card1_coll1")
+		expect(data1_after_pop2.priority).toBe(1) // Unchanged
+
+		const data2_after_pop2 = await store2.getCardData("card1_coll2")
+		expect(data2_after_pop2).toEqual(dummyState) // Back to default
+	})
+
+	test("getTopCard is collection-specific", async () => {
+		// Collection 1
+		await store1.push("card1_coll1", { priority: 3 })
+		await store1.push("card2_coll1", { priority: 1 })
+		// Collection 2
+		await store2.push("card1_coll2", { priority: 5 })
+		await store2.push("card2_coll2", { priority: 2 })
+
+		const topCard_coll1 = await store1.getTopCard(undefined)
+		expect(topCard_coll1).toBe("card1_coll1")
+
+		const topCard_coll2 = await store2.getTopCard(undefined)
+		expect(topCard_coll2).toBe("card1_coll2")
+	})
+
+	test("getTopCard with queues is collection-specific", async () => {
+		// Collection 1
+		await store1.push("card1_coll1", { priority: 3, queue: 101 })
+		await store1.push("card2_coll1", { priority: 4, queue: 102 })
+		// Collection 2
+		await store2.push("card1_coll2", { priority: 5, queue: 101 })
+		await store2.push("card2_coll2", { priority: 6, queue: 102 })
+
+		let topCard = await store1.getTopCard([101])
+		expect(topCard).toBe("card1_coll1")
+
+		topCard = await store2.getTopCard([101])
+		expect(topCard).toBe("card1_coll2")
+
+		topCard = await store1.getTopCard([102])
+		expect(topCard).toBe("card2_coll1")
+
+		topCard = await store2.getTopCard([102])
+		expect(topCard).toBe("card2_coll2")
+
+		topCard = await store1.getTopCard([999]) // Non-existent queue
+		expect(topCard).toBeNull()
+	})
+
+	test("popCard is collection-specific and does not affect other collections", async () => {
+		await store1.push("card1_coll1", { priority: 1 })
+		await store1.push("card1_coll1", { priority: 2 })
+		await store2.push("card1_coll2", { priority: 3 })
+
+		await store1.popCard("card1_coll1") // card1_coll1 state: prio 1
+
+		const data1 = await store1.getCardData("card1_coll1")
+		expect(data1.priority).toBe(1)
+		const data2 = await store2.getCardData("card1_coll2")
+		expect(data2.priority).toBe(3) // Unchanged
+
+		// Try to popCard from store1 for a card in store2 (should throw due to collection mismatch in getCard)
+		await expect(store1.popCard("card1_coll2")).rejects.toThrow()
+	})
+
+	test("interleaved operations across collections maintain consistency", async () => {
+		await store1.push("card1_coll1", { priority: 10 })
+		await store2.push("card1_coll2", { priority: 20 })
+
+		await store1.pop() // card1_coll1 (store1) -> default
+		let data1_store1 = await store1.getCardData("card1_coll1")
+		expect(data1_store1).toEqual(dummyState)
+		let data1_store2 = await store2.getCardData("card1_coll2")
+		expect(data1_store2.priority).toBe(20)
+
+		await store1.push("card1_coll1", { priority: 15 }) // card1_coll1 (store1) -> prio 15
+		data1_store1 = await store1.getCardData("card1_coll1")
+		expect(data1_store1.priority).toBe(15)
+
+		await store2.push("card2_coll2", { priority: 25 }) // card2_coll2 (store2) -> prio 25
+
+		await store2.pop() // card2_coll2 (store2) -> default. card1_coll2 (store2) should be next in its history.
+		const data2_store2_card1 = await store2.getCardData("card1_coll2")
+		expect(data2_store2_card1.priority).toBe(20)
+		const data2_store2_card2 = await store2.getCardData("card2_coll2")
+		expect(data2_store2_card2).toEqual(dummyState)
+
+		// Verify store1's card is unaffected
+		data1_store1 = await store1.getCardData("card1_coll1")
+		expect(data1_store1.priority).toBe(15)
 	})
 })
