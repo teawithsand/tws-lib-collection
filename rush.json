@@ -330,6 +330,10 @@
     {
       "packageName": "@teawithsand/lngext",
       "projectFolder": "packages/lngext"
+    },
+    {
+      "packageName": "@teawithsand/reserd",
+      "projectFolder": "packages/reserd"
     }
 
     // {

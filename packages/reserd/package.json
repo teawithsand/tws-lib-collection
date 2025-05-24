@@ -1,0 +1,39 @@
+{
+  "name": "@teawithsand/reserd",
+  "version": "0.0.1",
+  "description": "Opinionated package for creating Anti-Corruption Layers for serialized data",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "format:fix": "prettier ./src --write",
+    "format:check": "prettier ./src --check",
+    "lint": "eslint ./src --max-warnings 0",
+    "lint:fix": "eslint ./src --fix",
+    "test:mutate": "stryker run",
+    "test": "vitest",
+    "test:ss": "vitest -u",
+    "build": "tsc --build --clean && tsc",
+    "build:check": "tsc --noEmit",
+    "fix": "npm run format:fix && npm run lint:fix",
+    "pre-commit-check": "npm run build:check && npm run lint && npm run format:check",
+    "pre-push-check": "npm run build:check && npm run lint && npm run format:check && npm run test",
+    "prepublishOnly": "npm run build && npm run lint && npm run format:check && npm run test"
+  },
+  "author": "teawithsand",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.32.0",
+    "@vitest/coverage-istanbul": "^3.1.3",
+    "eslint": "^9.26.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^16.1.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.0",
+    "vitest": "~3.1.3",
+    "@stryker-mutator/vitest-runner": "~9.0.1"
+  },
+  "dependencies": {
+  }
+}
