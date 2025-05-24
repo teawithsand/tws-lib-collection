@@ -14,6 +14,17 @@ export class SdelkaCardStateReducer
 		this.fsrs = new FSRS(FSRSBridge.convertParamsToFSRS(params))
 	}
 
+	private readonly fixStateTimestamp = (
+		state: SdelkaCardState,
+		timestamp: number,
+	): SdelkaCardState => ({
+		...state,
+		fsrs: {
+			...state.fsrs,
+			dueTimestamp: state.fsrs.dueTimestamp || timestamp,
+		},
+	})
+
 	public readonly getPossibleStates = (
 		state: SdelkaCardState,
 		timestamp: number,
@@ -24,6 +35,8 @@ export class SdelkaCardStateReducer
 			SdelkaAnswer.GOOD,
 			SdelkaAnswer.EASY,
 		].map((answer): [SdelkaAnswer, SdelkaCardState] => {
+			state = this.fixStateTimestamp(state, timestamp)
+
 			return [
 				answer,
 				this.fold(state, {
@@ -41,6 +54,8 @@ export class SdelkaCardStateReducer
 		state: SdelkaCardState,
 		event: SdelkaCardEvent,
 	): SdelkaCardState => {
+		state = this.fixStateTimestamp(state, event.timestamp)
+
 		switch (event.type) {
 			case SdelkaCardEventType.ANSWER: {
 				const fsrsCard = FSRSBridge.convertCardToFSRS(state.fsrs)
