@@ -61,3 +61,33 @@ export class TypeAssert {
 		// No-op at runtime, but provides compile-time type checking
 	}
 }
+
+// See https://stackoverflow.com/questions/57683303/how-can-i-see-the-full-expanded-contract-of-a-typescript-type
+
+/**
+ * Expands a type to show its full structure.
+ * This is useful for debugging complex types.
+ * It expands the type one level deep.
+ *
+ * @template T - The type to expand.
+ */
+export type Expand<T> = T extends (...args: infer A) => infer R
+	? (...args: Expand<A>) => Expand<R>
+	: T extends infer O
+		? { [K in keyof O]: O[K] }
+		: never
+
+/**
+ * Recursively expands a type to show its full structure.
+ * This is useful for debugging complex types.
+ * It expands the type and all its nested properties.
+ *
+ * @template T - The type to expand.
+ */
+export type ExpandRecursively<T> = T extends (...args: infer A) => infer R
+	? (...args: ExpandRecursively<A>) => ExpandRecursively<R>
+	: T extends object
+		? T extends infer O
+			? { [K in keyof O]: ExpandRecursively<O[K]> }
+			: never
+		: T
