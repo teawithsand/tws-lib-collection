@@ -61,8 +61,12 @@ export class SdelkaCardStateReducer
 
 	public readonly getDefaultState = (): SdelkaCardState => {
 		const card = createEmptyCard(0)
+		const fsrs = FSRSBridge.convertCardFromFSRS(card)
+
+		fsrs.dueTimestamp = 0
+
 		return {
-			fsrs: FSRSBridge.convertCardFromFSRS(card),
+			fsrs: fsrs,
 		}
 	}
 }

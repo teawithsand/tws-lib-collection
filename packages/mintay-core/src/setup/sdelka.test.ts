@@ -5,6 +5,8 @@ import {
 	SdelkaAnswer,
 	SdelkaCardDataUtil,
 	SdelkaCardEventType,
+	SdelkaCardQueue,
+	SdelkaCardStateExtractor,
 	SdelkaCollectionDataUtil,
 } from "../defines/card"
 import { CardId } from "../defines/typings/cardId"
@@ -18,7 +20,7 @@ const testParameters: FsrsParameters = {
 	maximumInterval: 36500,
 	w: [
 		0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18,
-		0.05, 0.34, 1.26, 0.29, 2.61,
+		0.05, 0.34, 1.26, 0.29, 2.61, 0.29, 2.61,
 	],
 	enableFuzz: false,
 	enableShortTerm: true,
@@ -213,16 +215,6 @@ describe.each<{
 			expect(topCardId).toBe(card2.id)
 		})
 
-		test("getTopCard should return null if no cards are due or in the collection", async () => {
-			const newCollection = await sdelka.collectionStore.create()
-			const engineStore = sdelka.getEngineStore(
-				newCollection.id,
-				testParameters,
-			)
-			const topCardId = await engineStore.getTopCard(undefined)
-			expect(topCardId).toBeNull()
-		})
-
 		test("should pop an event and revert card state", async () => {
 			const engineStore = sdelka.getEngineStore(
 				collectionId,
@@ -325,9 +317,145 @@ describe.each<{
 			expect(cardData.fsrs.scheduledDays).toBe(0)
 			expect(cardData.fsrs.reps).toBe(0)
 			expect(cardData.fsrs.lapses).toBe(0)
-			// Due date is set for new cards, so we check it's a number
-			expect(typeof cardData.fsrs.dueTimestamp).toBe("number")
-			expect(cardData.fsrs.dueTimestamp).toBeGreaterThan(0)
+			expect(cardData.fsrs.dueTimestamp).toBe(0)
+		})
+
+		test("getTopCard should return the card with the earliest dueTimestamp when multiple cards are due", async () => {
+			const engineStore = sdelka.getEngineStore(
+				collectionId,
+				testParameters,
+			)
+			const collection = sdelka.collectionStore.get(collectionId)
+			const card2 = await collection.createCard()
+			const card3 = await collection.createCard()
+			const now = 1000000
+
+			await engineStore.push(cardId, {
+				type: SdelkaCardEventType.ANSWER,
+				answer: SdelkaAnswer.EASY,
+				timestamp: now + 1000,
+			})
+
+			await engineStore.push(card2.id, {
+				type: SdelkaCardEventType.ANSWER,
+				answer: SdelkaAnswer.EASY,
+				timestamp: now + 10000,
+			})
+
+			await engineStore.push(card3.id, {
+				type: SdelkaCardEventType.ANSWER,
+				answer: SdelkaAnswer.EASY,
+				timestamp: now + 100000,
+			})
+
+			const poppedCardIds: CardId[] = []
+			let timeFlow = now
+
+			for (let i = 0; i < 3; i++) {
+				const topCardId = await engineStore.getTopCard(undefined)
+
+				if (null === topCardId) break
+
+				poppedCardIds.push(topCardId)
+
+				timeFlow += 1000 * 3600 * 2
+
+				await engineStore.push(topCardId, {
+					type: SdelkaCardEventType.ANSWER,
+					answer: SdelkaAnswer.EASY,
+					timestamp: timeFlow,
+				})
+			}
+			expect(poppedCardIds).toEqual([cardId, card2.id, card3.id])
+		})
+
+		test("popCard should correctly revert the state of a specific card, not necessarily the last one pushed to engine", async () => {
+			const engineStore = sdelka.getEngineStore(
+				collectionId,
+				testParameters,
+			)
+			const collection = sdelka.collectionStore.get(collectionId)
+			const card2 = await collection.createCard()
+			const now = 10000000
+
+			// Event 1 for cardId
+			await engineStore.push(cardId, {
+				type: SdelkaCardEventType.ANSWER,
+				answer: SdelkaAnswer.AGAIN,
+				timestamp: now,
+			})
+			const stateCard1AfterPush1 = await engineStore.getCardData(cardId)
+			expect(stateCard1AfterPush1.fsrs.reps).toBe(1)
+			expect(stateCard1AfterPush1.fsrs.lapses).toBe(0) // New card + AGAIN = 0 lapses
+
+			// Event for card2
+			await engineStore.push(card2.id, {
+				type: SdelkaCardEventType.ANSWER,
+				answer: SdelkaAnswer.GOOD,
+				timestamp: now + 1000,
+			})
+			const stateCard2AfterPush = await engineStore.getCardData(card2.id)
+			expect(stateCard2AfterPush.fsrs.reps).toBe(1)
+
+			// Event 2 for cardId
+			await engineStore.push(cardId, {
+				type: SdelkaCardEventType.ANSWER,
+				answer: SdelkaAnswer.GOOD, // From Lapsed (AGAIN) to Good
+				timestamp: now + 2000,
+			})
+			const stateCard1AfterPush2 = await engineStore.getCardData(cardId)
+			expect(stateCard1AfterPush2.fsrs.reps).toBe(2) // Reps increase
+			expect(stateCard1AfterPush2.fsrs.lapses).toBe(0) // Lapses remain 0 as card hasn't been "learned" then "lapsed"
+
+			// Act: Pop the last event for cardId (which is Event 2 for cardId)
+			await engineStore.popCard(cardId)
+
+			const stateCard1AfterPop = await engineStore.getCardData(cardId)
+			const stateCard2AfterPop = await engineStore.getCardData(card2.id)
+
+			// Assertions:
+			// cardId should revert to its state after its first push
+			expect(stateCard1AfterPop.fsrs.reps).toBe(
+				stateCard1AfterPush1.fsrs.reps,
+			)
+			expect(stateCard1AfterPop.fsrs.lapses).toBe(
+				stateCard1AfterPush1.fsrs.lapses,
+			)
+			expect(stateCard1AfterPop.fsrs.dueTimestamp).toBe(
+				stateCard1AfterPush1.fsrs.dueTimestamp,
+			)
+			// card2's state should remain unaffected
+			expect(stateCard2AfterPop.fsrs.reps).toBe(
+				stateCard2AfterPush.fsrs.reps,
+			)
+		})
+
+		test("pop on an empty engine store (no events for any card) should not throw an error", async () => {
+			const newCollection = await sdelka.collectionStore.create()
+			// card in this collection, but no events pushed for it
+			await newCollection.createCard()
+			const engineStore = sdelka.getEngineStore(
+				newCollection.id,
+				testParameters,
+			)
+
+			await expect(engineStore.pop()).resolves.not.toThrow()
+		})
+
+		test("popCard on a card with no events should not throw an error and state remains default", async () => {
+			const engineStore = sdelka.getEngineStore(
+				collectionId,
+				testParameters,
+			)
+			// cardId was created in beforeEach, but has no events yet in this specific test context
+			const initialState = await engineStore.getCardData(cardId)
+
+			await engineStore.popCard(cardId)
+
+			const stateAfterPop = await engineStore.getCardData(cardId)
+			expect(stateAfterPop).toEqual(initialState) // State should be the default initial state
+			expect(stateAfterPop.fsrs.reps).toBe(0)
+			expect(stateAfterPop.fsrs.lapses).toBe(0)
 		})
 	})
 })

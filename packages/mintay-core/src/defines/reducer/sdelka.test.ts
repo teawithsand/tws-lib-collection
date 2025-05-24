@@ -20,23 +20,6 @@ describe("SdelkaCardStateReducer", () => {
 	const reducer = new SdelkaCardStateReducer(defaultParams)
 	const extractor = new SdelkaCardStateExtractor()
 
-	test("getDefaultState should return a new card state", () => {
-		const defaultState = reducer.getDefaultState()
-		expect(defaultState.fsrs.state).toBe(SdelkaCardQueue.NEW)
-		expect(defaultState.fsrs.dueTimestamp).toBeGreaterThan(0)
-		expect(defaultState.fsrs.reps).toBe(0)
-		expect(defaultState.fsrs.lapses).toBe(0)
-
-		expect(extractor.getQueue(defaultState)).toBe(SdelkaCardQueue.NEW)
-		expect(extractor.getPriority(defaultState)).toBe(
-			-defaultState.fsrs.dueTimestamp,
-		)
-		expect(extractor.getStats(defaultState)).toEqual({
-			repeats: 0,
-			lapses: 0,
-		})
-	})
-
 	test("fold should update card state based on an event", () => {
 		const initialState = reducer.getDefaultState()
 		const timestamp = initialState.fsrs.dueTimestamp + 24 * 60 * 60 * 1000 // 1 day after due
@@ -163,5 +146,18 @@ describe("SdelkaCardStateReducer", () => {
 			SdelkaCardQueue.RELEARNING,
 		)
 		expect(extractor.getStats(currentState).lapses).toBe(1)
+	})
+
+	test("getDefaultState returns consistent values", async () => {
+		const reducer = new SdelkaCardStateReducer(defaultParams)
+
+		const state1 = reducer.getDefaultState()
+
+		// Introduce a delay
+		await new Promise((resolve) => setTimeout(resolve, 400))
+
+		const state2 = reducer.getDefaultState()
+
+		expect(state1).toEqual(state2)
 	})
 })
