@@ -1,12 +1,12 @@
 import { createEmptyCard, FSRS } from "ts-fsrs"
 import { FSRSBridge } from "../../fsrs"
 import { FsrsParameters } from "../../fsrs/params"
-import { SdelkaAnswer, SdelkaCardState } from "../card"
-import { SdelkaCardEvent, SdelkaCardEventType } from "../card/sdelkaCardEvent"
+import { MintayAnswer, MintayCardState } from "../card"
+import { MintayCardEvent, MintayCardEventType } from "../card/sdelkaCardEvent"
 import { CardStateReducer } from "./defines"
 
-export class SdelkaCardStateReducer
-	implements CardStateReducer<SdelkaCardEvent, SdelkaCardState>
+export class MintayCardStateReducer
+	implements CardStateReducer<MintayCardEvent, MintayCardState>
 {
 	private readonly fsrs
 
@@ -15,9 +15,9 @@ export class SdelkaCardStateReducer
 	}
 
 	private readonly fixStateTimestamp = (
-		state: SdelkaCardState,
+		state: MintayCardState,
 		timestamp: number,
-	): SdelkaCardState => ({
+	): MintayCardState => ({
 		...state,
 		fsrs: {
 			...state.fsrs,
@@ -26,21 +26,21 @@ export class SdelkaCardStateReducer
 	})
 
 	public readonly getPossibleStates = (
-		state: SdelkaCardState,
+		state: MintayCardState,
 		timestamp: number,
-	): Map<SdelkaAnswer, SdelkaCardState> => {
+	): Map<MintayAnswer, MintayCardState> => {
 		const tuples = [
-			SdelkaAnswer.AGAIN,
-			SdelkaAnswer.HARD,
-			SdelkaAnswer.GOOD,
-			SdelkaAnswer.EASY,
-		].map((answer): [SdelkaAnswer, SdelkaCardState] => {
+			MintayAnswer.AGAIN,
+			MintayAnswer.HARD,
+			MintayAnswer.GOOD,
+			MintayAnswer.EASY,
+		].map((answer): [MintayAnswer, MintayCardState] => {
 			state = this.fixStateTimestamp(state, timestamp)
 
 			return [
 				answer,
 				this.fold(state, {
-					type: SdelkaCardEventType.ANSWER,
+					type: MintayCardEventType.ANSWER,
 					answer,
 					timestamp,
 				}),
@@ -51,13 +51,13 @@ export class SdelkaCardStateReducer
 	}
 
 	public readonly fold = (
-		state: SdelkaCardState,
-		event: SdelkaCardEvent,
-	): SdelkaCardState => {
+		state: MintayCardState,
+		event: MintayCardEvent,
+	): MintayCardState => {
 		state = this.fixStateTimestamp(state, event.timestamp)
 
 		switch (event.type) {
-			case SdelkaCardEventType.ANSWER: {
+			case MintayCardEventType.ANSWER: {
 				const fsrsCard = FSRSBridge.convertCardToFSRS(state.fsrs)
 				const rating = FSRSBridge.convertAnswerToRating(event.answer)
 				const now = new Date(event.timestamp)
@@ -74,7 +74,7 @@ export class SdelkaCardStateReducer
 		}
 	}
 
-	public readonly getDefaultState = (): SdelkaCardState => {
+	public readonly getDefaultState = (): MintayCardState => {
 		const card = createEmptyCard(0)
 		const fsrs = FSRSBridge.convertCardFromFSRS(card)
 

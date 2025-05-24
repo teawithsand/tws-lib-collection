@@ -1,7 +1,7 @@
 /**
- * Represents the data structure for a card used by Sdelka.
+ * Represents the data structure for a card used by Mintay.
  */
-export type SdelkaCardData = {
+export type MintayCardData = {
 	/** The unique global identifier of the card. */
 	globalId: string
 
@@ -14,10 +14,10 @@ export type SdelkaCardData = {
 	/** The timestamp indicating the last time the card was updated. */
 	lastUpdatedAtTimestamp: number
 }
-export class SdelkaCardDataUtil {
+export class MintayCardDataUtil {
 	private constructor() {}
 
-	public static readonly getDefaultData = (): SdelkaCardData => ({
+	public static readonly getDefaultData = (): MintayCardData => ({
 		globalId: "",
 		content: "",
 		createdAtTimestamp: 0,

@@ -1,14 +1,14 @@
 import {
-	SdelkaCardData,
-	SdelkaCardEvent,
-	SdelkaCardState,
-	SdelkaCollectionData,
+	MintayCardData,
+	MintayCardEvent,
+	MintayCardState,
+	MintayCollectionData,
 } from ".."
 import { StorageTypeSpec } from "../typings/typeSpec"
 
-export interface SdelkaTypeSpec extends StorageTypeSpec {
-	collectionData: SdelkaCollectionData
-	cardData: SdelkaCardData
-	cardState: SdelkaCardState
-	cardEvent: SdelkaCardEvent
+export interface MintayTypeSpec extends StorageTypeSpec {
+	collectionData: MintayCollectionData
+	cardData: MintayCardData
+	cardState: MintayCardState
+	cardEvent: MintayCardEvent
 }

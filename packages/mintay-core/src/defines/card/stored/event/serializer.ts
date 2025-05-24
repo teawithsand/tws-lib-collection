@@ -1,53 +1,53 @@
-import { SdelkaAnswer } from "../../answer"
-import { SdelkaCardEvent, SdelkaCardEventType } from "../../sdelkaCardEvent"
-import { StoredSdelkaCardEvent } from "./schema"
-import { StoredSdelkaAnswerV1, StoredSdelkaCardEventTypeV1 } from "./schemaV1"
+import { MintayAnswer } from "../../answer"
+import { MintayCardEvent, MintayCardEventType } from "../../sdelkaCardEvent"
+import { StoredMintayCardEvent } from "./schema"
+import { StoredMintayAnswerV1, StoredMintayCardEventTypeV1 } from "./schemaV1"
 
-export class SdelkaCardEventSerializer {
+export class MintayCardEventSerializer {
 	public static readonly toStoredAnswer = (
-		answer: SdelkaAnswer,
-	): StoredSdelkaAnswerV1 => {
+		answer: MintayAnswer,
+	): StoredMintayAnswerV1 => {
 		switch (answer) {
-			case SdelkaAnswer.AGAIN:
-				return StoredSdelkaAnswerV1.AGAIN
-			case SdelkaAnswer.HARD:
-				return StoredSdelkaAnswerV1.HARD
-			case SdelkaAnswer.GOOD:
-				return StoredSdelkaAnswerV1.GOOD
-			case SdelkaAnswer.EASY:
-				return StoredSdelkaAnswerV1.EASY
+			case MintayAnswer.AGAIN:
+				return StoredMintayAnswerV1.AGAIN
+			case MintayAnswer.HARD:
+				return StoredMintayAnswerV1.HARD
+			case MintayAnswer.GOOD:
+				return StoredMintayAnswerV1.GOOD
+			case MintayAnswer.EASY:
+				return StoredMintayAnswerV1.EASY
 		}
 		const _exhaustiveCheck: never = answer
 		return _exhaustiveCheck
 	}
 
 	public static readonly fromStoredAnswer = (
-		answer: StoredSdelkaAnswerV1,
-	): SdelkaAnswer => {
+		answer: StoredMintayAnswerV1,
+	): MintayAnswer => {
 		switch (answer) {
-			case StoredSdelkaAnswerV1.AGAIN:
-				return SdelkaAnswer.AGAIN
-			case StoredSdelkaAnswerV1.HARD:
-				return SdelkaAnswer.HARD
-			case StoredSdelkaAnswerV1.GOOD:
-				return SdelkaAnswer.GOOD
-			case StoredSdelkaAnswerV1.EASY:
-				return SdelkaAnswer.EASY
+			case StoredMintayAnswerV1.AGAIN:
+				return MintayAnswer.AGAIN
+			case StoredMintayAnswerV1.HARD:
+				return MintayAnswer.HARD
+			case StoredMintayAnswerV1.GOOD:
+				return MintayAnswer.GOOD
+			case StoredMintayAnswerV1.EASY:
+				return MintayAnswer.EASY
 		}
 		const _exhaustiveCheck: never = answer
 		return _exhaustiveCheck
 	}
 
 	public static readonly serialize = (
-		event: SdelkaCardEvent,
-	): StoredSdelkaCardEvent => {
+		event: MintayCardEvent,
+	): StoredMintayCardEvent => {
 		switch (event.type) {
-			case SdelkaCardEventType.ANSWER:
+			case MintayCardEventType.ANSWER:
 				return {
 					version: 1,
 					data: {
-						type: StoredSdelkaCardEventTypeV1.ANSWER,
-						answer: SdelkaCardEventSerializer.toStoredAnswer(
+						type: StoredMintayCardEventTypeV1.ANSWER,
+						answer: MintayCardEventSerializer.toStoredAnswer(
 							event.answer,
 						),
 						timestamp: event.timestamp,
@@ -59,15 +59,15 @@ export class SdelkaCardEventSerializer {
 	}
 
 	public static readonly deserialize = (
-		storedEvent: StoredSdelkaCardEvent,
-	): SdelkaCardEvent => {
+		storedEvent: StoredMintayCardEvent,
+	): MintayCardEvent => {
 		if (storedEvent.version === 1) {
 			const data = storedEvent.data
 			switch (data.type) {
-				case StoredSdelkaCardEventTypeV1.ANSWER:
+				case StoredMintayCardEventTypeV1.ANSWER:
 					return {
-						type: SdelkaCardEventType.ANSWER,
-						answer: SdelkaCardEventSerializer.fromStoredAnswer(
+						type: MintayCardEventType.ANSWER,
+						answer: MintayCardEventSerializer.fromStoredAnswer(
 							data.answer,
 						),
 						timestamp: data.timestamp,

@@ -4,9 +4,9 @@ import {
 	Rating,
 	FSRSParameters as TsFSRSParameters,
 } from "ts-fsrs"
-import { SdelkaAnswer } from "../defines/card/answer"
-import { SdelkaCardStateFSRS } from "../defines/card/sdelkaCardState"
-import { SdelkaCardQueue } from "../defines/card/sdelkaQueue"
+import { MintayAnswer } from "../defines/card/answer"
+import { MintayCardStateFSRS } from "../defines/card/sdelkaCardState"
+import { MintayCardQueue } from "../defines/card/sdelkaQueue"
 import { type FsrsParameters as MintayFSRSParameters } from "./params"
 
 export class FSRSBridge {
@@ -14,16 +14,16 @@ export class FSRSBridge {
 
 	public static readonly convertStateFromFSRS = (
 		state: FSRSState,
-	): SdelkaCardQueue => {
+	): MintayCardQueue => {
 		switch (state) {
 			case FSRSState.New:
-				return SdelkaCardQueue.NEW
+				return MintayCardQueue.NEW
 			case FSRSState.Learning:
-				return SdelkaCardQueue.LEARNING
+				return MintayCardQueue.LEARNING
 			case FSRSState.Review:
-				return SdelkaCardQueue.LEARNED
+				return MintayCardQueue.LEARNED
 			case FSRSState.Relearning:
-				return SdelkaCardQueue.RELEARNING
+				return MintayCardQueue.RELEARNING
 			default:
 				throw new Error(`Unknown FSRSState: ${state}`)
 		}
@@ -31,7 +31,7 @@ export class FSRSBridge {
 
 	public static readonly convertCardFromFSRS = (
 		card: FSRSCard,
-	): SdelkaCardStateFSRS => {
+	): MintayCardStateFSRS => {
 		return {
 			dueTimestamp: card.due.getTime(),
 			stability: card.stability,
@@ -48,24 +48,24 @@ export class FSRSBridge {
 	}
 
 	public static readonly convertStateToFSRS = (
-		state: SdelkaCardQueue,
+		state: MintayCardQueue,
 	): FSRSState => {
 		switch (state) {
-			case SdelkaCardQueue.NEW:
+			case MintayCardQueue.NEW:
 				return FSRSState.New
-			case SdelkaCardQueue.LEARNING:
+			case MintayCardQueue.LEARNING:
 				return FSRSState.Learning
-			case SdelkaCardQueue.LEARNED:
+			case MintayCardQueue.LEARNED:
 				return FSRSState.Review
-			case SdelkaCardQueue.RELEARNING:
+			case MintayCardQueue.RELEARNING:
 				return FSRSState.Relearning
 			default:
-				throw new Error(`Unknown SdelkaCardState: ${state}`)
+				throw new Error(`Unknown MintayCardState: ${state}`)
 		}
 	}
 
 	public static readonly convertCardToFSRS = (
-		card: SdelkaCardStateFSRS,
+		card: MintayCardStateFSRS,
 	): FSRSCard => {
 		const fsrsCard: FSRSCard = {
 			due: new Date(card.dueTimestamp),
@@ -96,19 +96,19 @@ export class FSRSBridge {
 	}
 
 	public static readonly convertAnswerToRating = (
-		answer: SdelkaAnswer,
+		answer: MintayAnswer,
 	): Rating.Again | Rating.Hard | Rating.Good | Rating.Easy => {
 		switch (answer) {
-			case SdelkaAnswer.AGAIN:
+			case MintayAnswer.AGAIN:
 				return Rating.Again
-			case SdelkaAnswer.HARD:
+			case MintayAnswer.HARD:
 				return Rating.Hard
-			case SdelkaAnswer.GOOD:
+			case MintayAnswer.GOOD:
 				return Rating.Good
-			case SdelkaAnswer.EASY:
+			case MintayAnswer.EASY:
 				return Rating.Easy
 			default:
-				throw new Error(`Unknown SdelkaAnswer: ${answer}`)
+				throw new Error(`Unknown MintayAnswer: ${answer}`)
 		}
 	}
 }

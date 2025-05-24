@@ -1,50 +1,50 @@
 import { describe, expect, test } from "vitest"
-import { SdelkaCardData } from "../../sdelkaCardData"
-import { StoredSdelkaCardData } from "./schema"
-import { StoredSdelkaCardDataSerializer } from "./serializer"
+import { MintayCardData } from "../../sdelkaCardData"
+import { StoredMintayCardData } from "./schema"
+import { StoredMintayCardDataSerializer } from "./serializer"
 
-const exampleData: SdelkaCardData = {
+const exampleData: MintayCardData = {
 	globalId: "abc123",
 	content: "example content",
 	createdAtTimestamp: 1234567890,
 	lastUpdatedAtTimestamp: 1234567899,
 }
 
-describe("StoredSdelkaCardDataSerializer", () => {
+describe("StoredMintayCardDataSerializer", () => {
 	test("serialize returns correct structure with version 1", () => {
-		const serialized = StoredSdelkaCardDataSerializer.serialize(exampleData)
+		const serialized = StoredMintayCardDataSerializer.serialize(exampleData)
 		expect(serialized.version).toBe(1)
 		expect(serialized.data).toEqual(exampleData)
 		expect(serialized).toMatchSnapshot()
 	})
 
-	test("deserialize returns correct SdelkaCardData for version 1", () => {
-		const storedData: StoredSdelkaCardData = {
+	test("deserialize returns correct MintayCardData for version 1", () => {
+		const storedData: StoredMintayCardData = {
 			version: 1,
 			data: exampleData,
 		}
 		const deserialized =
-			StoredSdelkaCardDataSerializer.deserialize(storedData)
+			StoredMintayCardDataSerializer.deserialize(storedData)
 		expect(deserialized).toEqual(exampleData)
 		expect(deserialized).toMatchSnapshot()
 	})
 
 	test("serialize then deserialize returns original value", () => {
-		const serialized = StoredSdelkaCardDataSerializer.serialize(exampleData)
+		const serialized = StoredMintayCardDataSerializer.serialize(exampleData)
 		const deserialized =
-			StoredSdelkaCardDataSerializer.deserialize(serialized)
+			StoredMintayCardDataSerializer.deserialize(serialized)
 		expect(deserialized).toEqual(exampleData)
 	})
 
 	test("deserialize then serialize returns original value", () => {
-		const storedData: StoredSdelkaCardData = {
+		const storedData: StoredMintayCardData = {
 			version: 1,
 			data: exampleData,
 		}
 		const deserialized =
-			StoredSdelkaCardDataSerializer.deserialize(storedData)
+			StoredMintayCardDataSerializer.deserialize(storedData)
 		const serialized =
-			StoredSdelkaCardDataSerializer.serialize(deserialized)
+			StoredMintayCardDataSerializer.serialize(deserialized)
 		expect(serialized).toEqual(storedData)
 	})
 })

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SdelkaCardStateSerializer > deserialize snapshot 1`] = `
+exports[`MintayCardStateSerializer > deserialize snapshot 1`] = `
 {
   "fsrs": {
     "difficulty": 0.5,
@@ -16,7 +16,7 @@ exports[`SdelkaCardStateSerializer > deserialize snapshot 1`] = `
 }
 `;
 
-exports[`SdelkaCardStateSerializer > serialize snapshot 1`] = `
+exports[`MintayCardStateSerializer > serialize snapshot 1`] = `
 {
   "data": {
     "fsrs": {

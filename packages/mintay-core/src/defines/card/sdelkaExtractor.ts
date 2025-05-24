@@ -1,18 +1,18 @@
 import { CardStateExtractor } from "../typings/defines"
 import { CardStats } from "./cardStats"
-import { SdelkaCardState } from "./sdelkaCardState"
-import { SdelkaCardQueue } from "./sdelkaQueue"
+import { MintayCardState } from "./sdelkaCardState"
+import { MintayCardQueue } from "./sdelkaQueue"
 
-export class SdelkaCardStateExtractor
-	implements CardStateExtractor<SdelkaCardState, SdelkaCardQueue>
+export class MintayCardStateExtractor
+	implements CardStateExtractor<MintayCardState, MintayCardQueue>
 {
-	public readonly getPriority = (state: SdelkaCardState): number =>
+	public readonly getPriority = (state: MintayCardState): number =>
 		-state.fsrs.dueTimestamp
 
-	public readonly getQueue = (state: SdelkaCardState): SdelkaCardQueue =>
+	public readonly getQueue = (state: MintayCardState): MintayCardQueue =>
 		state.fsrs.state
 
-	public readonly getStats = (state: SdelkaCardState): CardStats => ({
+	public readonly getStats = (state: MintayCardState): CardStats => ({
 		repeats: state.fsrs.reps,
 		lapses: state.fsrs.lapses,
 	})

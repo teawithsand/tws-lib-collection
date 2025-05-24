@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest"
 import { DrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
 import {
-	SdelkaCardDataUtil,
-	SdelkaCollectionDataUtil,
-	SdelkaTypeSpec,
-	SdelkaTypeSpecSerializer,
+	MintayCardDataUtil,
+	MintayCollectionDataUtil,
+	MintayTypeSpec,
+	MintayTypeSpecSerializer,
 } from "../defines"
 import { CardId } from "../defines/typings/cardId"
 import { InMemoryDb } from "../inMemoryDb/db"
@@ -19,24 +19,24 @@ import { InMemoryCollectionStore } from "./inMemory/collectionStore"
 describe.each<{
 	name: string
 	storeFactory: () => Promise<{
-		cardStore: CardStore<SdelkaTypeSpec>
-		collectionStore: CollectionStore<SdelkaTypeSpec> // To create test data
+		cardStore: CardStore<MintayTypeSpec>
+		collectionStore: CollectionStore<MintayTypeSpec> // To create test data
 		cleanup?: () => Promise<void>
 	}>
 }>([
 	{
 		name: "InMemoryCardStore",
 		storeFactory: async () => {
-			const db = new InMemoryDb<SdelkaTypeSpec>()
-			const collectionStore = new InMemoryCollectionStore<SdelkaTypeSpec>(
+			const db = new InMemoryDb<MintayTypeSpec>()
+			const collectionStore = new InMemoryCollectionStore<MintayTypeSpec>(
 				{
 					db,
 					defaultCollectionHeader:
-						SdelkaCollectionDataUtil.getDefaultData(),
-					defaultCardData: SdelkaCardDataUtil.getDefaultData(),
+						MintayCollectionDataUtil.getDefaultData(),
+					defaultCardData: MintayCardDataUtil.getDefaultData(),
 				},
 			)
-			const cardStore = new InMemoryCardStore<SdelkaTypeSpec>({ db })
+			const cardStore = new InMemoryCardStore<MintayTypeSpec>({ db })
 			return { cardStore, collectionStore }
 		},
 	},
@@ -44,23 +44,23 @@ describe.each<{
 		name: "DrizzleCardStore",
 		storeFactory: async () => {
 			const { drizzle, close } = await getTestingDb()
-			const collectionStore = new DrizzleCollectionStore<SdelkaTypeSpec>({
+			const collectionStore = new DrizzleCollectionStore<MintayTypeSpec>({
 				db: drizzle as DrizzleDB,
 				defaultCollectionHeader:
-					SdelkaCollectionDataUtil.getDefaultData(),
-				defaultCardData: SdelkaCardDataUtil.getDefaultData(),
-				serializer: SdelkaTypeSpecSerializer,
+					MintayCollectionDataUtil.getDefaultData(),
+				defaultCardData: MintayCardDataUtil.getDefaultData(),
+				serializer: MintayTypeSpecSerializer,
 			})
-			const cardStore = new DrizzleCardStore<SdelkaTypeSpec>({
+			const cardStore = new DrizzleCardStore<MintayTypeSpec>({
 				db: drizzle as DrizzleDB,
-				serializer: SdelkaTypeSpecSerializer,
+				serializer: MintayTypeSpecSerializer,
 			})
 			return { cardStore, collectionStore, cleanup: close }
 		},
 	},
 ])("CardStore Implementation - $name", ({ storeFactory }) => {
-	let cardStore: CardStore<SdelkaTypeSpec>
-	let collectionStore: CollectionStore<SdelkaTypeSpec>
+	let cardStore: CardStore<MintayTypeSpec>
+	let collectionStore: CollectionStore<MintayTypeSpec>
 	let cleanup: (() => Promise<void>) | undefined
 
 	beforeEach(async () => {
@@ -86,7 +86,7 @@ describe.each<{
 		expect(retrievedCardHandle!.id).toEqual(cardId)
 
 		const cardData = await retrievedCardHandle!.read()
-		expect(cardData).toEqual(SdelkaCardDataUtil.getDefaultData())
+		expect(cardData).toEqual(MintayCardDataUtil.getDefaultData())
 	})
 
 	test("should return null when getting a non-existent card by ID", async () => {

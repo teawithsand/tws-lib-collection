@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest"
-import { SdelkaCollectionData } from "../../sdelkaCollectionData"
-import { StoredSdelkaCollectionData } from "./schema"
-import { StoredSdelkaCollectionDataSerializer } from "./serializer"
+import { MintayCollectionData } from "../../sdelkaCollectionData"
+import { StoredMintayCollectionData } from "./schema"
+import { StoredMintayCollectionDataSerializer } from "./serializer"
 
-const exampleData: SdelkaCollectionData = {
+const exampleData: MintayCollectionData = {
 	globalId: "col123",
 	title: "Example Collection",
 	description: "A description of the example collection",
@@ -11,43 +11,43 @@ const exampleData: SdelkaCollectionData = {
 	lastUpdatedAtTimestamp: 1234567899,
 }
 
-describe("StoredSdelkaCollectionDataSerializer", () => {
+describe("StoredMintayCollectionDataSerializer", () => {
 	test("serialize returns correct structure with version 1", () => {
 		const serialized =
-			StoredSdelkaCollectionDataSerializer.serialize(exampleData)
+			StoredMintayCollectionDataSerializer.serialize(exampleData)
 		expect(serialized.version).toBe(1)
 		expect(serialized.data).toEqual(exampleData)
 		expect(serialized).toMatchSnapshot()
 	})
 
-	test("deserialize returns correct SdelkaCollectionData for version 1", () => {
-		const storedData: StoredSdelkaCollectionData = {
+	test("deserialize returns correct MintayCollectionData for version 1", () => {
+		const storedData: StoredMintayCollectionData = {
 			version: 1,
 			data: exampleData,
 		}
 		const deserialized =
-			StoredSdelkaCollectionDataSerializer.deserialize(storedData)
+			StoredMintayCollectionDataSerializer.deserialize(storedData)
 		expect(deserialized).toEqual(exampleData)
 		expect(deserialized).toMatchSnapshot()
 	})
 
 	test("serialize then deserialize returns original value", () => {
 		const serialized =
-			StoredSdelkaCollectionDataSerializer.serialize(exampleData)
+			StoredMintayCollectionDataSerializer.serialize(exampleData)
 		const deserialized =
-			StoredSdelkaCollectionDataSerializer.deserialize(serialized)
+			StoredMintayCollectionDataSerializer.deserialize(serialized)
 		expect(deserialized).toEqual(exampleData)
 	})
 
 	test("deserialize then serialize returns original value", () => {
-		const storedData: StoredSdelkaCollectionData = {
+		const storedData: StoredMintayCollectionData = {
 			version: 1,
 			data: exampleData,
 		}
 		const deserialized =
-			StoredSdelkaCollectionDataSerializer.deserialize(storedData)
+			StoredMintayCollectionDataSerializer.deserialize(storedData)
 		const serialized =
-			StoredSdelkaCollectionDataSerializer.serialize(deserialized)
+			StoredMintayCollectionDataSerializer.serialize(deserialized)
 		expect(serialized).toEqual(storedData)
 	})
 })

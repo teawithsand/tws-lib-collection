@@ -1,41 +1,41 @@
 import { CollectionStore } from "../cardStore/defines/collection"
 import { InMemoryCollectionStore } from "../cardStore/inMemory"
 import {
-	SdelkaCardQueue,
-	SdelkaCardStateExtractor,
-	SdelkaCardStateReducer,
-	SdelkaTypeSpec,
+	MintayCardQueue,
+	MintayCardStateExtractor,
+	MintayCardStateReducer,
+	MintayTypeSpec,
 } from "../defines"
-import { SdelkaCardDataUtil, SdelkaCollectionDataUtil } from "../defines/card"
+import { MintayCardDataUtil, MintayCollectionDataUtil } from "../defines/card"
 import { CardId } from "../defines/typings/cardId"
 import { EngineStore } from "../engineStore"
 import { InMemoryEngineStore } from "../engineStore/inMemory"
 import { FsrsParameters } from "../fsrs/params"
 import { InMemoryDb } from "../inMemoryDb/db"
-import { Sdelka } from "./defines"
+import { Mintay } from "./defines"
 
-export class InMemorySdelka implements Sdelka {
-	public readonly collectionStore: CollectionStore<SdelkaTypeSpec>
-	private readonly db: InMemoryDb<SdelkaTypeSpec>
+export class InMemoryMintay implements Mintay {
+	public readonly collectionStore: CollectionStore<MintayTypeSpec>
+	private readonly db: InMemoryDb<MintayTypeSpec>
 
 	constructor() {
-		this.db = new InMemoryDb<SdelkaTypeSpec>()
-		this.collectionStore = new InMemoryCollectionStore<SdelkaTypeSpec>({
+		this.db = new InMemoryDb<MintayTypeSpec>()
+		this.collectionStore = new InMemoryCollectionStore<MintayTypeSpec>({
 			db: this.db,
-			defaultCollectionHeader: SdelkaCollectionDataUtil.getDefaultData(),
-			defaultCardData: SdelkaCardDataUtil.getDefaultData(),
+			defaultCollectionHeader: MintayCollectionDataUtil.getDefaultData(),
+			defaultCardData: MintayCardDataUtil.getDefaultData(),
 		})
 	}
 
 	public readonly getEngineStore = (
 		id: CardId,
 		parameters: FsrsParameters,
-	): EngineStore<SdelkaTypeSpec, SdelkaCardQueue> => {
-		const reducer = new SdelkaCardStateReducer(parameters)
-		const priorityExtractor = new SdelkaCardStateExtractor()
+	): EngineStore<MintayTypeSpec, MintayCardQueue> => {
+		const reducer = new MintayCardStateReducer(parameters)
+		const priorityExtractor = new MintayCardStateExtractor()
 		const newStore = new InMemoryEngineStore<
-			SdelkaTypeSpec,
-			SdelkaCardQueue
+			MintayTypeSpec,
+			MintayCardQueue
 		>({
 			reducer,
 			priorityExtractor,

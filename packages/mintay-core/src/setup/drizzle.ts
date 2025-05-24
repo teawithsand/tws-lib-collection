@@ -1,47 +1,47 @@
 import { CollectionStore, DrizzleCollectionStore } from "../cardStore"
 import { DrizzleDB } from "../db/db"
 import {
-	SdelkaCardQueue,
-	SdelkaCardStateExtractor,
-	SdelkaCardStateReducer,
-	SdelkaTypeSpec,
-	SdelkaTypeSpecSerializer,
+	MintayCardQueue,
+	MintayCardStateExtractor,
+	MintayCardStateReducer,
+	MintayTypeSpec,
+	MintayTypeSpecSerializer,
 } from "../defines"
-import { SdelkaCardDataUtil, SdelkaCollectionDataUtil } from "../defines/card"
+import { MintayCardDataUtil, MintayCollectionDataUtil } from "../defines/card"
 import { CardId } from "../defines/typings/cardId"
 import { DrizzleEngineStore, EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs/params"
-import { Sdelka } from "./defines"
+import { Mintay } from "./defines"
 
-export class DrizzleSdelka implements Sdelka {
-	public readonly collectionStore: CollectionStore<SdelkaTypeSpec>
+export class DrizzleMintay implements Mintay {
+	public readonly collectionStore: CollectionStore<MintayTypeSpec>
 	private readonly db: DrizzleDB
 
 	constructor({ db }: { db: DrizzleDB }) {
 		this.db = db
-		this.collectionStore = new DrizzleCollectionStore<SdelkaTypeSpec>({
+		this.collectionStore = new DrizzleCollectionStore<MintayTypeSpec>({
 			db: this.db,
-			defaultCollectionHeader: SdelkaCollectionDataUtil.getDefaultData(),
-			defaultCardData: SdelkaCardDataUtil.getDefaultData(),
-			serializer: SdelkaTypeSpecSerializer,
+			defaultCollectionHeader: MintayCollectionDataUtil.getDefaultData(),
+			defaultCardData: MintayCardDataUtil.getDefaultData(),
+			serializer: MintayTypeSpecSerializer,
 		})
 	}
 
 	public readonly getEngineStore = (
 		id: CardId,
 		parameters: FsrsParameters,
-	): EngineStore<SdelkaTypeSpec, SdelkaCardQueue> => {
-		const reducer = new SdelkaCardStateReducer(parameters)
-		const priorityExtractor = new SdelkaCardStateExtractor()
+	): EngineStore<MintayTypeSpec, MintayCardQueue> => {
+		const reducer = new MintayCardStateReducer(parameters)
+		const priorityExtractor = new MintayCardStateExtractor()
 		const newStore = new DrizzleEngineStore<
-			SdelkaTypeSpec,
-			SdelkaCardQueue
+			MintayTypeSpec,
+			MintayCardQueue
 		>({
 			reducer,
 			priorityExtractor,
 			db: this.db,
 			collectionId: id,
-			serializer: SdelkaTypeSpecSerializer,
+			serializer: MintayTypeSpecSerializer,
 		})
 
 		return newStore

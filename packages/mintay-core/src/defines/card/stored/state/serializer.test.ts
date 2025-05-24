@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest"
-import { SdelkaCardState } from "../../sdelkaCardState"
-import { SdelkaCardQueue } from "../../sdelkaQueue"
-import { StoredSdelkaCardState } from "./schema"
-import { StoredSdelkaCardQueueV1 } from "./schemaV1"
-import { SdelkaCardStateSerializer } from "./serializer"
+import { MintayCardState } from "../../sdelkaCardState"
+import { MintayCardQueue } from "../../sdelkaQueue"
+import { StoredMintayCardState } from "./schema"
+import { StoredMintayCardQueueV1 } from "./schemaV1"
+import { MintayCardStateSerializer } from "./serializer"
 
-describe("SdelkaCardStateSerializer", () => {
-	const exampleStateBase: Omit<SdelkaCardState, "fsrs"> & {
-		fsrs: Omit<SdelkaCardState["fsrs"], "state">
+describe("MintayCardStateSerializer", () => {
+	const exampleStateBase: Omit<MintayCardState, "fsrs"> & {
+		fsrs: Omit<MintayCardState["fsrs"], "state">
 	} = {
 		fsrs: {
 			dueTimestamp: 1234567890,
@@ -22,14 +22,14 @@ describe("SdelkaCardStateSerializer", () => {
 	}
 
 	const statesToTest = [
-		SdelkaCardQueue.NEW,
-		SdelkaCardQueue.LEARNING,
-		SdelkaCardQueue.LEARNED,
-		SdelkaCardQueue.RELEARNING,
+		MintayCardQueue.NEW,
+		MintayCardQueue.LEARNING,
+		MintayCardQueue.LEARNED,
+		MintayCardQueue.RELEARNING,
 	]
 
 	statesToTest.forEach((state) => {
-		test(`serialize and deserialize with state ${StoredSdelkaCardQueueV1[state]} (${state})`, () => {
+		test(`serialize and deserialize with state ${StoredMintayCardQueueV1[state]} (${state})`, () => {
 			const exampleState = {
 				...exampleStateBase,
 				fsrs: {
@@ -37,16 +37,16 @@ describe("SdelkaCardStateSerializer", () => {
 					state,
 				},
 			}
-			const serialized = SdelkaCardStateSerializer.serialize(exampleState)
+			const serialized = MintayCardStateSerializer.serialize(exampleState)
 			expect(serialized.data.fsrs.state).toBe(state)
 			const deserialized =
-				SdelkaCardStateSerializer.deserialize(serialized)
+				MintayCardStateSerializer.deserialize(serialized)
 			expect(deserialized.fsrs.state).toBe(exampleState.fsrs.state)
 			expect(deserialized).toEqual(exampleState)
 		})
 	})
 
-	const exampleState: SdelkaCardState = {
+	const exampleState: MintayCardState = {
 		fsrs: {
 			dueTimestamp: 1234567890,
 			stability: 0.8,
@@ -55,13 +55,13 @@ describe("SdelkaCardStateSerializer", () => {
 			scheduledDays: 5,
 			reps: 20,
 			lapses: 2,
-			state: SdelkaCardQueue.LEARNING,
+			state: MintayCardQueue.LEARNING,
 			lastReviewTimestamp: 1234560000,
 		},
 	}
 
-	test("serialize returns correct StoredSdelkaCardState with version 1", () => {
-		const serialized = SdelkaCardStateSerializer.serialize(exampleState)
+	test("serialize returns correct StoredMintayCardState with version 1", () => {
+		const serialized = MintayCardStateSerializer.serialize(exampleState)
 		expect(serialized.version).toBe(1)
 		expect(serialized.data.fsrs.dueTimestamp).toBe(
 			exampleState.fsrs.dueTimestamp,
@@ -85,13 +85,13 @@ describe("SdelkaCardStateSerializer", () => {
 	})
 
 	test("serialize and then deserialize should not change the state", () => {
-		const serialized = SdelkaCardStateSerializer.serialize(exampleState)
-		const deserialized = SdelkaCardStateSerializer.deserialize(serialized)
+		const serialized = MintayCardStateSerializer.serialize(exampleState)
+		const deserialized = MintayCardStateSerializer.deserialize(serialized)
 		expect(deserialized).toEqual(exampleState)
 	})
 
-	test("deserialize returns correct SdelkaCardState from StoredSdelkaCardState", () => {
-		const stored: StoredSdelkaCardState = {
+	test("deserialize returns correct MintayCardState from StoredMintayCardState", () => {
+		const stored: StoredMintayCardState = {
 			version: 1,
 			data: {
 				fsrs: {
@@ -107,7 +107,7 @@ describe("SdelkaCardStateSerializer", () => {
 				},
 			},
 		}
-		const deserialized = SdelkaCardStateSerializer.deserialize(stored)
+		const deserialized = MintayCardStateSerializer.deserialize(stored)
 		expect(deserialized.fsrs.dueTimestamp).toBe(
 			stored.data.fsrs.dueTimestamp,
 		)
@@ -119,14 +119,14 @@ describe("SdelkaCardStateSerializer", () => {
 		)
 		expect(deserialized.fsrs.reps).toBe(stored.data.fsrs.reps)
 		expect(deserialized.fsrs.lapses).toBe(stored.data.fsrs.lapses)
-		expect(deserialized.fsrs.state).toBe(SdelkaCardQueue.LEARNING)
+		expect(deserialized.fsrs.state).toBe(MintayCardQueue.LEARNING)
 		expect(deserialized.fsrs.lastReviewTimestamp).toBe(
 			stored.data.fsrs.lastReviewTimestamp,
 		)
 	})
 
 	test("deserialize and then serialize should not change the stored state", () => {
-		const stored: StoredSdelkaCardState = {
+		const stored: StoredMintayCardState = {
 			version: 1,
 			data: {
 				fsrs: {
@@ -142,18 +142,18 @@ describe("SdelkaCardStateSerializer", () => {
 				},
 			},
 		}
-		const deserialized = SdelkaCardStateSerializer.deserialize(stored)
-		const reStored = SdelkaCardStateSerializer.serialize(deserialized)
+		const deserialized = MintayCardStateSerializer.deserialize(stored)
+		const reStored = MintayCardStateSerializer.serialize(deserialized)
 		expect(reStored).toEqual(stored)
 	})
 
 	test("serialize snapshot", () => {
-		const serialized = SdelkaCardStateSerializer.serialize(exampleState)
+		const serialized = MintayCardStateSerializer.serialize(exampleState)
 		expect(serialized).toMatchSnapshot()
 	})
 
 	test("deserialize snapshot", () => {
-		const stored: StoredSdelkaCardState = {
+		const stored: StoredMintayCardState = {
 			version: 1,
 			data: {
 				fsrs: {
@@ -169,7 +169,7 @@ describe("SdelkaCardStateSerializer", () => {
 				},
 			},
 		}
-		const deserialized = SdelkaCardStateSerializer.deserialize(stored)
+		const deserialized = MintayCardStateSerializer.deserialize(stored)
 		expect(deserialized).toMatchSnapshot()
 	})
 })

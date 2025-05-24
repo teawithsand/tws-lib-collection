@@ -2,18 +2,18 @@ import { afterAll, beforeAll, beforeEach, describe, expect, test } from "vitest"
 import { DrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
 import {
-	SdelkaAnswer,
-	SdelkaCardDataUtil,
-	SdelkaCardEventType,
-	SdelkaCardQueue,
-	SdelkaCardStateExtractor,
-	SdelkaCollectionDataUtil,
+	MintayAnswer,
+	MintayCardDataUtil,
+	MintayCardEventType,
+	MintayCardQueue,
+	MintayCardStateExtractor,
+	MintayCollectionDataUtil,
 } from "../defines/card"
 import { CardId } from "../defines/typings/cardId"
 import { FsrsParameters } from "../fsrs"
-import { Sdelka } from "./defines"
-import { DrizzleSdelka } from "./drizzle"
-import { InMemorySdelka } from "./inMemory"
+import { Mintay } from "./defines"
+import { DrizzleMintay } from "./drizzle"
+import { InMemoryMintay } from "./inMemory"
 
 const testParameters: FsrsParameters = {
 	requestRetention: 0.9,
@@ -28,28 +28,28 @@ const testParameters: FsrsParameters = {
 
 describe.each<{
 	name: string
-	getSdelka: () => Promise<{ sdelka: Sdelka; cleanup?: () => Promise<void> }>
+	getMintay: () => Promise<{ sdelka: Mintay; cleanup?: () => Promise<void> }>
 }>([
 	{
-		name: "InMemorySdelka",
-		getSdelka: async () => ({ sdelka: new InMemorySdelka() }),
+		name: "InMemoryMintay",
+		getMintay: async () => ({ sdelka: new InMemoryMintay() }),
 	},
 	{
-		name: "DrizzleSdelka",
-		getSdelka: async () => {
+		name: "DrizzleMintay",
+		getMintay: async () => {
 			const { drizzle, close } = await getTestingDb()
 			return {
-				sdelka: new DrizzleSdelka({ db: drizzle as DrizzleDB }),
+				sdelka: new DrizzleMintay({ db: drizzle as DrizzleDB }),
 				cleanup: close,
 			}
 		},
 	},
-])("Sdelka E2E Tests - $name", ({ getSdelka }) => {
-	let sdelka: Sdelka
+])("Mintay E2E Tests - $name", ({ getMintay }) => {
+	let sdelka: Mintay
 	let cleanup: (() => Promise<void>) | undefined
 
 	beforeAll(async () => {
-		const res = await getSdelka()
+		const res = await getMintay()
 		sdelka = res.sdelka
 		cleanup = res.cleanup
 	})
@@ -65,7 +65,7 @@ describe.each<{
 			const collectionHandle = await sdelka.collectionStore.create()
 			expect(collectionHandle).toBeDefined()
 			const header = await collectionHandle.read()
-			expect(header).toEqual(SdelkaCollectionDataUtil.getDefaultData())
+			expect(header).toEqual(MintayCollectionDataUtil.getDefaultData())
 		})
 
 		test("should get an existing collection", async () => {
@@ -76,13 +76,13 @@ describe.each<{
 			expect(gottenCollection).toBeDefined()
 			expect(gottenCollection.id).toBe(newCollection.id)
 			const header = await gottenCollection.read()
-			expect(header).toEqual(SdelkaCollectionDataUtil.getDefaultData())
+			expect(header).toEqual(MintayCollectionDataUtil.getDefaultData())
 		})
 
 		test("should save and read collection header", async () => {
 			const collectionHandle = await sdelka.collectionStore.create()
 			const newHeader = {
-				...SdelkaCollectionDataUtil.getDefaultData(),
+				...MintayCollectionDataUtil.getDefaultData(),
 				title: "My Test Collection",
 			}
 			await collectionHandle.save(newHeader)
@@ -95,14 +95,14 @@ describe.each<{
 			const cardHandle = await collectionHandle.createCard()
 			expect(cardHandle).toBeDefined()
 			const cardData = await cardHandle.read()
-			expect(cardData).toEqual(SdelkaCardDataUtil.getDefaultData())
+			expect(cardData).toEqual(MintayCardDataUtil.getDefaultData())
 		})
 
 		test("should save and read card data", async () => {
 			const collectionHandle = await sdelka.collectionStore.create()
 			const cardHandle = await collectionHandle.createCard()
 			const newCardData = {
-				...SdelkaCardDataUtil.getDefaultData(),
+				...MintayCardDataUtil.getDefaultData(),
 				content: "Test Card Content",
 			}
 			await cardHandle.save(newCardData)
@@ -179,8 +179,8 @@ describe.each<{
 			expect(initialCardData.fsrs.reps).toBe(0)
 
 			await engineStore.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.GOOD,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
 				timestamp: Date.now(),
 			})
 
@@ -201,13 +201,13 @@ describe.each<{
 			// We'll make cardId "Good" and card2 "Again" to ensure card2 is due sooner.
 			const now = Date.now()
 			await engineStore.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.GOOD,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
 				timestamp: now,
 			})
 			await engineStore.push(card2.id, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.AGAIN,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.AGAIN,
 				timestamp: now,
 			})
 
@@ -222,8 +222,8 @@ describe.each<{
 			)
 
 			await engineStore.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.GOOD,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
 				timestamp: Date.now(),
 			})
 			const stateAfterPush = await engineStore.getCardData(cardId)
@@ -255,20 +255,20 @@ describe.each<{
 			const now = Date.now()
 			// Event for cardA1 (cardId) in collectionA
 			await engineStoreA.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.GOOD,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
 				timestamp: now,
 			})
 			// Event for cardB1 in collectionB - this event is chronologically between cardA1's and cardA2's events
 			await engineStoreB.push(cardB1.id, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.EASY,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.EASY,
 				timestamp: now + 1000,
 			})
 			// Event for cardA2 in collectionA - this is the latest event pushed via engineStoreA
 			await engineStoreA.push(cardA2.id, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.HARD,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.HARD,
 				timestamp: now + 2000,
 			})
 
@@ -331,20 +331,20 @@ describe.each<{
 			const now = 1000000
 
 			await engineStore.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.EASY,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.EASY,
 				timestamp: now + 1000,
 			})
 
 			await engineStore.push(card2.id, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.EASY,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.EASY,
 				timestamp: now + 10000,
 			})
 
 			await engineStore.push(card3.id, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.EASY,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.EASY,
 				timestamp: now + 100000,
 			})
 
@@ -361,8 +361,8 @@ describe.each<{
 				timeFlow += 1000 * 3600 * 2
 
 				await engineStore.push(topCardId, {
-					type: SdelkaCardEventType.ANSWER,
-					answer: SdelkaAnswer.EASY,
+					type: MintayCardEventType.ANSWER,
+					answer: MintayAnswer.EASY,
 					timestamp: timeFlow,
 				})
 			}
@@ -380,8 +380,8 @@ describe.each<{
 
 			// Event 1 for cardId
 			await engineStore.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.AGAIN,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.AGAIN,
 				timestamp: now,
 			})
 			const stateCard1AfterPush1 = await engineStore.getCardData(cardId)
@@ -390,8 +390,8 @@ describe.each<{
 
 			// Event for card2
 			await engineStore.push(card2.id, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.GOOD,
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
 				timestamp: now + 1000,
 			})
 			const stateCard2AfterPush = await engineStore.getCardData(card2.id)
@@ -399,8 +399,8 @@ describe.each<{
 
 			// Event 2 for cardId
 			await engineStore.push(cardId, {
-				type: SdelkaCardEventType.ANSWER,
-				answer: SdelkaAnswer.GOOD, // From Lapsed (AGAIN) to Good
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD, // From Lapsed (AGAIN) to Good
 				timestamp: now + 2000,
 			})
 			const stateCard1AfterPush2 = await engineStore.getCardData(cardId)

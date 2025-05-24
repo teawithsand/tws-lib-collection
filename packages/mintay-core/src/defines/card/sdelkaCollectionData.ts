@@ -1,7 +1,7 @@
 /**
- * Represents the data structure for a collection of cards used by Sdelka.
+ * Represents the data structure for a collection of cards used by Mintay.
  */
-export type SdelkaCollectionData = {
+export type MintayCollectionData = {
 	/** The unique global identifier of the collection. */
 	globalId: string
 
@@ -18,10 +18,10 @@ export type SdelkaCollectionData = {
 	lastUpdatedAtTimestamp: number
 }
 
-export class SdelkaCollectionDataUtil {
+export class MintayCollectionDataUtil {
 	private constructor() {}
 
-	public static readonly getDefaultData = (): SdelkaCollectionData => ({
+	public static readonly getDefaultData = (): MintayCollectionData => ({
 		globalId: "",
 		title: "",
 		description: "",

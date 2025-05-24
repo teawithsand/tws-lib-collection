@@ -1,33 +1,33 @@
 import { TypeSpecSerializer } from "../typings/serializer"
-import { SdelkaTypeSpec } from "./sdelkaTypeSpec"
-import { StoredSdelkaCollectionDataSchema } from "./stored/collection/schema"
-import { StoredSdelkaCollectionDataSerializer } from "./stored/collection/serializer"
-import { StoredSdelkaCardDataSchema } from "./stored/data/schema"
-import { StoredSdelkaCardDataSerializer } from "./stored/data/serializer"
-import { StoredSdelkaCardEventSchema } from "./stored/event/schema"
-import { SdelkaCardEventSerializer } from "./stored/event/serializer"
-import { StoredSdelkaCardStateSchema } from "./stored/state/schema"
-import { SdelkaCardStateSerializer } from "./stored/state/serializer"
+import { MintayTypeSpec } from "./sdelkaTypeSpec"
+import { StoredMintayCollectionDataSchema } from "./stored/collection/schema"
+import { StoredMintayCollectionDataSerializer } from "./stored/collection/serializer"
+import { StoredMintayCardDataSchema } from "./stored/data/schema"
+import { StoredMintayCardDataSerializer } from "./stored/data/serializer"
+import { StoredMintayCardEventSchema } from "./stored/event/schema"
+import { MintayCardEventSerializer } from "./stored/event/serializer"
+import { StoredMintayCardStateSchema } from "./stored/state/schema"
+import { MintayCardStateSerializer } from "./stored/state/serializer"
 
-export const SdelkaTypeSpecSerializer: TypeSpecSerializer<SdelkaTypeSpec> = {
-	serializeCardData: StoredSdelkaCardDataSerializer.serialize,
+export const MintayTypeSpecSerializer: TypeSpecSerializer<MintayTypeSpec> = {
+	serializeCardData: StoredMintayCardDataSerializer.serialize,
 	deserializeCardData: (data: unknown) => {
-		const parsed = StoredSdelkaCardDataSchema.parse(data)
-		return StoredSdelkaCardDataSerializer.deserialize(parsed)
+		const parsed = StoredMintayCardDataSchema.parse(data)
+		return StoredMintayCardDataSerializer.deserialize(parsed)
 	},
-	serializeCollectionHeader: StoredSdelkaCollectionDataSerializer.serialize,
+	serializeCollectionHeader: StoredMintayCollectionDataSerializer.serialize,
 	deserializeCollectionHeader: (data: unknown) => {
-		const parsed = StoredSdelkaCollectionDataSchema.parse(data)
-		return StoredSdelkaCollectionDataSerializer.deserialize(parsed)
+		const parsed = StoredMintayCollectionDataSchema.parse(data)
+		return StoredMintayCollectionDataSerializer.deserialize(parsed)
 	},
-	serializeState: SdelkaCardStateSerializer.serialize,
+	serializeState: MintayCardStateSerializer.serialize,
 	deserializeState: (data: unknown) => {
-		const parsed = StoredSdelkaCardStateSchema.parse(data)
-		return SdelkaCardStateSerializer.deserialize(parsed)
+		const parsed = StoredMintayCardStateSchema.parse(data)
+		return MintayCardStateSerializer.deserialize(parsed)
 	},
-	serializeEvent: SdelkaCardEventSerializer.serialize,
+	serializeEvent: MintayCardEventSerializer.serialize,
 	deserializeEvent: (data: unknown) => {
-		const parsed = StoredSdelkaCardEventSchema.parse(data)
-		return SdelkaCardEventSerializer.deserialize(parsed)
+		const parsed = StoredMintayCardEventSchema.parse(data)
+		return MintayCardEventSerializer.deserialize(parsed)
 	},
 }

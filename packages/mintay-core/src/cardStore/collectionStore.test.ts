@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest"
 import { DrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
 import {
-	SdelkaCardData,
-	SdelkaCardDataUtil,
-	SdelkaCollectionDataUtil,
-	SdelkaTypeSpec,
-	SdelkaTypeSpecSerializer,
+	MintayCardData,
+	MintayCardDataUtil,
+	MintayCollectionDataUtil,
+	MintayTypeSpec,
+	MintayTypeSpecSerializer,
 } from "../defines"
 import { CardId } from "../defines/typings/cardId"
 import { InMemoryDb } from "../inMemoryDb/db"
@@ -17,20 +17,20 @@ import { InMemoryCollectionStore } from "./inMemory"
 describe.each<{
 	name: string
 	storeFactory: () => Promise<{
-		store: CollectionStore<SdelkaTypeSpec>
+		store: CollectionStore<MintayTypeSpec>
 		cleanup?: () => Promise<void>
 	}>
 }>([
 	{
 		name: "InMemoryCollectionStore",
 		storeFactory: async () => {
-			const db = new InMemoryDb<SdelkaTypeSpec>()
+			const db = new InMemoryDb<MintayTypeSpec>()
 			return {
-				store: new InMemoryCollectionStore<SdelkaTypeSpec>({
+				store: new InMemoryCollectionStore<MintayTypeSpec>({
 					db,
 					defaultCollectionHeader:
-						SdelkaCollectionDataUtil.getDefaultData(),
-					defaultCardData: SdelkaCardDataUtil.getDefaultData(),
+						MintayCollectionDataUtil.getDefaultData(),
+					defaultCardData: MintayCardDataUtil.getDefaultData(),
 				}),
 			}
 		},
@@ -40,19 +40,19 @@ describe.each<{
 		storeFactory: async () => {
 			const { drizzle, close } = await getTestingDb()
 			return {
-				store: new DrizzleCollectionStore<SdelkaTypeSpec>({
+				store: new DrizzleCollectionStore<MintayTypeSpec>({
 					db: drizzle as DrizzleDB,
 					defaultCollectionHeader:
-						SdelkaCollectionDataUtil.getDefaultData(),
-					defaultCardData: SdelkaCardDataUtil.getDefaultData(),
-					serializer: SdelkaTypeSpecSerializer,
+						MintayCollectionDataUtil.getDefaultData(),
+					defaultCardData: MintayCardDataUtil.getDefaultData(),
+					serializer: MintayTypeSpecSerializer,
 				}),
 				cleanup: close,
 			}
 		},
 	},
 ])("CollectionStore Implementation - $name", ({ storeFactory }) => {
-	let store: CollectionStore<SdelkaTypeSpec>
+	let store: CollectionStore<MintayTypeSpec>
 	let cleanup: (() => Promise<void>) | undefined
 
 	beforeEach(async () => {
@@ -71,7 +71,7 @@ describe.each<{
 	test("should create a new collection, get it, and verify its data", async () => {
 		const collectionHandle = await store.create()
 		const createdHeader = await collectionHandle.read()
-		expect(createdHeader).toEqual(SdelkaCollectionDataUtil.getDefaultData())
+		expect(createdHeader).toEqual(MintayCollectionDataUtil.getDefaultData())
 
 		const retrievedHandle = store.get(collectionHandle.id)
 		expect(retrievedHandle).toBeDefined()
@@ -79,7 +79,7 @@ describe.each<{
 
 		const retrievedHeader = await retrievedHandle.read()
 		expect(retrievedHeader).toEqual(
-			SdelkaCollectionDataUtil.getDefaultData(),
+			MintayCollectionDataUtil.getDefaultData(),
 		)
 
 		const exists = await retrievedHandle.exists()
@@ -111,7 +111,7 @@ describe.each<{
 
 		// New data to save
 		const newData = {
-			...SdelkaCollectionDataUtil.getDefaultData(),
+			...MintayCollectionDataUtil.getDefaultData(),
 			title: "New Collection Title",
 		}
 
@@ -157,11 +157,11 @@ describe.each<{
 
 		// Verify cards exist and have default data
 		const card1Data = await card1.read()
-		expect(card1Data).toEqual(SdelkaCardDataUtil.getDefaultData())
+		expect(card1Data).toEqual(MintayCardDataUtil.getDefaultData())
 
 		// Modify card data
-		const customCardData: SdelkaCardData = {
-			...SdelkaCardDataUtil.getDefaultData(),
+		const customCardData: MintayCardData = {
+			...MintayCardDataUtil.getDefaultData(),
 			content: "DD AA",
 		}
 
@@ -171,7 +171,7 @@ describe.each<{
 
 		// Update card data partially
 		const updatedCardData = {
-			...SdelkaCardDataUtil.getDefaultData(),
+			...MintayCardDataUtil.getDefaultData(),
 			content: "Updated content",
 		}
 		await card3.update({ content: "Updated content" })

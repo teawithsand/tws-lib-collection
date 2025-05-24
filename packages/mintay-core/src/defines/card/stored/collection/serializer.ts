@@ -1,16 +1,16 @@
-import { SdelkaCollectionData } from "../../sdelkaCollectionData"
-import { StoredSdelkaCollectionData } from "./schema"
+import { MintayCollectionData } from "../../sdelkaCollectionData"
+import { StoredMintayCollectionData } from "./schema"
 
 const neverGuard = (value: never): never => {
 	throw new Error(`Unsupported version: ${value}`)
 }
 
-export class StoredSdelkaCollectionDataSerializer {
+export class StoredMintayCollectionDataSerializer {
 	private constructor() {}
 
 	public static readonly serialize = (
-		data: SdelkaCollectionData,
-	): StoredSdelkaCollectionData => {
+		data: MintayCollectionData,
+	): StoredMintayCollectionData => {
 		return {
 			version: 1,
 			data: {
@@ -24,8 +24,8 @@ export class StoredSdelkaCollectionDataSerializer {
 	}
 
 	public static readonly deserialize = (
-		storedData: StoredSdelkaCollectionData,
-	): SdelkaCollectionData => {
+		storedData: StoredMintayCollectionData,
+	): MintayCollectionData => {
 		if (storedData.version === 1) {
 			const d = storedData.data
 			return {

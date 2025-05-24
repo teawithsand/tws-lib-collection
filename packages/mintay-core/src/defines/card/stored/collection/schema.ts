@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-const StoredSdelkaCollectionDataV1Schema = z.object({
+const StoredMintayCollectionDataV1Schema = z.object({
 	globalId: z.string(),
 	title: z.string(),
 	description: z.string(),
@@ -8,16 +8,16 @@ const StoredSdelkaCollectionDataV1Schema = z.object({
 	lastUpdatedAtTimestamp: z.number(),
 })
 
-export const StoredSdelkaCollectionDataSchema = z.discriminatedUnion(
+export const StoredMintayCollectionDataSchema = z.discriminatedUnion(
 	"version",
 	[
 		z.object({
 			version: z.literal(1),
-			data: StoredSdelkaCollectionDataV1Schema,
+			data: StoredMintayCollectionDataV1Schema,
 		}),
 	],
 )
 
-export type StoredSdelkaCollectionData = z.infer<
-	typeof StoredSdelkaCollectionDataSchema
+export type StoredMintayCollectionData = z.infer<
+	typeof StoredMintayCollectionDataSchema
 >

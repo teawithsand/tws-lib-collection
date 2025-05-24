@@ -1,13 +1,13 @@
 import { z } from "zod"
 
-export enum StoredSdelkaCardQueueV1 {
+export enum StoredMintayCardQueueV1 {
 	NEW = 0,
 	LEARNING = 1,
 	LEARNED = 2,
 	RELEARNING = 3,
 }
 
-const StoredSdelkaCardStateFSRSSchema = z.object({
+const StoredMintayCardStateFSRSSchema = z.object({
 	dueTimestamp: z.number(),
 	stability: z.number(),
 	difficulty: z.number(),
@@ -15,13 +15,13 @@ const StoredSdelkaCardStateFSRSSchema = z.object({
 	scheduledDays: z.number(),
 	reps: z.number(),
 	lapses: z.number(),
-	state: z.nativeEnum(StoredSdelkaCardQueueV1),
+	state: z.nativeEnum(StoredMintayCardQueueV1),
 	lastReviewTimestamp: z.number().nullable(),
 })
 
-export const StoredSdelkaCardStateV1Schema = z.object({
-	fsrs: StoredSdelkaCardStateFSRSSchema,
+export const StoredMintayCardStateV1Schema = z.object({
+	fsrs: StoredMintayCardStateFSRSSchema,
 })
-export type StoredSdelkaCardStateV1 = z.infer<
-	typeof StoredSdelkaCardStateV1Schema
+export type StoredMintayCardStateV1 = z.infer<
+	typeof StoredMintayCardStateV1Schema
 >

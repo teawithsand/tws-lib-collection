@@ -1,48 +1,48 @@
-import { SdelkaCardState } from "../../sdelkaCardState"
-import { SdelkaCardQueue } from "../../sdelkaQueue"
-import { StoredSdelkaCardState } from "./schema"
-import { StoredSdelkaCardQueueV1 } from "./schemaV1"
+import { MintayCardState } from "../../sdelkaCardState"
+import { MintayCardQueue } from "../../sdelkaQueue"
+import { StoredMintayCardState } from "./schema"
+import { StoredMintayCardQueueV1 } from "./schemaV1"
 
-export class SdelkaCardStateSerializer {
+export class MintayCardStateSerializer {
 	private constructor() {}
 
 	private static readonly toStoredQueue = (
-		queue: SdelkaCardQueue,
-	): StoredSdelkaCardQueueV1 => {
+		queue: MintayCardQueue,
+	): StoredMintayCardQueueV1 => {
 		switch (queue) {
-			case SdelkaCardQueue.NEW:
-				return StoredSdelkaCardQueueV1.NEW
-			case SdelkaCardQueue.LEARNING:
-				return StoredSdelkaCardQueueV1.LEARNING
-			case SdelkaCardQueue.LEARNED:
-				return StoredSdelkaCardQueueV1.LEARNED
-			case SdelkaCardQueue.RELEARNING:
-				return StoredSdelkaCardQueueV1.RELEARNING
+			case MintayCardQueue.NEW:
+				return StoredMintayCardQueueV1.NEW
+			case MintayCardQueue.LEARNING:
+				return StoredMintayCardQueueV1.LEARNING
+			case MintayCardQueue.LEARNED:
+				return StoredMintayCardQueueV1.LEARNED
+			case MintayCardQueue.RELEARNING:
+				return StoredMintayCardQueueV1.RELEARNING
 		}
 		const _exhaustiveCheck: never = queue
 		return _exhaustiveCheck
 	}
 
 	private static readonly fromStoredQueue = (
-		queue: StoredSdelkaCardQueueV1,
-	): SdelkaCardQueue => {
+		queue: StoredMintayCardQueueV1,
+	): MintayCardQueue => {
 		switch (queue) {
-			case StoredSdelkaCardQueueV1.NEW:
-				return SdelkaCardQueue.NEW
-			case StoredSdelkaCardQueueV1.LEARNING:
-				return SdelkaCardQueue.LEARNING
-			case StoredSdelkaCardQueueV1.LEARNED:
-				return SdelkaCardQueue.LEARNED
-			case StoredSdelkaCardQueueV1.RELEARNING:
-				return SdelkaCardQueue.RELEARNING
+			case StoredMintayCardQueueV1.NEW:
+				return MintayCardQueue.NEW
+			case StoredMintayCardQueueV1.LEARNING:
+				return MintayCardQueue.LEARNING
+			case StoredMintayCardQueueV1.LEARNED:
+				return MintayCardQueue.LEARNED
+			case StoredMintayCardQueueV1.RELEARNING:
+				return MintayCardQueue.RELEARNING
 		}
 		const _exhaustiveCheck: never = queue
 		return _exhaustiveCheck
 	}
 
 	public static readonly serialize = (
-		state: SdelkaCardState,
-	): StoredSdelkaCardState => {
+		state: MintayCardState,
+	): StoredMintayCardState => {
 		return {
 			version: 1,
 			data: {
@@ -54,7 +54,7 @@ export class SdelkaCardStateSerializer {
 					scheduledDays: state.fsrs.scheduledDays,
 					reps: state.fsrs.reps,
 					lapses: state.fsrs.lapses,
-					state: SdelkaCardStateSerializer.toStoredQueue(
+					state: MintayCardStateSerializer.toStoredQueue(
 						state.fsrs.state,
 					),
 					lastReviewTimestamp: state.fsrs.lastReviewTimestamp,
@@ -64,8 +64,8 @@ export class SdelkaCardStateSerializer {
 	}
 
 	public static readonly deserialize = (
-		stored: StoredSdelkaCardState,
-	): SdelkaCardState => {
+		stored: StoredMintayCardState,
+	): MintayCardState => {
 		if (stored.version === 1) {
 			const data = stored.data
 			return {
@@ -77,7 +77,7 @@ export class SdelkaCardStateSerializer {
 					scheduledDays: data.fsrs.scheduledDays,
 					reps: data.fsrs.reps,
 					lapses: data.fsrs.lapses,
-					state: SdelkaCardStateSerializer.fromStoredQueue(
+					state: MintayCardStateSerializer.fromStoredQueue(
 						data.fsrs.state,
 					),
 					lastReviewTimestamp: data.fsrs.lastReviewTimestamp,

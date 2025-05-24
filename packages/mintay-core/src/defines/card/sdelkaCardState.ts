@@ -1,12 +1,12 @@
-import { SdelkaCardQueue } from "./sdelkaQueue"
+import { MintayCardQueue } from "./sdelkaQueue"
 
 // See: https://github.com/open-spaced-repetition/ts-fsrs?tab=readme-ov-file#5-understanding-card-attributes
 
 /**
- * Represents the Free Spaced Repetition Scheduler (FSRS) state of a Sdelka card.
+ * Represents the Free Spaced Repetition Scheduler (FSRS) state of a Mintay card.
  * This information is used by the FSRS algorithm to determine the next review date.
  */
-export type SdelkaCardStateFSRS = {
+export type MintayCardStateFSRS = {
 	/**
 	 * The timestamp indicating when the card is next due for review.
 	 * This is a Unix timestamp (milliseconds since epoch).
@@ -42,7 +42,7 @@ export type SdelkaCardStateFSRS = {
 	 * The current learning phase or queue of the card within the FSRS system.
 	 * (e.g., New, Learning, Review, Relearning).
 	 */
-	state: SdelkaCardQueue
+	state: MintayCardQueue
 	/**
 	 * The timestamp of the most recent review, if the card has been reviewed at least once.
 	 * This is a Unix timestamp (milliseconds since epoch), or null if never reviewed.
@@ -51,11 +51,11 @@ export type SdelkaCardStateFSRS = {
 }
 
 /**
- * Represents the overall state of a Sdelka card, primarily encompassing its FSRS data.
+ * Represents the overall state of a Mintay card, primarily encompassing its FSRS data.
  */
-export type SdelkaCardState = {
+export type MintayCardState = {
 	/**
 	 * The FSRS-specific state information for the card.
 	 */
-	fsrs: SdelkaCardStateFSRS
+	fsrs: MintayCardStateFSRS
 }

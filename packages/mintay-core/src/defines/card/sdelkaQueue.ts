@@ -1,5 +1,5 @@
 /**
- * Enum representing the different states of a card in the Sdelka learning queue.
+ * Enum representing the different states of a card in the Mintay learning queue.
  *
  * @enum {number}
  * @property {number} NEW - The card is newly added to the queue.
@@ -7,7 +7,7 @@
  * @property {number} LEARNED - The card has been learned.
  * @property {number} RELEARNING - The card is being reviewed or relearned.
  */
-export enum SdelkaCardQueue {
+export enum MintayCardQueue {
 	NEW = 0,
 	LEARNING = 1,
 	LEARNED = 2,

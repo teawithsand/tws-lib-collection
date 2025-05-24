@@ -1,18 +1,18 @@
 import { CollectionStore } from "../cardStore"
-import { SdelkaCardQueue, SdelkaTypeSpec } from "../defines"
+import { MintayCardQueue, MintayTypeSpec } from "../defines"
 import { CardId } from "../defines/typings/cardId"
 import { EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs"
 
 /**
- * Represents the main entry point for interacting with Sdelka's core functionalities.
+ * Represents the main entry point for interacting with Mintay's core functionalities.
  * It provides access to card collections and engine stores.
  */
-export interface Sdelka {
+export interface Mintay {
 	/**
 	 * Provides access to the collection store, allowing management of card collections.
 	 */
-	readonly collectionStore: CollectionStore<SdelkaTypeSpec>
+	readonly collectionStore: CollectionStore<MintayTypeSpec>
 
 	/**
 	 * Retrieves an engine store for a specific card collection.
@@ -24,5 +24,5 @@ export interface Sdelka {
 	getEngineStore: (
 		id: CardId,
 		parameters: FsrsParameters,
-	) => EngineStore<SdelkaTypeSpec, SdelkaCardQueue>
+	) => EngineStore<MintayTypeSpec, MintayCardQueue>
 }

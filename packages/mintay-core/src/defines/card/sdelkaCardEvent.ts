@@ -1,11 +1,11 @@
-import { SdelkaAnswer } from "./answer"
+import { MintayAnswer } from "./answer"
 
-export enum SdelkaCardEventType {
+export enum MintayCardEventType {
 	ANSWER = 0,
 }
 
-export type SdelkaCardEvent = {
-	type: SdelkaCardEventType.ANSWER
-	answer: SdelkaAnswer
+export type MintayCardEvent = {
+	type: MintayCardEventType.ANSWER
+	answer: MintayAnswer
 	timestamp: number
 }
