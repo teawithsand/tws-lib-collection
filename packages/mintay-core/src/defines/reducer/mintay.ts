@@ -2,7 +2,7 @@ import { createEmptyCard, FSRS } from "ts-fsrs"
 import { FSRSBridge } from "../../fsrs"
 import { FsrsParameters } from "../../fsrs/params"
 import { MintayAnswer, MintayCardState } from "../card"
-import { MintayCardEvent, MintayCardEventType } from "../card/sdelkaCardEvent"
+import { MintayCardEvent, MintayCardEventType } from "../card/cardEvent"
 import { CardStateReducer } from "./defines"
 
 export class MintayCardStateReducer

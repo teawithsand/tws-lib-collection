@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest"
 import { FsrsParameters } from "../../fsrs/params"
 import { MintayAnswer } from "../card"
-import { MintayCardEvent, MintayCardEventType } from "../card/sdelkaCardEvent"
-import { MintayCardStateExtractor } from "../card/sdelkaExtractor"
-import { MintayCardQueue } from "../card/sdelkaQueue"
-import { MintayCardStateReducer } from "./sdelka"
+import { MintayCardEvent, MintayCardEventType } from "../card/cardEvent"
+import { MintayCardStateExtractor } from "../card/extractor"
+import { MintayCardQueue } from "../card/queue"
+import { MintayCardStateReducer } from "./mintay"
 
 describe("MintayCardStateReducer", () => {
 	const defaultParams: FsrsParameters = {

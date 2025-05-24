@@ -1,5 +1,4 @@
 import { TypeSpecSerializer } from "../typings/serializer"
-import { MintayTypeSpec } from "./sdelkaTypeSpec"
 import { StoredMintayCollectionDataSchema } from "./stored/collection/schema"
 import { StoredMintayCollectionDataSerializer } from "./stored/collection/serializer"
 import { StoredMintayCardDataSchema } from "./stored/data/schema"
@@ -8,6 +7,7 @@ import { StoredMintayCardEventSchema } from "./stored/event/schema"
 import { MintayCardEventSerializer } from "./stored/event/serializer"
 import { StoredMintayCardStateSchema } from "./stored/state/schema"
 import { MintayCardStateSerializer } from "./stored/state/serializer"
+import { MintayTypeSpec } from "./typeSpec"
 
 export const MintayTypeSpecSerializer: TypeSpecSerializer<MintayTypeSpec> = {
 	serializeCardData: StoredMintayCardDataSerializer.serialize,

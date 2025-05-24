@@ -1,5 +1,5 @@
 import { MintayAnswer } from "../../answer"
-import { MintayCardEvent, MintayCardEventType } from "../../sdelkaCardEvent"
+import { MintayCardEvent, MintayCardEventType } from "../../cardEvent"
 import { StoredMintayCardEvent } from "./schema"
 import { StoredMintayAnswerV1, StoredMintayCardEventTypeV1 } from "./schemaV1"
 

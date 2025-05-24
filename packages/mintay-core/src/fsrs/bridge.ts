@@ -5,8 +5,8 @@ import {
 	FSRSParameters as TsFSRSParameters,
 } from "ts-fsrs"
 import { MintayAnswer } from "../defines/card/answer"
-import { MintayCardStateFSRS } from "../defines/card/sdelkaCardState"
-import { MintayCardQueue } from "../defines/card/sdelkaQueue"
+import { MintayCardStateFSRS } from "../defines/card/cardState"
+import { MintayCardQueue } from "../defines/card/queue"
 import { type FsrsParameters as MintayFSRSParameters } from "./params"
 
 export class FSRSBridge {

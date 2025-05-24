@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
-import { MintayCardState } from "../../sdelkaCardState"
-import { MintayCardQueue } from "../../sdelkaQueue"
+import { MintayCardState } from "../../cardState"
+import { MintayCardQueue } from "../../queue"
 import { StoredMintayCardState } from "./schema"
 import { StoredMintayCardQueueV1 } from "./schemaV1"
 import { MintayCardStateSerializer } from "./serializer"

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { DbSchemaConstants } from "../../db/schema"
-import { MintayCardQueue } from "./sdelkaQueue"
+import { MintayCardQueue } from "./queue"
 
 describe("MintayCardQueue", () => {
 	test("NEW equals to default schema queue", () => {

@@ -28,29 +28,29 @@ const testParameters: FsrsParameters = {
 
 describe.each<{
 	name: string
-	getMintay: () => Promise<{ sdelka: Mintay; cleanup?: () => Promise<void> }>
+	getMintay: () => Promise<{ mintay: Mintay; cleanup?: () => Promise<void> }>
 }>([
 	{
 		name: "InMemoryMintay",
-		getMintay: async () => ({ sdelka: new InMemoryMintay() }),
+		getMintay: async () => ({ mintay: new InMemoryMintay() }),
 	},
 	{
 		name: "DrizzleMintay",
 		getMintay: async () => {
 			const { drizzle, close } = await getTestingDb()
 			return {
-				sdelka: new DrizzleMintay({ db: drizzle as DrizzleDB }),
+				mintay: new DrizzleMintay({ db: drizzle as DrizzleDB }),
 				cleanup: close,
 			}
 		},
 	},
 ])("Mintay E2E Tests - $name", ({ getMintay }) => {
-	let sdelka: Mintay
+	let mintay: Mintay
 	let cleanup: (() => Promise<void>) | undefined
 
 	beforeAll(async () => {
 		const res = await getMintay()
-		sdelka = res.sdelka
+		mintay = res.mintay
 		cleanup = res.cleanup
 	})
 
@@ -62,15 +62,15 @@ describe.each<{
 
 	describe("CollectionStore", () => {
 		test("should create a new collection and read its header", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			expect(collectionHandle).toBeDefined()
 			const header = await collectionHandle.read()
 			expect(header).toEqual(MintayCollectionDataUtil.getDefaultData())
 		})
 
 		test("should get an existing collection", async () => {
-			const newCollection = await sdelka.collectionStore.create()
-			const gottenCollection = sdelka.collectionStore.get(
+			const newCollection = await mintay.collectionStore.create()
+			const gottenCollection = mintay.collectionStore.get(
 				newCollection.id,
 			)
 			expect(gottenCollection).toBeDefined()
@@ -80,7 +80,7 @@ describe.each<{
 		})
 
 		test("should save and read collection header", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			const newHeader = {
 				...MintayCollectionDataUtil.getDefaultData(),
 				title: "My Test Collection",
@@ -91,7 +91,7 @@ describe.each<{
 		})
 
 		test("should create a card in a collection and read its data", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			const cardHandle = await collectionHandle.createCard()
 			expect(cardHandle).toBeDefined()
 			const cardData = await cardHandle.read()
@@ -99,7 +99,7 @@ describe.each<{
 		})
 
 		test("should save and read card data", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			const cardHandle = await collectionHandle.createCard()
 			const newCardData = {
 				...MintayCardDataUtil.getDefaultData(),
@@ -111,7 +111,7 @@ describe.each<{
 		})
 
 		test("should get cards from a collection", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			const card1 = await collectionHandle.createCard()
 			const card2 = await collectionHandle.createCard()
 			const cards = await collectionHandle.getCards()
@@ -122,7 +122,7 @@ describe.each<{
 		})
 
 		test("should get card count from a collection", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			await collectionHandle.createCard()
 			await collectionHandle.createCard()
 			const count = await collectionHandle.getCardCount()
@@ -130,7 +130,7 @@ describe.each<{
 		})
 
 		test("should delete a card", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			const cardHandle = await collectionHandle.createCard()
 			const cardId = cardHandle.id
 			await cardHandle.delete()
@@ -140,12 +140,12 @@ describe.each<{
 		})
 
 		test("should delete a collection", async () => {
-			const collectionHandle = await sdelka.collectionStore.create()
+			const collectionHandle = await mintay.collectionStore.create()
 			const collectionId = collectionHandle.id
 			await collectionHandle.delete()
 			const exists = await collectionHandle.exists()
 			expect(exists).toBe(false)
-			const newHandle = sdelka.collectionStore.get(collectionId)
+			const newHandle = mintay.collectionStore.get(collectionId)
 			const newExists = await newHandle.exists()
 			expect(newExists).toBe(false)
 		})
@@ -156,14 +156,14 @@ describe.each<{
 		let cardId: CardId
 
 		beforeEach(async () => {
-			const collection = await sdelka.collectionStore.create()
+			const collection = await mintay.collectionStore.create()
 			collectionId = collection.id
 			const card = await collection.createCard()
 			cardId = card.id
 		})
 
 		test("should get an engine store", () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
@@ -171,7 +171,7 @@ describe.each<{
 		})
 
 		test("should push an event and update card state", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
@@ -189,11 +189,11 @@ describe.each<{
 		})
 
 		test("should get top card", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
-			const collection = sdelka.collectionStore.get(collectionId)
+			const collection = mintay.collectionStore.get(collectionId)
 			const card2 = await collection.createCard()
 
 			// Push events to make card2 have higher priority (earlier due date)
@@ -216,7 +216,7 @@ describe.each<{
 		})
 
 		test("should pop an event and revert card state", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
@@ -236,17 +236,17 @@ describe.each<{
 
 		test("pop on EngineStore should remove the last event within its collection and not affect other collections", async () => {
 			// collectionId is collectionAId, cardId is cardA1Id from beforeEach
-			const engineStoreA = sdelka.getEngineStore(
+			const engineStoreA = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
-			const collectionA = sdelka.collectionStore.get(collectionId) // collectionA is collectionId
+			const collectionA = mintay.collectionStore.get(collectionId) // collectionA is collectionId
 			const cardA2 = await collectionA.createCard() // cardA2 in collectionA
 
 			// Create a second collection, engine store, and card
-			const collectionBHandle = await sdelka.collectionStore.create()
+			const collectionBHandle = await mintay.collectionStore.create()
 			const collectionBId = collectionBHandle.id
-			const engineStoreB = sdelka.getEngineStore(
+			const engineStoreB = mintay.getEngineStore(
 				collectionBId,
 				testParameters,
 			)
@@ -305,7 +305,7 @@ describe.each<{
 		})
 
 		test("getCardData returns default state for a card with no events", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
@@ -321,11 +321,11 @@ describe.each<{
 		})
 
 		test("getTopCard should return the card with the earliest dueTimestamp when multiple cards are due", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
-			const collection = sdelka.collectionStore.get(collectionId)
+			const collection = mintay.collectionStore.get(collectionId)
 			const card2 = await collection.createCard()
 			const card3 = await collection.createCard()
 			const now = 1000000
@@ -370,11 +370,11 @@ describe.each<{
 		})
 
 		test("popCard should correctly revert the state of a specific card, not necessarily the last one pushed to engine", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
-			const collection = sdelka.collectionStore.get(collectionId)
+			const collection = mintay.collectionStore.get(collectionId)
 			const card2 = await collection.createCard()
 			const now = 10000000
 
@@ -431,10 +431,10 @@ describe.each<{
 		})
 
 		test("pop on an empty engine store (no events for any card) should not throw an error", async () => {
-			const newCollection = await sdelka.collectionStore.create()
+			const newCollection = await mintay.collectionStore.create()
 			// card in this collection, but no events pushed for it
 			await newCollection.createCard()
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				newCollection.id,
 				testParameters,
 			)
@@ -443,7 +443,7 @@ describe.each<{
 		})
 
 		test("popCard on a card with no events should not throw an error and state remains default", async () => {
-			const engineStore = sdelka.getEngineStore(
+			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)

@@ -1,7 +1,7 @@
 import { CardStateExtractor } from "../typings/defines"
+import { MintayCardState } from "./cardState"
 import { CardStats } from "./cardStats"
-import { MintayCardState } from "./sdelkaCardState"
-import { MintayCardQueue } from "./sdelkaQueue"
+import { MintayCardQueue } from "./queue"
 
 export class MintayCardStateExtractor
 	implements CardStateExtractor<MintayCardState, MintayCardQueue>

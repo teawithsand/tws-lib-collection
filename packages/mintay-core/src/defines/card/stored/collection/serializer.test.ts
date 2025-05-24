@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { MintayCollectionData } from "../../sdelkaCollectionData"
+import { MintayCollectionData } from "../../collectionData"
 import { StoredMintayCollectionData } from "./schema"
 import { StoredMintayCollectionDataSerializer } from "./serializer"
 

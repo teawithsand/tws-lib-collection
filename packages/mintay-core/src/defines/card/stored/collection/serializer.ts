@@ -1,4 +1,4 @@
-import { MintayCollectionData } from "../../sdelkaCollectionData"
+import { MintayCollectionData } from "../../collectionData"
 import { StoredMintayCollectionData } from "./schema"
 
 const neverGuard = (value: never): never => {

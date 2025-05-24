@@ -1,2 +1,2 @@
 export * from "./defines"
-export * from "./sdelka"
+export * from "./mintay"

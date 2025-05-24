@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { MintayAnswer } from "../../answer"
-import { MintayCardEventType } from "../../sdelkaCardEvent"
+import { MintayCardEventType } from "../../cardEvent"
 import { StoredMintayCardEvent } from "./schema"
 import { StoredMintayAnswerV1, StoredMintayCardEventTypeV1 } from "./schemaV1"
 import { MintayCardEventSerializer } from "./serializer"
