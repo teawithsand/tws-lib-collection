@@ -334,6 +334,10 @@
     {
       "packageName": "@teawithsand/reserd",
       "projectFolder": "packages/reserd"
+    },
+        {
+      "packageName": "@teawithsand/peer-client",
+      "projectFolder": "packages/peer-client"
     }
 
     // {
