@@ -1,7 +1,7 @@
 import { z } from "zod"
-import { StoredLanguageSchema } from "../misc/stored"
 import { StoredABookTruthSourceSchema } from "../abook/stored"
 import { StoredABookEntrySchema } from "../entry/stored"
+import { StoredLanguageSchema } from "../misc/stored"
 
 // Metadata V1 schema
 const StoredABookMetadataV1Schema = z.object({
