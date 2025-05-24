@@ -47,7 +47,8 @@
 		"drizzle-orm": "^0.42.0",
 		"immer": "^10.1.1",
 		"ts-fsrs": "^4.7.1",
-		"zod": "^3.24.3"
+		"zod": "^3.24.3",
+		"@teawithsand/lngext": "workspace:*"
 	},
 	"files": [
 		"dist",

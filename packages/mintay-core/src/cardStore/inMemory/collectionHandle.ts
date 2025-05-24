@@ -1,3 +1,4 @@
+import { generateUuid } from "@teawithsand/lngext"
 import { CardId } from "../../defines/typings/cardId"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { InMemoryCard, InMemoryDb } from "../../inMemoryDb/db"
@@ -102,7 +103,7 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 	}
 
 	public readonly createCard = async (): Promise<CardHandle<T>> => {
-		const newId = this.generateId()
+		const newId = generateUuid() as CardId
 		const newCard: InMemoryCard<T> = {
 			data: this.defaultCardData,
 			collection: this.id,
@@ -110,10 +111,5 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 		}
 		this.db.upsertCard(newId, newCard)
 		return new InMemoryCardHandle<T>({ id: newId, db: this.db })
-	}
-
-	private readonly generateId = (): CardId => {
-		// Simple unique ID generator for example purposes
-		return Math.random().toString(36).substr(2, 9) as CardId
 	}
 }

@@ -1,3 +1,4 @@
+import { generateUuid } from "@teawithsand/lngext"
 import { CardId } from "../../defines/typings/cardId"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { InMemoryCollection, InMemoryDb } from "../../inMemoryDb/db"
@@ -26,7 +27,7 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 	}
 
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
-		const newId = this.generateId()
+		const newId = generateUuid() as CardId
 		const newCollection: InMemoryCollection<T> = {
 			header: this.defaultCollectionHeader,
 		}
@@ -44,9 +45,5 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 			db: this.db,
 			defaultCardData: this.defaultCardData,
 		})
-	}
-
-	private readonly generateId = (): CardId => {
-		return Math.random().toString(36).substr(2, 9) as CardId
 	}
 }
