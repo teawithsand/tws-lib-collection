@@ -1,6 +1,13 @@
-import { Card as FSRSCard, State as FSRSState } from "ts-fsrs"
+import {
+	Card as FSRSCard,
+	State as FSRSState,
+	Rating,
+	FSRSParameters as TsFSRSParameters,
+} from "ts-fsrs"
+import { SdelkaAnswer } from "../defines/card/answer"
 import { SdelkaCardStateFSRS } from "../defines/card/sdelkaCardState"
 import { SdelkaCardQueue } from "../defines/card/sdelkaQueue"
+import { type FsrsParameters as MintayFSRSParameters } from "./params"
 
 export class FSRSBridge {
 	private constructor() {}
@@ -74,5 +81,34 @@ export class FSRSBridge {
 			}),
 		}
 		return fsrsCard
+	}
+
+	public static readonly convertParamsToFSRS = (
+		params: MintayFSRSParameters,
+	): TsFSRSParameters => {
+		return {
+			request_retention: params.requestRetention,
+			maximum_interval: params.maximumInterval,
+			w: params.w,
+			enable_fuzz: params.enableFuzz,
+			enable_short_term: params.enableShortTerm,
+		}
+	}
+
+	public static readonly convertAnswerToRating = (
+		answer: SdelkaAnswer,
+	): Rating.Again | Rating.Hard | Rating.Good | Rating.Easy => {
+		switch (answer) {
+			case SdelkaAnswer.AGAIN:
+				return Rating.Again
+			case SdelkaAnswer.HARD:
+				return Rating.Hard
+			case SdelkaAnswer.GOOD:
+				return Rating.Good
+			case SdelkaAnswer.EASY:
+				return Rating.Easy
+			default:
+				throw new Error(`Unknown SdelkaAnswer: ${answer}`)
+		}
 	}
 }
