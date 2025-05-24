@@ -14,3 +14,13 @@ export type SdelkaCardData = {
 	/** The timestamp indicating the last time the card was updated. */
 	lastUpdatedAtTimestamp: number
 }
+export class SdelkaCardDataUtil {
+	private constructor() {}
+
+	public static readonly getDefaultData = (): SdelkaCardData => ({
+		globalId: "",
+		content: "",
+		createdAtTimestamp: 0,
+		lastUpdatedAtTimestamp: 0,
+	})
+}

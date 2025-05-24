@@ -17,3 +17,15 @@ export type SdelkaCollectionData = {
 	/** The timestamp when the collection was last updated. */
 	lastUpdatedAtTimestamp: number
 }
+
+export class SdelkaCollectionDataUtil {
+	private constructor() {}
+
+	public static readonly getDefaultData = (): SdelkaCollectionData => ({
+		globalId: "",
+		title: "",
+		description: "",
+		createdAtTimestamp: 0,
+		lastUpdatedAtTimestamp: 0,
+	})
+}
