@@ -7,9 +7,7 @@ const config = {
 	plugins: ['@stryker-mutator/vitest-runner'],
 	coverageAnalysis: "perTest",
 	mutate: [
-		"./src/flux.ts",
-		"./src/result.ts",
-		"./src/deepCopy.ts",
+		
 	],
 }
 export default config

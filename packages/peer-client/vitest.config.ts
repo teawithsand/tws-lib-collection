@@ -1,15 +1,15 @@
 import { defineConfig } from "vitest/config"
 
 export default defineConfig({
+	
 	test: {
 		globals: true,
-		environment: "node",
+		environment: "jsdom",
 		coverage: {
 			reporter: ["text", "json", "html", "lcov"],
-			exclude: ["node_modules/", "test/"], 
+			exclude: ["node_modules/", "test/"],
 			provider: "istanbul",
 		},
-		include: ["src/**/*.test.ts"],
 		watch: false,
 	},
 })

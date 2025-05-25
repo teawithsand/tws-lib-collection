@@ -1,0 +1,16 @@
+services:
+  coturn:
+    image: coturn/coturn
+    container_name: coturn_server
+    ports:
+      - "127.0.0.1:3478:3478/tcp"
+      - "127.0.0.1:3478:3478/udp"
+      - "127.0.0.1:5349:5349/tcp" # TURN over TLS
+      - "127.0.0.1:5349:5349/udp" # TURN over DTLS
+    # To use environment variables for configuration, you would typically need a custom entrypoint
+    # or a turnserver.conf file. For simplicity in a testing setup,
+    # we can pass command-line arguments.
+    # For more complex configurations, mounting a turnserver.conf is recommended.
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf
+    command: ["-c", "/etc/coturn/turnserver.conf"]
