@@ -48,12 +48,15 @@
 		"drizzle-orm": "^0.44.1",
 		"immer": "^10.1.1",
 		"ts-fsrs": "^4.7.1",
-		"zod": "^3.24.3",
-		"@teawithsand/lngext": "workspace:*"
+		"@teawithsand/lngext": "workspace:*",
+		"@teawithsand/reserd": "workspace:*"
 	},
 	"files": [
 		"dist",
 		"LICENSE",
 		"README.md"
-	]
+	],
+	"peerDependencies": {
+	  "zod": "~3.25.42"
+	}
 }

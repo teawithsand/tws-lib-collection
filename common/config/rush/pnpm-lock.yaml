@@ -319,6 +319,9 @@ importers:
       '@teawithsand/lngext':
         specifier: workspace:*
         version: link:../lngext
+      '@teawithsand/reserd':
+        specifier: workspace:*
+        version: link:../reserd
       drizzle-orm:
         specifier: ^0.44.1
         version: 0.44.1(@types/better-sqlite3@7.6.13)(better-sqlite3@11.10.0)
@@ -329,8 +332,8 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       zod:
-        specifier: ^3.24.3
-        version: 3.24.4
+        specifier: ~3.25.42
+        version: 3.25.42
     devDependencies:
       '@eslint/js':
         specifier: ^9.26.0

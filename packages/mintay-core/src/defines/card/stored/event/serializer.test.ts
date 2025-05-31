@@ -1,125 +1,129 @@
-import { describe, expect, test } from "vitest"
+import { SerializerTester, TestData } from "@teawithsand/reserd"
+import { describe, test } from "vitest"
 import { MintayAnswer } from "../../answer"
-import { MintayCardEventType } from "../../cardEvent"
+import { MintayCardEvent, MintayCardEventType } from "../../cardEvent"
 import { StoredMintayCardEvent } from "./schema"
 import { StoredMintayAnswerV1, StoredMintayCardEventTypeV1 } from "./schemaV1"
-import { MintayCardEventSerializer } from "./serializer"
+import { storedMintayCardEventVersionedType } from "./serializer"
 
-describe("MintayCardEventSerializer", () => {
-	const timestamp = 1234567890
-
-	const answersToTest = [
-		MintayAnswer.AGAIN,
-		MintayAnswer.HARD,
-		MintayAnswer.GOOD,
-		MintayAnswer.EASY,
-	]
-
-	const eventTypesToTest = [
-		MintayCardEventType.ANSWER,
-		// Add other event types here if they exist
-	]
-
-	eventTypesToTest.forEach((eventType) => {
-		answersToTest.forEach((answer) => {
-			test(`serialize and deserialize with eventType ${eventType} and answer ${answer}`, () => {
-				const event = {
-					type: eventType,
-					answer: answer,
-					timestamp,
-				}
-				const serialized = MintayCardEventSerializer.serialize(event)
-				expect(serialized.data.type).toBe(
-					StoredMintayCardEventTypeV1.ANSWER,
-				)
-				expect(serialized.data.answer).toBe(answer)
-				const deserialized =
-					MintayCardEventSerializer.deserialize(serialized)
-				expect(deserialized.type).toBe(eventType)
-				expect(deserialized.answer).toBe(answer)
-				expect(deserialized.timestamp).toBe(timestamp)
-				expect(deserialized).toEqual(event)
-			})
-		})
-	})
-
-	describe("serialize", () => {
-		test("should serialize ANSWER event correctly", () => {
-			const event = {
-				type: MintayCardEventType.ANSWER,
-				answer: MintayAnswer.GOOD,
-				timestamp,
-			}
-			const stored = MintayCardEventSerializer.serialize(event)
-			expect(stored.version).toBe(1)
-			expect(stored.data.type).toBe(StoredMintayCardEventTypeV1.ANSWER)
-			expect(stored.data.answer).toBe(StoredMintayAnswerV1.GOOD)
-			expect(stored.data.timestamp).toBe(timestamp)
-		})
-
-		test("serialize and then deserialize should not change the event", () => {
-			const event = {
-				type: MintayCardEventType.ANSWER,
-				answer: MintayAnswer.GOOD,
-				timestamp,
-			}
-			const stored = MintayCardEventSerializer.serialize(event)
-			const deserialized = MintayCardEventSerializer.deserialize(stored)
-			expect(deserialized).toEqual(event)
-		})
-
-		test("serialize snapshot", () => {
-			const event = {
-				type: MintayCardEventType.ANSWER,
-				answer: MintayAnswer.GOOD,
-				timestamp,
-			}
-			const stored = MintayCardEventSerializer.serialize(event)
-			expect(stored).toMatchSnapshot()
-		})
-	})
-
-	describe("deserialize", () => {
-		test("should deserialize ANSWER event correctly", () => {
-			const storedEvent: StoredMintayCardEvent = {
-				version: 1,
-				data: {
-					type: StoredMintayCardEventTypeV1.ANSWER,
-					answer: StoredMintayAnswerV1.GOOD,
-					timestamp,
+describe("storedMintayCardEventVersionedType", () => {
+	test("should pass SerializerTester validation", () => {
+		const testData: TestData<StoredMintayCardEvent, MintayCardEvent> = {
+			storedExamples: [
+				{
+					version: 1,
+					data: {
+						type: StoredMintayCardEventTypeV1.ANSWER,
+						answer: StoredMintayAnswerV1.AGAIN,
+						timestamp: 1640995200000, // 2022-01-01T00:00:00.000Z
+					},
 				},
-			}
-			const event = MintayCardEventSerializer.deserialize(storedEvent)
-			expect(event.type).toBe(MintayCardEventType.ANSWER)
-			expect(event.answer).toBe(MintayAnswer.GOOD)
-			expect(event.timestamp).toBe(timestamp)
+				{
+					version: 1,
+					data: {
+						type: StoredMintayCardEventTypeV1.ANSWER,
+						answer: StoredMintayAnswerV1.HARD,
+						timestamp: 1641081600000, // 2022-01-02T00:00:00.000Z
+					},
+				},
+				{
+					version: 1,
+					data: {
+						type: StoredMintayCardEventTypeV1.ANSWER,
+						answer: StoredMintayAnswerV1.GOOD,
+						timestamp: 1641168000000, // 2022-01-03T00:00:00.000Z
+					},
+				},
+				{
+					version: 1,
+					data: {
+						type: StoredMintayCardEventTypeV1.ANSWER,
+						answer: StoredMintayAnswerV1.EASY,
+						timestamp: 0,
+					},
+				},
+			],
+			ownedExamples: [
+				{
+					type: MintayCardEventType.ANSWER,
+					answer: MintayAnswer.AGAIN,
+					timestamp: 1609459200000, // 2021-01-01T00:00:00.000Z
+				},
+				{
+					type: MintayCardEventType.ANSWER,
+					answer: MintayAnswer.HARD,
+					timestamp: 1609545600000, // 2021-01-02T00:00:00.000Z
+				},
+				{
+					type: MintayCardEventType.ANSWER,
+					answer: MintayAnswer.GOOD,
+					timestamp: Number.MAX_SAFE_INTEGER,
+				},
+				{
+					type: MintayCardEventType.ANSWER,
+					answer: MintayAnswer.EASY,
+					timestamp: Number.MIN_SAFE_INTEGER,
+				},
+			],
+			pairExamples: [
+				[
+					{
+						version: 1,
+						data: {
+							type: StoredMintayCardEventTypeV1.ANSWER,
+							answer: StoredMintayAnswerV1.AGAIN,
+							timestamp: 1577836800000, // 2020-01-01T00:00:00.000Z
+						},
+					},
+					{
+						type: MintayCardEventType.ANSWER,
+						answer: MintayAnswer.AGAIN,
+						timestamp: 1577836800000,
+					},
+				],
+				[
+					{
+						version: 1,
+						data: {
+							type: StoredMintayCardEventTypeV1.ANSWER,
+							answer: StoredMintayAnswerV1.GOOD,
+							timestamp: 1,
+						},
+					},
+					{
+						type: MintayCardEventType.ANSWER,
+						answer: MintayAnswer.GOOD,
+						timestamp: 1,
+					},
+				],
+				[
+					{
+						version: 1,
+						data: {
+							type: StoredMintayCardEventTypeV1.ANSWER,
+							answer: StoredMintayAnswerV1.EASY,
+							timestamp: 1234567890,
+						},
+					},
+					{
+						type: MintayCardEventType.ANSWER,
+						answer: MintayAnswer.EASY,
+						timestamp: 1234567890,
+					},
+				],
+			],
+		}
+
+		// Get the serializer from the versioned type
+		const serializer = storedMintayCardEventVersionedType.getSerializer()
+
+		// Create and run the tester
+		const tester = new SerializerTester({
+			testData,
+			serializer,
 		})
 
-		test("deserialize and then serialize should not change the stored event", () => {
-			const storedEvent: StoredMintayCardEvent = {
-				version: 1,
-				data: {
-					type: StoredMintayCardEventTypeV1.ANSWER,
-					answer: StoredMintayAnswerV1.GOOD,
-					timestamp,
-				},
-			}
-			const event = MintayCardEventSerializer.deserialize(storedEvent)
-			const reStored = MintayCardEventSerializer.serialize(event)
-			expect(reStored).toEqual(storedEvent)
-		})
-
-		test("deserialize snapshot", () => {
-			const storedEvent: StoredMintayCardEvent = {
-				version: 1,
-				data: {
-					type: StoredMintayCardEventTypeV1.ANSWER,
-					answer: StoredMintayAnswerV1.GOOD,
-					timestamp,
-				},
-			}
-			const event = MintayCardEventSerializer.deserialize(storedEvent)
-			expect(event).toMatchSnapshot()
-		})
+		// This will throw if any test fails
+		tester.runAllTests()
 	})
 })

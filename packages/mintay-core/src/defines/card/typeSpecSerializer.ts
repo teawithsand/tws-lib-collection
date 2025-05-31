@@ -1,33 +1,36 @@
 import { TypeSpecSerializer } from "../typings/serializer"
+import {
+	storedMintayCardDataVersionedType,
+	storedMintayCollectionDataVersionedType,
+} from "./stored"
 import { StoredMintayCollectionDataSchema } from "./stored/collection/schema"
-import { StoredMintayCollectionDataSerializer } from "./stored/collection/serializer"
 import { StoredMintayCardDataSchema } from "./stored/data/schema"
-import { StoredMintayCardDataSerializer } from "./stored/data/serializer"
 import { StoredMintayCardEventSchema } from "./stored/event/schema"
-import { MintayCardEventSerializer } from "./stored/event/serializer"
+import { storedMintayCardEventVersionedType } from "./stored/event/serializer"
 import { StoredMintayCardStateSchema } from "./stored/state/schema"
-import { MintayCardStateSerializer } from "./stored/state/serializer"
+import { storedMintayCardStateVersionedType } from "./stored/state/serializer"
 import { MintayTypeSpec } from "./typeSpec"
 
 export const MintayTypeSpecSerializer: TypeSpecSerializer<MintayTypeSpec> = {
-	serializeCardData: StoredMintayCardDataSerializer.serialize,
+	serializeCardData: storedMintayCardDataVersionedType.serialize,
 	deserializeCardData: (data: unknown) => {
 		const parsed = StoredMintayCardDataSchema.parse(data)
-		return StoredMintayCardDataSerializer.deserialize(parsed)
+		return storedMintayCardDataVersionedType.deserialize(parsed)
 	},
-	serializeCollectionHeader: StoredMintayCollectionDataSerializer.serialize,
+	serializeCollectionHeader:
+		storedMintayCollectionDataVersionedType.serialize,
 	deserializeCollectionHeader: (data: unknown) => {
 		const parsed = StoredMintayCollectionDataSchema.parse(data)
-		return StoredMintayCollectionDataSerializer.deserialize(parsed)
+		return storedMintayCollectionDataVersionedType.deserialize(parsed)
 	},
-	serializeState: MintayCardStateSerializer.serialize,
+	serializeState: storedMintayCardStateVersionedType.serialize,
 	deserializeState: (data: unknown) => {
 		const parsed = StoredMintayCardStateSchema.parse(data)
-		return MintayCardStateSerializer.deserialize(parsed)
+		return storedMintayCardStateVersionedType.deserialize(parsed)
 	},
-	serializeEvent: MintayCardEventSerializer.serialize,
+	serializeEvent: storedMintayCardEventVersionedType.serialize,
 	deserializeEvent: (data: unknown) => {
 		const parsed = StoredMintayCardEventSchema.parse(data)
-		return MintayCardEventSerializer.deserialize(parsed)
+		return storedMintayCardEventVersionedType.deserialize(parsed)
 	},
 }

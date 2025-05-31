@@ -1,50 +1,104 @@
-import { describe, expect, test } from "vitest"
+import { SerializerTester, TestData } from "@teawithsand/reserd"
+import { describe, test } from "vitest"
 import { MintayCardData } from "../../cardData"
 import { StoredMintayCardData } from "./schema"
-import { StoredMintayCardDataSerializer } from "./serializer"
+import { storedMintayCardDataVersionedType } from "./serializer"
 
-const exampleData: MintayCardData = {
-	globalId: "abc123",
-	content: "example content",
-	createdAtTimestamp: 1234567890,
-	lastUpdatedAtTimestamp: 1234567899,
-}
-
-describe("StoredMintayCardDataSerializer", () => {
-	test("serialize returns correct structure with version 1", () => {
-		const serialized = StoredMintayCardDataSerializer.serialize(exampleData)
-		expect(serialized.version).toBe(1)
-		expect(serialized.data).toEqual(exampleData)
-		expect(serialized).toMatchSnapshot()
-	})
-
-	test("deserialize returns correct MintayCardData for version 1", () => {
-		const storedData: StoredMintayCardData = {
-			version: 1,
-			data: exampleData,
+describe("storedMintayCardDataVersionedType", () => {
+	test("should pass SerializerTester validation", () => {
+		const testData: TestData<StoredMintayCardData, MintayCardData> = {
+			storedExamples: [
+				{
+					version: 1,
+					data: {
+						globalId: "card-123",
+						content: "Sample card content with various characters",
+						createdAtTimestamp: 1640995200000, // 2022-01-01T00:00:00.000Z
+						lastUpdatedAtTimestamp: 1641081600000, // 2022-01-02T00:00:00.000Z
+					},
+				},
+				{
+					version: 1,
+					data: {
+						globalId: "",
+						content: "",
+						createdAtTimestamp: 0,
+						lastUpdatedAtTimestamp: 0,
+					},
+				},
+				{
+					version: 1,
+					data: {
+						globalId: "special-chars-card-!@#$%^&*()",
+						content:
+							"Card with Unicode: 你好世界 🌍\nand\nnewlines\tand\ttabs",
+						createdAtTimestamp: Date.now(),
+						lastUpdatedAtTimestamp: Date.now() + 1000,
+					},
+				},
+			],
+			ownedExamples: [
+				{
+					globalId: "owned-card-456",
+					content: "Owned card example content",
+					createdAtTimestamp: 1609459200000, // 2021-01-01T00:00:00.000Z
+					lastUpdatedAtTimestamp: 1609545600000, // 2021-01-02T00:00:00.000Z
+				},
+				{
+					globalId: "large-card",
+					content: "C".repeat(10000), // Large content
+					createdAtTimestamp: Number.MAX_SAFE_INTEGER - 1000,
+					lastUpdatedAtTimestamp: Number.MAX_SAFE_INTEGER,
+				},
+			],
+			pairExamples: [
+				[
+					{
+						version: 1,
+						data: {
+							globalId: "paired-card-789",
+							content: "Paired card content",
+							createdAtTimestamp: 1577836800000, // 2020-01-01T00:00:00.000Z
+							lastUpdatedAtTimestamp: 1577923200000, // 2020-01-02T00:00:00.000Z
+						},
+					},
+					{
+						globalId: "paired-card-789",
+						content: "Paired card content",
+						createdAtTimestamp: 1577836800000,
+						lastUpdatedAtTimestamp: 1577923200000,
+					},
+				],
+				[
+					{
+						version: 1,
+						data: {
+							globalId: "minimal-pair",
+							content: "X",
+							createdAtTimestamp: 1,
+							lastUpdatedAtTimestamp: 2,
+						},
+					},
+					{
+						globalId: "minimal-pair",
+						content: "X",
+						createdAtTimestamp: 1,
+						lastUpdatedAtTimestamp: 2,
+					},
+				],
+			],
 		}
-		const deserialized =
-			StoredMintayCardDataSerializer.deserialize(storedData)
-		expect(deserialized).toEqual(exampleData)
-		expect(deserialized).toMatchSnapshot()
-	})
 
-	test("serialize then deserialize returns original value", () => {
-		const serialized = StoredMintayCardDataSerializer.serialize(exampleData)
-		const deserialized =
-			StoredMintayCardDataSerializer.deserialize(serialized)
-		expect(deserialized).toEqual(exampleData)
-	})
+		// Get the serializer from the versioned type
+		const serializer = storedMintayCardDataVersionedType.getSerializer()
 
-	test("deserialize then serialize returns original value", () => {
-		const storedData: StoredMintayCardData = {
-			version: 1,
-			data: exampleData,
-		}
-		const deserialized =
-			StoredMintayCardDataSerializer.deserialize(storedData)
-		const serialized =
-			StoredMintayCardDataSerializer.serialize(deserialized)
-		expect(serialized).toEqual(storedData)
+		// Create and run the tester
+		const tester = new SerializerTester({
+			testData,
+			serializer,
+		})
+
+		// This will throw if any test fails
+		tester.runAllTests()
 	})
 })

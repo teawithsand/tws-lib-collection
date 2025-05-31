@@ -1,39 +1,39 @@
+import { VersionedStoredType, createVersionedSchema } from "@teawithsand/reserd"
+import { z } from "zod"
 import { MintayCardData } from "../../cardData"
 import { StoredMintayCardData } from "./schema"
 
-const neverGuard = (value: never): never => {
-	throw new Error(`Unsupported version: ${value}`)
-}
+const mintayCardDataV1Schema = z.object({
+	globalId: z.string(),
+	content: z.string(),
+	createdAtTimestamp: z.number(),
+	lastUpdatedAtTimestamp: z.number(),
+})
 
-export class StoredMintayCardDataSerializer {
-	private constructor() {}
-
-	public static readonly serialize = (
-		data: MintayCardData,
-	): StoredMintayCardData => {
-		return {
-			version: 1,
+export const storedMintayCardDataVersionedType = VersionedStoredType.create<
+	StoredMintayCardData,
+	MintayCardData
+>({
+	config: {
+		versions: {
+			1: {
+				schema: createVersionedSchema(1, mintayCardDataV1Schema),
+				deserializer: (stored) => ({
+					globalId: stored.data.globalId,
+					content: stored.data.content,
+					createdAtTimestamp: stored.data.createdAtTimestamp,
+					lastUpdatedAtTimestamp: stored.data.lastUpdatedAtTimestamp,
+				}),
+			},
+		},
+		currentSerializer: (data: MintayCardData) => ({
+			version: 1 as const,
 			data: {
 				globalId: data.globalId,
 				content: data.content,
 				createdAtTimestamp: data.createdAtTimestamp,
 				lastUpdatedAtTimestamp: data.lastUpdatedAtTimestamp,
 			},
-		}
-	}
-
-	public static readonly deserialize = (
-		storedData: StoredMintayCardData,
-	): MintayCardData => {
-		if (storedData.version === 1) {
-			const d = storedData.data
-			return {
-				globalId: d.globalId,
-				content: d.content,
-				createdAtTimestamp: d.createdAtTimestamp,
-				lastUpdatedAtTimestamp: d.lastUpdatedAtTimestamp,
-			}
-		}
-		return neverGuard(storedData.version)
-	}
-}
+		}),
+	},
+})
