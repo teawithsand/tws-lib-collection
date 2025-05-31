@@ -308,6 +308,10 @@
    */
   "projects": [
     {
+      "packageName": "@teawithsand/llog",
+      "projectFolder": "packages/llog"
+    },
+    {
       "packageName": "@teawithsand/player",
       "projectFolder": "packages/player"
     },

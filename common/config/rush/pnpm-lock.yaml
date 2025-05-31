@@ -157,6 +157,39 @@ importers:
         specifier: ~3.1.3
         version: 3.1.4(@types/node@22.15.21)(@vitest/browser@3.1.4)(@vitest/ui@3.1.4)(jsdom@26.1.0)
 
+  ../../packages/llog:
+    devDependencies:
+      '@typescript-eslint/parser':
+        specifier: ^8.32.0
+        version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      '@vitest/coverage-istanbul':
+        specifier: ^3.1.3
+        version: 3.1.4(vitest@3.1.4)
+      eslint:
+        specifier: ^9.26.0
+        version: 9.27.0
+      eslint-plugin-unused-imports:
+        specifier: ^4.1.4
+        version: 4.1.4(@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
+      globals:
+        specifier: ^16.1.0
+        version: 16.1.0
+      prettier:
+        specifier: ^3.5.3
+        version: 3.5.3
+      prettier-plugin-organize-imports:
+        specifier: ^4.1.0
+        version: 4.1.0(prettier@3.5.3)(typescript@5.8.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+      typescript-eslint:
+        specifier: ^8.32.0
+        version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      vitest:
+        specifier: ~3.1.3
+        version: 3.1.4(@types/node@22.15.21)(@vitest/browser@3.1.4)(@vitest/ui@3.1.4)(jsdom@26.1.0)
+
   ../../packages/lngext:
     devDependencies:
       '@stryker-mutator/vitest-runner':
