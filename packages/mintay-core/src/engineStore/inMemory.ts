@@ -12,10 +12,7 @@ export class InMemoryEngineStore<
 {
 	private readonly db: InMemoryDb<T>
 	private readonly reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-	private readonly priorityExtractor: CardStateExtractor<
-		T["cardState"],
-		Queue
-	>
+	private readonly priorityExtractor: CardStateExtractor<T, Queue>
 	private readonly lastPushedCardIds: CardId[] = []
 	private readonly collectionId: CardId
 
@@ -26,7 +23,7 @@ export class InMemoryEngineStore<
 		collectionId,
 	}: {
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-		priorityExtractor: CardStateExtractor<T["cardState"], Queue>
+		priorityExtractor: CardStateExtractor<T, Queue>
 		db: InMemoryDb<T>
 		collectionId: CardId
 	}) {
@@ -113,13 +110,19 @@ export class InMemoryEngineStore<
 					? card.states[card.states.length - 1]!.state
 					: this.reducer.getDefaultState()
 
-			const priority = this.priorityExtractor.getPriority(state)
+			const priority = this.priorityExtractor.getPriority(
+				state,
+				card.data,
+			)
 			if (priority < lowestPriority) {
 				if (
 					!queues ||
 					queues.some(
 						(queue) =>
-							this.priorityExtractor.getQueue(state) === queue,
+							this.priorityExtractor.getQueue(
+								state,
+								card.data,
+							) === queue,
 					)
 				) {
 					lowestPriority = priority

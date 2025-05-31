@@ -14,12 +14,12 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 
 	constructor({
 		db,
-		defaultCollectionHeader = {} as T["collectionData"],
-		defaultCardData = {} as T["cardData"],
+		defaultCollectionHeader,
+		defaultCardData,
 	}: {
 		db: InMemoryDb<T>
-		defaultCollectionHeader?: T["collectionData"]
-		defaultCardData?: T["cardData"]
+		defaultCollectionHeader: T["collectionData"]
+		defaultCardData: T["cardData"]
 	}) {
 		this.db = db
 		this.defaultCollectionHeader = defaultCollectionHeader

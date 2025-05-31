@@ -46,7 +46,7 @@ const dummyReducer: CardStateReducer<
 	getDefaultState: () => dummyState,
 }
 
-const priorityExtractor: CardStateExtractor<DummySpec["cardState"], number> = {
+const priorityExtractor: CardStateExtractor<DummySpec, number> = {
 	getPriority: (state) => state.priority ?? 0,
 	getQueue: (state) => state.queue ?? 0,
 	getStats: (state) => {

@@ -2,9 +2,10 @@ import { CardStateExtractor } from "../typings/defines"
 import { MintayCardState } from "./cardState"
 import { CardStats } from "./cardStats"
 import { MintayCardQueue } from "./queue"
+import { MintayTypeSpec } from "./typeSpec"
 
 export class MintayCardStateExtractor
-	implements CardStateExtractor<MintayCardState, MintayCardQueue>
+	implements CardStateExtractor<MintayTypeSpec, MintayCardQueue>
 {
 	public readonly getPriority = (state: MintayCardState): number =>
 		state.fsrs.dueTimestamp

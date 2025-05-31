@@ -12,7 +12,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 	implements EngineStore<T, Queue>
 {
 	private reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-	private extractor: CardStateExtractor<T["cardState"], Queue>
+	private extractor: CardStateExtractor<T, Queue>
 	private db: MintayDrizzleDB
 	private serializer: TypeSpecSerializer<T>
 	private readonly collectionId: number
@@ -26,7 +26,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 	}: {
 		db: MintayDrizzleDB
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-		priorityExtractor: CardStateExtractor<T["cardState"], Queue>
+		priorityExtractor: CardStateExtractor<T, Queue>
 		serializer: TypeSpecSerializer<T>
 		collectionId: CardId
 	}) {
@@ -227,10 +227,22 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 		id: number,
 		tx: MintayDrizzleDBTx,
 	) => {
-		const queue = this.extractor.getQueue(state)
-		const priority = this.extractor.getPriority(state)
+		const card = await tx
+			.select()
+			.from(cardsTable)
+			.where(eq(cardsTable.id, id))
+			.get()
 
-		const stats = this.extractor.getStats(state)
+		if (!card)
+			throw new Error(
+				`Card with id ${id} not found; But it should exist. This should be unreachable.`,
+			)
+
+		const data = this.serializer.deserializeCardData(card?.cardData)
+
+		const queue = this.extractor.getQueue(state, data)
+		const priority = this.extractor.getPriority(state, data)
+		const stats = this.extractor.getStats(state, data)
 
 		await tx
 			.update(cardsTable)
