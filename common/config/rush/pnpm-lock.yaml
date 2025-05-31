@@ -495,6 +495,10 @@ importers:
         version: 3.1.4(@types/node@22.15.21)(@vitest/browser@3.1.4)(@vitest/ui@3.1.4)(jsdom@26.1.0)(sass-embedded@1.89.1)(sugarss@4.0.1(postcss@8.5.4))
 
   ../../packages/reserd:
+    dependencies:
+      zod:
+        specifier: ~3.25.42
+        version: 3.25.42
     devDependencies:
       '@stryker-mutator/vitest-runner':
         specifier: ~9.0.1
@@ -3518,6 +3522,9 @@ packages:
   zod@3.24.4:
     resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
 
+  zod@3.25.42:
+    resolution: {integrity: sha512-PcALTLskaucbeHc41tU/xfjfhcz8z0GdhhDcSgrCTmSazUuqnYqiXO63M0QUBVwpBlsLsNVn5qHSC5Dw3KZvaQ==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -6218,3 +6225,5 @@ snapshots:
   yoctocolors@2.1.1: {}
 
   zod@3.24.4: {}
+
+  zod@3.25.42: {}

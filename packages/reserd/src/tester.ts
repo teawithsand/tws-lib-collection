@@ -144,7 +144,7 @@ export class SerializerTester<Stored, Owned> {
 		// Test stored examples
 		for (const stored of this.testData.storedExamples) {
 			try {
-				this.serializer.deserializer(stored)
+				this.serializer.deserialize(stored)
 			} catch (error) {
 				throw new Error(
 					`Deserialization failed for stored object: ${JSON.stringify(stored)}\nError: ${error}`,
@@ -155,7 +155,7 @@ export class SerializerTester<Stored, Owned> {
 		// Test pair examples
 		for (const [stored, owned] of this.testData.pairExamples) {
 			try {
-				const deserialized = this.serializer.deserializer(stored)
+				const deserialized = this.serializer.deserialize(stored)
 				this.assertEquivalent(
 					deserialized,
 					owned,
@@ -175,28 +175,14 @@ export class SerializerTester<Stored, Owned> {
 	 * Throws an error if round trip fails
 	 */
 	public readonly testRoundTrip = (): void => {
-		// Stored -> Owned -> Stored round trip
-		for (const stored of this.testData.storedExamples) {
-			try {
-				const owned = this.serializer.deserializer(stored)
-				const roundTripped = this.serializer.serialize(owned)
-				this.assertEquivalent(
-					roundTripped,
-					stored,
-					"Round trip Stored->Owned->Stored failed",
-				)
-			} catch (error) {
-				throw new Error(
-					`Round trip Stored->Owned->Stored failed for: ${JSON.stringify(stored)}\nError: ${error}`,
-				)
-			}
-		}
+		// Note that round trips ending in Stored are not tested here, since during such round trip version update may occur,
+		// which would change structure of the Stored object, which would cause such test to fail.
 
 		// Owned -> Stored -> Owned round trip
 		for (const owned of this.testData.ownedExamples) {
 			try {
 				const stored = this.serializer.serialize(owned)
-				const roundTripped = this.serializer.deserializer(stored)
+				const roundTripped = this.serializer.deserialize(stored)
 				this.assertEquivalent(
 					roundTripped,
 					owned,

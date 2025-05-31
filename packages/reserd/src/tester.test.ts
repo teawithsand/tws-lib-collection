@@ -52,7 +52,7 @@ class MockSerializer implements Serializer<SimpleStored, SimpleOwned> {
 		return result
 	}
 
-	public readonly deserializer = (stored: SimpleStored): SimpleOwned => {
+	public readonly deserialize = (stored: SimpleStored): SimpleOwned => {
 		const result: SimpleOwned = {
 			id: stored.id,
 			name: stored.name,

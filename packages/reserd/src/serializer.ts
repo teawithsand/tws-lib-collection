@@ -22,7 +22,7 @@ export interface Serializer<Stored, Owned> {
 	 * @param stored Object in serialized format
 	 * @returns Object in application format
 	 */
-	deserializer: (stored: Stored) => Owned
+	deserialize: (stored: Stored) => Owned
 }
 
 /**
@@ -92,7 +92,7 @@ export class SimpleSerializer<TStored extends VersionedStored, TOwned>
 	 * @param stored - Object in serialized format
 	 * @returns Object in application format
 	 */
-	public readonly deserializer = (stored: TStored): TOwned => {
+	public readonly deserialize = (stored: TStored): TOwned => {
 		return this.deserializerSet.deserialize(stored)
 	}
 }

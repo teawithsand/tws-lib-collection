@@ -10,6 +10,7 @@ const config = {
 		"./src/flux.ts",
 		"./src/result.ts",
 		"./src/deepCopy.ts",
+		"./src/versionedStoredType.ts",
 	],
 }
 export default config
