@@ -2,18 +2,6 @@ import { drizzle } from "drizzle-orm/sqlite-proxy"
 import { SqliteClient } from "./client"
 
 /**
- * Query method types supported by Drizzle ORM
- */
-type DrizzleQueryMethod = "run" | "all" | "values" | "get"
-
-/**
- * Result structure expected by Drizzle ORM
- */
-interface DrizzleQueryResult {
-	readonly rows: unknown[]
-}
-
-/**
  * Creates a Drizzle ORM instance using SqlitePromiser as the backend.
  * This function provides a bridge between Drizzle ORM's proxy interface
  * and the SqlitePromiser implementation.
@@ -30,25 +18,26 @@ interface DrizzleQueryResult {
  * const users = await db.select().from(usersTable)
  * ```
  */
-export const createDrizzleFromPromiser = (client: SqliteClient) => {
-	return drizzle(
-		async (
-			sql: string,
-			params: unknown[],
-			method: DrizzleQueryMethod,
-		): Promise<DrizzleQueryResult> => {
-			// Execute the SQL using the promiser with appropriate configuration
-			const result = await client.exec({
-				sql,
-				bind: params,
-				returnValue: "resultRows",
-				rowMode: method === "get" ? "object" : "array",
-			})
+export const createDrizzleFromClient = (
+	client: SqliteClient,
+): ReturnType<typeof drizzle> => {
+	return drizzle(async (sql: string, params: unknown[], method) => {
+		// Execute the SQL using the client with appropriate configuration
+		const result = await client.exec({
+			sql,
+			bind: params,
+			returnValue: "resultRows",
+			rowMode: "array",
+		})
 
-			// Return the result in the format expected by Drizzle
+		if (method === "get") {
 			return {
-				rows: result.resultRows || [],
+				rows: result.resultRows![0] as unknown[], // in reality drizzle expects undefined here as well, but TS does not allow for it.
 			}
-		},
-	)
+		}
+
+		return {
+			rows: result.resultRows || [],
+		}
+	})
 }

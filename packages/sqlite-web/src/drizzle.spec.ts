@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm"
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { describe, expect, test } from "vitest"
-import { createDrizzleFromPromiser } from "./drizzle"
+import { createDrizzleFromClient } from "./drizzle"
 import { SqliteWorkerClient } from "./workerClient"
 
 // Define a simple test table
@@ -34,7 +34,7 @@ describe("Drizzle Proxy Implementation", () => {
 		`)
 
 		// Create Drizzle instance
-		const db = createDrizzleFromPromiser(client)
+		const db = createDrizzleFromClient(client)
 		const id = 69
 
 		// Execute raw query using template literal syntax
@@ -81,7 +81,7 @@ describe("Drizzle Proxy Implementation", () => {
 		}
 
 		// Create Drizzle instance
-		const db = createDrizzleFromPromiser(client)
+		const db = createDrizzleFromClient(client)
 
 		// Test select all users
 		const allUsers = await db.select().from(usersTable)
