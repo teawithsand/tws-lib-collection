@@ -104,12 +104,12 @@ export class InMemoryEngineStore<
 				continue
 			}
 
-			// Get state: either the last state or default state for cards with no events
-			const state =
-				card.states.length > 0
-					? card.states[card.states.length - 1]!.state
-					: this.reducer.getDefaultState()
+			// Only consider cards that have at least one event
+			if (card.states.length === 0) {
+				continue
+			}
 
+			const state = card.states[card.states.length - 1]!.state
 			const priority = this.priorityExtractor.getPriority(
 				state,
 				card.data,

@@ -34,6 +34,8 @@ export interface EngineStore<
 	/**
 	 * Retrieves the card ID with the highest priority from the specified queues.
 	 * If no queues are specified, considers all queues.
+	 * Only considers cards that have at least one event (excludes cards with no events).
+	 * S
 	 * @param queues - Optional array of queues to filter the search.
 	 * @returns A promise that resolves to the card ID with the highest priority or null if none found.
 	 */

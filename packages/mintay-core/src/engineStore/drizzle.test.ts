@@ -392,4 +392,35 @@ describe("DrizzleEngineStore", () => {
 			expect(state).toEqual(dummyState)
 		}
 	})
+
+	test("getTopCard should not return cards with no events", async () => {
+		const cards = await createCards()
+
+		// Initially, no cards have events, so getTopCard should return null
+		let topCard = await store.getTopCard(undefined)
+		expect(topCard).toBeNull()
+
+		// Push events to some cards but not all
+		await store.push(cards[0].id, { priority: 5 })
+		await store.push(cards[2].id, { priority: 3 })
+		// cards[1], cards[3], cards[4] have no events
+
+		topCard = await store.getTopCard(undefined)
+		expect(topCard).toBe(cards[2].id) // Should return the card with lowest priority among those with events
+
+		// Verify that cards with no events are not considered even if they would have lower priority
+		topCard = await store.getTopCard(undefined)
+		expect([cards[0].id, cards[2].id]).toContain(topCard)
+		expect([cards[1].id, cards[3].id, cards[4].id]).not.toContain(topCard)
+
+		// Pop all events from cards[2], it should no longer be returned
+		await store.popCard(cards[2].id)
+		topCard = await store.getTopCard(undefined)
+		expect(topCard).toBe(cards[0].id) // Only cards[0] has events now
+
+		// Pop all events from cards[0], no cards should be returned
+		await store.popCard(cards[0].id)
+		topCard = await store.getTopCard(undefined)
+		expect(topCard).toBeNull()
+	})
 })

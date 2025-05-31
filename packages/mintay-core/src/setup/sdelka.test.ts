@@ -529,37 +529,46 @@ describe.each<{
 			expect(finalDbRecord!.lapses).toBe(finalEngineState.fsrs.lapses)
 		})
 
-		test("REGRESSION: getTopCard should return cards that exist but have no events", async () => {
+		test("getTopCard should not return cards with no events", async () => {
 			const engineStore = mintay.getEngineStore(
 				collectionId,
 				testParameters,
 			)
 			const collection = mintay.collectionStore.get(collectionId)
 
-			// Create additional cards - some with events, some without
-			const cardWithoutEvents = await collection.createCard()
-			const cardWithEvents = await collection.createCard()
+			// Create additional cards
+			const card2 = await collection.createCard()
+			const card3 = await collection.createCard()
 
-			// Push an event to only one card, making it less prioritized (later due date)
-			await engineStore.push(cardWithEvents.id, {
+			// Initially, no cards have events, so getTopCard should return null
+			let topCard = await engineStore.getTopCard(undefined)
+			expect(topCard).toBeNull()
+
+			// Push events to some cards but not all
+			await engineStore.push(cardId, {
 				type: MintayCardEventType.ANSWER,
-				answer: MintayAnswer.EASY, // This will schedule the card far in the future
+				answer: MintayAnswer.GOOD,
 				timestamp: Date.now(),
 			})
+			await engineStore.push(card3.id, {
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.AGAIN,
+				timestamp: Date.now() + 1000,
+			})
+			// card2 has no events
 
-			// Get top card - should prioritize cards without events over cards with future due dates
-			// Cards without events have default priority (typically due now), so they should be higher priority
-			const topCardId = await engineStore.getTopCard(undefined)
+			// Should return one of the cards with events
+			topCard = await engineStore.getTopCard(undefined)
+			expect([cardId, card3.id]).toContain(topCard)
+			expect(topCard).not.toBe(card2.id) // card2 has no events
 
-			// The bug would cause getTopCard to return cardWithEvents.id or null,
-			// but it should return one of the cards without events (cardId or cardWithoutEvents.id)
-			// since they have default state with immediate due dates
-			expect(topCardId).not.toBeNull()
-			expect([cardId, cardWithoutEvents.id]).toContain(topCardId)
+			// Pop all events from cardId and card3
+			await engineStore.popCard(cardId)
+			await engineStore.popCard(card3.id)
 
-			// Verify the card without events is actually considered
-			// by checking that it's not the card we gave a future due date
-			expect(topCardId).not.toBe(cardWithEvents.id)
+			// Now no cards should be returned
+			topCard = await engineStore.getTopCard(undefined)
+			expect(topCard).toBeNull()
 		})
 	})
 })

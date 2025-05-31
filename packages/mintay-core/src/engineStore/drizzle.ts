@@ -187,8 +187,14 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 			: eq(cardsTable.collectionId, this.collectionId)
 
 		const result = await this.db
-			.select()
+			.select({
+				id: cardsTable.id,
+			})
 			.from(cardsTable)
+			.innerJoin(
+				cardEventsTable,
+				eq(cardEventsTable.cardId, cardsTable.id),
+			)
 			.where(whereCondition)
 			.orderBy(asc(cardsTable.priority))
 			.limit(1)
