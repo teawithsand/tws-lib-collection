@@ -192,40 +192,22 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 	public readonly getTopCard = async (
 		queues?: Queue[],
 	): Promise<CardId | null> => {
-		if (!queues) {
-			const result = await this.db
-				.select()
-				.from(cardEventsTable)
-				.innerJoin(
-					cardsTable,
-					and(
-						eq(cardEventsTable.cardId, cardsTable.id),
-						eq(cardEventsTable.collectionId, this.collectionId),
-					),
+		const whereCondition = queues
+			? and(
+					eq(cardsTable.collectionId, this.collectionId),
+					inArray(cardsTable.queue, queues),
 				)
-				.orderBy(desc(cardsTable.priority))
-				.limit(1)
-				.get()
+			: eq(cardsTable.collectionId, this.collectionId)
 
-			return result?.card_events.cardId ?? null
-		} else {
-			const result = await this.db
-				.select()
-				.from(cardEventsTable)
-				.innerJoin(
-					cardsTable,
-					and(
-						eq(cardEventsTable.cardId, cardsTable.id),
-						eq(cardEventsTable.collectionId, this.collectionId),
-					),
-				)
-				.where(inArray(cardsTable.queue, queues))
-				.orderBy(desc(cardsTable.priority))
-				.limit(1)
-				.get()
+		const result = await this.db
+			.select()
+			.from(cardsTable)
+			.where(whereCondition)
+			.orderBy(desc(cardsTable.priority))
+			.limit(1)
+			.get()
 
-			return result?.card_events.cardId ?? null
-		}
+		return result?.id ?? null
 	}
 
 	public readonly getCardData = async (

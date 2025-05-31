@@ -528,5 +528,38 @@ describe.each<{
 			expect(finalDbRecord!.repeats).toBe(finalEngineState.fsrs.reps)
 			expect(finalDbRecord!.lapses).toBe(finalEngineState.fsrs.lapses)
 		})
+
+		test("REGRESSION: getTopCard should return cards that exist but have no events", async () => {
+			const engineStore = mintay.getEngineStore(
+				collectionId,
+				testParameters,
+			)
+			const collection = mintay.collectionStore.get(collectionId)
+
+			// Create additional cards - some with events, some without
+			const cardWithoutEvents = await collection.createCard()
+			const cardWithEvents = await collection.createCard()
+
+			// Push an event to only one card, making it less prioritized (later due date)
+			await engineStore.push(cardWithEvents.id, {
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.EASY, // This will schedule the card far in the future
+				timestamp: Date.now(),
+			})
+
+			// Get top card - should prioritize cards without events over cards with future due dates
+			// Cards without events have default priority (typically due now), so they should be higher priority
+			const topCardId = await engineStore.getTopCard(undefined)
+
+			// The bug would cause getTopCard to return cardWithEvents.id or null,
+			// but it should return one of the cards without events (cardId or cardWithoutEvents.id)
+			// since they have default state with immediate due dates
+			expect(topCardId).not.toBeNull()
+			expect([cardId, cardWithoutEvents.id]).toContain(topCardId)
+
+			// Verify the card without events is actually considered
+			// by checking that it's not the card we gave a future due date
+			expect(topCardId).not.toBe(cardWithEvents.id)
+		})
 	})
 })

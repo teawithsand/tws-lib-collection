@@ -89,12 +89,20 @@ const insertCard = async (
 describe("DrizzleEngineStore", () => {
 	let store: DrizzleEngineStore<DummySpec, number>
 	let close: () => any
-
-	let cards: CardHandle<DummySpec>[]
 	let collectionStore: DrizzleCollectionStore<DummySpec>
+	let collectionOne: any
+
+	const createCards = async (
+		count: number = 5,
+	): Promise<CardHandle<DummySpec>[]> => {
+		const cards: CardHandle<DummySpec>[] = []
+		for (let i = 0; i < count; i++) {
+			cards.push(await collectionOne.createCard())
+		}
+		return cards
+	}
 
 	beforeEach(async () => {
-		cards = []
 		const res = await getTestingDb()
 		close = res.close
 		const db = res.drizzle
@@ -106,11 +114,7 @@ describe("DrizzleEngineStore", () => {
 			serializer: mockSerializer,
 		})
 
-		const collectionOne = await collectionStore.create()
-
-		for (let i = 0; i < 5; i++) {
-			cards.push(await collectionOne.createCard())
-		}
+		collectionOne = await collectionStore.create()
 
 		store = new DrizzleEngineStore<DummySpec, number>({
 			db,
@@ -126,12 +130,14 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("push adds event and state correctly", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		const data = await store.getCardData(cards[0].id)
 		expect(data).toEqual({ ...dummyState, priority: 1 })
 	})
 
 	test("popCard removes last event and updates state", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[0].id, { priority: 2 })
 		await store.popCard(cards[0].id)
@@ -140,12 +146,14 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("popCard on empty stack does nothing", async () => {
+		const cards = await createCards()
 		await store.popCard(cards[0].id)
 		const data = await store.getCardData(cards[0].id)
 		expect(data).toEqual(dummyState)
 	})
 
 	test("popCard removes card from store if last event popped", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.popCard(cards[0].id)
 		const data = await store.getCardData(cards[0].id)
@@ -153,6 +161,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("popCard multiple times removes events in order", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[0].id, { priority: 2 })
 		await store.push(cards[0].id, { priority: 3 })
@@ -171,11 +180,13 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("getCardData returns default state if no data", async () => {
+		const cards = await createCards()
 		const data = await store.getCardData(cards[0].id)
 		expect(data).toEqual(dummyState)
 	})
 
 	test("getTopCard returns card with highest priority", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 3 })
 		await store.push(cards[2].id, { priority: 2 })
@@ -190,6 +201,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("getTopCard returns one of highest priority cards if tie", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 5 })
 		await store.push(cards[1].id, { priority: 5 })
 
@@ -198,6 +210,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("getTopCard returns correct card after popping highest priority card", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 3 })
 		await store.push(cards[2].id, { priority: 2 })
@@ -211,15 +224,8 @@ describe("DrizzleEngineStore", () => {
 		expect(topCard).toBe(cards[2].id)
 	})
 
-	test("getTopCard returns null after popping all cards", async () => {
-		await store.push(cards[0].id, { priority: 1 })
-		await store.popCard(cards[0].id)
-
-		const topCard = await store.getTopCard(undefined)
-		expect(topCard).toBeNull()
-	})
-
 	test("getTopCard handles multiple cards with varying stack sizes", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[0].id, { priority: 4 })
 		await store.push(cards[1].id, { priority: 3 })
@@ -230,6 +236,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("pop removes last pushed event from stack", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[0].id, { priority: 2 })
 		await store.pop()
@@ -238,12 +245,14 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("pop does nothing if no last pushed card ids", async () => {
+		const cards = await createCards()
 		await store.pop()
 		const data = await store.getCardData(cards[0].id)
 		expect(data).toEqual(dummyState)
 	})
 
 	test("pop removes card from store if last event popped", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.pop()
 		const data = await store.getCardData(cards[0].id)
@@ -251,6 +260,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("push and popCard interleaved multiple times", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[0].id, { priority: 2 })
 		await store.popCard(cards[0].id)
@@ -271,6 +281,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("push multiple cards and verify states", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 2 })
 		await store.push(cards[0].id, { priority: 3 })
@@ -283,6 +294,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("popCard removes only last event for card", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[0].id, { priority: 2 })
 		await store.popCard(cards[0].id)
@@ -291,6 +303,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("pop removes events in correct order", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 2 })
 		await store.pop()
@@ -303,6 +316,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("pop with interleaved push and popCard", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 2 })
 		await store.popCard(cards[0].id)
@@ -314,6 +328,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("getTopCard respects queue filtering comprehensively", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1, queue: 1 })
 		await store.push(cards[1].id, { priority: 3, queue: 2 })
 		await store.push(cards[2].id, { priority: 2, queue: 1 })
@@ -341,6 +356,7 @@ describe("DrizzleEngineStore", () => {
 	})
 
 	test("advanced push/popCard/pop and getCardData scenario for multiple cards", async () => {
+		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 2 })
 		await store.push(cards[2].id, { priority: 3 })
