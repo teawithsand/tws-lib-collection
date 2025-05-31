@@ -1,37 +1,66 @@
+import {
+	Anchor,
+	Button,
+	Code,
+	Container,
+	Flex,
+	Image,
+	Paper,
+	Stack,
+	Text,
+	Title,
+} from "@mantine/core"
 import { useState } from "react"
-import "./App.css"
-import reactLogo from "./assets/react.svg"
+import styles from "./App.module.scss"
 
-function App() {
+/**
+ * Main application component using Mantine UI library
+ */
+const App = () => {
 	const [count, setCount] = useState(0)
 
 	return (
-		<>
-			<div>
-				<a href="https://vite.dev" target="_blank">
-					<img src={""} className="logo" alt="Vite logo" />
-				</a>
-				<a href="https://react.dev" target="_blank">
-					<img
-						src={reactLogo}
-						className="logo react"
-						alt="React logo"
-					/>
-				</a>
-			</div>
-			<h1>Vite + React</h1>
-			<div className="card">
-				<button onClick={() => setCount((count) => count + 1)}>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.tsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">
-				Click on the Vite and React logos to learn more
-			</p>
-		</>
+		<Container size="sm" py="xl" className={styles.container}>
+			<Stack align="center" gap="lg" className={styles.stack}>
+				<Flex gap="md" justify="center">
+					<Anchor href="https://vite.dev" target="_blank">
+						<Image
+							src={""}
+							alt="Vite logo"
+							className={styles.logo}
+						/>
+					</Anchor>
+					<Anchor href="https://react.dev" target="_blank">
+						<Image
+							src={""}
+							alt="React logo"
+							className={`${styles.logo} react`}
+						/>
+					</Anchor>
+				</Flex>
+
+				<Title>Vite + React + Mantine</Title>
+
+				<Paper p="xl" radius="md" shadow="sm" withBorder>
+					<Stack align="center">
+						<Button
+							onClick={() => setCount((count) => count + 1)}
+							size="lg"
+							variant="filled"
+						>
+							Count is {count}
+						</Button>
+						<Text>
+							Edit <Code>/src/App.tsx</Code> and save to test HMR
+						</Text>
+					</Stack>
+				</Paper>
+
+				<Text c="dimmed" size="sm">
+					Click on the Vite and React logos to learn more
+				</Text>
+			</Stack>
+		</Container>
 	)
 }
 
