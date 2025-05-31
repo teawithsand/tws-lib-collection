@@ -36,7 +36,7 @@ export class SqliteInMemoryClient implements SqliteClient {
 	 */
 	public static readonly create = async (): Promise<SqliteInMemoryClient> => {
 		const sqlite3 = await sqlite3InitModule({
-			print: console.log,
+			// print: console.log, // skip logging unnecessary stuff
 			printErr: console.error,
 		})
 
