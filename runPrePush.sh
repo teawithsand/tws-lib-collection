@@ -6,6 +6,8 @@ tmpfile=$(mktemp)
 # Ensure the temp file is deleted on script exit
 trap 'rm -f "$tmpfile"' EXIT
 
+rush build
+
 rush list --json > "$tmpfile"
 paths=$(jq -r '.projects[].path' "$tmpfile")
 
