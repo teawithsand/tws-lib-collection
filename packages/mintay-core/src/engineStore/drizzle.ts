@@ -204,7 +204,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 				.limit(1)
 				.get()
 
-			return result?.card_events.id ?? null
+			return result?.card_events.cardId ?? null
 		} else {
 			const result = await this.db
 				.select()
@@ -221,7 +221,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 				.limit(1)
 				.get()
 
-			return result?.card_events.id ?? null
+			return result?.card_events.cardId ?? null
 		}
 	}
 
