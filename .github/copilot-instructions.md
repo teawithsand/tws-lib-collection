@@ -67,3 +67,9 @@
 # Monorepo Structure
 
 - This is a rush monorepo. All projects and packages are located in the `packages/` directory at the root of the repository.
+
+# CSS
+- Do not use inline styles in React components and HTML files.
+- Use CSS modules for styling React components. Make sure modular file names end with `.module.css` or `.module.scss`.
+- Prefer SASS over CSS for styling React components. Use `.scss` file extension for SASS files.
+- Use BEM (Block Element Modifier) naming convention for CSS classes.
