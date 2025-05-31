@@ -1,5 +1,5 @@
 import { and, count, eq } from "drizzle-orm"
-import { DbUtil, DrizzleDB } from "../../db/db"
+import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
@@ -15,7 +15,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 	implements CollectionHandle<T>
 {
 	public readonly id: CardId
-	private readonly db: DrizzleDB
+	private readonly db: MintayDrizzleDB
 	private readonly defaultCardData: T["cardData"]
 	private readonly serializer: TypeSpecSerializer<T>
 
@@ -26,7 +26,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 		serializer,
 	}: {
 		id: CardId
-		db: DrizzleDB
+		db: MintayDrizzleDB
 		defaultCardData: T["cardData"]
 		serializer: TypeSpecSerializer<T>
 	}) {
@@ -206,7 +206,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 				})
 				.run()
 
-			const id = await DbUtil.selectLastInsertId(tx)
+			const id = await MintayDbUtil.selectLastInsertId(tx)
 			return { id }
 		})
 

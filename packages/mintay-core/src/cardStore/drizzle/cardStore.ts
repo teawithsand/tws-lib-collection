@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm"
-import { DrizzleDB } from "../../db/db"
+import { MintayDrizzleDB } from "../../db/db"
 import { cardsTable } from "../../db/schema"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
@@ -10,14 +10,14 @@ import { DrizzleCardHandle } from "./cardHandle"
 export class DrizzleCardStore<T extends StorageTypeSpec>
 	implements CardStore<T>
 {
-	private readonly db: DrizzleDB
+	private readonly db: MintayDrizzleDB
 	private readonly serializer: TypeSpecSerializer<T>
 
 	public constructor({
 		db,
 		serializer,
 	}: {
-		db: DrizzleDB
+		db: MintayDrizzleDB
 		serializer: TypeSpecSerializer<T>
 	}) {
 		this.db = db

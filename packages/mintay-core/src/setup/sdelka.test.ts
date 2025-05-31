@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from "vitest"
-import { DrizzleDB } from "../db/db"
+import { MintayDrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
 import {
 	MintayAnswer,
@@ -39,7 +39,7 @@ describe.each<{
 		getMintay: async () => {
 			const { drizzle, close } = await getTestingDb()
 			return {
-				mintay: new DrizzleMintay({ db: drizzle as DrizzleDB }),
+				mintay: new DrizzleMintay({ db: drizzle as MintayDrizzleDB }),
 				cleanup: close,
 			}
 		},

@@ -1,4 +1,4 @@
-import { DbUtil, DrizzleDB } from "../../db/db"
+import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable } from "../../db/schema"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
@@ -9,7 +9,7 @@ import { DrizzleCollectionHandle } from "./collectionHandle"
 export class DrizzleCollectionStore<T extends StorageTypeSpec>
 	implements CollectionStore<T>
 {
-	private readonly db: DrizzleDB
+	private readonly db: MintayDrizzleDB
 	private readonly defaultCollectionHeader: T["collectionData"]
 	private readonly defaultCardData: T["cardData"]
 	private readonly serializer: TypeSpecSerializer<T>
@@ -20,7 +20,7 @@ export class DrizzleCollectionStore<T extends StorageTypeSpec>
 		defaultCollectionHeader,
 		defaultCardData,
 	}: {
-		db: DrizzleDB
+		db: MintayDrizzleDB
 		serializer: TypeSpecSerializer<T>
 		defaultCollectionHeader: T["collectionData"]
 		defaultCardData: T["cardData"]
@@ -43,7 +43,7 @@ export class DrizzleCollectionStore<T extends StorageTypeSpec>
 				})
 				.run()
 
-			const id = await DbUtil.selectLastInsertId(tx)
+			const id = await MintayDbUtil.selectLastInsertId(tx)
 			return { id }
 		})
 

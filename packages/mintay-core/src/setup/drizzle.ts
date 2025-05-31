@@ -1,5 +1,5 @@
 import { CollectionStore, DrizzleCollectionStore } from "../cardStore"
-import { DrizzleDB } from "../db/db"
+import { MintayDrizzleDB } from "../db/db"
 import {
 	MintayCardQueue,
 	MintayCardStateExtractor,
@@ -15,9 +15,9 @@ import { Mintay } from "./defines"
 
 export class DrizzleMintay implements Mintay {
 	public readonly collectionStore: CollectionStore<MintayTypeSpec>
-	private readonly db: DrizzleDB
+	private readonly db: MintayDrizzleDB
 
-	constructor({ db }: { db: DrizzleDB }) {
+	constructor({ db }: { db: MintayDrizzleDB }) {
 		this.db = db
 		this.collectionStore = new DrizzleCollectionStore<MintayTypeSpec>({
 			db: this.db,

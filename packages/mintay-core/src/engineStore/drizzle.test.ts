@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
 import { CardHandle, DrizzleCollectionStore } from "../cardStore"
-import { DrizzleDB } from "../db/db"
+import { MintayDrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
 import { cardsTable } from "../db/schema"
 import { CardStateReducer } from "../defines/reducer/defines"
@@ -67,7 +67,11 @@ const mockSerializer: TypeSpecSerializer<DummySpec> = {
 	deserializeEvent: (eventStr) => JSON.parse(eventStr as string),
 }
 
-const insertCard = async (db: DrizzleDB, id: number, collectionId = 0) => {
+const insertCard = async (
+	db: MintayDrizzleDB,
+	id: number,
+	collectionId = 0,
+) => {
 	await db
 		.insert(cardsTable)
 		.values({

@@ -1,7 +1,7 @@
 import Database from "better-sqlite3"
 import { drizzle } from "drizzle-orm/sqlite-proxy"
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
-import { DB_MIGRATIONS, DrizzleDB } from "./db"
+import { DB_MIGRATIONS, MintayDrizzleDB } from "./db"
 
 export const getTestingDb = async (migrate = true) => {
 	const db = new Database(":memory:")
@@ -64,7 +64,7 @@ export const getTestingDb = async (migrate = true) => {
 }
 
 describe("getTestingDb", () => {
-	let drizzle: DrizzleDB
+	let drizzle: MintayDrizzleDB
 	let close: () => any
 
 	beforeEach(async () => {

@@ -1,5 +1,5 @@
 import { and, desc, eq, inArray, max } from "drizzle-orm"
-import { DrizzleDB, DrizzleDBTx } from "../db/db"
+import { MintayDrizzleDB, MintayDrizzleDBTx } from "../db"
 import { cardEventsTable, cardsTable } from "../db/schema"
 import { CardStateReducer } from "../defines/reducer/defines"
 import { CardId, CardIdUtil } from "../defines/typings/cardId"
@@ -13,7 +13,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 {
 	private reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
 	private extractor: CardStateExtractor<T["cardState"], Queue>
-	private db: DrizzleDB
+	private db: MintayDrizzleDB
 	private serializer: TypeSpecSerializer<T>
 	private readonly collectionId: number
 
@@ -24,7 +24,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 		serializer,
 		collectionId,
 	}: {
-		db: DrizzleDB
+		db: MintayDrizzleDB
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
 		priorityExtractor: CardStateExtractor<T["cardState"], Queue>
 		serializer: TypeSpecSerializer<T>
@@ -253,7 +253,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 	private readonly updateCardAfterModify = async (
 		state: T["cardState"],
 		id: number,
-		tx: DrizzleDBTx,
+		tx: MintayDrizzleDBTx,
 	) => {
 		const queue = this.extractor.getQueue(state)
 		const priority = this.extractor.getPriority(state)

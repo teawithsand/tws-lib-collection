@@ -1,16 +1,18 @@
 import { drizzle as drizzleProxy } from "drizzle-orm/sqlite-proxy"
 import { z } from "zod"
 
-export type DrizzleDB = ReturnType<typeof drizzleProxy>
-export type DrizzleDBTx = Parameters<Parameters<DrizzleDB["transaction"]>[0]>[0]
+export type MintayDrizzleDB = ReturnType<typeof drizzleProxy>
+export type MintayDrizzleDBTx = Parameters<
+	Parameters<MintayDrizzleDB["transaction"]>[0]
+>[0]
 
 const schema = z.tuple([z.number()])
 
-export class DbUtil {
+export class MintayDbUtil {
 	private constructor() {}
 
 	public static readonly selectLastInsertId = async (
-		db: DrizzleDB | DrizzleDBTx,
+		db: MintayDrizzleDB | MintayDrizzleDBTx,
 	): Promise<number> => {
 		const res = await db.get(`SELECT last_insert_rowid()`)
 		const parsed = schema.parse(res)
@@ -18,7 +20,7 @@ export class DbUtil {
 	}
 }
 
-export class DbMigration {
+export class MintayDbMigration {
 	public readonly up: string
 
 	constructor({ up }: { up: string }) {
@@ -26,18 +28,18 @@ export class DbMigration {
 	}
 }
 
-export class MigrationCollection {
-	constructor(public readonly migrations: DbMigration[]) {}
+export class MintayMigrationCollection {
+	constructor(public readonly migrations: MintayDbMigration[]) {}
 
-	public readonly runMigrations = async (db: DrizzleDB) => {
+	public readonly runMigrations = async (db: MintayDrizzleDB) => {
 		for (const migration of this.migrations) {
 			await db.run(migration.up)
 		}
 	}
 }
 
-export const DB_MIGRATIONS = new MigrationCollection([
-	new DbMigration({
+export const DB_MIGRATIONS = new MintayMigrationCollection([
+	new MintayDbMigration({
 		up: `-- filepath: /workspaces/sdelka-core/drizzle/0000_glossy_zarda.sql
 CREATE TABLE \`card_collections\` (
     \`id\` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
