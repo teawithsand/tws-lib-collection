@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, max } from "drizzle-orm"
+import { and, asc, desc, eq, inArray, max } from "drizzle-orm"
 import { MintayDrizzleDB, MintayDrizzleDBTx } from "../db"
 import { cardEventsTable, cardsTable } from "../db/schema"
 import { CardStateReducer } from "../defines/reducer/defines"
@@ -77,10 +77,6 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 
 			const ordinalNumber = (ordinalNumberRes?.ordinalNumber ?? -1) + 1
 
-			const queue = this.extractor.getQueue(newState)
-			const priority = this.extractor.getPriority(newState)
-			const stats = this.extractor.getStats(newState)
-
 			await tx.insert(cardEventsTable).values({
 				cardId: parsedId,
 				collectionId,
@@ -89,16 +85,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 				ordinalNumber,
 			})
 
-			await tx
-				.update(cardsTable)
-				.set({
-					queue,
-					priority,
-					lapses: stats.lapses,
-					repeats: stats.repeats,
-				})
-				.where(eq(cardsTable.id, parsedId))
-				.execute()
+			await this.updateCardAfterModify(newState, parsedId, tx)
 		})
 	}
 
@@ -203,7 +190,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 			.select()
 			.from(cardsTable)
 			.where(whereCondition)
-			.orderBy(desc(cardsTable.priority))
+			.orderBy(asc(cardsTable.priority))
 			.limit(1)
 			.get()
 

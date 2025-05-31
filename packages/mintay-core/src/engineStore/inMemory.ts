@@ -100,7 +100,7 @@ export class InMemoryEngineStore<
 			return null
 		}
 		let topCard: CardId | null = null
-		let highestPriority = -Infinity
+		let lowestPriority = Infinity
 		for (const cardId of this.db.getAllCardIds()) {
 			const card = this.db.getCardById(cardId)
 			if (!card || card.collection !== this.collectionId) {
@@ -114,7 +114,7 @@ export class InMemoryEngineStore<
 					: this.reducer.getDefaultState()
 
 			const priority = this.priorityExtractor.getPriority(state)
-			if (priority > highestPriority) {
+			if (priority < lowestPriority) {
 				if (
 					!queues ||
 					queues.some(
@@ -122,7 +122,7 @@ export class InMemoryEngineStore<
 							this.priorityExtractor.getQueue(state) === queue,
 					)
 				) {
-					highestPriority = priority
+					lowestPriority = priority
 					topCard = cardId
 				}
 			}

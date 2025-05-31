@@ -40,7 +40,7 @@ describe("MintayCardStateReducer", () => {
 
 		expect(extractor.getQueue(nextState)).not.toBe(MintayCardQueue.NEW)
 		expect(extractor.getPriority(nextState)).toBe(
-			-nextState.fsrs.dueTimestamp,
+			nextState.fsrs.dueTimestamp,
 		)
 		expect(extractor.getStats(nextState)).toEqual({
 			repeats: 1,
@@ -89,9 +89,6 @@ describe("MintayCardStateReducer", () => {
 				expect(nextState.fsrs.lapses).toBe(0)
 			}
 
-			expect(extractor.getPriority(nextState)).toBe(
-				-nextState.fsrs.dueTimestamp,
-			)
 			expect(extractor.getStats(nextState).repeats).toBe(1)
 		}
 

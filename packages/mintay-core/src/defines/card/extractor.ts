@@ -7,7 +7,7 @@ export class MintayCardStateExtractor
 	implements CardStateExtractor<MintayCardState, MintayCardQueue>
 {
 	public readonly getPriority = (state: MintayCardState): number =>
-		-state.fsrs.dueTimestamp
+		state.fsrs.dueTimestamp
 
 	public readonly getQueue = (state: MintayCardState): MintayCardQueue =>
 		state.fsrs.state

@@ -18,7 +18,7 @@ interface DummySpec extends StorageTypeSpec {
 	}
 	cardState: {
 		value: number
-		priority?: number
+		priority: number
 		queue?: number
 		lapses?: number
 		repeats?: number
@@ -27,7 +27,10 @@ interface DummySpec extends StorageTypeSpec {
 	cardData: {}
 }
 
-const dummyState: DummySpec["cardState"] = { value: 0, priority: 0 }
+const dummyState: DummySpec["cardState"] = {
+	value: 0,
+	priority: Number.MAX_SAFE_INTEGER,
+}
 
 const dummyReducer: CardStateReducer<
 	DummySpec["cardEvent"],
@@ -37,7 +40,7 @@ const dummyReducer: CardStateReducer<
 		...state,
 		priority: event.priority,
 		queue: event.queue !== undefined ? event.queue : state.queue,
-		lapses: event.queue !== undefined ? event.lapses : state.lapses,
+		lapses: event.lapses !== undefined ? event.lapses : state.lapses,
 		repeats: event.repeats !== undefined ? event.repeats : state.repeats,
 	}),
 	getDefaultState: () => dummyState,
@@ -65,25 +68,6 @@ const mockSerializer: TypeSpecSerializer<DummySpec> = {
 	serializeCollectionHeader: (header) => JSON.stringify(header),
 	deserializeCollectionHeader: (headerStr) => JSON.parse(headerStr as string),
 	deserializeEvent: (eventStr) => JSON.parse(eventStr as string),
-}
-
-const insertCard = async (
-	db: MintayDrizzleDB,
-	id: number,
-	collectionId = 0,
-) => {
-	await db
-		.insert(cardsTable)
-		.values({
-			id,
-			collectionId,
-			queue: 0,
-			priority: 0,
-			repeats: 0,
-			lapses: 0,
-			cardData: "{}",
-		})
-		.execute()
 }
 
 describe("DrizzleEngineStore", () => {
@@ -185,14 +169,14 @@ describe("DrizzleEngineStore", () => {
 		expect(data).toEqual(dummyState)
 	})
 
-	test("getTopCard returns card with highest priority", async () => {
+	test("getTopCard returns card with lowest priority", async () => {
 		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 3 })
 		await store.push(cards[2].id, { priority: 2 })
 
 		const topCard = await store.getTopCard(undefined)
-		expect(topCard).toBe(cards[1].id)
+		expect(topCard).toBe(cards[0].id)
 	})
 
 	test("getTopCard returns null if no cards", async () => {
@@ -200,7 +184,7 @@ describe("DrizzleEngineStore", () => {
 		expect(topCard).toBeNull()
 	})
 
-	test("getTopCard returns one of highest priority cards if tie", async () => {
+	test("getTopCard returns one of lowest priority cards if tie", async () => {
 		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 5 })
 		await store.push(cards[1].id, { priority: 5 })
@@ -209,16 +193,16 @@ describe("DrizzleEngineStore", () => {
 		expect([cards[0].id, cards[1].id]).toContain(topCard)
 	})
 
-	test("getTopCard returns correct card after popping highest priority card", async () => {
+	test("getTopCard returns correct card after popping lowest priority card", async () => {
 		const cards = await createCards()
 		await store.push(cards[0].id, { priority: 1 })
 		await store.push(cards[1].id, { priority: 3 })
 		await store.push(cards[2].id, { priority: 2 })
 
 		let topCard = await store.getTopCard(undefined)
-		expect(topCard).toBe(cards[1].id)
+		expect(topCard).toBe(cards[0].id)
 
-		await store.popCard(cards[1].id)
+		await store.popCard(cards[0].id)
 
 		topCard = await store.getTopCard(undefined)
 		expect(topCard).toBe(cards[2].id)
@@ -232,7 +216,7 @@ describe("DrizzleEngineStore", () => {
 		await store.push(cards[2].id, { priority: 2 })
 
 		const topCard = await store.getTopCard(undefined)
-		expect(topCard).toBe(cards[0].id)
+		expect(topCard).toBe(cards[2].id)
 	})
 
 	test("pop removes last pushed event from stack", async () => {
@@ -336,8 +320,8 @@ describe("DrizzleEngineStore", () => {
 		await store.push(cards[4].id, { priority: 3, queue: 3 })
 
 		let topCard = await store.getTopCard([1])
-		expect([cards[3].id, cards[2].id, cards[0].id]).toContain(topCard)
-		expect(topCard).toBe(cards[3].id)
+		expect([cards[0].id, cards[2].id, cards[3].id]).toContain(topCard)
+		expect(topCard).toBe(cards[0].id)
 
 		topCard = await store.getTopCard([2])
 		expect(topCard).toBe(cards[1].id)
@@ -352,7 +336,9 @@ describe("DrizzleEngineStore", () => {
 		expect(topCard).toBeNull()
 
 		topCard = await store.getTopCard(undefined)
-		expect([cards[1].id, cards[3].id, cards[4].id]).toContain(topCard)
+		expect([cards[0].id, cards[1].id, cards[3].id, cards[4].id]).toContain(
+			topCard,
+		)
 	})
 
 	test("advanced push/popCard/pop and getCardData scenario for multiple cards", async () => {
