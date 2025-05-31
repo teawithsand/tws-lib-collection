@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
-import { DrizzleDB } from "../db/db"
+import { MintayDrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
 import {
 	MintayCardData,
@@ -41,7 +41,7 @@ describe.each<{
 			const { drizzle, close } = await getTestingDb()
 			return {
 				store: new DrizzleCollectionStore<MintayTypeSpec>({
-					db: drizzle as DrizzleDB,
+					db: drizzle as MintayDrizzleDB,
 					defaultCollectionHeader:
 						MintayCollectionDataUtil.getDefaultData(),
 					defaultCardData: MintayCardDataUtil.getDefaultData(),
