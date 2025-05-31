@@ -308,6 +308,10 @@
    */
   "projects": [
     {
+      "packageName": "@teawithsand/mintay-app",
+      "projectFolder": "packages/mintay-app"
+    },
+    {
       "packageName": "@teawithsand/llog",
       "projectFolder": "packages/llog"
     },
