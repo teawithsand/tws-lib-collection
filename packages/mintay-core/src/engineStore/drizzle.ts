@@ -79,6 +79,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 
 			const queue = this.extractor.getQueue(newState)
 			const priority = this.extractor.getPriority(newState)
+			const stats = this.extractor.getStats(newState)
 
 			await tx.insert(cardEventsTable).values({
 				cardId: parsedId,
@@ -93,6 +94,8 @@ export class DrizzleEngineStore<T extends StorageTypeSpec, Queue extends number>
 				.set({
 					queue,
 					priority,
+					lapses: stats.lapses,
+					repeats: stats.repeats,
 				})
 				.where(eq(cardsTable.id, parsedId))
 				.execute()

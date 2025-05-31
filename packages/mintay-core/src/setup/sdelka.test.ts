@@ -1,6 +1,8 @@
+import { eq } from "drizzle-orm"
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from "vitest"
 import { MintayDrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
+import { cardsTable } from "../db/schema"
 import {
 	MintayAnswer,
 	MintayCardDataUtil,
@@ -9,7 +11,7 @@ import {
 	MintayCardStateExtractor,
 	MintayCollectionDataUtil,
 } from "../defines/card"
-import { CardId } from "../defines/typings/cardId"
+import { CardId, CardIdUtil } from "../defines/typings/cardId"
 import { FsrsParameters } from "../fsrs"
 import { Mintay } from "./defines"
 import { DrizzleMintay } from "./drizzle"
@@ -456,6 +458,75 @@ describe.each<{
 			expect(stateAfterPop).toEqual(initialState) // State should be the default initial state
 			expect(stateAfterPop.fsrs.reps).toBe(0)
 			expect(stateAfterPop.fsrs.lapses).toBe(0)
+		})
+
+		test("REGRESSION: DrizzleMintay push method should update card stats in database table", async () => {
+			// This test specifically targets the bug where stats were not updated in the database
+			// Skip for InMemoryMintay since it doesn't use a database
+			if (!(mintay instanceof DrizzleMintay)) {
+				return
+			}
+
+			const engineStore = mintay.getEngineStore(
+				collectionId,
+				testParameters,
+			)
+
+			// Get the database instance to directly query the cards table
+			const db = (mintay as any).db as MintayDrizzleDB
+
+			// Verify initial database state
+			const initialDbRecord = await db
+				.select()
+				.from(cardsTable)
+				.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+				.get()
+
+			expect(initialDbRecord).toBeDefined()
+			expect(initialDbRecord!.repeats).toBe(0)
+			expect(initialDbRecord!.lapses).toBe(0)
+
+			// Push a GOOD answer event
+			await engineStore.push(cardId, {
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
+				timestamp: Date.now(),
+			})
+
+			// Verify the engine store state is correct
+			const engineState = await engineStore.getCardData(cardId)
+			expect(engineState.fsrs.reps).toBe(1)
+			expect(engineState.fsrs.lapses).toBe(0)
+
+			// CRITICAL: Verify the database table was actually updated
+			// This is the check that would have failed before the bug fix
+			const updatedDbRecord = await db
+				.select()
+				.from(cardsTable)
+				.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+				.get()
+
+			expect(updatedDbRecord).toBeDefined()
+			expect(updatedDbRecord!.repeats).toBe(1) // This would fail without the fix
+			expect(updatedDbRecord!.lapses).toBe(0) // This would fail without the fix
+
+			// Push another event to further test the synchronization
+			await engineStore.push(cardId, {
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
+				timestamp: Date.now() + 1000,
+			})
+
+			const finalEngineState = await engineStore.getCardData(cardId)
+			const finalDbRecord = await db
+				.select()
+				.from(cardsTable)
+				.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+				.get()
+
+			expect(finalDbRecord).toBeDefined()
+			expect(finalDbRecord!.repeats).toBe(finalEngineState.fsrs.reps)
+			expect(finalDbRecord!.lapses).toBe(finalEngineState.fsrs.lapses)
 		})
 	})
 })
