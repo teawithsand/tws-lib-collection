@@ -1,55 +1,14 @@
-import Database from "better-sqlite3"
-import { drizzle } from "drizzle-orm/sqlite-proxy"
+import {
+	createDrizzleFromClient,
+	SqliteInMemoryClient,
+} from "@teawithsand/sqlite-web"
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
 import { DB_MIGRATIONS, MintayDrizzleDB } from "./db"
 
 export const getTestingDb = async (migrate = true) => {
-	const db = new Database(":memory:")
-
-	const drizzleDb = drizzle(async (sql, params, method) => {
-		if (method === "run") {
-			if (params.length === 0) {
-				db.exec(sql)
-			} else {
-				const stmt = db.prepare(sql)
-				let caught = false
-				try {
-					stmt.columns()
-				} catch (e) {
-					caught = true
-				}
-
-				if (caught) {
-					stmt.run(params)
-				} else {
-					const rows = stmt.all(params).map(Object.values as any)
-					return { rows }
-				}
-			}
-			return { rows: [] }
-		} else if (method === "all") {
-			const stmt = db.prepare(sql)
-			const rows = stmt.all(params).map(Object.values as any)
-			return { rows }
-		} else if (method === "get") {
-			const stmt = db.prepare(sql)
-			const row = stmt.get(params)
-			return {
-				rows: row
-					? Object.values(row)
-					: (undefined as unknown as string[]),
-			}
-		} else if (method === "values") {
-			const stmt = db.prepare(sql)
-			const rows = stmt
-				.all(params)
-				.map(Object.values as any)
-				.map((x) => String(x))
-			return { rows }
-		} else {
-			throw new Error(`Unsupported method: ${method}`)
-		}
-	})
+	const client = await SqliteInMemoryClient.create()
+	await client.open()
+	const drizzleDb = createDrizzleFromClient(client)
 
 	if (migrate) {
 		await DB_MIGRATIONS.runMigrations(drizzleDb)
@@ -58,7 +17,8 @@ export const getTestingDb = async (migrate = true) => {
 	return {
 		drizzle: drizzleDb,
 		close: async () => {
-			db.close()
+			console.log(client.close)
+			await client.close()
 		},
 	}
 }
