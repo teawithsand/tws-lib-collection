@@ -308,6 +308,10 @@
    */
   "projects": [
     {
+      "packageName": "@teawithsand/sqlite-web",
+      "projectFolder": "packages/sqlite-web"
+    },
+    {
       "packageName": "@teawithsand/mintay-app",
       "projectFolder": "packages/mintay-app"
     },
