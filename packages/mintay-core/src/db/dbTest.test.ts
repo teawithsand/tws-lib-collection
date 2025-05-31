@@ -17,7 +17,6 @@ export const getTestingDb = async (migrate = true) => {
 	return {
 		drizzle: drizzleDb,
 		close: async () => {
-			console.log(client.close)
 			await client.close()
 		},
 	}
