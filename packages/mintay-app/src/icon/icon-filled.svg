@@ -1,0 +1,80 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+  CUSTOMIZABLE PARAMETERS - Edit these values to customize the icon:
+  
+  COLORS:
+  - Background: #3b82f6 (solid blue matching hollow icon)
+  - Fish gradient start: #ffffff
+  - Fish gradient end: #f8fafc
+  - Eye color: #1e293b
+  - Eye highlight: white
+  - Smile color: #1e293b
+  
+  STROKE WIDTHS:
+  - Smile: 2.5
+  
+  SIZES:
+  - Fish body: rx="29" ry="17"
+  - Eye radius: r="4"
+  - Eye highlight radius: r="1.3"
+  
+  POSITIONS:
+  - Container: x="10" y="10" width="100" height="100"
+  - Fish center: translate(60, 60)
+  - Fish rotation: rotate(-45)
+  - Fish offset: translate(8, 0)
+  - Eye: cx="16" cy="-5"
+  - Eye highlight: cx="16.8" cy="-5.7"
+  -->
+  
+  <defs>
+    <filter id="iconShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.12"/>
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+    
+    <!-- Fish gradient -->
+    <linearGradient id="fishGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- App icon background - solid blue -->
+  <rect 
+    x="10" y="10" 
+    width="100" height="100" 
+    rx="22" ry="22"
+    fill="#3b82f6"
+    filter="url(#iconShadow)"/>
+  
+  <!-- Alaska Pollock fish -->
+  <g transform="translate(60, 60)">
+    <g transform="rotate(-45)">
+      <g transform="translate(8, 0)">
+        <!-- Fish body -->
+        <ellipse 
+          cx="0" cy="0" 
+          rx="29" ry="17"
+          fill="url(#fishGradient)"/>
+        
+        <!-- Fish tail -->
+        <path 
+          d="M -29 0 L -44 -12 L -39 0 L -44 12 Z"
+          fill="url(#fishGradient)"/>
+        
+        <!-- Fish eye -->
+        <circle cx="16" cy="-5" r="4" fill="#1e293b"/>
+        <circle cx="16.8" cy="-5.7" r="1.3" fill="white" opacity="0.9"/>
+        
+        <!-- Fish smile -->
+        <path 
+          d="M 12 7 Q 19 11 26 7"
+          fill="none"
+          stroke="#1e293b"
+          stroke-width="2.5"
+          stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+</svg>
