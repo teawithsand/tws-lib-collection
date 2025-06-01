@@ -1,30 +1,10 @@
-import { eq } from "drizzle-orm"
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from "vitest"
+import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { MintayDrizzleDB } from "../db/db"
 import { getTestingDb } from "../db/dbTest.test"
-import { cardsTable } from "../db/schema"
-import {
-	MintayAnswer,
-	MintayCardDataUtil,
-	MintayCardEventType,
-	MintayCollectionDataUtil,
-} from "../defines/card"
-import { CardId, CardIdUtil } from "../defines/typings/cardId"
-import { FsrsParameters } from "../fsrs"
+import { MintayCollectionDataUtil } from "../defines/card"
 import { Mintay } from "./defines"
 import { DrizzleMintay } from "./drizzle"
 import { InMemoryMintay } from "./inMemory"
-
-const testParameters: FsrsParameters = {
-	requestRetention: 0.9,
-	maximumInterval: 36500,
-	w: [
-		0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94, 2.18,
-		0.05, 0.34, 1.26, 0.29, 2.61, 0.29, 2.61,
-	],
-	enableFuzz: false,
-	enableShortTerm: true,
-}
 
 describe.each<{
 	name: string
