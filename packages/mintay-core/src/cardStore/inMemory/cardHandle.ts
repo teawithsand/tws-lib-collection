@@ -51,6 +51,17 @@ export class InMemoryCardHandle<T extends StorageTypeSpec>
 		return card.data
 	}
 
+	public readonly readState = async (): Promise<T["cardState"] | null> => {
+		const card = this.db.getCardById(this.id)
+		if (!card) throw new Error("Card not found")
+
+		if (card.states.length === 0) {
+			return null
+		}
+
+		return card.states[card.states.length - 1]!.state
+	}
+
 	public readonly exists = async (): Promise<boolean> => {
 		return this.db.getCardById(this.id) !== undefined
 	}

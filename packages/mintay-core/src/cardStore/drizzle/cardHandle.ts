@@ -232,6 +232,12 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 		return this.serializer.deserializeCardData(card.cardData)
 	}
 
+	public readonly readState = async (): Promise<T["cardState"] | null> => {
+		return await this.db.transaction(async (tx) => {
+			return await this.fetchLatestState(tx)
+		})
+	}
+
 	public readonly exists = async (): Promise<boolean> => {
 		const card = await this.db
 			.select({
@@ -259,5 +265,18 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 				.run()
 		})
 		this.collectionId = id
+	}
+
+	/**
+	 * Recomputes and updates all card metadata fields (priority, queue, lapses, repeats)
+	 * based on the current card data and latest state from events.
+	 * This is useful for manually refreshing computed properties when implementation of extractor has changed.
+	 */
+	public readonly recomputeMetadata = async (): Promise<void> => {
+		await this.withExistingCard(async (tx, card) => {
+			const cardData = this.serializer.deserializeCardData(card.cardData)
+			const latestState = await this.fetchLatestState(tx)
+			await this.updateCardMetadata(tx, cardData, latestState)
+		})
 	}
 }
