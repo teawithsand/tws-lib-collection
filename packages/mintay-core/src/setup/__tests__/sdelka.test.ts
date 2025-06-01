@@ -1289,4 +1289,158 @@ describe.each<{
 			}
 		}
 	})
+
+	test("should handle card events with getEventCount and getEvents functionality", async () => {
+		// Create collection and card
+		const collection = await mintay.collectionStore.create()
+		await collection.save({
+			globalId: "events-test-collection",
+			title: "Events Test Collection",
+			description: "Testing card event count and retrieval",
+			createdAtTimestamp: BASE_TIMESTAMP,
+			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
+		})
+
+		const card = await collection.createCard()
+		await card.save({
+			globalId: "events-test-card",
+			content: "What is the meaning of life?",
+			createdAtTimestamp: BASE_TIMESTAMP + 2000,
+			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 3000,
+			discoveryPriority: 500,
+		})
+
+		// Set up engine store with FSRS parameters
+		const fsrsParams: FsrsParameters = {
+			requestRetention: 0.9,
+			maximumInterval: 36500,
+			w: [
+				0.4, 0.6, 2.4, 5.8, 4.93, 0.94, 0.86, 0.01, 1.49, 0.14, 0.94,
+				2.18, 0.05, 0.34, 1.26, 0.29, 2.61, 0.2, 1.0,
+			],
+			enableFuzz: true,
+			enableShortTerm: true,
+		}
+		const engineStore = mintay.getEngineStore(collection.id, fsrsParams)
+
+		// Initially, card should have no events
+		expect(await card.getEventCount()).toBe(0)
+		const initialEvents = await card.getEvents()
+		expect(initialEvents).toHaveLength(0)
+
+		// Create multiple events with different answers and timestamps
+		const events: MintayCardEvent[] = [
+			{
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
+				timestamp: BASE_TIMESTAMP + 4000,
+			},
+			{
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.HARD,
+				timestamp: BASE_TIMESTAMP + 5000,
+			},
+			{
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.EASY,
+				timestamp: BASE_TIMESTAMP + 6000,
+			},
+			{
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.AGAIN,
+				timestamp: BASE_TIMESTAMP + 7000,
+			},
+			{
+				type: MintayCardEventType.ANSWER,
+				answer: MintayAnswer.GOOD,
+				timestamp: BASE_TIMESTAMP + 8000,
+			},
+		]
+
+		// Push all events to the card
+		for (const event of events) {
+			await engineStore.push(card.id, event)
+		}
+
+		// Test getEventCount after adding events
+		expect(await card.getEventCount()).toBe(5)
+
+		// Test getEvents without pagination (should return all events)
+		const allEvents = await card.getEvents()
+		expect(allEvents).toHaveLength(5)
+
+		// Verify events are returned in chronological order (oldest to newest)
+		for (let i = 0; i < allEvents.length; i++) {
+			expect(allEvents[i]).toEqual(events[i])
+		}
+
+		// Test getEvents with pagination - first page
+		const firstPage = await card.getEvents({ offset: 0, limit: 2 })
+		expect(firstPage).toHaveLength(2)
+		expect(firstPage[0]).toEqual(events[0])
+		expect(firstPage[1]).toEqual(events[1])
+
+		// Test getEvents with pagination - second page
+		const secondPage = await card.getEvents({ offset: 2, limit: 2 })
+		expect(secondPage).toHaveLength(2)
+		expect(secondPage[0]).toEqual(events[2])
+		expect(secondPage[1]).toEqual(events[3])
+
+		// Test getEvents with pagination - last page
+		const lastPage = await card.getEvents({ offset: 4, limit: 2 })
+		expect(lastPage).toHaveLength(1)
+		expect(lastPage[0]).toEqual(events[4])
+
+		// Test getEvents with offset only
+		const offsetOnly = await card.getEvents({ offset: 3 })
+		expect(offsetOnly).toHaveLength(2)
+		expect(offsetOnly[0]).toEqual(events[3])
+		expect(offsetOnly[1]).toEqual(events[4])
+
+		// Test getEvents with limit only
+		const limitOnly = await card.getEvents({ limit: 3 })
+		expect(limitOnly).toHaveLength(3)
+		expect(limitOnly[0]).toEqual(events[0])
+		expect(limitOnly[1]).toEqual(events[1])
+		expect(limitOnly[2]).toEqual(events[2])
+
+		// Test edge cases
+		const emptyPage = await card.getEvents({ offset: 10, limit: 5 })
+		expect(emptyPage).toHaveLength(0)
+
+		const zeroLimit = await card.getEvents({ offset: 0, limit: 0 })
+		expect(zeroLimit).toHaveLength(0)
+
+		// Test error handling for invalid parameters
+		await expect(card.getEvents({ offset: -1 })).rejects.toThrow()
+		await expect(card.getEvents({ limit: -1 })).rejects.toThrow()
+
+		// Test with non-finite numbers
+		await expect(
+			card.getEvents({ offset: Number.POSITIVE_INFINITY }),
+		).rejects.toThrow()
+		await expect(card.getEvents({ limit: Number.NaN })).rejects.toThrow()
+
+		// Verify that adding more events updates the count correctly
+		const additionalEvent: MintayCardEvent = {
+			type: MintayCardEventType.ANSWER,
+			answer: MintayAnswer.HARD,
+			timestamp: BASE_TIMESTAMP + 9000,
+		}
+		await engineStore.push(card.id, additionalEvent)
+
+		expect(await card.getEventCount()).toBe(6)
+		const updatedEvents = await card.getEvents()
+		expect(updatedEvents).toHaveLength(6)
+		expect(updatedEvents[5]).toEqual(additionalEvent)
+
+		// Test pop functionality with getEventCount
+		await engineStore.popCard(card.id)
+		expect(await card.getEventCount()).toBe(5)
+
+		const eventsAfterPop = await card.getEvents()
+		expect(eventsAfterPop).toHaveLength(5)
+		// Should not contain the last event that was popped
+		expect(eventsAfterPop).not.toContainEqual(additionalEvent)
+	})
 })

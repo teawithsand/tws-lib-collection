@@ -77,4 +77,38 @@ export class InMemoryCardHandle<T extends StorageTypeSpec>
 		this.db.upsertCard(this.id, updatedCard)
 		this.collectionId = id
 	}
+
+	public readonly getEventCount = async (): Promise<number> => {
+		const card = this.db.getCardById(this.id)
+		if (!card) throw new Error("Card not found")
+		return card.states.length
+	}
+
+	public readonly getEvents = async (params?: {
+		offset?: number
+		limit?: number
+	}): Promise<T["cardEvent"][]> => {
+		const card = this.db.getCardById(this.id)
+		if (!card) throw new Error("Card not found")
+
+		if (params?.offset !== undefined && params.offset < 0) {
+			throw new Error("Offset cannot be negative")
+		}
+		if (params?.offset !== undefined && !Number.isFinite(params.offset)) {
+			throw new Error("Offset must be a finite number")
+		}
+		if (params?.limit !== undefined && params.limit < 0) {
+			throw new Error("Limit cannot be negative")
+		}
+		if (params?.limit !== undefined && !Number.isFinite(params.limit)) {
+			throw new Error("Limit must be a finite number")
+		}
+
+		const offset = params?.offset ?? 0
+		const limit = params?.limit ?? card.states.length
+
+		return card.states
+			.slice(offset, offset + limit)
+			.map((stateItem) => stateItem.event)
+	}
 }

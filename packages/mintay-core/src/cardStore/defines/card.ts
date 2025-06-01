@@ -48,6 +48,21 @@ export interface CardHandle<T extends StorageTypeSpec> {
 	 * Throws error if card doesn't exist.
 	 */
 	setCollection: (id: CardId) => Promise<void>
+
+	/**
+	 * Gets the total number of events for this card.
+	 * Throws error if card doesn't exist.
+	 */
+	getEventCount: () => Promise<number>
+
+	/**
+	 * Gets paginated events for this card, ordered from oldest to newest.
+	 * Throws error if card doesn't exist.
+	 */
+	getEvents: (params?: {
+		offset?: number
+		limit?: number
+	}) => Promise<T["cardEvent"][]>
 }
 
 /**

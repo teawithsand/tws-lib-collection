@@ -1,5 +1,5 @@
-import { desc, eq } from "drizzle-orm"
-import { MintayDrizzleDB } from "../../db/db"
+import { asc, count, desc, eq } from "drizzle-orm"
+import { MintayDrizzleDB, MintayDrizzleDBTx } from "../../db/db"
 import {
 	cardCollectionsTable,
 	cardEventsTable,
@@ -10,6 +10,8 @@ import { CardExtractor } from "../../defines/typings/defines"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle } from "../defines/card"
+
+type CardRecord = typeof cardsTable.$inferSelect
 
 export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	implements CardHandle<T>
@@ -57,7 +59,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	/**
 	 * Fetches card from database within a transaction
 	 */
-	private readonly fetchCard = async (tx: any) => {
+	private readonly fetchCard = async (tx: MintayDrizzleDBTx) => {
 		return await tx
 			.select()
 			.from(cardsTable)
@@ -69,7 +71,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Fetches the latest state for the card
 	 */
 	private readonly fetchLatestState = async (
-		tx: any,
+		tx: MintayDrizzleDBTx,
 	): Promise<T["cardState"] | null> => {
 		const latestStateRes = await tx
 			.select({
@@ -103,7 +105,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Validates that the collection exists
 	 */
 	private readonly validateCollectionExists = async (
-		tx: any,
+		tx: MintayDrizzleDBTx,
 	): Promise<void> => {
 		const collection = await tx
 			.select()
@@ -119,7 +121,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	/**
 	 * Gets card from database, throws if not found
 	 */
-	private readonly getExistingCard = async (tx: any) => {
+	private readonly getExistingCard = async (tx: MintayDrizzleDBTx) => {
 		const card = await this.fetchCard(tx)
 		if (!card) throw new Error("Card not found")
 		return card
@@ -129,7 +131,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Updates card metadata based on state and data
 	 */
 	private readonly updateCardMetadata = async (
-		tx: any,
+		tx: MintayDrizzleDBTx,
 		data: T["cardData"],
 		state: T["cardState"] | null = null,
 	): Promise<void> => {
@@ -152,7 +154,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Executes a transaction that requires an existing card
 	 */
 	private readonly withExistingCard = async <R>(
-		callback: (tx: any, card: any) => Promise<R>,
+		callback: (tx: MintayDrizzleDBTx, card: CardRecord) => Promise<R>,
 	): Promise<R> => {
 		return await this.db.transaction(async (tx) => {
 			const card = await this.getExistingCard(tx)
@@ -164,7 +166,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Creates a new card in the database
 	 */
 	private readonly createCard = async (
-		tx: any,
+		tx: MintayDrizzleDBTx,
 		data: T["cardData"],
 	): Promise<void> => {
 		await this.validateCollectionExists(tx)
@@ -189,7 +191,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Updates an existing card in the database
 	 */
 	private readonly updateCard = async (
-		tx: any,
+		tx: MintayDrizzleDBTx,
 		data: T["cardData"],
 	): Promise<void> => {
 		const latestState = await this.fetchLatestState(tx)
@@ -277,6 +279,58 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 			const cardData = this.serializer.deserializeCardData(card.cardData)
 			const latestState = await this.fetchLatestState(tx)
 			await this.updateCardMetadata(tx, cardData, latestState)
+		})
+	}
+
+	public readonly getEventCount = async (): Promise<number> => {
+		return await this.withExistingCard(async (tx) => {
+			const result = await tx
+				.select({
+					count: count(),
+				})
+				.from(cardEventsTable)
+				.where(eq(cardEventsTable.cardId, this.getCardIdAsNumber()))
+				.get()
+
+			return result?.count ?? 0
+		})
+	}
+
+	public readonly getEvents = async (params?: {
+		offset?: number
+		limit?: number
+	}): Promise<T["cardEvent"][]> => {
+		return await this.withExistingCard(async (tx) => {
+			if (params?.offset !== undefined && params.offset < 0) {
+				throw new Error("Offset cannot be negative")
+			}
+			if (
+				params?.offset !== undefined &&
+				!Number.isFinite(params.offset)
+			) {
+				throw new Error("Offset must be a finite number")
+			}
+			if (params?.limit !== undefined && params.limit < 0) {
+				throw new Error("Limit cannot be negative")
+			}
+			if (params?.limit !== undefined && !Number.isFinite(params.limit)) {
+				throw new Error("Limit must be a finite number")
+			}
+
+			const events = await tx
+				.select({
+					event: cardEventsTable.event,
+				})
+				.from(cardEventsTable)
+				.where(eq(cardEventsTable.cardId, this.getCardIdAsNumber()))
+				.orderBy(asc(cardEventsTable.ordinalNumber))
+				.offset(params?.offset ?? 0)
+				.limit(params?.limit ?? Number.MAX_SAFE_INTEGER)
+				.all()
+
+			return events.map((event) =>
+				this.serializer.deserializeEvent(event.event),
+			)
 		})
 	}
 }
