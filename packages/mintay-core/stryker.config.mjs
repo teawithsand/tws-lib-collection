@@ -6,14 +6,11 @@ const config = {
 	testRunner: "vitest",
 	coverageAnalysis: "perTest",
 	mutate: [
-		"src/engineStore/inMemory.ts",
-		"src/cardStore/inMemory.ts",
-		"src/defines/card/stored/data/serializer.ts",
-		"src/defines/card/stored/state/serializer.ts",
-		"src/defines/card/stored/event/serializer.ts",
-		"src/defines/card/stored/collection/serializer.ts",
-		"src/cardStore/drizzle.ts",
+		"src/cardStore/inMemory/*.ts",
+		"src/cardStore/drizzle/*.ts",
+		"src/defines/card/stored/*/serializer.ts",
 		"src/engineStore/drizzle.ts",
+		"src/engineStore/inMemory.ts",
 	],
 }
 export default config
