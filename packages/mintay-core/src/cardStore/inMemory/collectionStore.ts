@@ -26,6 +26,10 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 		this.defaultCardData = defaultCardData
 	}
 
+	public readonly list = async (): Promise<CardId[]> => {
+		return this.db.getAllCollectionIds()
+	}
+
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
 		const newId = generateUuid() as CardId
 		const newCollection: InMemoryCollection<T> = {

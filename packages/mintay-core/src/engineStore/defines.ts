@@ -6,10 +6,7 @@ import { StorageTypeSpec } from "../defines/typings/typeSpec"
  * @template T - The type specification for card events and states.
  * @template Queue - The type used to identify queues, either string or number.
  */
-export interface EngineStore<
-	T extends StorageTypeSpec,
-	Queue extends string | number,
-> {
+export interface EngineStore<T extends StorageTypeSpec> {
 	/**
 	 * Pushes an event onto the stack for the specified card ID.
 	 * @param id - The card ID to push the event for.
@@ -39,7 +36,7 @@ export interface EngineStore<
 	 * @param queues - Optional array of queues to filter the search.
 	 * @returns A promise that resolves to the card ID with the highest priority or null if none found.
 	 */
-	getTopCard: (queues?: Queue[]) => Promise<CardId | null>
+	getTopCard: (queues?: T["queue"][]) => Promise<CardId | null>
 
 	/**
 	 * Retrieves the current state data for the specified card ID.

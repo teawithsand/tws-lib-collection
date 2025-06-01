@@ -2,33 +2,38 @@ import { eq } from "drizzle-orm"
 import { MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
+import { CardDataExtractor } from "../../defines/typings/defines"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle } from "../defines/card"
 
-export class DrizzleCardHandle<T extends StorageTypeSpec>
+export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	implements CardHandle<T>
 {
 	public readonly id: CardId
 	private readonly db: MintayDrizzleDB
 	private collectionId: CardId
 	private readonly serializer: TypeSpecSerializer<T>
+	private readonly cardDataExtractor: CardDataExtractor<T>
 
 	constructor({
 		id,
 		db,
 		serializer,
 		collectionId,
+		cardDataExtractor,
 	}: {
 		id: CardId
 		db: MintayDrizzleDB
 		serializer: TypeSpecSerializer<T>
 		collectionId: CardId
+		cardDataExtractor: CardDataExtractor<T>
 	}) {
 		this.id = id
 		this.db = db
 		this.collectionId = collectionId
 		this.serializer = serializer
+		this.cardDataExtractor = cardDataExtractor
 	}
 
 	public readonly save = async (data: T["cardData"]): Promise<void> => {
@@ -54,12 +59,21 @@ export class DrizzleCardHandle<T extends StorageTypeSpec>
 					throw new Error(
 						"Card not found and collection does not exist",
 					)
+
+				// Use CardDataExtractor to determine initial priority and queue
+				const discoveryPriority =
+					this.cardDataExtractor.getDiscoveryPriority(data)
+				const initialQueue =
+					this.cardDataExtractor.getInitialQueue(data)
+
 				await tx
 					.insert(cardsTable)
 					.values({
 						id: CardIdUtil.toNumber(this.id),
 						collectionId: CardIdUtil.toNumber(this.collectionId),
 						cardData: this.serializer.serializeCardData(data),
+						priority: discoveryPriority,
+						queue: initialQueue,
 					})
 					.run()
 				return

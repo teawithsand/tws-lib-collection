@@ -24,6 +24,7 @@ export interface CollectionHandle<T extends StorageTypeSpec> {
 }
 
 export interface CollectionStore<T extends StorageTypeSpec> {
+	list: () => Promise<CardId[]>
 	create: () => Promise<CollectionHandle<T>>
 	get: (id: CardId) => CollectionHandle<T>
 }

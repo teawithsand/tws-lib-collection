@@ -5,6 +5,7 @@ const StoredMintayCardDataV1Schema = z.object({
 	content: z.string(),
 	createdAtTimestamp: z.number(),
 	lastUpdatedAtTimestamp: z.number(),
+	discoveryPriority: z.number(),
 })
 
 export const StoredMintayCardDataSchema = z.discriminatedUnion("version", [

@@ -1,13 +1,16 @@
 import { CollectionStore, DrizzleCollectionStore } from "../cardStore"
 import { MintayDrizzleDB } from "../db/db"
 import {
-	MintayCardQueue,
 	MintayCardStateExtractor,
 	MintayCardStateReducer,
 	MintayTypeSpec,
 	MintayTypeSpecSerializer,
 } from "../defines"
-import { MintayCardDataUtil, MintayCollectionDataUtil } from "../defines/card"
+import {
+	MintayCardDataExtractor,
+	MintayCardDataUtil,
+	MintayCollectionDataUtil,
+} from "../defines/card"
 import { CardId } from "../defines/typings/cardId"
 import { DrizzleEngineStore, EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs/params"
@@ -24,21 +27,21 @@ export class DrizzleMintay implements Mintay {
 			defaultCollectionHeader: MintayCollectionDataUtil.getDefaultData(),
 			defaultCardData: MintayCardDataUtil.getDefaultData(),
 			serializer: MintayTypeSpecSerializer,
+			cardDataExtractor: new MintayCardDataExtractor(),
 		})
 	}
 
 	public readonly getEngineStore = (
 		id: CardId,
 		parameters: FsrsParameters,
-	): EngineStore<MintayTypeSpec, MintayCardQueue> => {
+	): EngineStore<MintayTypeSpec> => {
 		const reducer = new MintayCardStateReducer(parameters)
-		const priorityExtractor = new MintayCardStateExtractor()
-		const newStore = new DrizzleEngineStore<
-			MintayTypeSpec,
-			MintayCardQueue
-		>({
+		const stateExtractor = new MintayCardStateExtractor()
+		const dataExtractor = new MintayCardDataExtractor()
+		const newStore = new DrizzleEngineStore<MintayTypeSpec>({
 			reducer,
-			priorityExtractor,
+			stateExtractor,
+			dataExtractor,
 			db: this.db,
 			collectionId: id,
 			serializer: MintayTypeSpecSerializer,

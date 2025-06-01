@@ -1,11 +1,12 @@
-import { CardStateExtractor } from "../typings/defines"
+import { CardDataExtractor, CardStateExtractor } from "../typings/defines"
+import { MintayCardData } from "./cardData"
 import { MintayCardState } from "./cardState"
 import { CardStats } from "./cardStats"
 import { MintayCardQueue } from "./queue"
 import { MintayTypeSpec } from "./typeSpec"
 
 export class MintayCardStateExtractor
-	implements CardStateExtractor<MintayTypeSpec, MintayCardQueue>
+	implements CardStateExtractor<MintayTypeSpec>
 {
 	public readonly getPriority = (state: MintayCardState): number =>
 		state.fsrs.dueTimestamp
@@ -17,4 +18,18 @@ export class MintayCardStateExtractor
 		repeats: state.fsrs.reps,
 		lapses: state.fsrs.lapses,
 	})
+}
+
+export class MintayCardDataExtractor
+	implements CardDataExtractor<MintayTypeSpec>
+{
+	public readonly getDiscoveryPriority = (
+		cardData: MintayCardData,
+	): number => {
+		return cardData.discoveryPriority
+	}
+
+	public readonly getInitialQueue = (): MintayCardQueue => {
+		return MintayCardQueue.NEW
+	}
 }

@@ -8,6 +8,7 @@ const mintayCardDataV1Schema = z.object({
 	content: z.string(),
 	createdAtTimestamp: z.number(),
 	lastUpdatedAtTimestamp: z.number(),
+	discoveryPriority: z.number(),
 })
 
 export const storedMintayCardDataVersionedType = VersionedStoredType.create<
@@ -23,6 +24,7 @@ export const storedMintayCardDataVersionedType = VersionedStoredType.create<
 					content: stored.data.content,
 					createdAtTimestamp: stored.data.createdAtTimestamp,
 					lastUpdatedAtTimestamp: stored.data.lastUpdatedAtTimestamp,
+					discoveryPriority: stored.data.discoveryPriority,
 				}),
 			},
 		},
@@ -33,6 +35,7 @@ export const storedMintayCardDataVersionedType = VersionedStoredType.create<
 				content: data.content,
 				createdAtTimestamp: data.createdAtTimestamp,
 				lastUpdatedAtTimestamp: data.lastUpdatedAtTimestamp,
+				discoveryPriority: data.discoveryPriority,
 			},
 		}),
 	},

@@ -15,6 +15,7 @@ describe("storedMintayCardDataVersionedType", () => {
 						content: "Sample card content with various characters",
 						createdAtTimestamp: 1640995200000, // 2022-01-01T00:00:00.000Z
 						lastUpdatedAtTimestamp: 1641081600000, // 2022-01-02T00:00:00.000Z
+						discoveryPriority: 1234,
 					},
 				},
 				{
@@ -24,6 +25,7 @@ describe("storedMintayCardDataVersionedType", () => {
 						content: "",
 						createdAtTimestamp: 0,
 						lastUpdatedAtTimestamp: 0,
+						discoveryPriority: 3211,
 					},
 				},
 				{
@@ -34,6 +36,7 @@ describe("storedMintayCardDataVersionedType", () => {
 							"Card with Unicode: 你好世界 🌍\nand\nnewlines\tand\ttabs",
 						createdAtTimestamp: Date.now(),
 						lastUpdatedAtTimestamp: Date.now() + 1000,
+						discoveryPriority: 123213131,
 					},
 				},
 			],
@@ -43,12 +46,14 @@ describe("storedMintayCardDataVersionedType", () => {
 					content: "Owned card example content",
 					createdAtTimestamp: 1609459200000, // 2021-01-01T00:00:00.000Z
 					lastUpdatedAtTimestamp: 1609545600000, // 2021-01-02T00:00:00.000Z
+					discoveryPriority: 123213,
 				},
 				{
 					globalId: "large-card",
 					content: "C".repeat(10000), // Large content
 					createdAtTimestamp: Number.MAX_SAFE_INTEGER - 1000,
 					lastUpdatedAtTimestamp: Number.MAX_SAFE_INTEGER,
+					discoveryPriority: 1231,
 				},
 			],
 			pairExamples: [
@@ -60,6 +65,7 @@ describe("storedMintayCardDataVersionedType", () => {
 							content: "Paired card content",
 							createdAtTimestamp: 1577836800000, // 2020-01-01T00:00:00.000Z
 							lastUpdatedAtTimestamp: 1577923200000, // 2020-01-02T00:00:00.000Z
+							discoveryPriority: 1234,
 						},
 					},
 					{
@@ -67,6 +73,7 @@ describe("storedMintayCardDataVersionedType", () => {
 						content: "Paired card content",
 						createdAtTimestamp: 1577836800000,
 						lastUpdatedAtTimestamp: 1577923200000,
+						discoveryPriority: 1234,
 					},
 				],
 				[
@@ -77,6 +84,7 @@ describe("storedMintayCardDataVersionedType", () => {
 							content: "X",
 							createdAtTimestamp: 1,
 							lastUpdatedAtTimestamp: 2,
+							discoveryPriority: 4321,
 						},
 					},
 					{
@@ -84,6 +92,7 @@ describe("storedMintayCardDataVersionedType", () => {
 						content: "X",
 						createdAtTimestamp: 1,
 						lastUpdatedAtTimestamp: 2,
+						discoveryPriority: 4321,
 					},
 				],
 			],

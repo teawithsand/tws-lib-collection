@@ -1,6 +1,7 @@
 import {
 	MintayCardData,
 	MintayCardEvent,
+	MintayCardQueue,
 	MintayCardState,
 	MintayCollectionData,
 } from ".."
@@ -11,4 +12,5 @@ export interface MintayTypeSpec extends StorageTypeSpec {
 	cardData: MintayCardData
 	cardState: MintayCardState
 	cardEvent: MintayCardEvent
+	queue: MintayCardQueue
 }

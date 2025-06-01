@@ -3,4 +3,5 @@ export interface StorageTypeSpec {
 	cardData: Record<string, unknown>
 	cardState: Record<string, unknown>
 	cardEvent: Record<string, unknown>
+	queue: string | number
 }

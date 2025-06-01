@@ -1,34 +1,39 @@
 import { CardStateReducer } from "../defines/reducer/defines"
 import { CardId, CardIdUtil } from "../defines/typings/cardId"
-import { CardStateExtractor } from "../defines/typings/defines"
+import {
+	CardDataExtractor,
+	CardStateExtractor,
+} from "../defines/typings/defines"
 import { StorageTypeSpec } from "../defines/typings/typeSpec"
 import { InMemoryDb } from "../inMemoryDb/db"
 import { EngineStore } from "./defines"
 
-export class InMemoryEngineStore<
-	T extends StorageTypeSpec,
-	Queue extends string | number,
-> implements EngineStore<T, Queue>
+export class InMemoryEngineStore<T extends StorageTypeSpec>
+	implements EngineStore<T>
 {
 	private readonly db: InMemoryDb<T>
 	private readonly reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-	private readonly priorityExtractor: CardStateExtractor<T, Queue>
+	private readonly stateExtractor: CardStateExtractor<T>
+	private readonly dataExtractor: CardDataExtractor<T>
 	private readonly lastPushedCardIds: CardId[] = []
 	private readonly collectionId: CardId
 
 	constructor({
 		reducer,
-		priorityExtractor,
+		stateExtractor,
+		dataExtractor,
 		db,
 		collectionId,
 	}: {
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-		priorityExtractor: CardStateExtractor<T, Queue>
+		stateExtractor: CardStateExtractor<T>
+		dataExtractor: CardDataExtractor<T>
 		db: InMemoryDb<T>
 		collectionId: CardId
 	}) {
 		this.reducer = reducer
-		this.priorityExtractor = priorityExtractor
+		this.stateExtractor = stateExtractor
+		this.dataExtractor = dataExtractor
 		this.db = db
 		this.collectionId = collectionId
 	}
@@ -91,7 +96,7 @@ export class InMemoryEngineStore<
 	}
 
 	public readonly getTopCard = async (
-		queues?: Queue[],
+		queues?: T["queue"][],
 	): Promise<CardId | null> => {
 		if (queues && queues.length === 0) {
 			return null
@@ -104,30 +109,27 @@ export class InMemoryEngineStore<
 				continue
 			}
 
-			// Only consider cards that have at least one event
+			let priority: number
 			if (card.states.length === 0) {
-				continue
-			}
-
-			const state = card.states[card.states.length - 1]!.state
-			const priority = this.priorityExtractor.getPriority(
-				state,
-				card.data,
-			)
-			if (priority < lowestPriority) {
+				// Use data extractor for cards with no events
+				priority = this.dataExtractor.getDiscoveryPriority(card.data)
+			} else {
+				const state = card.states[card.states.length - 1]!.state
+				priority = this.stateExtractor.getPriority(state)
 				if (
-					!queues ||
-					queues.some(
+					queues &&
+					!queues.some(
 						(queue) =>
-							this.priorityExtractor.getQueue(
-								state,
-								card.data,
-							) === queue,
+							this.stateExtractor.getQueue(state) === queue,
 					)
 				) {
-					lowestPriority = priority
-					topCard = cardId
+					continue
 				}
+			}
+
+			if (priority < lowestPriority) {
+				lowestPriority = priority
+				topCard = cardId
 			}
 		}
 		return topCard

@@ -1,6 +1,7 @@
 import { and, count, eq } from "drizzle-orm"
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
+import { CardDataExtractor } from "../../defines"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
@@ -11,29 +12,34 @@ import {
 } from "../defines/collection"
 import { DrizzleCardHandle } from "./cardHandle"
 
-export class DrizzleCollectionHandle<T extends StorageTypeSpec>
-	implements CollectionHandle<T>
+export class DrizzleCollectionHandle<
+	T extends StorageTypeSpec & { queue: number },
+> implements CollectionHandle<T>
 {
 	public readonly id: CardId
 	private readonly db: MintayDrizzleDB
 	private readonly defaultCardData: T["cardData"]
 	private readonly serializer: TypeSpecSerializer<T>
+	private readonly cardDataExtractor: CardDataExtractor<T>
 
 	constructor({
 		id,
 		db,
 		defaultCardData,
 		serializer,
+		cardDataExtractor,
 	}: {
 		id: CardId
 		db: MintayDrizzleDB
 		defaultCardData: T["cardData"]
 		serializer: TypeSpecSerializer<T>
+		cardDataExtractor: CardDataExtractor<T>
 	}) {
 		this.id = id
 		this.db = db
 		this.defaultCardData = defaultCardData
 		this.serializer = serializer
+		this.cardDataExtractor = cardDataExtractor
 	}
 
 	public readonly save = async (data: T["collectionData"]): Promise<void> => {
@@ -166,6 +172,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 					db: this.db,
 					serializer: this.serializer,
 					collectionId: this.id,
+					cardDataExtractor: this.cardDataExtractor,
 				}),
 		)
 	}
@@ -192,6 +199,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 			db: this.db,
 			serializer: this.serializer,
 			collectionId: this.id,
+			cardDataExtractor: this.cardDataExtractor,
 		})
 	}
 
@@ -219,6 +227,7 @@ export class DrizzleCollectionHandle<T extends StorageTypeSpec>
 			db: this.db,
 			serializer: this.serializer,
 			collectionId: this.id,
+			cardDataExtractor: this.cardDataExtractor,
 		})
 	}
 }

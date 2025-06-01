@@ -13,7 +13,11 @@ export type MintayCardData = {
 
 	/** The timestamp indicating the last time the card was updated. */
 	lastUpdatedAtTimestamp: number
+
+	/** Priority for discovery, used to determine the order of initial card processing. */
+	discoveryPriority: number
 }
+
 export class MintayCardDataUtil {
 	private constructor() {}
 
@@ -22,5 +26,6 @@ export class MintayCardDataUtil {
 		content: "",
 		createdAtTimestamp: 0,
 		lastUpdatedAtTimestamp: 0,
+		discoveryPriority: 0,
 	})
 }

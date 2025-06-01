@@ -1,5 +1,5 @@
 import { CollectionStore } from "../cardStore"
-import { MintayCardQueue, MintayTypeSpec } from "../defines"
+import { MintayTypeSpec } from "../defines"
 import { CardId } from "../defines/typings/cardId"
 import { EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs"
@@ -24,5 +24,5 @@ export interface Mintay {
 	getEngineStore: (
 		id: CardId,
 		parameters: FsrsParameters,
-	) => EngineStore<MintayTypeSpec, MintayCardQueue>
+	) => EngineStore<MintayTypeSpec>
 }
