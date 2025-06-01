@@ -54,10 +54,9 @@ export class MintayCardStateReducer
 		state: MintayCardState,
 		event: MintayCardEvent,
 	): MintayCardState => {
-		state = this.fixStateTimestamp(state, event.timestamp)
-
 		switch (event.type) {
 			case MintayCardEventType.ANSWER: {
+				state = this.fixStateTimestamp(state, event.timestamp)
 				const fsrsCard = FSRSBridge.convertCardToFSRS(state.fsrs)
 				const rating = FSRSBridge.convertAnswerToRating(event.answer)
 				const now = new Date(event.timestamp)
