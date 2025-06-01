@@ -63,6 +63,11 @@
 - When writing test code, try not to use any casts, unless they are required, since that's a bad pattern and you should avoid it.
 - Never try to access private members of a class in the test code. If you need to access private members, consider using a public method or property that exposes the necessary functionality.
 - When testing, assume that all inputs adhere to typescript types and do not write unit tests for cases when type provided is different than typescript type.
+- Use Arrange Act Assert (AAA) pattern for structuring tests:
+    - Arrange: Set up the necessary preconditions and inputs.
+    - Act: Execute the code under test.
+    - Assert: Verify that the expected outcomes occur.
+- Prefer more smaller unit tests, to fewer larger tests. Each test should ideally focus on a single aspect of the functionality being tested.
 
 # Monorepo Structure
 
