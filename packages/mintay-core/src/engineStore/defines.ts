@@ -4,7 +4,6 @@ import { StorageTypeSpec } from "../defines/typings/typeSpec"
 /**
  * Interface representing an engine store that manages events and states for cards.
  * @template T - The type specification for card events and states.
- * @template Queue - The type used to identify queues, either string or number.
  */
 export interface EngineStore<T extends StorageTypeSpec> {
 	/**
