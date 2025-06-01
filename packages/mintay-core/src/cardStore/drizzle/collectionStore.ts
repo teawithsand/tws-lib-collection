@@ -1,6 +1,6 @@
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable } from "../../db/schema"
-import { CardDataExtractor } from "../../defines"
+import { CardExtractor } from "../../defines"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
@@ -15,25 +15,25 @@ export class DrizzleCollectionStore<
 	private readonly defaultCollectionHeader: T["collectionData"]
 	private readonly defaultCardData: T["cardData"]
 	private readonly serializer: TypeSpecSerializer<T>
-	private readonly cardDataExtractor: CardDataExtractor<T>
+	private readonly cardExtractor: CardExtractor<T>
 	constructor({
 		db,
 		serializer,
 		defaultCollectionHeader,
 		defaultCardData,
-		cardDataExtractor,
+		cardExtractor,
 	}: {
 		db: MintayDrizzleDB
 		serializer: TypeSpecSerializer<T>
 		defaultCollectionHeader: T["collectionData"]
 		defaultCardData: T["cardData"]
-		cardDataExtractor: CardDataExtractor<T>
+		cardExtractor: CardExtractor<T>
 	}) {
 		this.db = db
 		this.serializer = serializer
 		this.defaultCollectionHeader = defaultCollectionHeader
 		this.defaultCardData = defaultCardData
-		this.cardDataExtractor = cardDataExtractor
+		this.cardExtractor = cardExtractor
 	}
 
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
@@ -63,7 +63,7 @@ export class DrizzleCollectionStore<
 			db: this.db,
 			defaultCardData: this.defaultCardData,
 			serializer: this.serializer,
-			cardDataExtractor: this.cardDataExtractor,
+			cardExtractor: this.cardExtractor,
 		})
 	}
 
@@ -73,7 +73,7 @@ export class DrizzleCollectionStore<
 			db: this.db,
 			defaultCardData: this.defaultCardData,
 			serializer: this.serializer,
-			cardDataExtractor: this.cardDataExtractor,
+			cardExtractor: this.cardExtractor,
 		})
 	}
 

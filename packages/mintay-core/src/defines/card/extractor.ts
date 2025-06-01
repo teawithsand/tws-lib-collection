@@ -1,35 +1,43 @@
-import { CardDataExtractor, CardStateExtractor } from "../typings/defines"
+import { CardExtractor } from "../typings/defines"
 import { MintayCardData } from "./cardData"
 import { MintayCardState } from "./cardState"
 import { CardStats } from "./cardStats"
 import { MintayCardQueue } from "./queue"
 import { MintayTypeSpec } from "./typeSpec"
 
-export class MintayCardStateExtractor
-	implements CardStateExtractor<MintayTypeSpec>
-{
-	public readonly getPriority = (state: MintayCardState): number =>
-		state.fsrs.dueTimestamp
-
-	public readonly getQueue = (state: MintayCardState): MintayCardQueue =>
-		state.fsrs.state
-
-	public readonly getStats = (state: MintayCardState): CardStats => ({
-		repeats: state.fsrs.reps,
-		lapses: state.fsrs.lapses,
-	})
-}
-
-export class MintayCardDataExtractor
-	implements CardDataExtractor<MintayTypeSpec>
-{
-	public readonly getDiscoveryPriority = (
-		cardData: MintayCardData,
+export class MintayCardExtractor implements CardExtractor<MintayTypeSpec> {
+	public readonly getPriority = (
+		state: MintayCardState | null,
+		data: MintayCardData,
 	): number => {
-		return cardData.discoveryPriority
+		if (state && state.fsrs.dueTimestamp) {
+			return state.fsrs.dueTimestamp
+		} else {
+			return data.discoveryPriority
+		}
 	}
 
-	public readonly getInitialQueue = (): MintayCardQueue => {
-		return MintayCardQueue.NEW
+	public readonly getQueue = (
+		state: MintayCardState | null,
+	): MintayCardQueue => {
+		if (state) {
+			return state.fsrs.state
+		} else {
+			return MintayCardQueue.NEW
+		}
+	}
+
+	public readonly getStats = (state: MintayCardState | null): CardStats => {
+		if (state) {
+			return {
+				repeats: state.fsrs.reps,
+				lapses: state.fsrs.lapses,
+			}
+		} else {
+			return {
+				lapses: 0,
+				repeats: 0,
+			}
+		}
 	}
 }

@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm"
 import { MintayDrizzleDB } from "../../db/db"
 import { cardsTable } from "../../db/schema"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
-import { CardDataExtractor } from "../../defines/typings/defines"
+import { CardExtractor } from "../../defines/typings/defines"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle, CardStore } from "../defines/card"
@@ -13,20 +13,20 @@ export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
 {
 	private readonly db: MintayDrizzleDB
 	private readonly serializer: TypeSpecSerializer<T>
-	private readonly dataExtractor: CardDataExtractor<T>
+	private readonly extractor: CardExtractor<T>
 
 	public constructor({
 		db,
 		serializer,
-		dataExtractor,
+		cardExtractor,
 	}: {
 		db: MintayDrizzleDB
 		serializer: TypeSpecSerializer<T>
-		dataExtractor: CardDataExtractor<T>
+		cardExtractor: CardExtractor<T>
 	}) {
 		this.db = db
 		this.serializer = serializer
-		this.dataExtractor = dataExtractor
+		this.extractor = cardExtractor
 	}
 
 	public readonly getCardById = async (
@@ -63,7 +63,7 @@ export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
 			db: this.db,
 			serializer: this.serializer,
 			collectionId: CardIdUtil.toNumber(card.collectionId),
-			cardDataExtractor: this.dataExtractor,
+			cardExtractor: this.extractor,
 		})
 	}
 }

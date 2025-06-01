@@ -1,7 +1,7 @@
 import { and, count, eq } from "drizzle-orm"
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
-import { CardDataExtractor } from "../../defines"
+import { CardExtractor } from "../../defines"
 import { CardId, CardIdUtil } from "../../defines/typings/cardId"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
@@ -20,26 +20,26 @@ export class DrizzleCollectionHandle<
 	private readonly db: MintayDrizzleDB
 	private readonly defaultCardData: T["cardData"]
 	private readonly serializer: TypeSpecSerializer<T>
-	private readonly cardDataExtractor: CardDataExtractor<T>
+	private readonly cardExtractor: CardExtractor<T>
 
 	constructor({
 		id,
 		db,
 		defaultCardData,
 		serializer,
-		cardDataExtractor,
+		cardExtractor: cardExtractor,
 	}: {
 		id: CardId
 		db: MintayDrizzleDB
 		defaultCardData: T["cardData"]
 		serializer: TypeSpecSerializer<T>
-		cardDataExtractor: CardDataExtractor<T>
+		cardExtractor: CardExtractor<T>
 	}) {
 		this.id = id
 		this.db = db
 		this.defaultCardData = defaultCardData
 		this.serializer = serializer
-		this.cardDataExtractor = cardDataExtractor
+		this.cardExtractor = cardExtractor
 	}
 
 	public readonly save = async (data: T["collectionData"]): Promise<void> => {
@@ -172,7 +172,7 @@ export class DrizzleCollectionHandle<
 					db: this.db,
 					serializer: this.serializer,
 					collectionId: this.id,
-					cardDataExtractor: this.cardDataExtractor,
+					cardExtractor: this.cardExtractor,
 				}),
 		)
 	}
@@ -199,7 +199,7 @@ export class DrizzleCollectionHandle<
 			db: this.db,
 			serializer: this.serializer,
 			collectionId: this.id,
-			cardDataExtractor: this.cardDataExtractor,
+			cardExtractor: this.cardExtractor,
 		})
 	}
 
@@ -227,7 +227,7 @@ export class DrizzleCollectionHandle<
 			db: this.db,
 			serializer: this.serializer,
 			collectionId: this.id,
-			cardDataExtractor: this.cardDataExtractor,
+			cardExtractor: this.cardExtractor,
 		})
 	}
 }
