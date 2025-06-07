@@ -404,6 +404,9 @@ importers:
       webrtc-adapter:
         specifier: ~9.0.3
         version: 9.0.3
+      zod:
+        specifier: ~3.25.46
+        version: 3.25.46
     devDependencies:
       '@stryker-mutator/vitest-runner':
         specifier: ~9.0.1
@@ -3528,6 +3531,9 @@ packages:
   zod@3.25.42:
     resolution: {integrity: sha512-PcALTLskaucbeHc41tU/xfjfhcz8z0GdhhDcSgrCTmSazUuqnYqiXO63M0QUBVwpBlsLsNVn5qHSC5Dw3KZvaQ==}
 
+  zod@3.25.46:
+    resolution: {integrity: sha512-IqRxcHEIjqLd4LNS/zKffB3Jzg3NwqJxQQ0Ns7pdrvgGkwQsEBdEQcOHaBVqvvZArShRzI39+aMST3FBGmTrLQ==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -6230,3 +6236,5 @@ snapshots:
   zod@3.24.4: {}
 
   zod@3.25.42: {}
+
+  zod@3.25.46: {}

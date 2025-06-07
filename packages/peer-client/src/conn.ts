@@ -1,4 +1,4 @@
-export interface Conn<T> {
+export interface Conn<T = ArrayBuffer> {
 	receive: () => Promise<T>
 	send: (message: T) => void
 	close: () => void

@@ -37,6 +37,7 @@
   "dependencies": {
     "@teawithsand/reserd": "workspace:*",
     "webrtc-adapter": "~9.0.3",
-    "peerjs": "~1.5.4"
+    "peerjs": "~1.5.4",
+    "zod": "~3.25.46"
   }
 }
