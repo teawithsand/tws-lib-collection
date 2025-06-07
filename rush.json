@@ -312,6 +312,10 @@
       "projectFolder": "packages/exop-rts"
     },
     {
+      "packageName": "@teawithsand/exop-rts-ui",
+      "projectFolder": "packages/exop-rts-ui"
+    },
+    {
       "packageName": "@teawithsand/sqlite-web",
       "projectFolder": "packages/sqlite-web"
     },
