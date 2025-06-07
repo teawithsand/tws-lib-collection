@@ -111,6 +111,64 @@ importers:
         specifier: ~3.1.3
         version: 3.1.4(@types/node@22.15.21)(@vitest/browser@3.1.4)(@vitest/ui@3.1.4)(jsdom@26.1.0)(sass-embedded@1.89.1)(sugarss@4.0.1(postcss@8.5.4))
 
+  ../../packages/exop-rts:
+    dependencies:
+      '@teawithsand/lngext':
+        specifier: workspace:*
+        version: link:../lngext
+      '@teawithsand/reserd':
+        specifier: workspace:*
+        version: link:../reserd
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.26.0
+        version: 9.27.0
+      '@eslint/json':
+        specifier: ^0.12.0
+        version: 0.12.0
+      '@stryker-mutator/vitest-runner':
+        specifier: ~9.0.1
+        version: 9.0.1(@stryker-mutator/core@9.0.1(@types/node@22.15.21))(vitest@3.1.4)
+      '@teawithsand/sqlite-web':
+        specifier: workspace:*
+        version: link:../sqlite-web
+      '@types/better-sqlite3':
+        specifier: ^7.6.13
+        version: 7.6.13
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^8.32.0
+        version: 8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3)
+      '@typescript-eslint/parser':
+        specifier: ^8.32.0
+        version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      '@vitest/coverage-istanbul':
+        specifier: ^3.1.3
+        version: 3.1.4(vitest@3.1.4)
+      eslint:
+        specifier: ^9.26.0
+        version: 9.27.0
+      eslint-plugin-unused-imports:
+        specifier: ^4.1.4
+        version: 4.1.4(@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
+      globals:
+        specifier: ^16.0.0
+        version: 16.1.0
+      prettier:
+        specifier: ^3.5.3
+        version: 3.5.3
+      prettier-plugin-organize-imports:
+        specifier: ^4.1.0
+        version: 4.1.0(prettier@3.5.3)(typescript@5.8.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+      typescript-eslint:
+        specifier: ^8.31.1
+        version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
+      vitest:
+        specifier: ~3.1.3
+        version: 3.1.4(@types/node@22.15.21)(@vitest/browser@3.1.4)(@vitest/ui@3.1.4)(jsdom@26.1.0)(sass-embedded@1.89.1)(sugarss@4.0.1(postcss@8.5.4))
+
   ../../packages/fstate:
     dependencies:
       immer:

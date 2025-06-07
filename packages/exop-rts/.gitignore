@@ -1,0 +1,8 @@
+node_modules
+/dist
+.devcontainer
+/__*
+# stryker temp files
+.stryker-tmp
+/reports
+/.vscode
