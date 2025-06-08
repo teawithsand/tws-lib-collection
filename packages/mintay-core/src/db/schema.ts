@@ -6,13 +6,6 @@ import {
 	unique,
 } from "drizzle-orm/sqlite-core"
 
-export class DbSchemaConstants {
-	private constructor() {}
-
-	public static readonly DEFAULT_PRIORITY = 0
-	public static readonly DEFAULT_QUEUE = 0
-}
-
 export const cardCollectionsTable = sqliteTable("card_collections", {
 	id: integer("id").primaryKey({ autoIncrement: true }),
 	collectionHeader: text("collectionData", { mode: "json" }).notNull(),
@@ -26,13 +19,11 @@ export const cardsTable = sqliteTable(
 
 		cardData: text("cardData", { mode: "json" }).notNull(),
 
-		queue: integer().notNull().default(DbSchemaConstants.DEFAULT_QUEUE),
-		priority: integer()
-			.notNull()
-			.default(DbSchemaConstants.DEFAULT_PRIORITY),
+		queue: integer().notNull(),
+		priority: integer().notNull(),
 
-		repeats: integer().notNull().default(0),
-		lapses: integer().notNull().default(0),
+		repeats: integer().notNull(),
+		lapses: integer().notNull(),
 	},
 	(table) => [
 		foreignKey({

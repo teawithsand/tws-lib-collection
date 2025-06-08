@@ -40,8 +40,7 @@ export class MintayMigrationCollection {
 
 export const DB_MIGRATIONS = new MintayMigrationCollection([
 	new MintayDbMigration({
-		up: `-- filepath: /workspaces/sdelka-core/drizzle/0000_glossy_zarda.sql
-CREATE TABLE \`card_collections\` (
+		up: `CREATE TABLE \`card_collections\` (
     \`id\` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
     \`collectionData\` text NOT NULL
 );
@@ -60,14 +59,13 @@ CREATE TABLE \`card_events\` (
 CREATE UNIQUE INDEX \`card_events_collection_ordinal_number_uniq\` ON \`card_events\` (\`collection_id\`,\`ordinalNumber\`);--> statement-breakpoint
 CREATE TABLE \`cards\` (
     \`id\` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-    \`collection_id\` integer,
+    \`collection_id\` integer NOT NULL,
     \`cardData\` text NOT NULL,
-    \`queue\` integer DEFAULT 0 NOT NULL,
-    \`priority\` integer DEFAULT 0 NOT NULL,
-    \`repeats\` integer DEFAULT 0 NOT NULL,
-    \`lapses\` integer DEFAULT 0 NOT NULL,
+    \`queue\` integer NOT NULL,
+    \`priority\` integer NOT NULL,
+    \`repeats\` integer NOT NULL,
+    \`lapses\` integer NOT NULL,
     FOREIGN KEY (\`collection_id\`) REFERENCES \`card_collections\`(\`id\`) ON UPDATE cascade ON DELETE cascade
-);
-`,
+);`,
 	}),
 ])

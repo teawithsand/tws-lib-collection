@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "b3a5d195-1e33-41c5-b01a-c21cc22ae9a0",
+  "id": "4a55776f-b37e-4d87-bf11-e76e816eea86",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "card_collections": {
@@ -130,7 +130,7 @@
           "name": "collection_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "cardData": {
@@ -145,32 +145,28 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "priority": {
           "name": "priority",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "repeats": {
           "name": "repeats",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         },
         "lapses": {
           "name": "lapses",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": 0
+          "autoincrement": false
         }
       },
       "indexes": {},

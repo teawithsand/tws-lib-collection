@@ -205,12 +205,21 @@ export class DrizzleCollectionHandle<
 
 	public readonly createCard = async (): Promise<CardHandle<T>> => {
 		const newCardData = this.defaultCardData
+
+		const queue = this.cardExtractor.getQueue(null, newCardData)
+		const priority = this.cardExtractor.getPriority(null, newCardData)
+		const stats = this.cardExtractor.getStats(null, newCardData)
+
 		const insertedCard = await this.db.transaction(async (tx) => {
 			await tx
 				.insert(cardsTable)
 				.values({
 					collectionId: CardIdUtil.toNumber(this.id),
 					cardData: this.serializer.serializeCardData(newCardData),
+					queue: queue,
+					priority: priority,
+					repeats: stats.repeats,
+					lapses: stats.lapses,
 				})
 				.run()
 
