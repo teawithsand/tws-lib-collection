@@ -224,7 +224,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 		})
 	}
 
-	public readonly read = async (): Promise<T["cardData"]> => {
+	public readonly mustRead = async (): Promise<T["cardData"]> => {
 		const card = await this.db
 			.select()
 			.from(cardsTable)

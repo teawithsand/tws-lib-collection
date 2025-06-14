@@ -25,7 +25,7 @@ export interface CardHandle<T extends StorageTypeSpec> {
 	 * Reads the current card data.
 	 * Throws error if card doesn't exist.
 	 */
-	read: () => Promise<T["cardData"]>
+	mustRead: () => Promise<T["cardData"]>
 
 	/**
 	 * Reads the latest card state derived from events.

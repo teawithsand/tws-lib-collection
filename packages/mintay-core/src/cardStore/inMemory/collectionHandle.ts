@@ -43,10 +43,16 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 		this.db.upsertCollection(this.id, { header: updated })
 	}
 
-	public readonly read = async (): Promise<T["collectionData"]> => {
+	public readonly read = async (): Promise<T["collectionData"] | null> => {
 		const collection = this.db.getCollectionById(this.id)
-		if (!collection) throw new Error("Collection not found")
+		if (!collection) return null
 		return collection.header
+	}
+
+	public readonly mustRead = async (): Promise<T["collectionData"]> => {
+		const data = await this.read()
+		if (data === null) throw new Error("Collection not found")
+		return data
 	}
 
 	public readonly exists = async (): Promise<boolean> => {

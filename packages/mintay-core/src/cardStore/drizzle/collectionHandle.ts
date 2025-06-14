@@ -103,7 +103,7 @@ export class DrizzleCollectionHandle<
 			.run()
 	}
 
-	public readonly read = async (): Promise<T["collectionData"]> => {
+	public readonly read = async (): Promise<T["collectionData"] | null> => {
 		const collection = await this.db
 			.select()
 			.from(cardCollectionsTable)
@@ -111,12 +111,20 @@ export class DrizzleCollectionHandle<
 			.get()
 
 		if (!collection) {
-			throw new Error("Collection not found")
+			return null
 		}
 
 		return this.serializer.deserializeCollectionHeader(
 			collection.collectionHeader,
 		)
+	}
+
+	public readonly mustRead = async (): Promise<T["collectionData"]> => {
+		const data = await this.read()
+		if (data === null) {
+			throw new Error("Collection not found")
+		}
+		return data
 	}
 
 	public readonly exists = async (): Promise<boolean> => {

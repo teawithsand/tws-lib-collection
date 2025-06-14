@@ -12,7 +12,8 @@ export interface CollectionHandle<T extends StorageTypeSpec> {
 
 	save: (data: T["collectionData"]) => Promise<void>
 	update: (partial: Partial<T["collectionData"]>) => Promise<void>
-	read: () => Promise<T["collectionData"]>
+	read: () => Promise<T["collectionData"] | null>
+	mustRead: () => Promise<T["collectionData"]>
 	exists: () => Promise<boolean>
 	delete: () => Promise<void>
 

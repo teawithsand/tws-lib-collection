@@ -71,12 +71,12 @@ describe.each<{
 		await collection.save(collectionData)
 
 		// Read back the data
-		const savedData = await collection.read()
+		const savedData = await collection.mustRead()
 		expect(savedData).toEqual(collectionData)
 
 		// Update partial data
 		await collection.update({ title: "Updated Collection Title" })
-		const updatedData = await collection.read()
+		const updatedData = await collection.mustRead()
 		expect(updatedData.title).toBe("Updated Collection Title")
 		expect(updatedData.description).toBe(collectionData.description)
 
@@ -118,18 +118,18 @@ describe.each<{
 		await card.save(cardData)
 
 		// Read back the data
-		const savedCardData = await card.read()
+		const savedCardData = await card.mustRead()
 		expect(savedCardData).toEqual(cardData)
 
 		// Update card content
 		await card.update({ content: "What is the capital of Italy?" })
-		const updatedCardData = await card.read()
+		const updatedCardData = await card.mustRead()
 		expect(updatedCardData.content).toBe("What is the capital of Italy?")
 		expect(updatedCardData.globalId).toBe(cardData.globalId)
 
 		// Get card through collection
 		const retrievedCard = await collection.getCard(cardId)
-		const retrievedData = await retrievedCard.read()
+		const retrievedData = await retrievedCard.mustRead()
 		expect(retrievedData.content).toBe("What is the capital of Italy?")
 
 		// Get all cards in collection
@@ -892,7 +892,7 @@ describe.each<{
 		expect(fetchedFrenchCard1).not.toBeNull()
 
 		if (fetchedFrenchCard1) {
-			const cardData = await fetchedFrenchCard1.read()
+			const cardData = await fetchedFrenchCard1.mustRead()
 			expect(cardData.globalId).toBe("french-hello")
 			expect(cardData.content).toBe("How do you say 'hello' in French?")
 			expect(cardData.discoveryPriority).toBe(100)
@@ -904,7 +904,7 @@ describe.each<{
 		expect(fetchedSpanishCard).not.toBeNull()
 
 		if (fetchedSpanishCard) {
-			const cardData = await fetchedSpanishCard.read()
+			const cardData = await fetchedSpanishCard.mustRead()
 			expect(cardData.globalId).toBe("spanish-subjunctive")
 			expect(cardData.content).toBe(
 				"When do you use the subjunctive mood in Spanish?",
@@ -924,7 +924,7 @@ describe.each<{
 				lastUpdatedAtTimestamp: BASE_TIMESTAMP + 6000,
 			})
 
-			const updatedData = await fetchedFrenchCard1.read()
+			const updatedData = await fetchedFrenchCard1.mustRead()
 			expect(updatedData.content).toBe(
 				"How do you say 'bonjour' in English?",
 			)
@@ -978,8 +978,8 @@ describe.each<{
 
 		if (fetchedMinimalCard && fetchedRichCard) {
 			// Validate that all required fields are present
-			const minimalData = await fetchedMinimalCard.read()
-			const richData = await fetchedRichCard.read()
+			const minimalData = await fetchedMinimalCard.mustRead()
+			const richData = await fetchedRichCard.mustRead()
 
 			// Check data structure consistency
 			expect(typeof minimalData.globalId).toBe("string")
@@ -1008,7 +1008,7 @@ describe.each<{
 				lastUpdatedAtTimestamp: BASE_TIMESTAMP + 10000,
 			})
 
-			const migratedData = await fetchedMinimalCard.read()
+			const migratedData = await fetchedMinimalCard.mustRead()
 			expect(migratedData.content).toBe(
 				"Updated: Simple question with additional context",
 			)
@@ -1082,7 +1082,7 @@ describe.each<{
 		for (const cardId of studySessionCardIds) {
 			const card = await mintay.cardStore.getCardById(cardId)
 			if (card) {
-				const cardData = await card.read()
+				const cardData = await card.mustRead()
 				studyCards.push({ id: cardId, data: cardData })
 			}
 		}
@@ -1108,7 +1108,7 @@ describe.each<{
 		for (const cardId of studySessionCardIds) {
 			const card = await mintay.cardStore.getCardById(cardId)
 			if (card) {
-				const data = await card.read()
+				const data = await card.mustRead()
 				expect(data.lastUpdatedAtTimestamp).toBe(BASE_TIMESTAMP + 20000)
 			}
 		}
@@ -1153,7 +1153,7 @@ describe.each<{
 		expect(fetchedCard).not.toBeNull()
 
 		if (fetchedCard) {
-			const cardData = await fetchedCard.read()
+			const cardData = await fetchedCard.mustRead()
 			expect(cardData.globalId).toBe("spanish-colors")
 
 			// Simulate moving card to intermediate collection
@@ -1176,7 +1176,7 @@ describe.each<{
 			expect(cardAfterMove).not.toBeNull()
 
 			if (cardAfterMove) {
-				const preservedData = await cardAfterMove.read()
+				const preservedData = await cardAfterMove.mustRead()
 				expect(preservedData.globalId).toBe("spanish-colors")
 				expect(preservedData.content).toBe(
 					"What are the primary colors in Spanish?",
@@ -1190,7 +1190,8 @@ describe.each<{
 			// Verify card can be found through new collection
 			const cardThroughNewCollection =
 				await intermediateCollection.getCard(spanishCard.id)
-			const dataFromNewCollection = await cardThroughNewCollection.read()
+			const dataFromNewCollection =
+				await cardThroughNewCollection.mustRead()
 			expect(dataFromNewCollection.globalId).toBe("spanish-colors")
 		}
 	})
@@ -1236,7 +1237,7 @@ describe.each<{
 		for (const cardId of cardIds) {
 			const card = await mintay.cardStore.getCardById(cardId)
 			if (card) {
-				const cardData = await card.read()
+				const cardData = await card.mustRead()
 				const isHighQuality = highQualityIndicators.some((indicator) =>
 					cardData.content.includes(indicator),
 				)
@@ -1259,7 +1260,7 @@ describe.each<{
 		for (const cardId of cardsToUpdate) {
 			const card = await mintay.cardStore.getCardById(cardId)
 			if (card) {
-				const updatedData = await card.read()
+				const updatedData = await card.mustRead()
 				expect(updatedData.discoveryPriority).toBe(50)
 				expect(updatedData.lastUpdatedAtTimestamp).toBe(
 					BASE_TIMESTAMP + 10000,
@@ -1282,7 +1283,7 @@ describe.each<{
 		for (const cardId of cardIds) {
 			const card = await mintay.cardStore.getCardById(cardId)
 			if (card) {
-				const finalData = await card.read()
+				const finalData = await card.mustRead()
 				expect(finalData.lastUpdatedAtTimestamp).toBe(
 					standardLastUpdated,
 				)
