@@ -1,9 +1,12 @@
 import {
 	createDrizzleFromClient,
+	MigrationManager,
+	MigrationTester,
 	SqliteInMemoryClient,
 } from "@teawithsand/sqlite-web"
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
-import { DB_MIGRATIONS, MintayDrizzleDB } from "./db"
+import { MintayDrizzleDB } from "./db"
+import { DB_MIGRATIONS } from "./migrations"
 
 export const getTestingDb = async (migrate = true) => {
 	const client = await SqliteInMemoryClient.create()
@@ -11,7 +14,10 @@ export const getTestingDb = async (migrate = true) => {
 	const drizzleDb = createDrizzleFromClient(client)
 
 	if (migrate) {
-		await DB_MIGRATIONS.runMigrations(drizzleDb)
+		const migrator = MigrationManager.createWithClient(client, {
+			migrations: DB_MIGRATIONS,
+		})
+		await migrator.migrateToLatest()
 	}
 
 	return {
@@ -42,17 +48,6 @@ describe("getTestingDb", () => {
 	})
 
 	test("should run migrations and create tables", async () => {
-		await DB_MIGRATIONS.runMigrations(drizzle)
-
-		const result = await drizzle.all(
-			"SELECT name FROM sqlite_master WHERE type='table'",
-		)
-		const tables = result.map((row) => (row as any)[0])
-
-		const expectedTables = ["card_collections", "card_events", "cards"]
-
-		for (const table of expectedTables) {
-			expect(tables).toContain(table)
-		}
+		await MigrationTester.testMigrationsInMemory(DB_MIGRATIONS)
 	})
 })
