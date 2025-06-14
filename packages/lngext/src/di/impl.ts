@@ -1,5 +1,4 @@
 import { throwError } from "../throwExpression"
-import { DIError } from "./error"
 import { DI, DIContents } from "./types"
 
 export class DIImpl<T extends DIContents> implements DI<T> {
@@ -32,7 +31,7 @@ export class DIImpl<T extends DIContents> implements DI<T> {
 		return (
 			this.services[key] ??
 			throwError(
-				new DIError(
+				new Error(
 					`Got null|undefined value for "${String(key)}" was it provided?`,
 				),
 			)

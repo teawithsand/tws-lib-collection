@@ -1,4 +1,3 @@
-import { DIError } from "./error"
 import { DIImpl } from "./impl"
 import { DI, DIContents, DIContentsFactory, DIDefinitionObject } from "./types"
 
@@ -65,7 +64,7 @@ export class DIBuilder<T extends DIContents> {
 	): this => {
 		for (const key of keys) {
 			if (this.factories[key] === undefined) {
-				throw new DIError(
+				throw new Error(
 					`Key "${String(key)}" is not defined in builder, even though it should be`,
 				)
 			}
@@ -92,7 +91,7 @@ export class DIBuilder<T extends DIContents> {
 				const bVal = b[1]
 
 				if (aVal === undefined || bVal === undefined) {
-					throw new DIError(
+					throw new Error(
 						`Assertion filed: got undefined. Was some container value not provided?`,
 					)
 				}
@@ -106,17 +105,11 @@ export class DIBuilder<T extends DIContents> {
 
 			const factory = this.factories[key]
 			if (!factory) {
-				throw new DIError(`Got no factory for key: "${String(key)}"`)
+				throw new Error(`Got no factory for key: "${String(key)}"`)
 			}
 
-			try {
-				const value = await factory(partialDI)
-				container[key] = value
-			} catch {
-				throw new DIError(
-					`Filed to initialize key: "${String(key)}" while building DI; Factory has thrown`,
-				)
-			}
+			const value = await factory(partialDI)
+			container[key] = value
 		}
 
 		return DIImpl.createFull(container as T)
