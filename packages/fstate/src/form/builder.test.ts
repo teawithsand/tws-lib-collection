@@ -1,7 +1,9 @@
 import { Atom, atom, createStore } from "jotai"
 import { describe, expect, test } from "vitest"
+import { z } from "zod"
 import { FormAtomsBuilder } from "./builder"
 import { FormErrorBag } from "./error"
+import { FormZodValidatorFactory } from "./zodValidatorFactory"
 
 interface TestFormData {
 	name: string
@@ -186,6 +188,136 @@ describe("FormAtomsBuilder", () => {
 		).toBe(true)
 		expect(
 			(store.get(form.globalValidationErrors) as FormErrorBag).isEmpty,
+		).toBe(true)
+		expect(store.get(form.hasErrors)).toBe(false)
+	})
+
+	test("should integrate with FormZodValidatorFactory for schema-based validation", () => {
+		const initialValues: TestFormData = {
+			name: "John Doe",
+			email: "john@example.com",
+			age: 25,
+			isActive: true,
+		}
+
+		const schema = z.object({
+			name: z.string().min(2, "Name must be at least 2 characters"),
+			email: z.string().email("Invalid email format"),
+			age: z.number().min(18, "Must be at least 18 years old"),
+			isActive: z.boolean(),
+		})
+
+		const zodValidatorFactory = new FormZodValidatorFactory<
+			TestFormData,
+			any
+		>({
+			errorConverter: {
+				convertFieldError: (issue, fieldName) => {
+					if (issue.path.length > 0 && issue.path[0] === fieldName) {
+						return issue.message
+					}
+					return null
+				},
+				convertGlobalError: (issue) => {
+					if (issue.path.length === 0) {
+						return issue.message
+					}
+					return null
+				},
+			},
+			formData: {
+				age: null,
+				email: null,
+				name: null,
+				isActive: null,
+			},
+		})
+
+		const builder = FormAtomsBuilder.fromDefaultValues(initialValues)
+
+		builder.setFormValidators(({ formData }) => {
+			const zodValidation = zodValidatorFactory.createValidationResult(
+				schema,
+				formData,
+			)
+
+			return {
+				global: () => zodValidation.globalErrors,
+				fields: {
+					name: () => zodValidation.fieldErrors.name,
+					email: () => zodValidation.fieldErrors.email,
+					age: () => zodValidation.fieldErrors.age,
+					isActive: () => zodValidation.fieldErrors.isActive,
+				},
+			}
+		})
+
+		const form = builder.buildForm()
+		const store = createStore()
+
+		expect(store.get(form.fields.name.value)).toBe("John Doe")
+		expect(store.get(form.fields.email.value)).toBe("john@example.com")
+		expect(store.get(form.fields.age.value)).toBe(25)
+
+		expect(
+			(store.get(form.fields.name.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(true)
+		expect(
+			(store.get(form.fields.email.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(true)
+		expect(
+			(store.get(form.globalValidationErrors) as FormErrorBag).isEmpty,
+		).toBe(true)
+		expect(store.get(form.hasErrors)).toBe(false)
+
+		store.set(form.fields.name.value, "J")
+		expect(
+			(store.get(form.fields.name.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(false)
+		expect(
+			(store.get(form.fields.name.validationErrors) as FormErrorBag)
+				.first,
+		).toBe("Name must be at least 2 characters")
+
+		store.set(form.fields.email.value, "invalid-email")
+		expect(
+			(store.get(form.fields.email.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(false)
+		expect(
+			(store.get(form.fields.email.validationErrors) as FormErrorBag)
+				.first,
+		).toBe("Invalid email format")
+
+		store.set(form.fields.age.value, 16)
+		expect(
+			(store.get(form.fields.age.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(false)
+		expect(
+			(store.get(form.fields.age.validationErrors) as FormErrorBag).first,
+		).toBe("Must be at least 18 years old")
+
+		expect(store.get(form.hasErrors)).toBe(true)
+
+		store.set(form.fields.name.value, "Jane Doe")
+		store.set(form.fields.email.value, "jane@example.com")
+		store.set(form.fields.age.value, 30)
+
+		expect(
+			(store.get(form.fields.name.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(true)
+		expect(
+			(store.get(form.fields.email.validationErrors) as FormErrorBag)
+				.isEmpty,
+		).toBe(true)
+		expect(
+			(store.get(form.fields.age.validationErrors) as FormErrorBag)
+				.isEmpty,
 		).toBe(true)
 		expect(store.get(form.hasErrors)).toBe(false)
 	})

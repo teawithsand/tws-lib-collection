@@ -9,6 +9,7 @@ import {
 	FormFieldsDataAtoms,
 	FormFieldValueAtom,
 	FormValidator,
+	FormValidators,
 	ValidationContext,
 } from "./defines"
 import { FormError, FormErrorBag } from "./error"
@@ -50,6 +51,46 @@ export class FormAtomsBuilder<
 				(get) => get(this.submitPromiseLoadable).state === "loading",
 			),
 		}
+	}
+
+	public readonly setFormValidators = (
+		validatorsBuilder: (context: {
+			formData: Atom<T>
+			validationContext: ValidationContext
+		}) => FormValidators<T, E>,
+	): this => {
+		const validators = validatorsBuilder({
+			formData: this.value,
+			validationContext: this.createValidationContext(),
+		})
+
+		if (validators.global) {
+			this.globalValidationErrors = validators.global(
+				this.value,
+				this.createValidationContext(),
+			)
+		} else {
+			this.globalValidationErrors = atom(FormErrorBag.empty<E>())
+		}
+
+		this.fieldValidatorMap.clear()
+
+		for (const [fieldName, validator] of Object.entries(
+			validators.fields,
+		)) {
+			if (validator) {
+				this.fieldValidatorMap.set(
+					fieldName as keyof T,
+					validator(
+						this.data[fieldName as keyof T],
+						this.value,
+						this.createValidationContext(),
+					),
+				)
+			}
+		}
+
+		return this
 	}
 
 	public readonly setGlobalValidator = (
