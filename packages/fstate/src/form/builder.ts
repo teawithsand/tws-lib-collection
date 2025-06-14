@@ -1,17 +1,22 @@
 import { inPlace } from "@teawithsand/lngext"
-import { atom, Atom } from "jotai"
+import { atom, Atom, WritableAtom } from "jotai"
 import { loadable } from "jotai/utils"
 import {
 	FormAtoms,
 	FormFieldAtoms,
 	FormFieldsAtoms,
 	FormFieldsDataAtoms,
+	FormFieldValueAtom,
+	ValidationContext,
 } from "./defines"
-import { FormErrorBag } from "./error"
+import { FormError, FormErrorBag } from "./error"
 import { FormDataBase } from "./internal/form"
 import { FormsAtomsUtil } from "./util"
 
-export class FormAtomsBuilder<T extends FormDataBase> {
+export class FormAtomsBuilder<
+	T extends FormDataBase,
+	E extends FormError = FormError,
+> {
 	public static readonly fromDefaultValues = <T extends FormDataBase>(
 		initialValues: T,
 	) => {
@@ -20,17 +25,16 @@ export class FormAtomsBuilder<T extends FormDataBase> {
 		)
 	}
 
-	private globalValidationErrors: Atom<FormErrorBag>
+	private globalValidationErrors: Atom<FormErrorBag<E>>
 	private readonly value
-	private readonly fieldValidatorMap: Map<keyof T, Atom<FormErrorBag>>
+	private readonly fieldValidatorMap: Map<keyof T, Atom<FormErrorBag<E>>>
 	private readonly fieldDisabledMap: Map<keyof T, Atom<boolean>>
-
 	private readonly submitPromiseAtom
 	private readonly submitPromiseLoadable
 
 	private constructor(private readonly data: FormFieldsDataAtoms<T>) {
 		this.value = FormsAtomsUtil.getValue(data)
-		this.globalValidationErrors = atom(FormErrorBag.empty())
+		this.globalValidationErrors = atom(FormErrorBag.empty<E>())
 		this.fieldValidatorMap = new Map()
 		this.fieldDisabledMap = new Map()
 
@@ -38,84 +42,129 @@ export class FormAtomsBuilder<T extends FormDataBase> {
 		this.submitPromiseLoadable = loadable(this.submitPromiseAtom)
 	}
 
-	setGlobalValidator = (callback: (value: Atom<T>) => Atom<FormErrorBag>) => {
-		this.globalValidationErrors = callback(this.value)
+	private readonly createValidationContext = (): ValidationContext => {
+		return {
+			isSubmitting: atom(
+				(get) => get(this.submitPromiseLoadable).state === "loading",
+			),
+		}
 	}
 
-	setFieldValidator = <E extends keyof T>(
-		name: E,
-		callback: (
-			fieldValue: Atom<T[E]>,
+	public readonly setGlobalValidator = (
+		validator: (value: Atom<T>) => Atom<FormErrorBag<E>>,
+	): this => {
+		this.globalValidationErrors = validator(this.value)
+		return this
+	}
+
+	public readonly setFieldValidator = <K extends keyof T>(
+		name: K,
+		validator: (
+			fieldValue: Atom<T[K]>,
 			formValue: Atom<T>,
-			context: {
-				isSubmitting: Atom<boolean>
-			},
-		) => Atom<FormErrorBag>,
-	) => {
+			context: ValidationContext,
+		) => Atom<FormErrorBag<E>>,
+	): this => {
 		this.fieldValidatorMap.set(
 			name,
-			callback(this.data[name], this.value, {
-				isSubmitting: atom(
-					(get) =>
-						get(this.submitPromiseLoadable).state === "loading",
-				),
-			}),
+			validator(
+				this.data[name],
+				this.value,
+				this.createValidationContext(),
+			),
 		)
+		return this
 	}
 
-	setFieldDisabledCondition = <E extends keyof T>(
-		name: E,
-		callback: (
-			fieldValue: Atom<T[E]>,
+	public readonly setFieldDisabledCondition = <K extends keyof T>(
+		name: K,
+		condition: (
+			fieldValue: Atom<T[K]>,
 			formValue: Atom<T>,
-			context: {
-				isSubmitting: Atom<boolean>
-			},
+			context: ValidationContext,
 		) => Atom<boolean>,
-	) => {
+	): this => {
 		this.fieldDisabledMap.set(
 			name,
-			callback(this.data[name], this.value, {
-				isSubmitting: atom(
-					(get) =>
-						get(this.submitPromiseLoadable).state === "loading",
-				),
-			}),
+			condition(
+				this.data[name],
+				this.value,
+				this.createValidationContext(),
+			),
 		)
+		return this
 	}
 
-	buildForm = (): FormAtoms<T> => {
-		const fields = inPlace(() => {
-			const defaultValidator = atom(FormErrorBag.empty())
-			const defaultDisabled = atom(
+	private readonly createDefaultAtoms = () => {
+		return {
+			validator: atom(FormErrorBag.empty<E>()),
+			disabled: atom(
 				(get) => get(this.submitPromiseLoadable).state === "loading",
-			)
+			),
+		}
+	}
+
+	private readonly createHasErrorsAtom = (fields: FormFieldsAtoms<T, E>) => {
+		return atom((get) => {
+			if (!get(this.globalValidationErrors).isEmpty) {
+				return true
+			}
+
+			for (const fieldAtoms of Object.values(fields)) {
+				const field = fieldAtoms as FormFieldAtoms<unknown, E>
+				if (!get(field.validationErrors).isEmpty) {
+					return true
+				}
+			}
+
+			return false
+		})
+	}
+
+	private readonly createFieldAtom = <K extends keyof T>(
+		fieldValueAtom: FormFieldValueAtom<T[K]>,
+		fieldKey: K,
+		pristineAtom: WritableAtom<boolean, [boolean], void>,
+		defaultValidator: Atom<FormErrorBag<E>>,
+		defaultDisabled: Atom<boolean>,
+	): FormFieldAtoms<T[K], E> => {
+		return {
+			value: atom(
+				(get) => get(fieldValueAtom),
+				(get, set, ...args) => {
+					const oldValue = get(fieldValueAtom)
+					set(fieldValueAtom, ...args)
+
+					// TODO(teawithsand): customizable equality function
+					if (get(fieldValueAtom) !== oldValue) {
+						set(pristineAtom, false)
+					}
+				},
+			),
+			pristine: pristineAtom,
+			validationErrors:
+				this.fieldValidatorMap.get(fieldKey) ?? defaultValidator,
+			disabled: this.fieldDisabledMap.get(fieldKey) ?? defaultDisabled,
+		}
+	}
+
+	buildForm = (): FormAtoms<T, E> => {
+		const defaultAtoms = this.createDefaultAtoms()
+
+		const fields = inPlace(() => {
 			return Object.fromEntries(
 				Object.entries(this.data).map(([k, v]) => {
 					const pristine = atom(true)
-
-					const field: FormFieldAtoms<unknown> = {
-						value: atom(
-							(get) => get(v),
-							(get, set, ...args) => {
-								const oldValue = get(v)
-								set(v, ...args)
-
-								// TODO(teawithsand): customizable equality function
-								if (get(v) !== oldValue) {
-									set(pristine, false)
-								}
-							},
-						),
+					const field = this.createFieldAtom(
+						v as FormFieldValueAtom<any>, // TypeScript cannot infer the exact type from Object.entries(), but we know v is FormFieldValueAtom<T[K]>
+						k as keyof T,
 						pristine,
-						validationErrors:
-							this.fieldValidatorMap.get(k) ?? defaultValidator,
-						disabled:
-							this.fieldDisabledMap.get(k) ?? defaultDisabled,
-					}
+						defaultAtoms.validator,
+						defaultAtoms.disabled,
+					)
 					return [k, field]
 				}),
-			) as FormFieldsAtoms<T>
+			) as unknown as FormFieldsAtoms<T, E>
 		})
 
 		return {
@@ -132,20 +181,7 @@ export class FormAtomsBuilder<T extends FormDataBase> {
 			}),
 			submitPromise: this.submitPromiseAtom,
 			submitPromiseLoadable: this.submitPromiseLoadable,
-			hasErrors: atom((get) => {
-				if (!get(this.globalValidationErrors).isEmpty) {
-					return true
-				}
-
-				for (const vRaw of Object.values(fields)) {
-					const v = vRaw as FormFieldAtoms<unknown>
-					if (!get(v.validationErrors).isEmpty) {
-						return true
-					}
-				}
-
-				return false
-			}),
+			hasErrors: this.createHasErrorsAtom(fields),
 		}
 	}
 }

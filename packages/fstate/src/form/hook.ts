@@ -1,28 +1,31 @@
 import { Draft } from "immer"
 import { useAtom, useAtomValue, useSetAtom } from "jotai"
 import { FormAtoms, FormFieldAtoms } from "./defines"
-import { FormErrorBag } from "./error"
+import { FormError, FormErrorBag } from "./error"
 import { FormDataBase } from "./internal/form"
 
-interface FormField<T> {
+interface FormField<T, E extends FormError = FormError> {
 	value: T
 	set: (value: T | ((draft: Draft<T>) => T | undefined)) => void
-	errors: FormErrorBag
+	errors: FormErrorBag<E>
 	pristine: boolean
 	disabled: boolean
 }
 
-interface Form<T extends FormDataBase> {
-	globalErrors: FormErrorBag
+interface Form<T extends FormDataBase, E extends FormError = FormError> {
+	globalErrors: FormErrorBag<E>
 	hasErrors: boolean
 	isSubmitting: boolean
 	lastSubmitError: any | null
 	submit: (callback: (data: T) => Promise<void>) => void
 }
 
-export const useForm = <T extends FormDataBase>(
-	form: FormAtoms<T>,
-): Form<T> => {
+export const useForm = <
+	T extends FormDataBase,
+	E extends FormError = FormError,
+>(
+	form: FormAtoms<T, E>,
+): Form<T, E> => {
 	const submit = useSetAtom(form.submit)
 	const globalErrors = useAtomValue(form.globalValidationErrors)
 	const hasErrors = useAtomValue(form.hasErrors)
@@ -41,7 +44,9 @@ export const useFormValue = <T extends FormDataBase>(form: FormAtoms<T>): T => {
 	return useAtomValue(form.data)
 }
 
-export const useFormField = <T>(atoms: FormFieldAtoms<T>): FormField<T> => {
+export const useFormField = <T, E extends FormError = FormError>(
+	atoms: FormFieldAtoms<T, E>,
+): FormField<T, E> => {
 	const [value, setValue] = useAtom(atoms.value)
 	const errors = useAtomValue(atoms.validationErrors)
 	const pristine = useAtomValue(atoms.pristine)
@@ -50,7 +55,7 @@ export const useFormField = <T>(atoms: FormFieldAtoms<T>): FormField<T> => {
 	return {
 		value: value,
 		set: setValue,
-		errors,
+		errors: errors,
 		pristine,
 		disabled,
 	}

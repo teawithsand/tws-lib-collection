@@ -1,10 +1,14 @@
 import { Atom, WritableAtom } from "jotai"
 import { atomWithImmer } from "jotai-immer"
 import { Loadable } from "../jotai"
-import { FormErrorBag } from "./error"
+import { FormError, FormErrorBag } from "./error"
 import { FormDataBase } from "./internal/form"
 
 export type FormFieldValueAtom<T> = ReturnType<typeof atomWithImmer<T>>
+
+export type ValidationContext = {
+	isSubmitting: Atom<boolean>
+}
 
 export type FormFieldSpec<T> = {
 	value: FormFieldValueAtom<T>
@@ -19,21 +23,27 @@ export type FormFieldsSpecAtoms<T extends FormDataBase> = {
 	[key in keyof T]: FormFieldValueAtom<T[key]>
 }
 
-export interface FormFieldAtoms<T> {
+export interface FormFieldAtoms<T, E extends FormError = FormError> {
 	value: FormFieldValueAtom<T>
 	disabled: Atom<boolean>
-	validationErrors: Atom<FormErrorBag>
+	validationErrors: Atom<FormErrorBag<E>>
 	pristine: Atom<boolean>
 }
 
-export type FormFieldsAtoms<T extends FormDataBase> = {
-	[key in keyof T]: FormFieldAtoms<T[key]>
+export type FormFieldsAtoms<
+	T extends FormDataBase,
+	E extends FormError = FormError,
+> = {
+	[key in keyof T]: FormFieldAtoms<T[key], E>
 }
 
-export interface FormAtoms<T extends FormDataBase> {
-	readonly fields: FormFieldsAtoms<T>
+export interface FormAtoms<
+	T extends FormDataBase,
+	E extends FormError = FormError,
+> {
+	readonly fields: FormFieldsAtoms<T, E>
 	readonly data: Atom<T>
-	readonly globalValidationErrors: Atom<FormErrorBag>
+	readonly globalValidationErrors: Atom<FormErrorBag<E>>
 
 	readonly submitPromise: Atom<Promise<void>>
 	readonly submitPromiseLoadable: Atom<Loadable<void>>
