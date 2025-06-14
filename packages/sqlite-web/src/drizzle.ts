@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/sqlite-proxy"
-import { SqliteClient } from "./client"
+import { SqliteClient } from "./client/client"
 
 /**
  * Creates a Drizzle ORM instance using SqlitePromiser as the backend.

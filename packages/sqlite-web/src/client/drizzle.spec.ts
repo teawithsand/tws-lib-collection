@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm"
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 import { describe, expect, test } from "vitest"
-import { createDrizzleFromClient } from "./drizzle"
+import { createDrizzleFromClient } from "../drizzle"
 import { SqliteWorkerClient } from "./workerClient"
 
 // Define a simple test table
