@@ -34,7 +34,8 @@
     "@teawithsand/mintay-core": "workspace:*",
     "@teawithsand/sqlite-web": "workspace:*",
     "@teawithsand/lngext": "workspace:*",
-    "@teawithsand/llog": "workspace:*"
+    "@teawithsand/llog": "workspace:*",
+    "@tabler/icons-react": "~3.34.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
