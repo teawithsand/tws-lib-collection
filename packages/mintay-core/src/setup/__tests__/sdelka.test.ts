@@ -14,6 +14,7 @@ import { FsrsParameters } from "../../fsrs"
 import { Mintay } from "../defines"
 import { DrizzleMintay } from "../drizzle"
 import { InMemoryMintay } from "../inMemory"
+import { LockingMintay } from "../locking"
 
 // Constants for deterministic testing
 const BASE_TIMESTAMP = 1700000000000
@@ -24,14 +25,18 @@ describe.each<{
 }>([
 	{
 		name: "InMemoryMintay",
-		getMintay: async () => ({ mintay: new InMemoryMintay() }),
+		getMintay: async () => ({
+			mintay: LockingMintay.wrapSafe(new InMemoryMintay()),
+		}),
 	},
 	{
 		name: "DrizzleMintay",
 		getMintay: async () => {
 			const { drizzle, close } = await getTestingDb()
 			return {
-				mintay: new DrizzleMintay({ db: drizzle as MintayDrizzleDB }),
+				mintay: LockingMintay.wrapSafe(
+					new DrizzleMintay({ db: drizzle as MintayDrizzleDB }),
+				),
 				cleanup: close,
 			}
 		},
