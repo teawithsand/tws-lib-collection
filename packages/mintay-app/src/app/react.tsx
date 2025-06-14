@@ -2,14 +2,15 @@ import { inPlace } from "@teawithsand/lngext"
 import { ReactNode, useEffect, useState } from "react"
 import { App } from "./app"
 import { AppContext } from "./appHook"
-import { makeAppDi } from "./di"
+import { AppDi } from "./di"
 
 export const AppProvider = ({ children }: { children?: ReactNode }) => {
 	const [app, setApp] = useState<App | null>(null)
 
 	useEffect(() => {
 		inPlace(async () => {
-			setApp(new App(await makeAppDi()))
+			const diBuilder = AppDi.makeDiBuilder(AppDi.DI_PROD_CONFIG)
+			setApp(new App(await diBuilder.build()))
 		})
 	}, [])
 
