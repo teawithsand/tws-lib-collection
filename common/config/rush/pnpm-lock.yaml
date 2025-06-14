@@ -240,9 +240,15 @@ importers:
       '@teawithsand/fstate':
         specifier: workspace:*
         version: link:../fstate
+      '@teawithsand/lngext':
+        specifier: workspace:*
+        version: link:../lngext
       '@teawithsand/mintay-core':
         specifier: workspace:*
         version: link:../mintay-core
+      '@teawithsand/sqlite-web':
+        specifier: workspace:*
+        version: link:../sqlite-web
       postcss:
         specifier: ~8.5.4
         version: 8.5.4
