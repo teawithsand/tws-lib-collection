@@ -224,14 +224,20 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 		})
 	}
 
-	public readonly mustRead = async (): Promise<T["cardData"]> => {
+	public readonly read = async (): Promise<T["cardData"] | null> => {
 		const card = await this.db
 			.select()
 			.from(cardsTable)
 			.where(eq(cardsTable.id, this.getCardIdAsNumber()))
 			.get()
-		if (!card) throw new Error("Card not found")
+		if (!card) return null
 		return this.serializer.deserializeCardData(card.cardData)
+	}
+
+	public readonly mustRead = async (): Promise<T["cardData"]> => {
+		const data = await this.read()
+		if (data === null) throw new Error("Card not found")
+		return data
 	}
 
 	public readonly readState = async (): Promise<T["cardState"] | null> => {

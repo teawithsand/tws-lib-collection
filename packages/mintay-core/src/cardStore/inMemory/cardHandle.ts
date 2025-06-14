@@ -45,10 +45,16 @@ export class InMemoryCardHandle<T extends StorageTypeSpec>
 		this.db.upsertCard(this.id, updatedCard)
 	}
 
-	public readonly mustRead = async (): Promise<T["cardData"]> => {
+	public readonly read = async (): Promise<T["cardData"] | null> => {
 		const card = this.db.getCardById(this.id)
-		if (!card) throw new Error("Card not found")
+		if (!card) return null
 		return card.data
+	}
+
+	public readonly mustRead = async (): Promise<T["cardData"]> => {
+		const data = await this.read()
+		if (data === null) throw new Error("Card not found")
+		return data
 	}
 
 	public readonly readState = async (): Promise<T["cardState"] | null> => {
