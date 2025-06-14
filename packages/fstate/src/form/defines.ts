@@ -10,6 +10,22 @@ export type ValidationContext = {
 	isSubmitting: Atom<boolean>
 }
 
+export type FormValidator<
+	T extends FormDataBase,
+	K extends keyof T,
+	E extends FormError = FormError,
+> = (
+	fieldValue: Atom<T[K]>,
+	formValue: Atom<T>,
+	context: ValidationContext,
+) => Atom<FormErrorBag<E>>
+
+export type FormDisabledCondition<T extends FormDataBase, K extends keyof T> = (
+	fieldValue: Atom<T[K]>,
+	formValue: Atom<T>,
+	context: ValidationContext,
+) => Atom<boolean>
+
 export type FormFieldSpec<T> = {
 	value: FormFieldValueAtom<T>
 	validation: Atom<FormErrorBag>
@@ -23,7 +39,7 @@ export type FormFieldsSpecAtoms<T extends FormDataBase> = {
 	[key in keyof T]: FormFieldValueAtom<T[key]>
 }
 
-export interface FormFieldAtoms<T, E extends FormError = FormError> {
+export interface FormFieldAtoms<T, E extends FormError> {
 	value: FormFieldValueAtom<T>
 	disabled: Atom<boolean>
 	validationErrors: Atom<FormErrorBag<E>>

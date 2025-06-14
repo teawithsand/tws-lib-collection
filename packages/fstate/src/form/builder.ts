@@ -3,10 +3,12 @@ import { atom, Atom, WritableAtom } from "jotai"
 import { loadable } from "jotai/utils"
 import {
 	FormAtoms,
+	FormDisabledCondition,
 	FormFieldAtoms,
 	FormFieldsAtoms,
 	FormFieldsDataAtoms,
 	FormFieldValueAtom,
+	FormValidator,
 	ValidationContext,
 } from "./defines"
 import { FormError, FormErrorBag } from "./error"
@@ -59,11 +61,7 @@ export class FormAtomsBuilder<
 
 	public readonly setFieldValidator = <K extends keyof T>(
 		name: K,
-		validator: (
-			fieldValue: Atom<T[K]>,
-			formValue: Atom<T>,
-			context: ValidationContext,
-		) => Atom<FormErrorBag<E>>,
+		validator: FormValidator<T, K, E>,
 	): this => {
 		this.fieldValidatorMap.set(
 			name,
@@ -78,11 +76,7 @@ export class FormAtomsBuilder<
 
 	public readonly setFieldDisabledCondition = <K extends keyof T>(
 		name: K,
-		condition: (
-			fieldValue: Atom<T[K]>,
-			formValue: Atom<T>,
-			context: ValidationContext,
-		) => Atom<boolean>,
+		condition: FormDisabledCondition<T, K>,
 	): this => {
 		this.fieldDisabledMap.set(
 			name,

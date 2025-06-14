@@ -9,7 +9,7 @@ export abstract class FormAtomsDelegateBase<
 	E extends FormError = FormError,
 > implements FormAtoms<T, E>
 {
-	public readonly fields: FormFieldsAtoms<T>
+	public readonly fields: FormFieldsAtoms<T, E>
 	public readonly data: Atom<T>
 	public readonly globalValidationErrors: Atom<FormErrorBag<E>>
 	public readonly submitPromise: Atom<Promise<void>>
