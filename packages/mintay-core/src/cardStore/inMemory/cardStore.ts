@@ -1,4 +1,4 @@
-import { CardId } from "../../defines/typings/cardId"
+import { CardId } from "../../defines/typings/defines"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { InMemoryDb } from "../../inMemoryDb/db"
 import { CardHandle, CardStore } from "../defines/card"

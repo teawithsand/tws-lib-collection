@@ -1,4 +1,4 @@
-import { CardId } from "../defines/typings/cardId"
+import { CardId } from "../defines"
 import { StorageTypeSpec } from "../defines/typings/typeSpec"
 
 /**

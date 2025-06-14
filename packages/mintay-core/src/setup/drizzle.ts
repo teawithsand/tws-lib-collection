@@ -12,7 +12,7 @@ import {
 	MintayTypeSpecSerializer,
 } from "../defines"
 import { MintayCardDataUtil, MintayCollectionDataUtil } from "../defines/card"
-import { CardId } from "../defines/typings/cardId"
+import { CardId } from "../defines/typings/defines"
 import { DrizzleEngineStore, EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs/params"
 import { Mintay } from "./defines"

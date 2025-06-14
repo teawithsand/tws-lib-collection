@@ -1,4 +1,4 @@
-export type CardId = string | number
+import { CardId } from "./defines"
 
 export class CardIdUtil {
 	private constructor() {}

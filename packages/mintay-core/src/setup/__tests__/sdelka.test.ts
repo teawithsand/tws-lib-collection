@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { MintayDrizzleDB } from "../../db/db"
 import { getTestingDb } from "../../db/dbTest.test"
 import {
+	CardId,
 	MintayAnswer,
 	MintayCardData,
 	MintayCardEvent,
@@ -9,7 +10,6 @@ import {
 	MintayCardQueue,
 	MintayCollectionData,
 } from "../../defines"
-import { CardId } from "../../defines/typings/cardId"
 import { FsrsParameters } from "../../fsrs"
 import { Mintay } from "../defines"
 import { DrizzleMintay } from "../drizzle"

@@ -5,8 +5,8 @@ import {
 	cardEventsTable,
 	cardsTable,
 } from "../../db/schema"
-import { CardId, CardIdUtil } from "../../defines/typings/cardId"
-import { CardExtractor } from "../../defines/typings/defines"
+import { CardExtractor, CardId } from "../../defines/typings/defines"
+import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
 import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle } from "../defines/card"

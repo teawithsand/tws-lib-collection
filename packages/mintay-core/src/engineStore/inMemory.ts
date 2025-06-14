@@ -1,6 +1,6 @@
 import { CardStateReducer } from "../defines/reducer/defines"
-import { CardId, CardIdUtil } from "../defines/typings/cardId"
-import { CardExtractor } from "../defines/typings/defines"
+import { CardExtractor, CardId } from "../defines/typings/defines"
+import { CardIdUtil } from "../defines/typings/internalCardIdUtil"
 import { StorageTypeSpec } from "../defines/typings/typeSpec"
 import { InMemoryDb } from "../inMemoryDb/db"
 import { EngineStore } from "./defines"

@@ -1,6 +1,5 @@
 import { CardStore, CollectionStore } from "../cardStore"
-import { MintayTypeSpec } from "../defines"
-import { CardId } from "../defines/typings/cardId"
+import { CardId, MintayTypeSpec } from "../defines"
 import { EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs"
 

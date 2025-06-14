@@ -4,12 +4,12 @@ import {
 	InMemoryCollectionStore,
 } from "../cardStore/inMemory"
 import {
+	CardId,
 	MintayCardExtractor,
 	MintayCardStateReducer,
 	MintayTypeSpec,
 } from "../defines"
 import { MintayCardDataUtil, MintayCollectionDataUtil } from "../defines/card"
-import { CardId } from "../defines/typings/cardId"
 import { EngineStore } from "../engineStore"
 import { InMemoryEngineStore } from "../engineStore/inMemory"
 import { FsrsParameters } from "../fsrs/params"
