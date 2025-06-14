@@ -40,5 +40,8 @@
     "jotai": "^2.12.4",
     "jotai-immer": "^0.4.1",
     "@teawithsand/lngext": "workspace:*"
+  },
+  "peerDependencies": {
+    "zod": "~3.25.64"
   }
 }
