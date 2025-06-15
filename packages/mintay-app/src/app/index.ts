@@ -1,5 +1,5 @@
 export * from "./app"
 export * from "./appHook"
 export * from "./di"
-export * from "./react"
+export * from "./provider"
 export * from "./trans"

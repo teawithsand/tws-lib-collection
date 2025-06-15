@@ -11,12 +11,12 @@ import {
 	Title,
 } from "@mantine/core"
 import { useState } from "react"
-import styles from "./App.module.scss"
+import styles from "../App.module.scss"
 
 /**
- * Main application component using Mantine UI library
+ * Home page component displaying the main application interface
  */
-const App = () => {
+export const Home = () => {
 	const [count, setCount] = useState(0)
 
 	return (
@@ -63,5 +63,3 @@ const App = () => {
 		</Container>
 	)
 }
-
-export default App
