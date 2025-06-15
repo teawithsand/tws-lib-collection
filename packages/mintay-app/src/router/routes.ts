@@ -22,9 +22,17 @@ export class Routes {
 	}
 
 	/**
+	 * About page route
+	 */
+	public static readonly about: RouteConfig = {
+		path: "/about",
+		navigate: () => "/about",
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
-		return [Routes.home]
+		return [Routes.home, Routes.about]
 	}
 }

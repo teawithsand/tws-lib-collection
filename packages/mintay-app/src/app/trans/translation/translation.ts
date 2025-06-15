@@ -18,4 +18,15 @@ export interface AppTranslation {
 			formValidationErrors: () => string
 		}
 	}
+	about: {
+		title: () => string
+		subtitle: () => string
+		applicationInfo: () => string
+		version: () => string
+		license: () => string
+		author: () => string
+		github: () => string
+		aboutTheProject: () => string
+		projectDescription: () => string
+	}
 }

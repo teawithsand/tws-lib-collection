@@ -20,4 +20,16 @@ export const translationPl: Readonly<AppTranslation> = {
 			formValidationErrors: () => "Błędy walidacji formularza",
 		},
 	},
+	about: {
+		title: () => "O Mintay",
+		subtitle: () => "System Interwałowego Powtarzania dla Lepszego Uczenia",
+		applicationInfo: () => "Informacje o Aplikacji",
+		version: () => "Wersja:",
+		license: () => "Licencja:",
+		author: () => "Autor",
+		github: () => "GitHub",
+		aboutTheProject: () => "O Projekcie",
+		projectDescription: () =>
+			"Mintay to nowoczesny system interwałowego powtarzania zaprojektowany w celu optymalizacji uczenia się i zapamiętywania. Zbudowany w React i TypeScript, zapewnia intuicyjny interfejs do tworzenia i zarządzania kolekcjami fiszek.",
+	},
 }

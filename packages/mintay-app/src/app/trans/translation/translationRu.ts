@@ -20,4 +20,17 @@ export const translationRu: Readonly<AppTranslation> = {
 			formValidationErrors: () => "Ошибки валидации формы",
 		},
 	},
+	about: {
+		title: () => "О Mintay",
+		subtitle: () =>
+			"Система Интервального Повторения для Улучшения Обучения",
+		applicationInfo: () => "Информация о Приложении",
+		version: () => "Версия:",
+		license: () => "Лицензия:",
+		author: () => "Автор",
+		github: () => "GitHub",
+		aboutTheProject: () => "О Проекте",
+		projectDescription: () =>
+			"Mintay - это современная система интервального повторения, разработанная для оптимизации обучения и запоминания. Построенная на React и TypeScript, она предоставляет интуитивно понятный интерфейс для создания и управления коллекциями карточек.",
+	},
 }

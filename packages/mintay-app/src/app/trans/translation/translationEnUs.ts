@@ -20,4 +20,16 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			formValidationErrors: () => "Form Validation Errors",
 		},
 	},
+	about: {
+		title: () => "About Mintay",
+		subtitle: () => "Spaced Repetition System for Enhanced Learning",
+		applicationInfo: () => "Application Info",
+		version: () => "Version:",
+		license: () => "License:",
+		author: () => "Author",
+		github: () => "GitHub",
+		aboutTheProject: () => "About the Project",
+		projectDescription: () =>
+			"Mintay is a modern spaced repetition system designed to optimize learning and memory retention. Built with React and TypeScript, it provides an intuitive interface for creating and managing flashcard collections.",
+	},
 }
