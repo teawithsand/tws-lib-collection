@@ -161,6 +161,8 @@ describe("FormAtomsBuilder", () => {
 
 		await submitPromise
 
+		await new Promise((resolve) => setTimeout(resolve, 10))
+
 		expect(store.get(form.fields.name.disabled)).toBe(false)
 		expect(store.get(form.fields.age.disabled)).toBe(true)
 		expect((store.get(form.submitPromiseLoadable) as any).state).toBe(

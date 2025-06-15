@@ -81,4 +81,10 @@ export interface FormAtoms<
 		[callback: (data: T) => Promise<void>],
 		Promise<void>
 	>
+
+	readonly getSubmitReturnAtom: <E>() => WritableAtom<
+		void,
+		[callback: (data: T) => Promise<E>],
+		Promise<E>
+	>
 }

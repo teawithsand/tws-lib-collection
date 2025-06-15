@@ -16,14 +16,14 @@ import { FormError, FormErrorBag } from "./error"
 import { FormDataBase } from "./internal/form"
 import { FormsAtomsUtil } from "./util"
 
-export class FormAtomsBuilder<
-	T extends FormDataBase,
-	E extends FormError = FormError,
-> {
-	public static readonly fromDefaultValues = <T extends FormDataBase>(
+export class FormAtomsBuilder<T extends FormDataBase, E extends FormError> {
+	public static readonly fromDefaultValues = <
+		T extends FormDataBase,
+		E extends FormError,
+	>(
 		initialValues: T,
 	) => {
-		return new FormAtomsBuilder(
+		return new FormAtomsBuilder<T, E>(
 			FormsAtomsUtil.getFormFieldsData(initialValues),
 		)
 	}
@@ -32,14 +32,22 @@ export class FormAtomsBuilder<
 	private readonly value
 	private readonly fieldValidatorMap: Map<keyof T, Atom<FormErrorBag<E>>>
 	private readonly fieldDisabledMap: Map<keyof T, Atom<boolean>>
+	private readonly fieldPreSubmitMutatorMap: Map<keyof T, (value: any) => any>
+	private readonly fieldPreSubmitMapperMap: Map<keyof T, (value: any) => any>
 	private readonly submitPromiseAtom
 	private readonly submitPromiseLoadable
+	private preSubmitMutator: (formData: T) => T
+	private preSubmitMapper: (formData: T) => T
 
 	private constructor(private readonly data: FormFieldsDataAtoms<T>) {
 		this.value = FormsAtomsUtil.getValue(data)
 		this.globalValidationErrors = atom(FormErrorBag.empty<E>())
 		this.fieldValidatorMap = new Map()
 		this.fieldDisabledMap = new Map()
+		this.fieldPreSubmitMutatorMap = new Map()
+		this.fieldPreSubmitMapperMap = new Map()
+		this.preSubmitMutator = (formData: T) => formData
+		this.preSubmitMapper = (formData: T) => formData
 
 		this.submitPromiseAtom = atom<Promise<void>>(Promise.resolve())
 		this.submitPromiseLoadable = loadable(this.submitPromiseAtom)
@@ -130,6 +138,34 @@ export class FormAtomsBuilder<
 		return this
 	}
 
+	public readonly setPreSubmitMutator = (
+		mutator: (formData: T) => T,
+	): this => {
+		this.preSubmitMutator = mutator
+		return this
+	}
+
+	public readonly setPreSubmitMapper = (mapper: (formData: T) => T): this => {
+		this.preSubmitMapper = mapper
+		return this
+	}
+
+	public readonly setFieldPreSubmitMutator = <K extends keyof T>(
+		name: K,
+		mutator: (value: T[K]) => T[K],
+	): this => {
+		this.fieldPreSubmitMutatorMap.set(name, mutator)
+		return this
+	}
+
+	public readonly setFieldPreSubmitMapper = <K extends keyof T>(
+		name: K,
+		mapper: (value: T[K]) => T[K],
+	): this => {
+		this.fieldPreSubmitMapperMap.set(name, mapper)
+		return this
+	}
+
 	private readonly createDefaultAtoms = () => {
 		return {
 			validator: atom(FormErrorBag.empty<E>()),
@@ -202,18 +238,59 @@ export class FormAtomsBuilder<
 			) as unknown as FormFieldsAtoms<T, E>
 		})
 
+		const submitAtomGetter = <Z>() =>
+			atom(null, (get, set, callback: (data: T) => Promise<Z>) => {
+				const formData = get(this.value)
+
+				// Apply per-field mutators first
+				const fieldMutatedData = { ...formData } as T
+				for (const [
+					key,
+					mutator,
+				] of this.fieldPreSubmitMutatorMap.entries()) {
+					fieldMutatedData[key] = mutator(fieldMutatedData[key])
+				}
+
+				// Apply global mutator
+				const mutatedData = this.preSubmitMutator(fieldMutatedData)
+
+				// Store the mutated data back in the form by updating each field
+				for (const [key, value] of Object.entries(mutatedData)) {
+					const fieldData = this.data[key as keyof T]
+					if (value !== get(fieldData)) {
+						set(fieldData, value)
+					}
+				}
+
+				// Apply per-field mappers (don't persist)
+				const fieldMappedData = { ...mutatedData } as T
+				for (const [
+					key,
+					mapper,
+				] of this.fieldPreSubmitMapperMap.entries()) {
+					fieldMappedData[key] = mapper(fieldMappedData[key])
+				}
+
+				// Apply global mapper (don't persist)
+				const mappedData = this.preSubmitMapper(fieldMappedData)
+
+				const promise = callback(mappedData)
+
+				const storePromise = inPlace(async () => {
+					await promise
+				})
+
+				storePromise.catch(() => {})
+				set(this.submitPromiseAtom, storePromise)
+				return promise
+			})
+
 		return {
 			fields,
 			data: this.value,
 			globalValidationErrors: this.globalValidationErrors,
-			submit: atom(null, (get, set, callback) => {
-				const promise = inPlace(
-					async () => await callback(get(this.value)),
-				)
-				set(this.submitPromiseAtom, promise)
-				promise.catch(() => {})
-				return promise
-			}),
+			submit: submitAtomGetter<void>(),
+			getSubmitReturnAtom: submitAtomGetter,
 			submitPromise: this.submitPromiseAtom,
 			submitPromiseLoadable: this.submitPromiseLoadable,
 			hasErrors: this.createHasErrorsAtom(fields),

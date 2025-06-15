@@ -6,7 +6,7 @@ import { FormDataBase } from "./internal/form"
 
 export abstract class FormAtomsDelegateBase<
 	T extends FormDataBase,
-	E extends FormError = FormError,
+	E extends FormError,
 > implements FormAtoms<T, E>
 {
 	public readonly fields: FormFieldsAtoms<T, E>
@@ -20,6 +20,7 @@ export abstract class FormAtomsDelegateBase<
 		Promise<void>
 	>
 	public readonly hasErrors: Atom<boolean>
+	public readonly getSubmitReturnAtom
 
 	protected constructor(formAtoms: FormAtoms<T, E>) {
 		this.fields = formAtoms.fields
@@ -29,5 +30,6 @@ export abstract class FormAtomsDelegateBase<
 		this.submitPromiseLoadable = formAtoms.submitPromiseLoadable
 		this.submit = formAtoms.submit
 		this.hasErrors = formAtoms.hasErrors
+		this.getSubmitReturnAtom = formAtoms.getSubmitReturnAtom
 	}
 }
