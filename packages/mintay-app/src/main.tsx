@@ -10,11 +10,11 @@ const theme = createTheme({
 })
 
 createRoot(document.getElementById("root")!).render(
-	<StrictMode>
-		<MantineProvider theme={theme}>
-			<AppProvider>
+	<AppProvider>
+		<StrictMode>
+			<MantineProvider theme={theme}>
 				<Router />
-			</AppProvider>
-		</MantineProvider>
-	</StrictMode>,
+			</MantineProvider>
+		</StrictMode>
+	</AppProvider>,
 )
