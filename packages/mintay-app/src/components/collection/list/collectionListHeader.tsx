@@ -1,11 +1,11 @@
 import { Button, Group, Stack, Text, Title } from "@mantine/core"
-import { IconPlus } from "@tabler/icons-react"
+import { IconPlus, IconRefresh } from "@tabler/icons-react"
 import styles from "./collectionListHeader.module.scss"
 
 interface CollectionListHeaderProps {
-	onRefresh: () => void
-	isLoading?: boolean
-	collectionsCount?: number
+	readonly onRefresh: () => void
+	readonly isLoading?: boolean
+	readonly collectionsCount?: number
 }
 
 /**
@@ -32,6 +32,7 @@ export const CollectionListHeader = ({
 				<Group>
 					<Button
 						variant="light"
+						leftSection={<IconRefresh size={16} />}
 						onClick={onRefresh}
 						loading={isLoading}
 						disabled={isLoading}
