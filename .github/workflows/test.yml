@@ -13,19 +13,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Setup Node.js 22 and Rush
+      - name: Setup Node.js 22
         uses: actions/setup-node@v3
         with:
           node-version: "22"
-      - name: Setup Node.js and Rush
-        run: |
-          npm install -g @microsoft/rush
-          npm install -g playwright
-        shell: bash
-      - name: Install playwright
-        run: npx playwright install --with-deps
+      - name: Setup Rush
+        run: npm install -g @microsoft/rush
       - name: Install dependencies
         run: rush install
+
+      - name: Install playwright for player testing
+        run: npx playwright install --with-deps
+        working-directory: packages/player
 
       - name: Build all packages
         run: rush build
