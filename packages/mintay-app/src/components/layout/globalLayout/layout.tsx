@@ -1,15 +1,12 @@
 import { ReactNode } from "react"
+import { Navbar } from "../navbar/navbar"
 import styles from "./layout.module.scss"
-import { Navbar } from "./navbar"
 
 interface LayoutProps {
 	readonly children: ReactNode
 }
 
-/**
- * Base layout component that wraps all pages with navigation
- */
-export const Layout = ({ children }: LayoutProps) => {
+export const GlobalLayout = ({ children }: LayoutProps) => {
 	return (
 		<div className={styles.layoutContainer}>
 			<Navbar />

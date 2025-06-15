@@ -109,35 +109,3 @@
 		display: none;
 	}
 }
-
-.mobileNav {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	right: 0;
-	background-color: var(--mantine-color-white);
-	border-bottom: 1px solid var(--mantine-color-gray-3);
-	box-shadow: var(--mantine-shadow-sm);
-
-	@include mantine.dark {
-		background-color: var(--mantine-color-dark-7);
-		border-bottom-color: var(--mantine-color-dark-4);
-	}
-
-	@include mantine.larger-than(mantine.$mantine-breakpoint-md) {
-		display: none;
-	}
-}
-
-.mobileNavContent {
-	padding: 1rem; // 16px converted to rem
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem; // 4px converted to rem
-
-	.navLink {
-		padding: 0.75rem 1rem; // 12px 16px converted to rem
-		font-size: 1rem; // 16px converted to rem
-		border-radius: var(--mantine-radius-md);
-	}
-}
