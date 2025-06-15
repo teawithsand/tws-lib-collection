@@ -5,7 +5,7 @@ import { Link } from "react-router"
 /**
  * NotFound page component displayed when user navigates to non-existent route
  */
-export const NotFound = () => {
+export const NotFoundPage = () => {
 	return (
 		<Container size="sm" py="xl">
 			<Stack

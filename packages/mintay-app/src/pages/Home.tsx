@@ -16,7 +16,7 @@ import styles from "../App.module.scss"
 /**
  * Home page component displaying the main application interface
  */
-export const Home = () => {
+export const HomePage = () => {
 	const [count, setCount] = useState(0)
 
 	return (

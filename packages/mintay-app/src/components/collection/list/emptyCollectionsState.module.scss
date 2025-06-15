@@ -1,0 +1,45 @@
+// Empty state
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: mantine.rem(48) mantine.rem(24);
+	min-height: 400px;
+}
+
+.emptyIcon {
+	color: var(--mantine-color-gray-5);
+	margin-bottom: mantine.rem(16);
+
+	@include mantine.dark {
+		color: var(--mantine-color-dark-3);
+	}
+}
+
+.emptyTitle {
+	margin-bottom: mantine.rem(8);
+	color: var(--mantine-color-gray-7);
+
+	@include mantine.dark {
+		color: var(--mantine-color-dark-1);
+	}
+}
+
+.emptyDescription {
+	max-width: 400px;
+	line-height: 1.5;
+}
+
+// Responsive adjustments
+@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+	.emptyState {
+		padding: mantine.rem(32) mantine.rem(16);
+		min-height: 300px;
+	}
+
+	.emptyIcon {
+		transform: scale(0.8);
+	}
+}

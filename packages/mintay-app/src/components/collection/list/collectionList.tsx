@@ -12,10 +12,12 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconAlertCircle, IconBook, IconPlus } from "@tabler/icons-react"
+import { IconAlertCircle, IconBook } from "@tabler/icons-react"
 import { useAtomValue } from "@teawithsand/fstate"
 import { useApp } from "../../../app"
 import styles from "./collectionList.module.scss"
+import { CollectionListHeader } from "./collectionListHeader"
+import { EmptyCollectionsState } from "./emptyCollectionsState"
 
 /**
  * Component for displaying a list of all available collections in a responsive grid layout
@@ -69,26 +71,7 @@ export const CollectionList = () => {
 		const collections = collectionsLoadable.data
 
 		if (!collections || collections.length === 0) {
-			return (
-				<div className={styles.emptyState}>
-					<IconBook size={48} className={styles.emptyIcon} />
-					<Title order={3} className={styles.emptyTitle}>
-						No collections yet
-					</Title>
-					<Text c="dimmed" className={styles.emptyDescription}>
-						Create your first collection to get started with
-						organizing your cards.
-					</Text>
-					<Button
-						leftSection={<IconPlus size={16} />}
-						variant="filled"
-						size="md"
-						mt="lg"
-					>
-						Create Collection
-					</Button>
-				</div>
-			)
+			return <EmptyCollectionsState />
 		}
 
 		return (
@@ -182,33 +165,15 @@ export const CollectionList = () => {
 
 	return (
 		<Container size="xl" className={styles.container}>
-			<div className={styles.header}>
-				<Group justify="space-between" align="center">
-					<div>
-						<Title order={1} className={styles.pageTitle}>
-							Collections
-						</Title>
-						<Text c="dimmed" className={styles.pageSubtitle}>
-							Manage your card collections
-						</Text>
-					</div>
-					<Group>
-						<Button
-							variant="subtle"
-							onClick={handleRefresh}
-							loading={collectionsLoadable.state === "loading"}
-						>
-							Refresh
-						</Button>
-						<Button
-							leftSection={<IconPlus size={16} />}
-							variant="filled"
-						>
-							New Collection
-						</Button>
-					</Group>
-				</Group>
-			</div>
+			<CollectionListHeader
+				onRefresh={handleRefresh}
+				isLoading={collectionsLoadable.state === "loading"}
+				collectionsCount={
+					collectionsLoadable.state === "hasData"
+						? collectionsLoadable.data?.length
+						: undefined
+				}
+			/>
 
 			<div className={styles.content}>{renderContent()}</div>
 		</Container>
