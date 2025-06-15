@@ -8,10 +8,19 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
 	const [app, setApp] = useState<App | null>(null)
 
 	useEffect(() => {
-		inPlace(async () => {
+		const promise = inPlace(async () => {
 			const diBuilder = AppDi.makeDiBuilder(AppDi.DI_PROD_CONFIG)
-			setApp(new App(await diBuilder.build()))
+			const app = new App(await diBuilder.build())
+			setApp(app)
+
+			return app
 		})
+
+		return () => {
+			promise.then((app) => {
+				app.release()
+			})
+		}
 	}, [])
 
 	return <AppContext.Provider value={app}>{children}</AppContext.Provider>
