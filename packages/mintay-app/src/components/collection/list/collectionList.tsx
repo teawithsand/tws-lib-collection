@@ -1,3 +1,4 @@
+import { useApp } from "@/app"
 import {
 	ActionIcon,
 	Alert,
@@ -14,7 +15,6 @@ import {
 } from "@mantine/core"
 import { IconAlertCircle, IconBook } from "@tabler/icons-react"
 import { useAtomValue } from "@teawithsand/fstate"
-import { useApp } from "../../../app"
 import styles from "./collectionList.module.scss"
 import { CollectionListHeader } from "./collectionListHeader"
 import { EmptyCollectionsState } from "./emptyCollectionsState"
