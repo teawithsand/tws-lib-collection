@@ -55,9 +55,7 @@ export class CollectionService {
 			async (_get, set, data: MintayCollectionData) => {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
-				// Refresh the specific collection data
 				set(collectionDataAtom)
-				// Refresh the collections list
 				set(this._collectionsDataList)
 			},
 		)
@@ -65,7 +63,6 @@ export class CollectionService {
 		const deleteCollection = atom(null, async (_get, set) => {
 			const collection = this.collectionStore.get(collectionId)
 			await collection.delete()
-			// Refresh the collections list
 			set(this._collectionsDataList)
 		})
 
@@ -74,9 +71,7 @@ export class CollectionService {
 			async (_get, set, data: MintayCollectionData) => {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
-				// Refresh the specific collection data
 				set(collectionDataAtom)
-				// Refresh the collections list
 				set(this._collectionsDataList)
 			},
 		)

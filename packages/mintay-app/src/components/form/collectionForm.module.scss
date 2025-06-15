@@ -1,0 +1,119 @@
+.collection-form {
+	&__container {
+		max-width: 600px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	&__title {
+		margin-bottom: 2rem;
+		text-align: center;
+		color: var(--mantine-color-dark-9);
+		font-weight: 600;
+	}
+
+	&__field-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	&__description-field {
+		textarea {
+			min-height: 100px;
+			resize: vertical;
+		}
+	}
+
+	&__switch-field {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		background-color: var(--mantine-color-gray-0);
+		border-radius: var(--mantine-radius-md);
+		border: 1px solid var(--mantine-color-gray-3);
+
+		@include mantine.dark {
+			background-color: var(--mantine-color-dark-6);
+			border-color: var(--mantine-color-dark-4);
+		}
+
+		> div:first-child {
+			flex: 1;
+		}
+	}
+
+	&__number-field {
+		max-width: 200px;
+
+		.mantine-NumberInput-input {
+			text-align: center;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: flex-end;
+		margin-top: 2rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--mantine-color-gray-3);
+
+		@include mantine.dark {
+			border-top-color: var(--mantine-color-dark-4);
+		}
+
+		@media (max-width: 480px) {
+			flex-direction: column-reverse;
+
+			button {
+				width: 100%;
+			}
+		}
+	}
+
+	&__submit-button {
+		min-width: 150px;
+		font-weight: 600;
+	}
+
+	&__error-message {
+		color: var(--mantine-color-red-6);
+		font-size: var(--mantine-font-size-sm);
+		margin-top: 0.5rem;
+
+		@include mantine.dark {
+			color: var(--mantine-color-red-4);
+		}
+	}
+
+	&__global-errors {
+		margin-bottom: 1.5rem;
+		padding: 1rem;
+		background-color: var(--mantine-color-red-0);
+		border: 1px solid var(--mantine-color-red-3);
+		border-radius: var(--mantine-radius-md);
+
+		@include mantine.dark {
+			background-color: var(--mantine-color-red-9);
+			border-color: var(--mantine-color-red-7);
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 1.5rem;
+		}
+
+		li {
+			color: var(--mantine-color-red-7);
+			margin-bottom: 0.5rem;
+
+			@include mantine.dark {
+				color: var(--mantine-color-red-3);
+			}
+		}
+	}
+}

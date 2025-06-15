@@ -15,6 +15,8 @@ import {
 	SqliteWorkerClient,
 } from "@teawithsand/sqlite-web"
 import { CollectionService } from "../domain/collectionsService"
+import { DiReleaseHelper } from "./releaseHelper"
+import { TransService } from "./trans"
 
 export type AppDiContents = {
 	logger: Logger
@@ -22,6 +24,9 @@ export type AppDiContents = {
 	mintay: Mintay
 	atomStore: JotaiStore
 
+	releaseHelper: DiReleaseHelper
+
+	translationService: TransService
 	collectionService: CollectionService
 }
 
@@ -29,6 +34,7 @@ const LOG_TAG = "makeAppDi"
 
 export type DiConfig = {
 	dbType: "opfs" | "inMemory"
+	throwFromRelease?: boolean
 }
 
 export class AppDi {
@@ -36,6 +42,7 @@ export class AppDi {
 
 	public static readonly DI_TEST_CONFIG: DiConfig = {
 		dbType: "inMemory",
+		throwFromRelease: true,
 	}
 
 	public static readonly DI_PROD_CONFIG: DiConfig = {
@@ -51,6 +58,15 @@ export class AppDi {
 				),
 			)
 			.setValue("atomStore", createStore())
+			.setValue("translationService", new TransService())
+			.setFactory(
+				"releaseHelper",
+				async (di) =>
+					new DiReleaseHelper({
+						logger: di.get("logger"),
+						throwFromRelease: config.throwFromRelease === true,
+					}),
+			)
 			.setFactory("sqliteClient", async () => {
 				if (config.dbType === "inMemory") {
 					return await SqliteInMemoryClient.create()
@@ -63,9 +79,15 @@ export class AppDi {
 			})
 			.setFactory("mintay", async (di) => {
 				const client = di.get("sqliteClient")
-				await client.open({
-					filename: "file:mintay-master.sqlite3?vfs=opfs",
-				})
+				if (config.dbType === "opfs") {
+					await client.open({
+						filename: "file:mintay-master.sqlite3?vfs=opfs",
+					})
+				} else {
+					await client.open({
+						filename: ":memory:",
+					})
+				}
 
 				const drizzle = createDrizzleFromClient(client)
 

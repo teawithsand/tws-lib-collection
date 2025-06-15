@@ -1,0 +1,211 @@
+@use "../_mantine" as mantine;
+
+.container {
+	padding: mantine.rem(24) mantine.rem(16);
+	min-height: 100vh;
+}
+
+.header {
+	margin-bottom: mantine.rem(32);
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		margin-bottom: mantine.rem(24);
+	}
+}
+
+.pageTitle {
+	margin-bottom: mantine.rem(4);
+}
+
+.pageSubtitle {
+	font-size: mantine.rem(14);
+}
+
+.content {
+	position: relative;
+}
+
+// Loading state
+.loadingContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 300px;
+	text-align: center;
+}
+
+// Error state
+.errorAlert {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+// Empty state
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: mantine.rem(48) mantine.rem(24);
+	min-height: 400px;
+}
+
+.emptyIcon {
+	color: var(--mantine-color-gray-5);
+	margin-bottom: mantine.rem(16);
+
+	@include mantine.dark {
+		color: var(--mantine-color-dark-3);
+	}
+}
+
+.emptyTitle {
+	margin-bottom: mantine.rem(8);
+	color: var(--mantine-color-gray-7);
+
+	@include mantine.dark {
+		color: var(--mantine-color-dark-1);
+	}
+}
+
+.emptyDescription {
+	max-width: 400px;
+	line-height: 1.5;
+}
+
+// Collections grid
+.collectionsGrid {
+	gap: mantine.rem(24);
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		gap: mantine.rem(16);
+	}
+}
+
+// Collection card styles
+.collectionCard {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	transition: all 0.2s ease;
+	cursor: pointer;
+
+	@include mantine.hover {
+		transform: translateY(-2px);
+		box-shadow: var(--mantine-shadow-md);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+.cardHeader {
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-blue-0) 0%,
+		var(--mantine-color-blue-1) 100%
+	);
+
+	@include mantine.dark {
+		background: linear-gradient(
+			135deg,
+			var(--mantine-color-dark-7) 0%,
+			var(--mantine-color-dark-6) 100%
+		);
+	}
+}
+
+.collectionIcon {
+	color: var(--mantine-color-blue-6);
+
+	@include mantine.dark {
+		color: var(--mantine-color-blue-4);
+	}
+}
+
+.cardContent {
+	flex: 1;
+	padding: mantine.rem(16) 0;
+}
+
+.collectionTitle {
+	font-weight: 600;
+	line-height: 1.3;
+	margin-bottom: mantine.rem(8);
+	min-height: mantine.rem(44); // Consistent height for 2 lines
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		font-size: mantine.rem(16);
+	}
+}
+
+.collectionDescription {
+	line-height: 1.4;
+	margin-bottom: mantine.rem(16);
+	min-height: mantine.rem(60); // Consistent height for 3 lines
+}
+
+.cardMeta {
+	margin-top: auto;
+	padding-top: mantine.rem(8);
+	border-top: 1px solid var(--mantine-color-gray-2);
+
+	@include mantine.dark {
+		border-top-color: var(--mantine-color-dark-4);
+	}
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: mantine.rem(4);
+	}
+}
+
+.cardActions {
+	background-color: var(--mantine-color-gray-0);
+
+	@include mantine.dark {
+		background-color: var(--mantine-color-dark-8);
+	}
+
+	@include mantine.hover {
+		.collectionCard:hover & {
+			background-color: var(--mantine-color-blue-0);
+
+			@include mantine.dark {
+				background-color: var(--mantine-color-dark-7);
+			}
+		}
+	}
+}
+
+// Responsive adjustments
+@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+	.container {
+		padding: mantine.rem(16) mantine.rem(12);
+	}
+
+	.header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: mantine.rem(16);
+	}
+}
+
+@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+	.pageTitle {
+		font-size: mantine.rem(24);
+	}
+
+	.emptyState {
+		padding: mantine.rem(32) mantine.rem(16);
+		min-height: 300px;
+	}
+
+	.emptyIcon {
+		transform: scale(0.8);
+	}
+}
