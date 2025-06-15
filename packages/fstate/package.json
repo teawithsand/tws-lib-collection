@@ -13,7 +13,7 @@
     "test:mutate": "stryker run",
     "test": "vitest",
     "test:ss": "vitest -u",
-    "build": "tsc --build --clean && tsc",
+    "build": "rm -r dist; tsc",
     "build:check": "tsc --noEmit",
     "fix": "npm run format:fix && npm run lint:fix",
     "pre-commit-check": "npm run build:check && npm run lint && npm run format:check",
