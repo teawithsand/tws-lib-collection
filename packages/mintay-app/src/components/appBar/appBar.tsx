@@ -143,12 +143,14 @@ export const AppBar = ({
 			<header className={styles.appBar}>
 				<Group justify="space-between" h="100%" px="md">
 					<Group gap="sm">
-						<Burger
-							opened={drawerOpened}
-							onClick={toggleDrawer}
-							size="sm"
-							aria-label="Open navigation"
-						/>
+						{drawerItems.length > 0 ? (
+							<Burger
+								opened={drawerOpened}
+								onClick={toggleDrawer}
+								size="sm"
+								aria-label="Open navigation"
+							/>
+						) : null}
 						<Title order={3} className={styles.title}>
 							{title}
 						</Title>
