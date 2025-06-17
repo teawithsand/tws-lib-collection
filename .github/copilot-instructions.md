@@ -78,3 +78,8 @@
 - Use CSS modules for styling React components. Make sure modular file names end with `.module.css` or `.module.scss`.
 - Prefer SASS over CSS for styling React components. Use `.scss` file extension for SASS files.
 - Use BEM (Block Element Modifier) naming convention for CSS classes.
+- If mantine is used in project, prefer mantine breakpoints to fixed custom values.
+
+# UI
+
+When using react-router prefer Link component to using navigate method from useNavigate hook wherever possible.
