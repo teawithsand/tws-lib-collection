@@ -1,12 +1,4 @@
-import {
-	Alert,
-	Button,
-	Paper,
-	Stack,
-	Textarea,
-	TextInput,
-	Title,
-} from "@mantine/core"
+import { Alert, Button, Paper, Stack, Textarea, TextInput } from "@mantine/core"
 import { IconAlertCircle } from "@tabler/icons-react"
 import { useForm, useFormField } from "@teawithsand/fstate"
 import { useCallback, useState } from "react"
@@ -31,7 +23,6 @@ export const CollectionForm: React.FC<CollectionFormProps> = ({
 
 	const { resolve } = useTransResolver()
 
-	const resolvedTitle = resolve((t) => t.collection.form.createCollection())
 	const resolvedSubmitLabel = resolve((t) => t.collection.form.submit())
 
 	const handleSubmit = useCallback(
@@ -52,10 +43,6 @@ export const CollectionForm: React.FC<CollectionFormProps> = ({
 			radius="md"
 			withBorder
 		>
-			<Title order={2} className={styles["collection-form__title"]}>
-				{resolvedTitle}
-			</Title>
-
 			<form onSubmit={handleSubmit}>
 				<Stack gap="lg">
 					{!form.globalErrors.isEmpty && (

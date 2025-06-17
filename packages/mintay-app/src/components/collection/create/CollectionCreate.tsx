@@ -1,39 +1,21 @@
-import { useCallback } from "react"
-import { useNavigate } from "react-router"
-import { Routes } from "../../../router/routes"
+import { Title } from "@mantine/core"
+import { useTransResolver } from "../../../app"
 import { CollectionForm, type CollectionFormData } from "../../form/collection"
+import styles from "./CollectionCreate.module.scss"
 
-/**
- * Component for creating new collections
- * Wraps the CollectionForm with creation-specific logic
- */
-export const CollectionCreate = () => {
-	const navigate = useNavigate()
+interface CollectionCreateProps {
+	readonly onSubmit: (data: CollectionFormData) => Promise<void>
+}
 
-	const handleSubmit = useCallback(
-		async (data: CollectionFormData) => {
-			try {
-				// TODO: Implement actual collection creation logic here
-				// This would typically involve calling an API or service
-				console.log("Creating collection:", data)
+export const CollectionCreate = ({ onSubmit }: CollectionCreateProps) => {
+	const { resolve } = useTransResolver()
 
-				// Simulate API call
-				await new Promise((resolve) => setTimeout(resolve, 1000))
-
-				// For now, just log success and navigate
-				console.log("Collection created successfully:", data.title)
-
-				// Navigate back to collections list
-				navigate(Routes.collections.navigate())
-			} catch (error) {
-				console.error("Failed to create collection:", error)
-
-				// Re-throw to let the form handle the error
-				throw error
-			}
-		},
-		[navigate],
+	return (
+		<div className={styles["collection-create__container"]}>
+			<Title order={2} className={styles["collection-create__title"]}>
+				{resolve((t) => t.collection.form.createCollection())}
+			</Title>
+			<CollectionForm onSubmit={onSubmit} />
+		</div>
 	)
-
-	return <CollectionForm onSubmit={handleSubmit} />
 }

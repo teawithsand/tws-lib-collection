@@ -1,0 +1,14 @@
+.collection-create {
+	&__container {
+		max-width: 600px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	&__title {
+		margin-bottom: 2rem;
+		text-align: center;
+		color: var(--mantine-color-dark-9);
+		font-weight: 600;
+	}
+}

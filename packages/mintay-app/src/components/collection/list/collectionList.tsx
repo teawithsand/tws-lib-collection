@@ -1,80 +1,27 @@
-import { useApp } from "@/app"
 import {
 	ActionIcon,
-	Alert,
 	Badge,
-	Button,
 	Card,
-	Container,
 	Grid,
 	Group,
-	Loader,
 	Stack,
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconAlertCircle, IconBook } from "@tabler/icons-react"
-import { useAtomValue } from "@teawithsand/fstate"
+import { IconBook } from "@tabler/icons-react"
+import { MintayCollectionData } from "@teawithsand/mintay-core"
 import styles from "./collectionList.module.scss"
-import { CollectionListHeader } from "./collectionListHeader"
-import { EmptyCollectionsState } from "./emptyCollectionsState"
+
+interface CollectionListProps {
+	readonly collections: MintayCollectionData[]
+}
 
 /**
- * Component for displaying a list of all available collections in a responsive grid layout
+ * Component for displaying a list of collections in a responsive grid layout
  */
-export const CollectionList = () => {
-	const app = useApp()
-	const collectionsLoadable = useAtomValue(
-		app.collectionService.collectionDataListLoadable,
-	)
-
-	const handleRefresh = () => {
-		// Trigger refresh of collections list
-		app.atomStore.set(app.collectionService.refreshCollectionsList)
-	}
-
-	const renderContent = () => {
-		if (collectionsLoadable.state === "loading") {
-			return (
-				<div className={styles.loadingContainer}>
-					<Loader size="lg" />
-					<Text mt="md" c="dimmed">
-						Loading collections...
-					</Text>
-				</div>
-			)
-		}
-
-		if (collectionsLoadable.state === "hasError") {
-			return (
-				<Alert
-					icon={<IconAlertCircle size={16} />}
-					title="Error loading collections"
-					color="red"
-					className={styles.errorAlert}
-				>
-					<Text size="sm">
-						Failed to load collections. Please try refreshing.
-					</Text>
-					<Button
-						variant="outline"
-						size="xs"
-						mt="sm"
-						onClick={handleRefresh}
-					>
-						Retry
-					</Button>
-				</Alert>
-			)
-		}
-
-		const collections = collectionsLoadable.data
-
-		if (!collections || collections.length === 0) {
-			return <EmptyCollectionsState />
-		}
-
-		return (
+export const CollectionList = ({ collections }: CollectionListProps) => {
+	return (
+		<div className={styles.content}>
 			<Grid className={styles.collectionsGrid}>
 				{collections.map((collection) => (
 					<Grid.Col
@@ -160,22 +107,6 @@ export const CollectionList = () => {
 					</Grid.Col>
 				))}
 			</Grid>
-		)
-	}
-
-	return (
-		<Container size="xl" className={styles.container}>
-			<CollectionListHeader
-				onRefresh={handleRefresh}
-				isLoading={collectionsLoadable.state === "loading"}
-				collectionsCount={
-					collectionsLoadable.state === "hasData"
-						? collectionsLoadable.data?.length
-						: undefined
-				}
-			/>
-
-			<div className={styles.content}>{renderContent()}</div>
-		</Container>
+		</div>
 	)
 }

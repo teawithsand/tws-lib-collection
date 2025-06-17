@@ -1,9 +1,10 @@
 import { Button, Group, Stack, Text, Title } from "@mantine/core"
-import { IconPlus, IconRefresh } from "@tabler/icons-react"
+import { IconPlus } from "@tabler/icons-react"
+import { Link } from "react-router"
+import { Routes } from "../../../router/routes"
 import styles from "./collectionListHeader.module.scss"
 
 interface CollectionListHeaderProps {
-	readonly onRefresh: () => void
 	readonly isLoading?: boolean
 	readonly collectionsCount?: number
 }
@@ -12,8 +13,6 @@ interface CollectionListHeaderProps {
  * Header component for the collections list page with title and action buttons
  */
 export const CollectionListHeader = ({
-	onRefresh,
-	isLoading = false,
 	collectionsCount,
 }: CollectionListHeaderProps) => {
 	return (
@@ -31,17 +30,10 @@ export const CollectionListHeader = ({
 				</div>
 				<Group>
 					<Button
-						variant="light"
-						leftSection={<IconRefresh size={16} />}
-						onClick={onRefresh}
-						loading={isLoading}
-						disabled={isLoading}
-					>
-						Refresh
-					</Button>
-					<Button
 						leftSection={<IconPlus size={16} />}
 						variant="filled"
+						component={Link}
+						to={Routes.createCollection.navigate()}
 					>
 						New Collection
 					</Button>

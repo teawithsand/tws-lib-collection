@@ -1,5 +1,7 @@
 import { Button, Text, Title } from "@mantine/core"
 import { IconBook, IconPlus } from "@tabler/icons-react"
+import { Link } from "react-router"
+import { Routes } from "../../../router/routes"
 import styles from "./emptyCollectionsState.module.scss"
 
 /**
@@ -21,6 +23,8 @@ export const EmptyCollectionsState = () => {
 				variant="filled"
 				size="md"
 				mt="lg"
+				component={Link}
+				to={Routes.createCollection.navigate()}
 			>
 				Create Collection
 			</Button>
