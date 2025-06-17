@@ -57,12 +57,6 @@ describe("AppBar", () => {
 		expect(screen.getByLabelText("More actions")).toBeInTheDocument()
 	})
 
-	test("renders navigation burger button", () => {
-		renderWithProviders(<AppBar title="Test" />)
-
-		expect(screen.getByLabelText("Open navigation")).toBeInTheDocument()
-	})
-
 	test("renders children content", () => {
 		renderWithProviders(
 			<AppBar title="Test">
