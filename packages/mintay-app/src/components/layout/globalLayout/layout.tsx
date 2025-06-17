@@ -1,5 +1,6 @@
 import { AppBarLinkType } from "@/components/appBar"
 import { AutonomousAppBar } from "@/components/appBar/autonomousAppBar"
+import { AppSuspense } from "@/components/boundary"
 import { useAppBarMutator } from "@/domain/appBar"
 import { Routes } from "@/router/routes"
 import { IconBook, IconHome } from "@tabler/icons-react"
@@ -31,9 +32,14 @@ export const GlobalLayout = ({ children }: LayoutProps) => {
 	}))
 
 	return (
-		<div className={styles.layoutContainer}>
-			<AutonomousAppBar />
-			<main className={styles.mainContent}>{children}</main>
-		</div>
+		<AppSuspense>
+			<div className={styles.layoutContainer}>
+				<AutonomousAppBar />
+
+				<main className={styles.mainContent}>
+					<AppSuspense>{children}</AppSuspense>
+				</main>
+			</div>
+		</AppSuspense>
 	)
 }

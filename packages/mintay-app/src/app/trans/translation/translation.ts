@@ -6,6 +6,7 @@ export interface AppTranslation {
 		form: {
 			thisFieldMustNotBeEmpty: () => string
 		}
+		loading: () => string
 	}
 	appBar: {
 		title: () => string

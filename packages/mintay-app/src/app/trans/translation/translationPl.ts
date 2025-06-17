@@ -7,6 +7,7 @@ export const translationPl: Readonly<AppTranslation> = {
 		form: {
 			thisFieldMustNotBeEmpty: () => "To pole nie może być puste",
 		},
+		loading: () => "Ładowanie...",
 	},
 	appBar: {
 		title: () => "Mintay",
