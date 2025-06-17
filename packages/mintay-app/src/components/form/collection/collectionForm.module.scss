@@ -57,7 +57,7 @@
 	&__actions {
 		display: flex;
 		gap: 1rem;
-		justify-content: flex-end;
+		justify-content: center;
 		margin-top: 2rem;
 		padding-top: 1.5rem;
 		border-top: 1px solid var(--mantine-color-gray-3);
@@ -66,9 +66,7 @@
 			border-top-color: var(--mantine-color-dark-4);
 		}
 
-		@media (max-width: 480px) {
-			flex-direction: column-reverse;
-
+		@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
 			button {
 				width: 100%;
 			}
@@ -78,6 +76,11 @@
 	&__submit-button {
 		min-width: 150px;
 		font-weight: 600;
+
+		@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+			width: 100%;
+			min-width: unset;
+		}
 	}
 
 	&__error-message {

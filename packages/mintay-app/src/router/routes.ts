@@ -38,9 +38,22 @@ export class Routes {
 	}
 
 	/**
+	 * Create collection page route
+	 */
+	public static readonly createCollection: RouteConfig = {
+		path: "/collections/create",
+		navigate: () => "/collections/create",
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
-		return [Routes.home, Routes.about, Routes.collections]
+		return [
+			Routes.home,
+			Routes.about,
+			Routes.collections,
+			Routes.createCollection,
+		]
 	}
 }

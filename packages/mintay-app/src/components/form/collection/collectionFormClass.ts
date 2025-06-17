@@ -4,7 +4,7 @@ import {
 	FormAtomsDelegateBase,
 	FormErrorBag,
 } from "@teawithsand/fstate"
-import { AppTransString } from "../../app/trans/defines"
+import { AppTransString } from "../../../app/trans/defines"
 
 export interface CollectionFormData {
 	title: string

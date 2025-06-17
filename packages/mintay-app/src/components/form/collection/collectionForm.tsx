@@ -10,7 +10,7 @@ import {
 import { IconAlertCircle } from "@tabler/icons-react"
 import { useForm, useFormField } from "@teawithsand/fstate"
 import { useCallback, useState } from "react"
-import { useTransResolver } from "../../app"
+import { useTransResolver } from "../../../app"
 import styles from "./collectionForm.module.scss"
 import { CollectionFormClass, CollectionFormData } from "./collectionFormClass"
 

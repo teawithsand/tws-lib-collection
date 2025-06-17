@@ -1,6 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router"
 import { GlobalLayout } from "../components/layout"
-import { AboutPage, CollectionListPage, HomePage, NotFoundPage } from "../pages"
+import {
+	AboutPage,
+	CollectionCreatePage,
+	CollectionListPage,
+	HomePage,
+	NotFoundPage,
+} from "../pages"
 import { Routes as AppRoutes } from "./routes"
 
 export const Router = () => {
@@ -16,6 +22,10 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.collections.path}
 						element={<CollectionListPage />}
+					/>
+					<Route
+						path={AppRoutes.createCollection.path}
+						element={<CollectionCreatePage />}
 					/>
 					<Route path={"*"} element={<NotFoundPage />} />
 				</Routes>
