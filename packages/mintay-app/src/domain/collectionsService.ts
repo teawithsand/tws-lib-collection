@@ -56,6 +56,13 @@ export class CollectionService {
 
 		return {
 			data: atom((get) => get(collectionDataAtom)),
+			dataWithId: atom(
+				async (get) =>
+					({
+						id: collectionId,
+						data: await get(collectionDataAtom),
+					}) satisfies WithMintayId<MintayCollectionData | null>,
+			),
 			dataLoadable: collectionDataLoadable,
 			update: updateCollection,
 			delete: deleteCollection,

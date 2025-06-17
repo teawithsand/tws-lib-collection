@@ -1,35 +1,36 @@
 import { useApp } from "@/app"
 import { CollectionFormData } from "@/components/form"
+import { WithMintayId } from "@/domain/mintay"
 import { Routes } from "@/router/routes"
-import { useStableMemo } from "@/util/useStableMemo"
-import { useAtomValue, useSetAtom } from "@teawithsand/fstate"
+import { Atom, useAtomValue, useSetAtom } from "@teawithsand/fstate"
 import { MintayCollectionData } from "@teawithsand/mintay-core"
 import { useCallback } from "react"
-import { useNavigate, useParams } from "react-router"
+import { useNavigate } from "react-router"
 import { CollectionEdit } from "./CollectionEdit"
 
-export const AutonomousCollectionEdit = () => {
+interface AutonomousCollectionEditProps {
+	readonly collectionDataWithIdAtom: Atom<
+		Promise<WithMintayId<MintayCollectionData | null>>
+	>
+}
+
+export const AutonomousCollectionEdit = ({
+	collectionDataWithIdAtom,
+}: AutonomousCollectionEditProps) => {
 	const app = useApp()
 	const navigate = useNavigate()
-	const { id } = useParams<{ id: string }>()
-	const collectionId = id ?? ""
+
+	const collectionDataWithId = useAtomValue(collectionDataWithIdAtom)
+	const { id: collectionId, data: collectionData } = collectionDataWithId
 
 	const refresh = useSetAtom(app.collectionService.refreshCollectionsList)
 
-	const collectionAtoms = useStableMemo(
-		() => app.collectionService.getCollection(collectionId),
-		[app.collectionService, collectionId],
-	)
-	const collectionDataLoadable = useAtomValue(collectionAtoms.dataLoadable)
-
 	const handleSubmit = useCallback(
 		async (data: CollectionFormData) => {
-			const currentData = await app.collectionService.collectionStore
-				.get(collectionId)
-				.mustRead()
+			if (!collectionData) return
 
 			const updatedData: MintayCollectionData = {
-				...currentData,
+				...collectionData,
 				title: data.title,
 				description: data.description,
 				lastUpdatedAtTimestamp: Date.now(),
@@ -43,30 +44,17 @@ export const AutonomousCollectionEdit = () => {
 
 			navigate(Routes.collections.navigate())
 		},
-		[app, collectionId, navigate, refresh],
+		[app, collectionId, navigate, refresh, collectionData],
 	)
 
-	if (collectionDataLoadable.state === "loading") {
-		return <div>Loading collection...</div>
+	if (!collectionData) {
+		return <div>Collection not found</div>
 	}
 
-	if (collectionDataLoadable.state === "hasError") {
-		return <div>Error loading collection</div>
+	const initialData: CollectionFormData = {
+		title: collectionData.title,
+		description: collectionData.description,
 	}
 
-	if (
-		collectionDataLoadable.state === "hasData" &&
-		collectionDataLoadable.data
-	) {
-		const initialData: CollectionFormData = {
-			title: collectionDataLoadable.data.title,
-			description: collectionDataLoadable.data.description,
-		}
-
-		return (
-			<CollectionEdit initialData={initialData} onSubmit={handleSubmit} />
-		)
-	}
-
-	return <div>Collection not found</div>
+	return <CollectionEdit initialData={initialData} onSubmit={handleSubmit} />
 }
