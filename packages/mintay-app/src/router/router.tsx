@@ -3,6 +3,7 @@ import { GlobalLayout } from "../components/layout"
 import {
 	AboutPage,
 	CollectionCreatePage,
+	CollectionEditPage,
 	CollectionListPage,
 	HomePage,
 	NotFoundPage,
@@ -26,6 +27,10 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.createCollection.path}
 						element={<CollectionCreatePage />}
+					/>
+					<Route
+						path={AppRoutes.editCollection.path}
+						element={<CollectionEditPage />}
 					/>
 					<Route path={"*"} element={<NotFoundPage />} />
 				</Routes>

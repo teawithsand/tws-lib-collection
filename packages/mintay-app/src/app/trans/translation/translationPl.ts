@@ -15,6 +15,7 @@ export const translationPl: Readonly<AppTranslation> = {
 	collection: {
 		form: {
 			createCollection: () => "Utwórz kolekcję",
+			editCollection: () => "Edytuj kolekcję",
 			submit: () => "Zatwierdź",
 			collectionName: () => "Nazwa kolekcji",
 			enterCollectionName: () => "Wprowadź nazwę kolekcji",

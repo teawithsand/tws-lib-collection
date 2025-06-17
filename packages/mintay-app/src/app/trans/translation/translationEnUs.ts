@@ -15,6 +15,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 	collection: {
 		form: {
 			createCollection: () => "Create Collection",
+			editCollection: () => "Edit Collection",
 			submit: () => "Submit",
 			collectionName: () => "Collection Name",
 			enterCollectionName: () => "Enter collection name",

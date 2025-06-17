@@ -7,9 +7,6 @@ import styles from "./collectionList.module.scss"
 import { CollectionListHeader } from "./collectionListHeader"
 import { EmptyCollectionsState } from "./emptyCollectionsState"
 
-/**
- * Loading state component for collections
- */
 const CollectionsLoadingState = () => (
 	<div className={styles.loadingContainer}>
 		<Loader size="lg" />
@@ -19,9 +16,6 @@ const CollectionsLoadingState = () => (
 	</div>
 )
 
-/**
- * Error state component for collections
- */
 const CollectionsErrorState = () => (
 	<Alert
 		icon={<IconAlertCircle size={16} />}
@@ -43,13 +37,10 @@ const CollectionsErrorState = () => (
 	</Alert>
 )
 
-/**
- * Autonomous collection list component that manages its own data fetching and state
- */
 export const AutonomousCollectionList = () => {
 	const app = useApp()
 	const collectionsLoadable = useAtomValue(
-		app.collectionService.collectionDataListLoadable,
+		app.collectionService.collectionListLoadable,
 	)
 
 	const renderContent = () => {

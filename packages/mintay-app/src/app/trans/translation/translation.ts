@@ -14,6 +14,7 @@ export interface AppTranslation {
 	collection: {
 		form: {
 			createCollection: () => string
+			editCollection: () => string
 			submit: () => string
 			collectionName: () => string
 			enterCollectionName: () => string

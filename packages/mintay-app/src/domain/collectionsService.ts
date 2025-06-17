@@ -5,6 +5,7 @@ import {
 	MintayCollectionData,
 	MintayTypeSpec,
 } from "@teawithsand/mintay-core"
+import { WithMintayId } from "./mintay"
 
 export class CollectionService {
 	public readonly collectionStore: CollectionStore<MintayTypeSpec>
@@ -17,29 +18,8 @@ export class CollectionService {
 		this.collectionStore = collectionStore
 	}
 
-	private readonly _collectionsDataList = atomWithRefresh(async () => {
-		const ids = await this.collectionStore.list()
-
-		const collections: MintayCollectionData[] = []
-
-		for (const id of ids) {
-			const handle = this.collectionStore.get(id)
-			collections.push(await handle.mustRead())
-		}
-
-		return collections
-	})
-
-	public readonly collectionsDataList = atom((get) =>
-		get(this._collectionsDataList),
-	)
-
-	public readonly collectionDataListLoadable = loadable(
-		this.collectionsDataList,
-	)
-
 	public readonly refreshCollectionsList = atom(null, (_get, set) => {
-		set(this._collectionsDataList)
+		set(this._collectionsList)
 	})
 
 	public readonly getCollection = (collectionId: CardId) => {
@@ -56,14 +36,13 @@ export class CollectionService {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
-				set(this._collectionsDataList)
+				set(this._collectionsList)
 			},
 		)
 
-		const deleteCollection = atom(null, async (_get, set) => {
+		const deleteCollection = atom(null, async () => {
 			const collection = this.collectionStore.get(collectionId)
 			await collection.delete()
-			set(this._collectionsDataList)
 		})
 
 		const createCollection = atom(
@@ -72,7 +51,6 @@ export class CollectionService {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
-				set(this._collectionsDataList)
 			},
 		)
 
@@ -87,4 +65,22 @@ export class CollectionService {
 			}),
 		}
 	}
+
+	private readonly _collectionsList = atomWithRefresh(async () => {
+		const ids = await this.collectionStore.list()
+
+		const collections: Array<WithMintayId<MintayCollectionData>> = []
+
+		for (const id of ids) {
+			const handle = this.collectionStore.get(id)
+			const data = await handle.mustRead()
+			collections.push({ id, data })
+		}
+
+		return collections
+	})
+
+	public readonly collectionsList = atom((get) => get(this._collectionsList))
+
+	public readonly collectionListLoadable = loadable(this.collectionsList)
 }

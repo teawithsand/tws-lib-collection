@@ -1,3 +1,5 @@
+import { WithMintayId } from "@/domain/mintay/mintay"
+import { Routes } from "@/router/routes"
 import {
 	ActionIcon,
 	Badge,
@@ -8,12 +10,13 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconBook } from "@tabler/icons-react"
+import { IconBook, IconEdit } from "@tabler/icons-react"
 import { MintayCollectionData } from "@teawithsand/mintay-core"
+import { Link } from "react-router"
 import styles from "./collectionList.module.scss"
 
 interface CollectionListProps {
-	readonly collections: MintayCollectionData[]
+	readonly collections: WithMintayId<MintayCollectionData>[]
 }
 
 /**
@@ -23,89 +26,104 @@ export const CollectionList = ({ collections }: CollectionListProps) => {
 	return (
 		<div className={styles.content}>
 			<Grid className={styles.collectionsGrid}>
-				{collections.map((collection) => (
-					<Grid.Col
-						key={collection.globalId || "unknown"}
-						span={{ base: 12, sm: 6, md: 4, lg: 3 }}
-					>
-						<Card
-							shadow="sm"
-							padding="lg"
-							radius="md"
-							withBorder
-							className={styles.collectionCard}
+				{collections.map((collection) => {
+					const { data, id } = collection
+					return (
+						<Grid.Col
+							key={id}
+							span={{ base: 12, sm: 6, md: 4, lg: 3 }}
 						>
-							<Card.Section className={styles.cardHeader}>
-								<Group justify="space-between" p="md">
-									<IconBook
-										size={24}
-										className={styles.collectionIcon}
-									/>
-									<Badge
-										color="blue"
-										variant="light"
-										size="sm"
+							<Card
+								shadow="sm"
+								padding="lg"
+								radius="md"
+								withBorder
+								className={styles.collectionCard}
+							>
+								<Card.Section className={styles.cardHeader}>
+									<Group justify="space-between" p="md">
+										<IconBook
+											size={24}
+											className={styles.collectionIcon}
+										/>
+										<Badge
+											color="blue"
+											variant="light"
+											size="sm"
+										>
+											Collection
+										</Badge>
+									</Group>
+								</Card.Section>
+
+								<Stack gap="sm" className={styles.cardContent}>
+									<Title
+										order={4}
+										className={styles.collectionTitle}
+										lineClamp={2}
 									>
-										Collection
-									</Badge>
-								</Group>
-							</Card.Section>
+										{data.title || "Untitled Collection"}
+									</Title>
 
-							<Stack gap="sm" className={styles.cardContent}>
-								<Title
-									order={4}
-									className={styles.collectionTitle}
-									lineClamp={2}
-								>
-									{collection.title || "Untitled Collection"}
-								</Title>
-
-								<Text
-									size="sm"
-									c="dimmed"
-									className={styles.collectionDescription}
-									lineClamp={3}
-								>
-									{collection.description ||
-										"No description available"}
-								</Text>
-
-								<Group
-									justify="space-between"
-									className={styles.cardMeta}
-								>
-									<Text size="xs" c="dimmed">
-										Created:{" "}
-										{new Date(
-											collection.createdAtTimestamp,
-										).toLocaleDateString()}
+									<Text
+										size="sm"
+										c="dimmed"
+										className={styles.collectionDescription}
+										lineClamp={3}
+									>
+										{data.description ||
+											"No description available"}
 									</Text>
-									{collection.lastUpdatedAtTimestamp !==
-										collection.createdAtTimestamp && (
+
+									<Group
+										justify="space-between"
+										className={styles.cardMeta}
+									>
 										<Text size="xs" c="dimmed">
-											Updated:{" "}
+											Created:{" "}
 											{new Date(
-												collection.lastUpdatedAtTimestamp,
+												data.createdAtTimestamp,
 											).toLocaleDateString()}
 										</Text>
-									)}
-								</Group>
-							</Stack>
+										{data.lastUpdatedAtTimestamp !==
+											data.createdAtTimestamp && (
+											<Text size="xs" c="dimmed">
+												Updated:{" "}
+												{new Date(
+													data.lastUpdatedAtTimestamp,
+												).toLocaleDateString()}
+											</Text>
+										)}
+									</Group>
+								</Stack>
 
-							<Card.Section className={styles.cardActions}>
-								<Group justify="flex-end" p="md">
-									<ActionIcon
-										variant="subtle"
-										color="blue"
-										size="sm"
-									>
-										<IconBook size={16} />
-									</ActionIcon>
-								</Group>
-							</Card.Section>
-						</Card>
-					</Grid.Col>
-				))}
+								<Card.Section className={styles.cardActions}>
+									<Group justify="flex-end" p="md">
+										<ActionIcon
+											component={Link}
+											to={Routes.editCollection.navigate(
+												id.toString(),
+											)}
+											variant="subtle"
+											color="orange"
+											size="sm"
+											title="Edit collection"
+										>
+											<IconEdit size={16} />
+										</ActionIcon>
+										<ActionIcon
+											variant="subtle"
+											color="blue"
+											size="sm"
+										>
+											<IconBook size={16} />
+										</ActionIcon>
+									</Group>
+								</Card.Section>
+							</Card>
+						</Grid.Col>
+					)
+				})}
 			</Grid>
 		</div>
 	)
