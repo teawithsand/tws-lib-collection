@@ -8,16 +8,26 @@ import { AppBarDrawerItem } from "./appBarTypes"
 interface AppBarDrawerItemProps {
 	readonly item: AppBarDrawerItem
 	readonly index: number
+	readonly onClose: () => void
 }
 
-const AppBarDrawerItemComponent = ({ item, index }: AppBarDrawerItemProps) => {
+const AppBarDrawerItemComponent = ({
+	item,
+	index,
+	onClose,
+}: AppBarDrawerItemProps) => {
+	const handleClick = () => {
+		item.onClick?.()
+		onClose()
+	}
+
 	if (item.linkType === AppBarLinkType.LOCAL_LINK && item.href) {
 		return (
 			<NavLink
 				key={index}
 				label={item.label}
 				leftSection={<item.icon size={18} />}
-				onClick={item.onClick}
+				onClick={handleClick}
 				disabled={item.disabled}
 				className={styles.navLink}
 				component={Link}
@@ -32,7 +42,7 @@ const AppBarDrawerItemComponent = ({ item, index }: AppBarDrawerItemProps) => {
 				key={index}
 				label={item.label}
 				leftSection={<item.icon size={18} />}
-				onClick={item.onClick}
+				onClick={handleClick}
 				disabled={item.disabled}
 				className={styles.navLink}
 				component="a"
@@ -48,7 +58,7 @@ const AppBarDrawerItemComponent = ({ item, index }: AppBarDrawerItemProps) => {
 			key={index}
 			label={item.label}
 			leftSection={<item.icon size={18} />}
-			onClick={item.onClick}
+			onClick={handleClick}
 			disabled={item.disabled}
 			className={styles.navLink}
 		/>
@@ -91,6 +101,7 @@ export const AppBarDrawer = ({
 						key={index}
 						item={item}
 						index={index}
+						onClose={onClose}
 					/>
 				))}
 			</Stack>
