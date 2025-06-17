@@ -59,12 +59,18 @@ export interface AppBarDrawerProps {
 	readonly opened: boolean
 	readonly onClose: () => void
 	readonly items: AppBarDrawerItem[]
+	readonly drawerTitle?: string
 }
 
 /**
  * Drawer component for the AppBar navigation
  */
-export const AppBarDrawer = ({ opened, onClose, items }: AppBarDrawerProps) => {
+export const AppBarDrawer = ({
+	opened,
+	onClose,
+	items,
+	drawerTitle = "Navigation",
+}: AppBarDrawerProps) => {
 	return (
 		<Drawer
 			opened={opened}
@@ -72,7 +78,7 @@ export const AppBarDrawer = ({ opened, onClose, items }: AppBarDrawerProps) => {
 			title={
 				<Group gap="xs">
 					<IconCards size={20} />
-					<Text fw={700}>Navigation</Text>
+					<Text fw={700}>{drawerTitle}</Text>
 				</Group>
 			}
 			padding="md"

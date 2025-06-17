@@ -8,6 +8,10 @@ export const translationPl: Readonly<AppTranslation> = {
 			thisFieldMustNotBeEmpty: () => "To pole nie może być puste",
 		},
 	},
+	appBar: {
+		title: () => "Mintay",
+		navigation: () => "Nawigacja",
+	},
 	collection: {
 		form: {
 			createCollection: () => "Utwórz kolekcję",

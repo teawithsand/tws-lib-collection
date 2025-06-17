@@ -7,6 +7,10 @@ export interface AppTranslation {
 			thisFieldMustNotBeEmpty: () => string
 		}
 	}
+	appBar: {
+		title: () => string
+		navigation: () => string
+	}
 	collection: {
 		form: {
 			createCollection: () => string

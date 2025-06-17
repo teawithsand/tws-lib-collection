@@ -14,6 +14,7 @@ import {
 	SqliteInMemoryClient,
 	SqliteWorkerClient,
 } from "@teawithsand/sqlite-web"
+import { AppBarService } from "../domain/appBar/appBarService"
 import { CollectionService } from "../domain/collectionsService"
 import { DiReleaseHelper } from "./releaseHelper"
 import { TransService } from "./trans"
@@ -28,6 +29,7 @@ export type AppDiContents = {
 
 	translationService: TransService
 	collectionService: CollectionService
+	appBarService: AppBarService
 }
 
 const LOG_TAG = "makeAppDi"
@@ -59,6 +61,7 @@ export class AppDi {
 			)
 			.setValue("atomStore", createStore())
 			.setValue("translationService", new TransService())
+			.setValue("appBarService", new AppBarService())
 			.setFactory(
 				"releaseHelper",
 				async (di) =>

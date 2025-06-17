@@ -2,6 +2,7 @@ import { MantineProvider, createTheme } from "@mantine/core"
 import "@mantine/core/styles.css"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
+import { AppBoundary } from "./app/boundary.tsx"
 import { AppProvider } from "./app/provider.tsx"
 import { Router } from "./router/router.tsx"
 
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")!).render(
 	<AppProvider>
 		<StrictMode>
 			<MantineProvider theme={theme}>
-				<Router />
+				<AppBoundary>
+					<Router />
+				</AppBoundary>
 			</MantineProvider>
 		</StrictMode>
 	</AppProvider>,

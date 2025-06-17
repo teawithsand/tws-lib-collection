@@ -8,6 +8,10 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			thisFieldMustNotBeEmpty: () => "This field must not be empty",
 		},
 	},
+	appBar: {
+		title: () => "Mintay",
+		navigation: () => "Navigation",
+	},
 	collection: {
 		form: {
 			createCollection: () => "Create Collection",

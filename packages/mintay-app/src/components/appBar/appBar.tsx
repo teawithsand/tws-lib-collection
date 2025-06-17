@@ -119,6 +119,7 @@ export interface AppBarProps {
 	readonly actions?: AppBarAction[]
 	readonly moreActions?: AppBarMoreAction[]
 	readonly drawerItems?: AppBarDrawerItem[]
+	readonly drawerTitle?: string
 	readonly children?: ReactNode
 }
 
@@ -131,6 +132,7 @@ export const AppBar = ({
 	actions = [],
 	moreActions = [],
 	drawerItems = [],
+	drawerTitle,
 	children,
 }: AppBarProps) => {
 	const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
@@ -193,6 +195,7 @@ export const AppBar = ({
 				opened={drawerOpened}
 				onClose={closeDrawer}
 				items={drawerItems}
+				drawerTitle={drawerTitle}
 			/>
 		</>
 	)
