@@ -5,10 +5,9 @@ import { StoredMintayCollectionData } from "./schema"
 
 const mintayCollectionDataV1Schema = z.object({
 	globalId: z.string(),
-	title: z.string(),
-	description: z.string(),
 	createdAtTimestamp: z.number(),
 	lastUpdatedAtTimestamp: z.number(),
+	content: z.string(),
 })
 
 export const storedMintayCollectionDataVersionedType =
@@ -25,11 +24,10 @@ export const storedMintayCollectionDataVersionedType =
 					),
 					deserializer: (stored) => ({
 						globalId: stored.data.globalId,
-						title: stored.data.title,
-						description: stored.data.description,
 						createdAtTimestamp: stored.data.createdAtTimestamp,
 						lastUpdatedAtTimestamp:
 							stored.data.lastUpdatedAtTimestamp,
+						content: stored.data.content,
 					}),
 				},
 			},
@@ -37,10 +35,9 @@ export const storedMintayCollectionDataVersionedType =
 				version: 1 as const,
 				data: {
 					globalId: data.globalId,
-					title: data.title,
-					description: data.description,
 					createdAtTimestamp: data.createdAtTimestamp,
 					lastUpdatedAtTimestamp: data.lastUpdatedAtTimestamp,
+					content: data.content,
 				},
 			}),
 		},

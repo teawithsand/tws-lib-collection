@@ -5,17 +5,14 @@ export type MintayCollectionData = {
 	/** The unique global identifier of the collection. */
 	globalId: string
 
-	/** The title of the collection. */
-	title: string
-
-	/** A brief description of the collection. */
-	description: string
-
 	/** The timestamp when the collection was created. */
 	createdAtTimestamp: number
 
 	/** The timestamp when the collection was last updated. */
 	lastUpdatedAtTimestamp: number
+
+	/** External data to be used by client application. It has role analogous to content of MintayCardData. */
+	content: string
 }
 
 export class MintayCollectionDataUtil {
@@ -23,9 +20,8 @@ export class MintayCollectionDataUtil {
 
 	public static readonly getDefaultData = (): MintayCollectionData => ({
 		globalId: "",
-		title: "",
-		description: "",
 		createdAtTimestamp: 0,
 		lastUpdatedAtTimestamp: 0,
+		content: "",
 	})
 }

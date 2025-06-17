@@ -68,8 +68,9 @@ describe.each<{
 		// Save collection data
 		const collectionData: MintayCollectionData = {
 			globalId: "test-collection-001",
-			title: "My First Collection",
-			description: "A collection for testing E2E functionality",
+			content: `My First Collection
+
+A collection for testing E2E functionality`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		}
@@ -80,10 +81,9 @@ describe.each<{
 		expect(savedData).toEqual(collectionData)
 
 		// Update partial data
-		await collection.update({ title: "Updated Collection Title" })
+		await collection.update({ content: "Updated Collection Content" })
 		const updatedData = await collection.mustRead()
-		expect(updatedData.title).toBe("Updated Collection Title")
-		expect(updatedData.description).toBe(collectionData.description)
+		expect(updatedData.content).toBe("Updated Collection Content")
 
 		// Verify collection appears in the list
 		const allCollections = await mintay.collectionStore.list()
@@ -95,8 +95,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "card-test-collection",
-			title: "Card Test Collection",
-			description: "Testing card operations",
+			content: `Card Test Collection
+
+Testing card operations`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -148,8 +149,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "learning-test-collection",
-			title: "Learning Engine Test",
-			description: "Testing FSRS learning functionality",
+			content: `Learning Engine Test
+
+Testing FSRS learning functionality`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -225,8 +227,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "priority-test-collection",
-			title: "Priority Test Collection",
-			description: "Testing card priority ordering",
+			content: `Priority Test Collection
+
+Testing card priority ordering`,
 			createdAtTimestamp: BASE_TIMESTAMP + 6000,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 6000,
 		})
@@ -275,8 +278,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "cleanup-test-collection",
-			title: "Cleanup Test Collection",
-			description: "Testing deletion functionality",
+			content: `Cleanup Test Collection
+
+Testing deletion functionality`,
 			createdAtTimestamp: BASE_TIMESTAMP + 7000,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 7000,
 		})
@@ -332,8 +336,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "pagination-test-collection",
-			title: "Pagination Test Collection",
-			description: "Testing card pagination",
+			content: `Pagination Test Collection
+
+Testing card pagination`,
 			createdAtTimestamp: BASE_TIMESTAMP + 8000,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 8000,
 		})
@@ -381,8 +386,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "pop-test-collection",
-			title: "Pop Test Collection",
-			description: "Testing event pop functionality",
+			content: `Pop Test Collection
+
+Testing event pop functionality`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -462,8 +468,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "global-undo-test-collection",
-			title: "Global Undo Test Collection",
-			description: "Testing global undo functionality",
+			content: `Global Undo Test Collection
+
+Testing global undo functionality`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -581,8 +588,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "mixed-pop-test-collection",
-			title: "Mixed Pop Test Collection",
-			description: "Testing mixed pop operations",
+			content: `Mixed Pop Test Collection
+
+Testing mixed pop operations`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -687,8 +695,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "relearning-test-collection",
-			title: "Relearning Test Collection",
-			description: "Testing card relearning and queue filtering",
+			content: `Relearning Test Collection
+
+Testing card relearning and queue filtering`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -847,8 +856,9 @@ describe.each<{
 		const collection1 = await mintay.collectionStore.create()
 		await collection1.save({
 			globalId: "content-mgmt-collection-1",
-			title: "French Vocabulary",
-			description: "Learning French words and phrases",
+			content: `French Vocabulary
+
+Learning French words and phrases`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -856,8 +866,9 @@ describe.each<{
 		const collection2 = await mintay.collectionStore.create()
 		await collection2.save({
 			globalId: "content-mgmt-collection-2",
-			title: "Spanish Grammar",
-			description: "Spanish grammar rules and exercises",
+			content: `Spanish Grammar
+
+Spanish grammar rules and exercises`,
 			createdAtTimestamp: BASE_TIMESTAMP + 1000,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 2000,
 		})
@@ -944,8 +955,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "validation-collection",
-			title: "Data Validation Collection",
-			description: "Testing data integrity and migration",
+			content: `Data Validation Collection
+
+Testing data integrity and migration`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -1031,8 +1043,9 @@ describe.each<{
 		const mathCollection = await mintay.collectionStore.create()
 		await mathCollection.save({
 			globalId: "mathematics-collection",
-			title: "Mathematics Problems",
-			description: "Algebra and calculus problems",
+			content: `Mathematics Problems
+
+Algebra and calculus problems`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -1040,8 +1053,9 @@ describe.each<{
 		const physicsCollection = await mintay.collectionStore.create()
 		await physicsCollection.save({
 			globalId: "physics-collection",
-			title: "Physics Concepts",
-			description: "Fundamental physics principles",
+			content: `Physics Concepts
+
+Fundamental physics principles`,
 			createdAtTimestamp: BASE_TIMESTAMP + 1000,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 2000,
 		})
@@ -1124,8 +1138,9 @@ describe.each<{
 		const beginnerCollection = await mintay.collectionStore.create()
 		await beginnerCollection.save({
 			globalId: "beginner-spanish",
-			title: "Beginner Spanish",
-			description: "Basic Spanish vocabulary",
+			content: `Beginner Spanish
+
+Basic Spanish vocabulary`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -1133,8 +1148,9 @@ describe.each<{
 		const intermediateCollection = await mintay.collectionStore.create()
 		await intermediateCollection.save({
 			globalId: "intermediate-spanish",
-			title: "Intermediate Spanish",
-			description: "Intermediate Spanish grammar and vocabulary",
+			content: `Intermediate Spanish
+
+Intermediate Spanish grammar and vocabulary`,
 			createdAtTimestamp: BASE_TIMESTAMP + 1000,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 2000,
 		})
@@ -1206,8 +1222,9 @@ describe.each<{
 		const curationCollection = await mintay.collectionStore.create()
 		await curationCollection.save({
 			globalId: "content-curation-collection",
-			title: "Content Curation Test",
-			description: "Testing bulk content operations",
+			content: `Content Curation Test
+
+Testing bulk content operations`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})
@@ -1301,8 +1318,9 @@ describe.each<{
 		const collection = await mintay.collectionStore.create()
 		await collection.save({
 			globalId: "events-test-collection",
-			title: "Events Test Collection",
-			description: "Testing card event count and retrieval",
+			content: `Events Test Collection
+
+Testing card event count and retrieval`,
 			createdAtTimestamp: BASE_TIMESTAMP,
 			lastUpdatedAtTimestamp: BASE_TIMESTAMP + 1000,
 		})

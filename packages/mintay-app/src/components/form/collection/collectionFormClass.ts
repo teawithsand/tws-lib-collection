@@ -7,8 +7,7 @@ import {
 import { AppTransString } from "../../../app/trans/defines"
 
 export interface CollectionFormData {
-	title: string
-	description: string
+	content: string
 }
 
 export class CollectionFormClass extends FormAtomsDelegateBase<
@@ -17,8 +16,7 @@ export class CollectionFormClass extends FormAtomsDelegateBase<
 > {
 	public constructor(initialData?: Partial<CollectionFormData>) {
 		const defaultValues: CollectionFormData = {
-			title: "",
-			description: "",
+			content: "",
 			...initialData,
 		}
 
@@ -27,12 +25,12 @@ export class CollectionFormClass extends FormAtomsDelegateBase<
 				CollectionFormData,
 				AppTransString
 			>(defaultValues)
-				.setFieldValidator("title", (fieldValue) => {
+				.setFieldValidator("content", (fieldValue) => {
 					return atom((get) => {
-						const title = get(fieldValue)
+						const content = get(fieldValue)
 						const errors: AppTransString[] = []
 
-						if (!title.trim()) {
+						if (!content.trim()) {
 							errors.push((trans) =>
 								trans.generic.form.thisFieldMustNotBeEmpty(),
 							)
@@ -41,24 +39,7 @@ export class CollectionFormClass extends FormAtomsDelegateBase<
 						return FormErrorBag.fromArray(errors)
 					})
 				})
-				.setFieldPreSubmitMapper("title", (fieldValue) =>
-					fieldValue.trim(),
-				)
-				.setFieldValidator("description", (fieldValue) => {
-					return atom((get) => {
-						const description = get(fieldValue)
-						const errors: AppTransString[] = []
-
-						if (!description.trim()) {
-							errors.push((trans) =>
-								trans.generic.form.thisFieldMustNotBeEmpty(),
-							)
-						}
-
-						return FormErrorBag.fromArray(errors)
-					})
-				})
-				.setFieldPreSubmitMapper("description", (fieldValue) =>
+				.setFieldPreSubmitMapper("content", (fieldValue) =>
 					fieldValue.trim(),
 				)
 				.buildForm(),

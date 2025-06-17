@@ -15,8 +15,8 @@ describe("storedMintayCollectionDataVersionedType", () => {
 					version: 1,
 					data: {
 						globalId: "collection-123",
-						title: "My First Collection",
-						description: "A sample collection for testing",
+						content:
+							"My First Collection\n\nA sample collection for testing",
 						createdAtTimestamp: 1640995200000, // 2022-01-01T00:00:00.000Z
 						lastUpdatedAtTimestamp: 1641081600000, // 2022-01-02T00:00:00.000Z
 					},
@@ -25,8 +25,7 @@ describe("storedMintayCollectionDataVersionedType", () => {
 					version: 1,
 					data: {
 						globalId: "",
-						title: "",
-						description: "",
+						content: "",
 						createdAtTimestamp: 0,
 						lastUpdatedAtTimestamp: 0,
 					},
@@ -35,8 +34,8 @@ describe("storedMintayCollectionDataVersionedType", () => {
 					version: 1,
 					data: {
 						globalId: "special-chars-collection-!@#$%^&*()",
-						title: "Collection with Unicode: 你好世界 🌍",
-						description: "Description with\nnewlines\tand\ttabs",
+						content:
+							"Collection with Unicode: 你好世界 🌍\n\nDescription with\nnewlines\tand\ttabs",
 						createdAtTimestamp: Date.now(),
 						lastUpdatedAtTimestamp: Date.now() + 1000,
 					},
@@ -45,15 +44,14 @@ describe("storedMintayCollectionDataVersionedType", () => {
 			ownedExamples: [
 				{
 					globalId: "owned-collection-456",
-					title: "Owned Collection Example",
-					description: "This is an owned collection example",
+					content:
+						"Owned Collection Example\n\nThis is an owned collection example",
 					createdAtTimestamp: 1609459200000, // 2021-01-01T00:00:00.000Z
 					lastUpdatedAtTimestamp: 1609545600000, // 2021-01-02T00:00:00.000Z
 				},
 				{
 					globalId: "large-collection",
-					title: "A".repeat(1000), // Large title
-					description: "B".repeat(5000), // Large description
+					content: "A".repeat(1000) + "\n\n" + "B".repeat(5000), // Large content
 					createdAtTimestamp: Number.MAX_SAFE_INTEGER - 1000,
 					lastUpdatedAtTimestamp: Number.MAX_SAFE_INTEGER,
 				},
@@ -64,18 +62,16 @@ describe("storedMintayCollectionDataVersionedType", () => {
 						version: 1,
 						data: {
 							globalId: "paired-collection-789",
-							title: "Paired Collection",
-							description:
-								"Collection with matched stored/owned pair",
+							content:
+								"Paired Collection\n\nCollection with matched stored/owned pair",
 							createdAtTimestamp: 1577836800000, // 2020-01-01T00:00:00.000Z
 							lastUpdatedAtTimestamp: 1577923200000, // 2020-01-02T00:00:00.000Z
 						},
 					},
 					{
 						globalId: "paired-collection-789",
-						title: "Paired Collection",
-						description:
-							"Collection with matched stored/owned pair",
+						content:
+							"Paired Collection\n\nCollection with matched stored/owned pair",
 						createdAtTimestamp: 1577836800000,
 						lastUpdatedAtTimestamp: 1577923200000,
 					},
@@ -85,16 +81,14 @@ describe("storedMintayCollectionDataVersionedType", () => {
 						version: 1,
 						data: {
 							globalId: "minimal-pair",
-							title: "Min",
-							description: "X",
+							content: "Min\n\nX",
 							createdAtTimestamp: 1,
 							lastUpdatedAtTimestamp: 2,
 						},
 					},
 					{
 						globalId: "minimal-pair",
-						title: "Min",
-						description: "X",
+						content: "Min\n\nX",
 						createdAtTimestamp: 1,
 						lastUpdatedAtTimestamp: 2,
 					},
