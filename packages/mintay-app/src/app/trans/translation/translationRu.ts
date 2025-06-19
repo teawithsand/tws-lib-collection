@@ -34,6 +34,9 @@ export const translationRu: Readonly<AppTranslation> = {
 			password: () => "Пароль",
 			enterPassword: () => "Введите пароль",
 			formValidationErrors: () => "Ошибки валидации формы",
+			submissionError: () => "Ошибка отправки",
+			unexpectedError: () =>
+				"Произошла непредвиденная ошибка. Попробуйте еще раз.",
 		},
 		register: {
 			submit: () => "Зарегистрироваться",
@@ -45,6 +48,9 @@ export const translationRu: Readonly<AppTranslation> = {
 			enterConfirmPassword: () => "Подтвердите ваш пароль",
 			formValidationErrors: () => "Ошибки валидации формы",
 			passwordsDoNotMatch: () => "Пароли не совпадают",
+			submissionError: () => "Ошибка отправки",
+			unexpectedError: () =>
+				"Произошла непредвиденная ошибка. Попробуйте еще раз.",
 		},
 	},
 	about: {

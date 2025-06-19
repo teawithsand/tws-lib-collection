@@ -71,6 +71,20 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 						</Alert>
 					)}
 
+					{form.lastSubmitError && (
+						<Alert
+							icon={<IconAlertCircle size="1rem" />}
+							title={resolve((t) =>
+								t.auth.login.submissionError(),
+							)}
+							color="red"
+							className={styles["login-form__submit-error"]}
+						>
+							{form.lastSubmitError.message ||
+								resolve((t) => t.auth.login.unexpectedError())}
+						</Alert>
+					)}
+
 					<div className={styles["login-form__field-group"]}>
 						<TextInput
 							label={resolve((t) => t.auth.login.username())}

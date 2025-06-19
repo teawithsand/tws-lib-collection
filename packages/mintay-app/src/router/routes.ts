@@ -54,6 +54,22 @@ export class Routes {
 	}
 
 	/**
+	 * Login page route
+	 */
+	public static readonly login: RouteConfig = {
+		path: "/auth/login",
+		navigate: () => "/auth/login",
+	}
+
+	/**
+	 * Register page route
+	 */
+	public static readonly register: RouteConfig = {
+		path: "/auth/register",
+		navigate: () => "/auth/register",
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
@@ -63,6 +79,8 @@ export class Routes {
 			Routes.collections,
 			Routes.createCollection,
 			Routes.editCollection,
+			Routes.login,
+			Routes.register,
 		]
 	}
 }

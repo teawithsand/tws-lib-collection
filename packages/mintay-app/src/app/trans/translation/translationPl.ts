@@ -34,6 +34,9 @@ export const translationPl: Readonly<AppTranslation> = {
 			password: () => "Hasło",
 			enterPassword: () => "Wprowadź hasło",
 			formValidationErrors: () => "Błędy walidacji formularza",
+			submissionError: () => "Błąd przesyłania",
+			unexpectedError: () =>
+				"Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
 		},
 		register: {
 			submit: () => "Zarejestruj się",
@@ -45,6 +48,9 @@ export const translationPl: Readonly<AppTranslation> = {
 			enterConfirmPassword: () => "Potwierdź swoje hasło",
 			formValidationErrors: () => "Błędy walidacji formularza",
 			passwordsDoNotMatch: () => "Hasła nie pasują do siebie",
+			submissionError: () => "Błąd przesyłania",
+			unexpectedError: () =>
+				"Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
 		},
 	},
 	about: {

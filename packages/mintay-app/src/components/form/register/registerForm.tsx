@@ -72,6 +72,22 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 						</Alert>
 					)}
 
+					{form.lastSubmitError && (
+						<Alert
+							icon={<IconAlertCircle size="1rem" />}
+							title={resolve((t) =>
+								t.auth.register.submissionError(),
+							)}
+							color="red"
+							className={styles["register-form__submit-error"]}
+						>
+							{form.lastSubmitError.message ||
+								resolve((t) =>
+									t.auth.register.unexpectedError(),
+								)}
+						</Alert>
+					)}
+
 					<div className={styles["register-form__field-group"]}>
 						<TextInput
 							label={resolve((t) => t.auth.register.username())}

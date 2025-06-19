@@ -7,6 +7,8 @@ import {
 	CollectionListPage,
 	HomePage,
 	NotFoundPage,
+	UserLoginPage,
+	UserRegisterPage,
 } from "../pages"
 import { Routes as AppRoutes } from "./routes"
 
@@ -31,6 +33,14 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.editCollection.path}
 						element={<CollectionEditPage />}
+					/>
+					<Route
+						path={AppRoutes.login.path}
+						element={<UserLoginPage />}
+					/>
+					<Route
+						path={AppRoutes.register.path}
+						element={<UserRegisterPage />}
 					/>
 					<Route path={"*"} element={<NotFoundPage />} />
 				</Routes>

@@ -3,7 +3,12 @@ import { AutonomousAppBar } from "@/components/appBar/autonomousAppBar"
 import { AppSuspense } from "@/components/boundary"
 import { useAppBarMutator } from "@/domain/appBar"
 import { Routes } from "@/router/routes"
-import { IconBook, IconHome } from "@tabler/icons-react"
+import {
+	IconBook,
+	IconHome,
+	IconLogin,
+	IconUserPlus,
+} from "@tabler/icons-react"
 import { ReactNode } from "react"
 import styles from "./layout.module.scss"
 
@@ -26,6 +31,18 @@ export const GlobalLayout = ({ children }: LayoutProps) => {
 				label: "Collections",
 				icon: IconBook,
 				href: Routes.collections.navigate(),
+				linkType: AppBarLinkType.LOCAL_LINK,
+			},
+			{
+				label: "Login",
+				icon: IconLogin,
+				href: Routes.login.navigate(),
+				linkType: AppBarLinkType.LOCAL_LINK,
+			},
+			{
+				label: "Register",
+				icon: IconUserPlus,
+				href: Routes.register.navigate(),
 				linkType: AppBarLinkType.LOCAL_LINK,
 			},
 		],

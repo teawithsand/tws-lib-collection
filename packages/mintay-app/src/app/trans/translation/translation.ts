@@ -32,6 +32,8 @@ export interface AppTranslation {
 			password: () => string
 			enterPassword: () => string
 			formValidationErrors: () => string
+			submissionError: () => string
+			unexpectedError: () => string
 		}
 		register: {
 			submit: () => string
@@ -43,6 +45,8 @@ export interface AppTranslation {
 			enterConfirmPassword: () => string
 			formValidationErrors: () => string
 			passwordsDoNotMatch: () => string
+			submissionError: () => string
+			unexpectedError: () => string
 		}
 	}
 	about: {

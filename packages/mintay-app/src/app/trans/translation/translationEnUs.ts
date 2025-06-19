@@ -34,6 +34,9 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			password: () => "Password",
 			enterPassword: () => "Enter password",
 			formValidationErrors: () => "Form Validation Errors",
+			submissionError: () => "Submission Error",
+			unexpectedError: () =>
+				"An unexpected error occurred. Please try again.",
 		},
 		register: {
 			submit: () => "Register",
@@ -45,6 +48,9 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			enterConfirmPassword: () => "Confirm your password",
 			formValidationErrors: () => "Form Validation Errors",
 			passwordsDoNotMatch: () => "Passwords do not match",
+			submissionError: () => "Submission Error",
+			unexpectedError: () =>
+				"An unexpected error occurred. Please try again.",
 		},
 	},
 	about: {

@@ -1,4 +1,5 @@
 export * from "./About"
+export * from "./auth"
 export * from "./collection"
 export * from "./CollectionEdit"
 export * from "./Home"
