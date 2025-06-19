@@ -2,6 +2,11 @@ import { useApp } from "@/app"
 import { PageSuspense } from "@/components/boundary"
 import { CollectionDetail, CollectionNotFound } from "@/components/collection"
 import { LocalLayout } from "@/components/layout"
+import {
+	AppBarMutators,
+	AppBarPredefinedMutatorPriorities,
+	useAppBarMutator,
+} from "@/domain/appBar"
 import { CollectionService } from "@/domain/collectionsService"
 import { AppCollectionData, WithMintayId } from "@/mintay"
 import { atom, useAtomValue } from "@teawithsand/fstate"
@@ -10,6 +15,11 @@ import { useParams } from "react-router"
 export const CollectionDetailPage = () => {
 	const { id } = useParams<{ id: string }>()
 	const app = useApp()
+
+	useAppBarMutator(
+		AppBarMutators.ARROW_BACK_MUTATOR,
+		AppBarPredefinedMutatorPriorities.PAGE,
+	)
 
 	if (!id) {
 		return <CollectionNotFound />
