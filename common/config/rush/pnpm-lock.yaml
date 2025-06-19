@@ -122,6 +122,9 @@ importers:
       '@teawithsand/lngext':
         specifier: workspace:*
         version: link:../lngext
+      '@teawithsand/reserd':
+        specifier: workspace:*
+        version: link:../reserd
       immer:
         specifier: ^10.1.1
         version: 10.1.1
@@ -150,6 +153,9 @@ importers:
       eslint-plugin-unused-imports:
         specifier: ^4.1.4
         version: 4.1.4(@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
+      fake-indexeddb:
+        specifier: ~6.0.1
+        version: 6.0.1
       globals:
         specifier: ^16.1.0
         version: 16.1.0
