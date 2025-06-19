@@ -3,21 +3,22 @@ import { MintayDrizzleDB } from "../../db/db"
 import { getTestingDb } from "../../db/dbTest.test"
 import {
 	CardDataExtractor,
-	CardId,
 	CollectionDataExtractor,
-	MintayAnswer,
-	MintayCardEvent,
-	MintayCardEventType,
-	MintayCardQueue,
-	MintayTypeSpec,
-	MintayTypeSpecParams,
-} from "../../defines"
-import { MintayCardEngineExtractorBase } from "../../defines/card/engineExtractorBase"
+} from "../../defines/extractor"
+import { MintayId } from "../../defines/id"
 import { FsrsParameters } from "../../fsrs"
 import { Mintay, MintayParams } from "../defines"
 import { DrizzleMintay } from "../drizzle"
 import { InMemoryMintay } from "../inMemory"
 import { LockingMintay } from "../locking"
+import { MintayAnswer } from "../types/answer"
+import {
+	MintayCardEvent,
+	MintayCardEventType,
+} from "../types/card/event/cardEvent"
+import { MintayCardEngineExtractorBase } from "../types/engineExtractorBase"
+import { MintayCardQueue } from "../types/queue"
+import { MintayTypeSpec, MintayTypeSpecParams } from "../types/typeSpec"
 
 // Constants for deterministic testing
 const BASE_TIMESTAMP = 1700000000000
@@ -442,7 +443,7 @@ Testing card pagination`,
 		})
 
 		// Create multiple cards
-		const cardIds: CardId[] = []
+		const cardIds: MintayId[] = []
 		for (let i = 0; i < 5; i++) {
 			const card = await collection.createCard()
 			await card.save({
@@ -1328,7 +1329,7 @@ Testing bulk content operations`,
 		})
 
 		// Create multiple cards with different quality levels
-		const cardIds: CardId[] = []
+		const cardIds: MintayId[] = []
 		const cardContents = [
 			"High quality question with clear context",
 			"Mediocre question needs improvement",
@@ -1351,7 +1352,7 @@ Testing bulk content operations`,
 
 		// Simulate content curation workflow: review and update cards
 		const highQualityIndicators = ["High quality", "Excellent", "Good"]
-		const cardsToUpdate: CardId[] = []
+		const cardsToUpdate: MintayId[] = []
 
 		// Use cardStore to fetch and evaluate each card
 		for (const cardId of cardIds) {

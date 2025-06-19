@@ -1,12 +1,9 @@
 import { Serializer } from "@teawithsand/reserd"
-import { TypeSpecSerializer } from "../typings/serializer"
-import { MintayCardEvent } from "./cardEvent"
-import { MintayCardState } from "./cardState"
-import { MintayTypeSpec, MintayTypeSpecParams } from "./typeSpec"
+import { MintayCardEvent } from "./card/event/cardEvent"
+import { MintayCardState } from "./card/state/cardState"
+import { MintayTypeSpecParams } from "./typeSpec"
 
-export class MintayTypeSpecSerializer<T extends MintayTypeSpecParams>
-	implements TypeSpecSerializer<MintayTypeSpec<T>>
-{
+export class MintayTypeSpecSerializer<T extends MintayTypeSpecParams> {
 	constructor(
 		public readonly collectionDataSerializer: Serializer<
 			unknown,

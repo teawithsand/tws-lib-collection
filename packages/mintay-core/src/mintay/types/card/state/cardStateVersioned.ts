@@ -1,8 +1,8 @@
 import { TypeAssert } from "@teawithsand/lngext"
 import { VersionedType } from "@teawithsand/reserd"
 import { z } from "zod"
+import { MintayCardQueue } from "../../queue"
 import { MintayCardState } from "./cardState"
-import { MintayCardQueue } from "./queue"
 
 enum MintayCardQueueStored {
 	NEW = 0,

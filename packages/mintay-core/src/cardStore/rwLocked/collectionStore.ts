@@ -1,6 +1,6 @@
 import { RwLock, RwLockAdapter, RwLockImpl } from "@teawithsand/lngext"
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CollectionHandle, CollectionStore } from "../defines/collection"
 import { RwLockedCollectionHandle } from "./collectionHandle"
 
@@ -9,7 +9,7 @@ import { RwLockedCollectionHandle } from "./collectionHandle"
  * Each CollectionHandle returned is also wrapped with thread-safety.
  * Store operations (list) use read locks, creation operations (create) use write locks.
  */
-export class RwLockedCollectionStore<T extends StorageTypeSpec>
+export class RwLockedCollectionStore<T extends TypeSpec>
 	implements CollectionStore<T>
 {
 	private readonly store: CollectionStore<T>
@@ -28,7 +28,7 @@ export class RwLockedCollectionStore<T extends StorageTypeSpec>
 		this.storeLock = new RwLockImpl(lockAdapter)
 	}
 
-	public readonly list = async (): Promise<CardId[]> => {
+	public readonly list = async (): Promise<MintayId[]> => {
 		return await this.storeLock.withReadLock(async () => {
 			return await this.store.list()
 		})
@@ -44,7 +44,7 @@ export class RwLockedCollectionStore<T extends StorageTypeSpec>
 		})
 	}
 
-	public readonly get = (id: CardId): CollectionHandle<T> => {
+	public readonly get = (id: MintayId): CollectionHandle<T> => {
 		const handle = this.store.get(id)
 		return new RwLockedCollectionHandle<T>({
 			handle,

@@ -6,19 +6,19 @@ import {
 	cardEventsTable,
 	cardsTable,
 } from "../../db/schema"
-import { CardEngineExtractor, CardId } from "../../defines/typings/defines"
-import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { CardEngineExtractor } from "../../defines/extractor"
+import { MintayId, MintayIdUtil } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CardHandle } from "../defines/card"
 
 type CardRecord = typeof cardsTable.$inferSelect
 
-export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
+export class DrizzleCardHandle<T extends TypeSpec & { queue: number }>
 	implements CardHandle<T>
 {
-	public readonly id: CardId
+	public readonly id: MintayId
 	private readonly db: MintayDrizzleDB
-	private collectionId: CardId
+	private collectionId: MintayId
 	private readonly cardStateSerializer: Serializer<unknown, T["cardState"]>
 	private readonly cardDataSerializer: Serializer<unknown, T["cardData"]>
 	private readonly cardEventSerializer: Serializer<unknown, T["cardEvent"]>
@@ -33,12 +33,12 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 		collectionId,
 		cardExtractor,
 	}: {
-		id: CardId
+		id: MintayId
 		db: MintayDrizzleDB
 		cardStateSerializer: Serializer<unknown, T["cardState"]>
 		cardDataSerializer: Serializer<unknown, T["cardData"]>
 		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
-		collectionId: CardId
+		collectionId: MintayId
 		cardExtractor: CardEngineExtractor<T>
 	}) {
 		this.id = id
@@ -54,14 +54,14 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 * Converts CardId to number for database operations
 	 */
 	private readonly getCardIdAsNumber = (): number => {
-		return CardIdUtil.toNumber(this.id)
+		return MintayIdUtil.toNumber(this.id)
 	}
 
 	/**
 	 * Converts collection CardId to number for database operations
 	 */
 	private readonly getCollectionIdAsNumber = (): number => {
-		return CardIdUtil.toNumber(this.collectionId)
+		return MintayIdUtil.toNumber(this.collectionId)
 	}
 
 	/**
@@ -272,11 +272,11 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 			.run()
 	}
 
-	public readonly setCollection = async (id: CardId): Promise<void> => {
+	public readonly setCollection = async (id: MintayId): Promise<void> => {
 		await this.withExistingCard(async (tx) => {
 			await tx
 				.update(cardsTable)
-				.set({ collectionId: CardIdUtil.toNumber(id) })
+				.set({ collectionId: MintayIdUtil.toNumber(id) })
 				.where(eq(cardsTable.id, this.getCardIdAsNumber()))
 				.run()
 		})

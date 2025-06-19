@@ -1,4 +1,4 @@
-import { MintayAnswer } from "./answer"
+import { MintayAnswer } from "../../answer"
 
 export enum MintayCardEventType {
 	ANSWER = 0,

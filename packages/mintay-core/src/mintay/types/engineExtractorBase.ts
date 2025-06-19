@@ -1,6 +1,6 @@
-import { CardDataExtractor, CardEngineExtractor } from "../typings/defines"
-import { MintayCardState } from "./cardState"
-import { CardStats } from "./cardStats"
+import { CardDataExtractor, CardEngineExtractor } from "../../defines/extractor"
+import { CardStats } from "./card/cardStats"
+import { MintayCardState } from "./card/state/cardState"
 import { MintayCardQueue } from "./queue"
 import { MintayTypeSpec, MintayTypeSpecParams } from "./typeSpec"
 

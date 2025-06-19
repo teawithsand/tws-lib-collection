@@ -1,6 +1,6 @@
 import { RwLock, RwLockAdapter, RwLockImpl } from "@teawithsand/lngext"
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { EngineStore } from "../defines"
 
 /**
@@ -8,9 +8,7 @@ import { EngineStore } from "../defines"
  * Read operations (getTopCard, getCardData) use read locks.
  * Write operations (push, popCard, pop) use write locks.
  */
-export class RwLockedEngineStore<T extends StorageTypeSpec>
-	implements EngineStore<T>
-{
+export class RwLockedEngineStore<T extends TypeSpec> implements EngineStore<T> {
 	private readonly store: EngineStore<T>
 	private readonly lock: RwLock
 
@@ -26,7 +24,7 @@ export class RwLockedEngineStore<T extends StorageTypeSpec>
 	}
 
 	public readonly push = async (
-		id: CardId,
+		id: MintayId,
 		event: T["cardEvent"],
 	): Promise<void> => {
 		return await this.lock.withWriteLock(async () => {
@@ -34,7 +32,7 @@ export class RwLockedEngineStore<T extends StorageTypeSpec>
 		})
 	}
 
-	public readonly popCard = async (id: CardId): Promise<void> => {
+	public readonly popCard = async (id: MintayId): Promise<void> => {
 		return await this.lock.withWriteLock(async () => {
 			return await this.store.popCard(id)
 		})
@@ -48,14 +46,14 @@ export class RwLockedEngineStore<T extends StorageTypeSpec>
 
 	public readonly getTopCard = async (
 		queues?: T["queue"][],
-	): Promise<CardId | null> => {
+	): Promise<MintayId | null> => {
 		return await this.lock.withReadLock(async () => {
 			return await this.store.getTopCard(queues)
 		})
 	}
 
 	public readonly getCardData = async (
-		id: CardId,
+		id: MintayId,
 	): Promise<T["cardState"]> => {
 		return await this.lock.withReadLock(async () => {
 			return await this.store.getCardData(id)

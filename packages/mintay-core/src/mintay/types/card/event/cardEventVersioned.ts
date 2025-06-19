@@ -1,7 +1,7 @@
 import { TypeAssert } from "@teawithsand/lngext"
 import { VersionedType } from "@teawithsand/reserd"
 import { z } from "zod"
-import { MintayAnswer } from "./answer"
+import { MintayAnswer } from "../../answer"
 import { MintayCardEvent, MintayCardEventType } from "./cardEvent"
 
 enum MintayAnswerStored {

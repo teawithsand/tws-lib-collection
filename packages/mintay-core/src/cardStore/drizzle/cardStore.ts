@@ -2,13 +2,13 @@ import { Serializer } from "@teawithsand/reserd"
 import { eq } from "drizzle-orm"
 import { MintayDrizzleDB } from "../../db/db"
 import { cardsTable } from "../../db/schema"
-import { CardEngineExtractor, CardId } from "../../defines/typings/defines"
-import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { CardEngineExtractor } from "../../defines/extractor"
+import { MintayId, MintayIdUtil } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CardHandle, CardStore } from "../defines/card"
 import { DrizzleCardHandle } from "./cardHandle"
 
-export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
+export class DrizzleCardStore<T extends TypeSpec & { queue: number }>
 	implements CardStore<T>
 {
 	private readonly db: MintayDrizzleDB
@@ -38,12 +38,12 @@ export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
 	}
 
 	public readonly getCardById = async (
-		id: CardId,
+		id: MintayId,
 	): Promise<CardHandle<T> | null> => {
 		const card = await this.db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.id, CardIdUtil.toNumber(id)))
+			.where(eq(cardsTable.id, MintayIdUtil.toNumber(id)))
 			.get()
 
 		if (!card) {
@@ -72,7 +72,7 @@ export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
 			cardStateSerializer: this.cardStateSerializer,
 			cardDataSerializer: this.cardDataSerializer,
 			cardEventSerializer: this.cardEventSerializer,
-			collectionId: card.collectionId as CardId,
+			collectionId: card.collectionId as MintayId,
 			cardExtractor: this.extractor,
 		})
 	}

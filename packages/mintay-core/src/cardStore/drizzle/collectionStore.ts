@@ -2,15 +2,13 @@ import { Serializer } from "@teawithsand/reserd"
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable } from "../../db/schema"
 import { CardEngineExtractor, CollectionDataExtractor } from "../../defines"
-import { CardId } from "../../defines/typings/defines"
-import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId, MintayIdUtil } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CollectionHandle, CollectionStore } from "../defines/collection"
 import { DrizzleCollectionHandle } from "./collectionHandle"
 
-export class DrizzleCollectionStore<
-	T extends StorageTypeSpec & { queue: number },
-> implements CollectionStore<T>
+export class DrizzleCollectionStore<T extends TypeSpec & { queue: number }>
+	implements CollectionStore<T>
 {
 	private readonly db: MintayDrizzleDB
 	private readonly defaultCardDataFactory: () => T["cardData"]
@@ -73,7 +71,7 @@ export class DrizzleCollectionStore<
 			throw new Error("Failed to retrieve inserted collection")
 		}
 
-		const newId = CardIdUtil.toNumber(insertedCollection.id)
+		const newId = MintayIdUtil.toNumber(insertedCollection.id)
 
 		return new DrizzleCollectionHandle<T>({
 			id: newId,
@@ -87,7 +85,7 @@ export class DrizzleCollectionStore<
 		})
 	}
 
-	public readonly get = (id: CardId): CollectionHandle<T> => {
+	public readonly get = (id: MintayId): CollectionHandle<T> => {
 		return new DrizzleCollectionHandle<T>({
 			id,
 			db: this.db,
@@ -100,14 +98,14 @@ export class DrizzleCollectionStore<
 		})
 	}
 
-	public readonly list = async (): Promise<CardId[]> => {
+	public readonly list = async (): Promise<MintayId[]> => {
 		const collections = await this.db
 			.select({ id: cardCollectionsTable.id })
 			.from(cardCollectionsTable)
 			.all()
 
 		return collections.map((collection) =>
-			CardIdUtil.toNumber(collection.id),
+			MintayIdUtil.toNumber(collection.id),
 		)
 	}
 }

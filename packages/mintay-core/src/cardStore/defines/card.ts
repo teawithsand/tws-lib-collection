@@ -1,13 +1,13 @@
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 
 /**
  * Handle for managing individual card operations.
  * Provides methods to create, read, update, and delete card data and state.
  */
-export interface CardHandle<T extends StorageTypeSpec> {
+export interface CardHandle<T extends TypeSpec> {
 	/** The unique identifier of this card */
-	readonly id: CardId
+	readonly id: MintayId
 
 	/**
 	 * Saves complete card data. Creates the card if it doesn't exist,
@@ -53,7 +53,7 @@ export interface CardHandle<T extends StorageTypeSpec> {
 	 * Moves the card to a different collection.
 	 * Throws error if card doesn't exist.
 	 */
-	setCollection: (id: CardId) => Promise<void>
+	setCollection: (id: MintayId) => Promise<void>
 
 	/**
 	 * Gets the total number of events for this card.
@@ -75,10 +75,10 @@ export interface CardHandle<T extends StorageTypeSpec> {
  * Store for managing card operations and retrieval.
  * Provides access to individual cards via CardHandle instances.
  */
-export interface CardStore<T extends StorageTypeSpec> {
+export interface CardStore<T extends TypeSpec> {
 	/**
 	 * Retrieves a card handle by its ID.
 	 * Returns null if the card doesn't exist.
 	 */
-	getCardById: (id: CardId) => Promise<CardHandle<T> | null>
+	getCardById: (id: MintayId) => Promise<CardHandle<T> | null>
 }

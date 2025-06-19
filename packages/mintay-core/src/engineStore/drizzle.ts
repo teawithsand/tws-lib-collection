@@ -2,13 +2,13 @@ import { Serializer } from "@teawithsand/reserd"
 import { and, asc, desc, eq, inArray, max } from "drizzle-orm"
 import { MintayDrizzleDB, MintayDrizzleDBTx } from "../db"
 import { cardEventsTable, cardsTable } from "../db/schema"
+import { CardEngineExtractor } from "../defines/extractor"
+import { MintayId, MintayIdUtil } from "../defines/id"
 import { CardStateReducer } from "../defines/reducer/defines"
-import { CardEngineExtractor, CardId } from "../defines/typings/defines"
-import { CardIdUtil } from "../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../defines/typings/typeSpec"
+import { TypeSpec } from "../defines/typeSpec"
 import { EngineStore } from "./defines"
 
-export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
+export class DrizzleEngineStore<T extends TypeSpec & { queue: number }>
 	implements EngineStore<T>
 {
 	private reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
@@ -34,7 +34,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 		cardStateSerializer: Serializer<unknown, T["cardState"]>
 		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
 		cardDataSerializer: Serializer<unknown, T["cardData"]>
-		collectionId: CardId
+		collectionId: MintayId
 	}) {
 		this.db = db
 		this.reducer = reducer
@@ -42,14 +42,14 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 		this.cardStateSerializer = cardStateSerializer
 		this.cardEventSerializer = cardEventSerializer
 		this.cardDataSerializer = cardDataSerializer
-		this.collectionId = CardIdUtil.toNumber(collectionId)
+		this.collectionId = MintayIdUtil.toNumber(collectionId)
 	}
 
 	public readonly push = async (
-		id: CardId,
+		id: MintayId,
 		event: T["cardEvent"],
 	): Promise<void> => {
-		const parsedId = CardIdUtil.toNumber(id)
+		const parsedId = MintayIdUtil.toNumber(id)
 
 		await this.db.transaction(async (tx) => {
 			const lastEvent = await this.getLastCardEvent(parsedId, tx)
@@ -77,8 +77,8 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 		})
 	}
 
-	public readonly popCard = async (id: CardId): Promise<void> => {
-		const parsedId = CardIdUtil.toNumber(id)
+	public readonly popCard = async (id: MintayId): Promise<void> => {
+		const parsedId = MintayIdUtil.toNumber(id)
 
 		await this.db.transaction(async (tx) => {
 			const lastEvent = await this.getLastCardEvent(parsedId, tx)
@@ -105,7 +105,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 
 	public readonly getTopCard = async (
 		queues?: T["queue"][],
-	): Promise<CardId | null> => {
+	): Promise<MintayId | null> => {
 		const whereCondition = queues
 			? and(
 					eq(cardsTable.collectionId, this.collectionId),
@@ -127,9 +127,9 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 	}
 
 	public readonly getCardData = async (
-		id: CardId,
+		id: MintayId,
 	): Promise<T["cardState"]> => {
-		const parsedId = CardIdUtil.toNumber(id)
+		const parsedId = MintayIdUtil.toNumber(id)
 
 		const lastEvent = await this.db.transaction(async (tx) => {
 			return await this.getLastCardEvent(parsedId, tx)

@@ -1,3 +1,4 @@
-export * from "./card"
+export * from "./extractor"
+export * from "./id"
 export * from "./reducer"
-export * from "./typings"
+export * from "./typeSpec"

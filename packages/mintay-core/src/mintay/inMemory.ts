@@ -3,13 +3,13 @@ import {
 	InMemoryCardStore,
 	InMemoryCollectionStore,
 } from "../cardStore/inMemory"
-import { CardId, MintayCardStateReducer, MintayTypeSpec } from "../defines"
-import { MintayTypeSpecParams } from "../defines/card"
+import { MintayCardStateReducer, MintayId } from "../defines"
 import { EngineStore } from "../engineStore"
 import { InMemoryEngineStore } from "../engineStore/inMemory"
 import { FsrsParameters } from "../fsrs/params"
 import { InMemoryDb } from "../inMemoryDb/db"
 import { Mintay, MintayParams } from "./defines"
+import { MintayTypeSpec, MintayTypeSpecParams } from "./types/typeSpec"
 
 export class InMemoryMintay<T extends MintayTypeSpecParams>
 	implements Mintay<T>
@@ -31,7 +31,7 @@ export class InMemoryMintay<T extends MintayTypeSpecParams>
 	}
 
 	public readonly getEngineStore = (
-		id: CardId,
+		id: MintayId,
 		parameters: FsrsParameters,
 	): EngineStore<MintayTypeSpec<T>> => {
 		const reducer = new MintayCardStateReducer(parameters)

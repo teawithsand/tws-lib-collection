@@ -1,6 +1,6 @@
 import { RwLock, RwLockAdapter, RwLockImpl } from "@teawithsand/lngext"
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CardHandle, CardStore } from "../defines/card"
 import { RwLockedCardHandle } from "./cardHandle"
 
@@ -9,9 +9,7 @@ import { RwLockedCardHandle } from "./cardHandle"
  * Each CardHandle returned is also wrapped with thread-safety.
  * Store operations (getCardById) use read locks.
  */
-export class RwLockedCardStore<T extends StorageTypeSpec>
-	implements CardStore<T>
-{
+export class RwLockedCardStore<T extends TypeSpec> implements CardStore<T> {
 	private readonly store: CardStore<T>
 	private readonly lockAdapter: RwLockAdapter
 	private readonly storeLock: RwLock
@@ -29,7 +27,7 @@ export class RwLockedCardStore<T extends StorageTypeSpec>
 	}
 
 	public readonly getCardById = async (
-		id: CardId,
+		id: MintayId,
 	): Promise<CardHandle<T> | null> => {
 		return await this.storeLock.withReadLock(async () => {
 			const handle = await this.store.getCardById(id)

@@ -1,11 +1,11 @@
-import { CardId } from "../defines"
-import { StorageTypeSpec } from "../defines/typings/typeSpec"
+import { MintayId } from "../defines"
+import { TypeSpec } from "../defines/typeSpec"
 
 /**
  * Represents a collection stored in memory.
  * @template T - The storage type specification.
  */
-export type InMemoryCollection<T extends StorageTypeSpec> = {
+export type InMemoryCollection<T extends TypeSpec> = {
 	/**
 	 * Header information of the collection.
 	 */
@@ -16,7 +16,7 @@ export type InMemoryCollection<T extends StorageTypeSpec> = {
  * Represents a card stored in memory.
  * @template T - The storage type specification.
  */
-export type InMemoryCard<T extends StorageTypeSpec> = {
+export type InMemoryCard<T extends TypeSpec> = {
 	/**
 	 * The data contained in the card.
 	 */
@@ -24,7 +24,7 @@ export type InMemoryCard<T extends StorageTypeSpec> = {
 	/**
 	 * The collection ID this card belongs to.
 	 */
-	collection: CardId
+	collection: MintayId
 	/**
 	 * The states and events history of the card.
 	 */
@@ -35,18 +35,19 @@ export type InMemoryCard<T extends StorageTypeSpec> = {
  * In-memory database for storing collections and cards.
  * @template T - The storage type specification.
  */
-export class InMemoryDb<T extends StorageTypeSpec> {
+export class InMemoryDb<T extends TypeSpec> {
 	constructor() {}
 
 	/**
 	 * Map of collections by their CardId.
 	 */
-	private readonly collections: Map<CardId, InMemoryCollection<T>> = new Map()
+	private readonly collections: Map<MintayId, InMemoryCollection<T>> =
+		new Map()
 
 	/**
 	 * Map of cards by their CardId.
 	 */
-	private readonly cards: Map<CardId, InMemoryCard<T>> = new Map()
+	private readonly cards: Map<MintayId, InMemoryCard<T>> = new Map()
 
 	/**
 	 * Get a collection by its CardId.
@@ -54,7 +55,7 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * @returns The collection or undefined if not found.
 	 */
 	public readonly getCollectionById = (
-		id: CardId,
+		id: MintayId,
 	): InMemoryCollection<T> | undefined => {
 		return this.collections.get(id)
 	}
@@ -64,7 +65,9 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * @param id - The CardId of the card.
 	 * @returns The card or undefined if not found.
 	 */
-	public readonly getCardById = (id: CardId): InMemoryCard<T> | undefined => {
+	public readonly getCardById = (
+		id: MintayId,
+	): InMemoryCard<T> | undefined => {
 		return this.cards.get(id)
 	}
 
@@ -73,7 +76,7 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * @param id - The CardId of the collection to delete.
 	 * @returns True if the collection was deleted, false if not found.
 	 */
-	public readonly deleteCollectionById = (id: CardId): boolean => {
+	public readonly deleteCollectionById = (id: MintayId): boolean => {
 		return this.collections.delete(id)
 	}
 
@@ -82,7 +85,7 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * @param id - The CardId of the card to delete.
 	 * @returns True if the card was deleted, false if not found.
 	 */
-	public readonly deleteCardById = (id: CardId): boolean => {
+	public readonly deleteCardById = (id: MintayId): boolean => {
 		return this.cards.delete(id)
 	}
 
@@ -92,7 +95,7 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * @param collection - The collection data to set.
 	 */
 	public readonly upsertCollection = (
-		id: CardId,
+		id: MintayId,
 		collection: InMemoryCollection<T>,
 	): void => {
 		this.collections.set(id, collection)
@@ -103,7 +106,10 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * @param id - The CardId of the card.
 	 * @param card - The card data to set.
 	 */
-	public readonly upsertCard = (id: CardId, card: InMemoryCard<T>): void => {
+	public readonly upsertCard = (
+		id: MintayId,
+		card: InMemoryCard<T>,
+	): void => {
 		this.cards.set(id, card)
 	}
 
@@ -111,7 +117,7 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * Get all collection CardIds.
 	 * @returns An array of all collection CardIds.
 	 */
-	public readonly getAllCollectionIds = (): CardId[] => {
+	public readonly getAllCollectionIds = (): MintayId[] => {
 		return Array.from(this.collections.keys())
 	}
 
@@ -119,7 +125,7 @@ export class InMemoryDb<T extends StorageTypeSpec> {
 	 * Get all card CardIds.
 	 * @returns An array of all card CardIds.
 	 */
-	public readonly getAllCardIds = (): CardId[] => {
+	public readonly getAllCardIds = (): MintayId[] => {
 		return Array.from(this.cards.keys())
 	}
 }

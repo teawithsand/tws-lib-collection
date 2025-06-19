@@ -1,11 +1,11 @@
 import { generateUuid } from "@teawithsand/lngext"
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { InMemoryCollection, InMemoryDb } from "../../inMemoryDb/db"
 import { CollectionHandle, CollectionStore } from "../defines/collection"
 import { InMemoryCollectionHandle } from "./collectionHandle"
 
-export class InMemoryCollectionStore<T extends StorageTypeSpec>
+export class InMemoryCollectionStore<T extends TypeSpec>
 	implements CollectionStore<T>
 {
 	private readonly db: InMemoryDb<T>
@@ -26,12 +26,12 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 		this.defaultCollectionDataFactory = defaultCollectionDataFactory
 	}
 
-	public readonly list = async (): Promise<CardId[]> => {
+	public readonly list = async (): Promise<MintayId[]> => {
 		return this.db.getAllCollectionIds()
 	}
 
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
-		const newId = generateUuid() as CardId
+		const newId = generateUuid() as MintayId
 		const newCollection: InMemoryCollection<T> = {
 			header: this.defaultCollectionDataFactory(),
 		}
@@ -43,7 +43,7 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 		})
 	}
 
-	public readonly get = (id: CardId): CollectionHandle<T> => {
+	public readonly get = (id: MintayId): CollectionHandle<T> => {
 		return new InMemoryCollectionHandle<T>({
 			id,
 			db: this.db,

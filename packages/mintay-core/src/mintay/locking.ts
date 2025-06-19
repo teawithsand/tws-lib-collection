@@ -2,11 +2,12 @@ import { QueueLockAdapter, RwLockAdapter } from "@teawithsand/lngext"
 import { CardStore, CollectionStore } from "../cardStore"
 import { RwLockedCardStore } from "../cardStore/rwLocked/cardStore"
 import { RwLockedCollectionStore } from "../cardStore/rwLocked/collectionStore"
-import { CardId, MintayTypeSpec, MintayTypeSpecParams } from "../defines"
+import { MintayId } from "../defines"
 import { EngineStore } from "../engineStore"
 import { RwLockedEngineStore } from "../engineStore/rwLocked/engineStore"
 import { FsrsParameters } from "../fsrs"
 import { Mintay } from "./defines"
+import { MintayTypeSpec, MintayTypeSpecParams } from "./types/typeSpec"
 
 /**
  * Thread-safe wrapper for Mintay implementations using read-write locks.
@@ -55,7 +56,7 @@ export class LockingMintay<T extends MintayTypeSpecParams>
 	}
 
 	public readonly getEngineStore = (
-		id: CardId,
+		id: MintayId,
 		parameters: FsrsParameters,
 	): EngineStore<MintayTypeSpec<T>> => {
 		const underlyingStore = this.mintay.getEngineStore(id, parameters)

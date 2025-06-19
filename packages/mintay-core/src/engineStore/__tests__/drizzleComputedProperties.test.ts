@@ -4,11 +4,11 @@ import { DrizzleCardHandle } from "../../cardStore/drizzle/cardHandle"
 import { MintayDrizzleDB } from "../../db"
 import { getTestingDb } from "../../db/dbTest.test"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
-import { CardStats } from "../../defines/card/cardStats"
+import { CardEngineExtractor } from "../../defines/extractor"
+import { MintayIdUtil } from "../../defines/id"
 import { CardStateReducer } from "../../defines/reducer/defines"
-import { CardEngineExtractor } from "../../defines/typings/defines"
-import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { TypeSpec } from "../../defines/typeSpec"
+import { CardStats } from "../../mintay/types/card/cardStats"
 import { DrizzleEngineStore } from "../drizzle"
 
 enum TestQueue {
@@ -37,7 +37,7 @@ interface TestCollectionData extends Record<string, unknown> {
 	name: string
 }
 
-interface TestTypeSpec extends StorageTypeSpec {
+interface TestTypeSpec extends TypeSpec {
 	cardData: TestCardData
 	cardState: TestCardState
 	cardEvent: TestCardEvent
@@ -133,8 +133,8 @@ describe("Drizzle Computed Properties", () => {
 
 	test("should set queue and priority correctly when saving card data with no events", async () => {
 		// Arrange
-		const collectionId = CardIdUtil.toNumber(1)
-		const cardId = CardIdUtil.toNumber(2)
+		const collectionId = MintayIdUtil.toNumber(1)
+		const cardId = MintayIdUtil.toNumber(2)
 		const testCardData: TestCardData = { basePriority: 5000 }
 
 		// Create collection first
@@ -165,7 +165,7 @@ describe("Drizzle Computed Properties", () => {
 		const savedCard = await db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+			.where(eq(cardsTable.id, MintayIdUtil.toNumber(cardId)))
 			.get()
 
 		expect(savedCard).toBeTruthy()
@@ -183,8 +183,8 @@ describe("Drizzle Computed Properties", () => {
 
 	test("should set queue and priority correctly when updating card data with no events", async () => {
 		// Arrange
-		const collectionId = CardIdUtil.toNumber(3)
-		const cardId = CardIdUtil.toNumber(4)
+		const collectionId = MintayIdUtil.toNumber(3)
+		const cardId = MintayIdUtil.toNumber(4)
 		const initialCardData: TestCardData = { basePriority: 3000 }
 		const updatedCardData: Partial<TestCardData> = { basePriority: 7000 }
 
@@ -219,7 +219,7 @@ describe("Drizzle Computed Properties", () => {
 		const updatedCard = await db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+			.where(eq(cardsTable.id, MintayIdUtil.toNumber(cardId)))
 			.get()
 
 		expect(updatedCard).toBeTruthy()
@@ -237,8 +237,8 @@ describe("Drizzle Computed Properties", () => {
 
 	test("should update state correctly when events are pushed to existing card", async () => {
 		// Arrange
-		const collectionId = CardIdUtil.toNumber(5)
-		const cardId = CardIdUtil.toNumber(6)
+		const collectionId = MintayIdUtil.toNumber(5)
+		const cardId = MintayIdUtil.toNumber(6)
 		const testCardData: TestCardData = { basePriority: 4000 }
 		const currentTime = Date.now()
 
@@ -298,7 +298,7 @@ describe("Drizzle Computed Properties", () => {
 		const finalCard = await db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+			.where(eq(cardsTable.id, MintayIdUtil.toNumber(cardId)))
 			.get()
 
 		expect(finalCard).toBeTruthy()
@@ -310,8 +310,8 @@ describe("Drizzle Computed Properties", () => {
 
 	test("should compute queue and priority correctly when saving card data with existing events", async () => {
 		// Arrange
-		const collectionId = CardIdUtil.toNumber(7)
-		const cardId = CardIdUtil.toNumber(8)
+		const collectionId = MintayIdUtil.toNumber(7)
+		const cardId = MintayIdUtil.toNumber(8)
 		const initialCardData: TestCardData = { basePriority: 6000 }
 		const newCardData: TestCardData = { basePriority: 8000 }
 		const currentTime = Date.now()
@@ -369,7 +369,7 @@ describe("Drizzle Computed Properties", () => {
 		const savedCard = await db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+			.where(eq(cardsTable.id, MintayIdUtil.toNumber(cardId)))
 			.get()
 
 		expect(savedCard).toBeTruthy()
@@ -387,8 +387,8 @@ describe("Drizzle Computed Properties", () => {
 
 	test("should compute queue and priority correctly when updating card data with existing events", async () => {
 		// Arrange
-		const collectionId = CardIdUtil.toNumber(9)
-		const cardId = CardIdUtil.toNumber(10)
+		const collectionId = MintayIdUtil.toNumber(9)
+		const cardId = MintayIdUtil.toNumber(10)
 		const initialCardData: TestCardData = { basePriority: 7000 }
 		const updatedCardData: Partial<TestCardData> = { basePriority: 9000 }
 		const currentTime = Date.now()
@@ -446,7 +446,7 @@ describe("Drizzle Computed Properties", () => {
 		const updatedCard = await db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.id, CardIdUtil.toNumber(cardId)))
+			.where(eq(cardsTable.id, MintayIdUtil.toNumber(cardId)))
 			.get()
 
 		expect(updatedCard).toBeTruthy()

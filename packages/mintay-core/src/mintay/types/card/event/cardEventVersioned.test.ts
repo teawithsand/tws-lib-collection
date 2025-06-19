@@ -1,6 +1,6 @@
 import { SerializerTester, TestData } from "@teawithsand/reserd"
 import { describe, test } from "vitest"
-import { MintayAnswer } from "./answer"
+import { MintayAnswer } from "../../answer"
 import { MintayCardEvent, MintayCardEventType } from "./cardEvent"
 import { MintayCardEventVersionedType } from "./cardEventVersioned"
 

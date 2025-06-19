@@ -3,13 +3,12 @@ import { CardStore, CollectionStore } from "../cardStore"
 import {
 	CardDataExtractor,
 	CardEngineExtractor,
-	CardId,
 	CollectionDataExtractor,
-	MintayTypeSpec,
-	MintayTypeSpecParams,
-} from "../defines"
+} from "../defines/extractor"
+import { MintayId } from "../defines/id"
 import { EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs"
+import { MintayTypeSpec, MintayTypeSpecParams } from "./types/typeSpec"
 
 /**
  * Configuration parameters required to initialize a Mintay instance.
@@ -92,7 +91,7 @@ export interface Mintay<T extends MintayTypeSpecParams> {
 	 * @returns An EngineStore instance for the specified collection.
 	 */
 	getEngineStore: (
-		id: CardId,
+		id: MintayId,
 		parameters: FsrsParameters,
 	) => EngineStore<MintayTypeSpec<T>>
 }

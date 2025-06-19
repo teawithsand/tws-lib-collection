@@ -1,18 +1,16 @@
+import { CardEngineExtractor } from "../defines/extractor"
+import { MintayId, MintayIdUtil } from "../defines/id"
 import { CardStateReducer } from "../defines/reducer/defines"
-import { CardEngineExtractor, CardId } from "../defines/typings/defines"
-import { CardIdUtil } from "../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../defines/typings/typeSpec"
+import { TypeSpec } from "../defines/typeSpec"
 import { InMemoryDb } from "../inMemoryDb/db"
 import { EngineStore } from "./defines"
 
-export class InMemoryEngineStore<T extends StorageTypeSpec>
-	implements EngineStore<T>
-{
+export class InMemoryEngineStore<T extends TypeSpec> implements EngineStore<T> {
 	private readonly db: InMemoryDb<T>
 	private readonly reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
 	private readonly stateExtractor: CardEngineExtractor<T>
-	private readonly lastPushedCardIds: CardId[] = []
-	private readonly collectionId: CardId
+	private readonly lastPushedCardIds: MintayId[] = []
+	private readonly collectionId: MintayId
 
 	constructor({
 		reducer,
@@ -23,7 +21,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
 		extractor: CardEngineExtractor<T>
 		db: InMemoryDb<T>
-		collectionId: CardId
+		collectionId: MintayId
 	}) {
 		this.reducer = reducer
 		this.stateExtractor = extractor
@@ -31,7 +29,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 		this.collectionId = collectionId
 	}
 
-	private readonly getCard = (id: CardId) => {
+	private readonly getCard = (id: MintayId) => {
 		const card = this.db.getCardById(id)
 		if (!card) throw new Error(`Card not found: ${id}`)
 		this.validateCardBelongsToCollection(card, id)
@@ -39,12 +37,12 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 	}
 
 	private readonly validateCardBelongsToCollection = (
-		card: { collection: CardId },
-		id: CardId,
+		card: { collection: MintayId },
+		id: MintayId,
 	) => {
 		if (card.collection !== this.collectionId) {
 			throw new Error(
-				`Card ${CardIdUtil.toString(id)} does not belong to collection ${CardIdUtil.toString(this.collectionId)}`,
+				`Card ${MintayIdUtil.toString(id)} does not belong to collection ${MintayIdUtil.toString(this.collectionId)}`,
 			)
 		}
 	}
@@ -57,7 +55,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 			: this.reducer.getDefaultState()
 	}
 
-	private readonly isCardInCollection = (cardId: CardId) => {
+	private readonly isCardInCollection = (cardId: MintayId) => {
 		const card = this.db.getCardById(cardId)
 		return card && card.collection === this.collectionId
 	}
@@ -90,7 +88,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 	}
 
 	public readonly push = async (
-		id: CardId,
+		id: MintayId,
 		event: T["cardEvent"],
 	): Promise<void> => {
 		const card = this.getCard(id)
@@ -101,7 +99,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 		this.lastPushedCardIds.push(id)
 	}
 
-	public readonly popCard = async (id: CardId): Promise<void> => {
+	public readonly popCard = async (id: MintayId): Promise<void> => {
 		const card = this.getCard(id)
 		if (card.states.length === 0) {
 			return
@@ -112,11 +110,11 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 
 	public readonly getTopCard = async (
 		queues?: T["queue"][],
-	): Promise<CardId | null> => {
+	): Promise<MintayId | null> => {
 		if (queues && queues.length === 0) {
 			return null
 		}
-		let topCard: CardId | null = null
+		let topCard: MintayId | null = null
 		let lowestPriority = Infinity
 		for (const cardId of this.db.getAllCardIds()) {
 			const card = this.db.getCardById(cardId)
@@ -146,7 +144,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 	}
 
 	public readonly getCardData = async (
-		id: CardId,
+		id: MintayId,
 	): Promise<T["cardState"]> => {
 		const card = this.getCard(id)
 		return this.getCurrentState(card)

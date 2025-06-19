@@ -4,9 +4,9 @@ import {
 	Rating,
 	FSRSParameters as TsFSRSParameters,
 } from "ts-fsrs"
-import { MintayAnswer } from "../defines/card/answer"
-import { MintayCardStateFSRS } from "../defines/card/cardState"
-import { MintayCardQueue } from "../defines/card/queue"
+import { MintayAnswer } from "../mintay/types/answer"
+import { MintayCardStateFSRS } from "../mintay/types/card/state/cardState"
+import { MintayCardQueue } from "../mintay/types/queue"
 import { type FsrsParameters as MintayFSRSParameters } from "./params"
 
 export class FSRSBridge {

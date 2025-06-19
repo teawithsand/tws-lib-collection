@@ -1,5 +1,5 @@
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CardHandle } from "./card"
 
 export type CollectionGetCardsParams = {
@@ -7,8 +7,8 @@ export type CollectionGetCardsParams = {
 	limit?: number
 }
 
-export interface CollectionHandle<T extends StorageTypeSpec> {
-	readonly id: CardId
+export interface CollectionHandle<T extends TypeSpec> {
+	readonly id: MintayId
 
 	save: (data: T["collectionData"]) => Promise<void>
 	update: (partial: Partial<T["collectionData"]>) => Promise<void>
@@ -20,12 +20,12 @@ export interface CollectionHandle<T extends StorageTypeSpec> {
 	getCardCount: () => Promise<number>
 	getCards: (offset?: CollectionGetCardsParams) => Promise<CardHandle<T>[]>
 
-	getCard: (id: CardId) => Promise<CardHandle<T>>
+	getCard: (id: MintayId) => Promise<CardHandle<T>>
 	createCard: () => Promise<CardHandle<T>>
 }
 
-export interface CollectionStore<T extends StorageTypeSpec> {
-	list: () => Promise<CardId[]>
+export interface CollectionStore<T extends TypeSpec> {
+	list: () => Promise<MintayId[]>
 	create: () => Promise<CollectionHandle<T>>
-	get: (id: CardId) => CollectionHandle<T>
+	get: (id: MintayId) => CollectionHandle<T>
 }

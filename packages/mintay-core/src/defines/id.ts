@@ -1,13 +1,18 @@
-import { CardId } from "./defines"
+/**
+ * Universal identifier type used throughout the system for both cards and collections.
+ *
+ * Prefixed with Mintay* to indicate its association with the Mintay system.
+ */
+export type MintayId = string | number
 
-export class CardIdUtil {
+export class MintayIdUtil {
 	private constructor() {}
 
-	public static readonly toString = (id: CardId): string => {
+	public static readonly toString = (id: MintayId): string => {
 		return String(id)
 	}
 
-	public static readonly toNumber = (id: CardId): number => {
+	public static readonly toNumber = (id: MintayId): number => {
 		if (typeof id === "number") {
 			if (!Number.isInteger(id)) {
 				throw new Error("CardId number must be an integer")

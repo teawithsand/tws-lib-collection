@@ -3,9 +3,8 @@ import { and, count, eq } from "drizzle-orm"
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
 import { CardEngineExtractor } from "../../defines"
-import { CardId } from "../../defines/typings/defines"
-import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId, MintayIdUtil } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CardHandle } from "../defines/card"
 import {
 	CollectionGetCardsParams,
@@ -13,11 +12,10 @@ import {
 } from "../defines/collection"
 import { DrizzleCardHandle } from "./cardHandle"
 
-export class DrizzleCollectionHandle<
-	T extends StorageTypeSpec & { queue: number },
-> implements CollectionHandle<T>
+export class DrizzleCollectionHandle<T extends TypeSpec & { queue: number }>
+	implements CollectionHandle<T>
 {
-	public readonly id: CardId
+	public readonly id: MintayId
 	private readonly db: MintayDrizzleDB
 	private readonly defaultCardDataFactory: () => T["cardData"]
 	private readonly collectionDataSerializer: Serializer<
@@ -39,7 +37,7 @@ export class DrizzleCollectionHandle<
 		cardEventSerializer,
 		cardExtractor,
 	}: {
-		id: CardId
+		id: MintayId
 		db: MintayDrizzleDB
 		defaultCardDataFactory: () => T["cardData"]
 		collectionDataSerializer: Serializer<unknown, T["collectionData"]>
@@ -64,7 +62,7 @@ export class DrizzleCollectionHandle<
 				.select()
 				.from(cardCollectionsTable)
 				.where(
-					eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)),
+					eq(cardCollectionsTable.id, MintayIdUtil.toNumber(this.id)),
 				)
 				.get()
 			const serializedData = this.collectionDataSerializer.serialize(data)
@@ -75,7 +73,7 @@ export class DrizzleCollectionHandle<
 					.where(
 						eq(
 							cardCollectionsTable.id,
-							CardIdUtil.toNumber(this.id),
+							MintayIdUtil.toNumber(this.id),
 						),
 					)
 					.run()
@@ -84,7 +82,7 @@ export class DrizzleCollectionHandle<
 					.insert(cardCollectionsTable)
 					.values({
 						collectionHeader: serializedData,
-						id: CardIdUtil.toNumber(this.id),
+						id: MintayIdUtil.toNumber(this.id),
 					})
 					.run()
 			}
@@ -97,7 +95,7 @@ export class DrizzleCollectionHandle<
 		const collection = await this.db
 			.select()
 			.from(cardCollectionsTable)
-			.where(eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardCollectionsTable.id, MintayIdUtil.toNumber(this.id)))
 			.get()
 		if (!collection) throw new Error("Collection not found")
 
@@ -113,7 +111,7 @@ export class DrizzleCollectionHandle<
 		await this.db
 			.update(cardCollectionsTable)
 			.set({ collectionHeader: serializedUpdatedData })
-			.where(eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardCollectionsTable.id, MintayIdUtil.toNumber(this.id)))
 			.run()
 	}
 
@@ -121,7 +119,7 @@ export class DrizzleCollectionHandle<
 		const collection = await this.db
 			.select()
 			.from(cardCollectionsTable)
-			.where(eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardCollectionsTable.id, MintayIdUtil.toNumber(this.id)))
 			.get()
 
 		if (!collection) {
@@ -147,7 +145,7 @@ export class DrizzleCollectionHandle<
 				id: cardCollectionsTable.id,
 			})
 			.from(cardCollectionsTable)
-			.where(eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardCollectionsTable.id, MintayIdUtil.toNumber(this.id)))
 			.get()
 		return !!collection
 	}
@@ -155,7 +153,7 @@ export class DrizzleCollectionHandle<
 	public readonly delete = async (): Promise<void> => {
 		await this.db
 			.delete(cardCollectionsTable)
-			.where(eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardCollectionsTable.id, MintayIdUtil.toNumber(this.id)))
 			.run()
 	}
 
@@ -165,7 +163,7 @@ export class DrizzleCollectionHandle<
 				count: count(),
 			})
 			.from(cardsTable)
-			.where(eq(cardsTable.collectionId, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardsTable.collectionId, MintayIdUtil.toNumber(this.id)))
 			.get()
 
 		if (!cards) return 0
@@ -184,14 +182,14 @@ export class DrizzleCollectionHandle<
 		const cards = await this.db
 			.select()
 			.from(cardsTable)
-			.where(eq(cardsTable.collectionId, CardIdUtil.toNumber(this.id)))
+			.where(eq(cardsTable.collectionId, MintayIdUtil.toNumber(this.id)))
 			.offset(params?.offset ?? 0)
 			.limit(params?.limit ?? Number.MAX_SAFE_INTEGER)
 			.all()
 		return cards.map(
 			(card) =>
 				new DrizzleCardHandle<T>({
-					id: card.id as CardId,
+					id: card.id as MintayId,
 					db: this.db,
 					cardStateSerializer: this.cardStateSerializer,
 					cardDataSerializer: this.cardDataSerializer,
@@ -202,14 +200,14 @@ export class DrizzleCollectionHandle<
 		)
 	}
 
-	public readonly getCard = async (id: CardId): Promise<CardHandle<T>> => {
+	public readonly getCard = async (id: MintayId): Promise<CardHandle<T>> => {
 		const card = await this.db.transaction(async (tx) => {
 			const card = await tx
 				.select()
 				.from(cardsTable)
 				.where(
 					and(
-						eq(cardsTable.id, CardIdUtil.toNumber(id)),
+						eq(cardsTable.id, MintayIdUtil.toNumber(id)),
 						// eq(cardsTable.collectionId, CardIdUtil.toNumber(this.id)),
 					),
 				)
@@ -217,7 +215,7 @@ export class DrizzleCollectionHandle<
 			return card
 		})
 		if (!card) throw new Error("Card not found")
-		if (card.collectionId !== CardIdUtil.toNumber(this.id))
+		if (card.collectionId !== MintayIdUtil.toNumber(this.id))
 			throw new Error("Card does not belong to this collection")
 		return new DrizzleCardHandle<T>({
 			id,
@@ -241,7 +239,7 @@ export class DrizzleCollectionHandle<
 			await tx
 				.insert(cardsTable)
 				.values({
-					collectionId: CardIdUtil.toNumber(this.id),
+					collectionId: MintayIdUtil.toNumber(this.id),
 					cardData: this.cardDataSerializer.serialize(newCardData),
 					queue: queue,
 					priority: priority,
@@ -259,7 +257,7 @@ export class DrizzleCollectionHandle<
 		const newId = insertedCard.id
 
 		return new DrizzleCardHandle<T>({
-			id: newId as CardId,
+			id: newId as MintayId,
 			db: this.db,
 			cardStateSerializer: this.cardStateSerializer,
 			cardDataSerializer: this.cardDataSerializer,

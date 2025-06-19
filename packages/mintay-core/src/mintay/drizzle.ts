@@ -5,16 +5,16 @@ import {
 	DrizzleCollectionStore,
 } from "../cardStore"
 import { MintayDrizzleDB } from "../db/db"
-import { MintayCardStateReducer, MintayTypeSpec } from "../defines"
-import {
-	MintayCardEventVersionedType,
-	MintayCardStateVersionedType,
-	MintayTypeSpecParams,
-} from "../defines/card"
-import { CardId } from "../defines/typings/defines"
+import { MintayCardStateReducer } from "../defines"
+import { MintayId } from "../defines/id"
 import { DrizzleEngineStore, EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs/params"
 import { Mintay, MintayParams } from "./defines"
+import {
+	MintayCardEventVersionedType,
+	MintayCardStateVersionedType,
+} from "./types"
+import { MintayTypeSpec, MintayTypeSpecParams } from "./types/typeSpec"
 
 export class DrizzleMintay<T extends MintayTypeSpecParams>
 	implements Mintay<T>
@@ -58,7 +58,7 @@ export class DrizzleMintay<T extends MintayTypeSpecParams>
 	}
 
 	public readonly getEngineStore = (
-		id: CardId,
+		id: MintayId,
 		parameters: FsrsParameters,
 	): EngineStore<MintayTypeSpec<T>> => {
 		const reducer = new MintayCardStateReducer(parameters)

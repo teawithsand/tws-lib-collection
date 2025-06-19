@@ -1,8 +1,8 @@
 import { SerializerTester, TestData } from "@teawithsand/reserd"
 import { describe, test } from "vitest"
+import { MintayCardQueue } from "../../queue"
 import { MintayCardState } from "./cardState"
 import { MintayCardStateVersionedType } from "./cardStateVersioned"
-import { MintayCardQueue } from "./queue"
 
 describe("MintayCardStateVersionedType", () => {
 	const createTestData = (): TestData<any, MintayCardState> => {

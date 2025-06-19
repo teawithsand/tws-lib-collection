@@ -1,4 +1,4 @@
-import { MintayCardQueue } from "./queue"
+import { MintayCardQueue } from "../../queue"
 
 // See: https://github.com/open-spaced-repetition/ts-fsrs?tab=readme-ov-file#5-understanding-card-attributes
 

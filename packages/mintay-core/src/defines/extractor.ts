@@ -1,12 +1,5 @@
-import { CardStats } from "../card/cardStats"
-import { StorageTypeSpec } from "./typeSpec"
-
-/**
- * Universal identifier type used throughout the system for both cards and collections.
- * Named `CardId` for historical reasons, but now represents any ID used in the system.
- * Can be either a string or number depending on the implementation requirements.
- */
-export type CardId = string | number
+import { CardStats } from "../mintay/types/card/cardStats"
+import { TypeSpec } from "./typeSpec"
 
 /**
  * Extractor interface for card engine-related operations.
@@ -15,7 +8,7 @@ export type CardId = string | number
  *
  * @template S - The storage type specification that defines the card state, data, and queue types.
  */
-export interface CardEngineExtractor<S extends StorageTypeSpec> {
+export interface CardEngineExtractor<S extends TypeSpec> {
 	/**
 	 * Calculates the priority of a card for scheduling purposes.
 	 * Higher priority cards are typically shown first during study sessions.
@@ -55,7 +48,7 @@ export interface CardEngineExtractor<S extends StorageTypeSpec> {
  *
  * @template S - The storage type specification that defines the card data type.
  */
-export interface CardDataExtractor<S extends StorageTypeSpec> {
+export interface CardDataExtractor<S extends TypeSpec> {
 	/**
 	 * Extracts a globally unique identifier from card data.
 	 * This ID is used for synchronization and exports across devices,
@@ -84,7 +77,7 @@ export interface CardDataExtractor<S extends StorageTypeSpec> {
  *
  * @template S - The storage type specification that defines the collection data type.
  */
-export interface CollectionDataExtractor<S extends StorageTypeSpec> {
+export interface CollectionDataExtractor<S extends TypeSpec> {
 	/**
 	 * Extracts a globally unique identifier from collection data.
 	 * This ID is used for synchronization and exports across devices,

@@ -1,6 +1,6 @@
 import { generateUuid } from "@teawithsand/lngext"
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { InMemoryCard, InMemoryDb } from "../../inMemoryDb/db"
 import { CardHandle } from "../defines/card"
 import {
@@ -9,10 +9,10 @@ import {
 } from "../defines/collection"
 import { InMemoryCardHandle } from "./cardHandle"
 
-export class InMemoryCollectionHandle<T extends StorageTypeSpec>
+export class InMemoryCollectionHandle<T extends TypeSpec>
 	implements CollectionHandle<T>
 {
-	public readonly id: CardId
+	public readonly id: MintayId
 	private readonly db: InMemoryDb<T>
 	private readonly defaultCardDataFactory: () => T["cardData"]
 
@@ -21,7 +21,7 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 		db,
 		defaultCardDataFactory,
 	}: {
-		id: CardId
+		id: MintayId
 		db: InMemoryDb<T>
 		defaultCardDataFactory: () => T["cardData"]
 	}) {
@@ -100,7 +100,7 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 		)
 	}
 
-	public readonly getCard = async (id: CardId): Promise<CardHandle<T>> => {
+	public readonly getCard = async (id: MintayId): Promise<CardHandle<T>> => {
 		const card = this.db.getCardById(id)
 		if (!card) throw new Error("Card not found")
 		if (card.collection !== this.id)
@@ -109,7 +109,7 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 	}
 
 	public readonly createCard = async (): Promise<CardHandle<T>> => {
-		const newId = generateUuid() as CardId
+		const newId = generateUuid() as MintayId
 		const newCard: InMemoryCard<T> = {
 			data: this.defaultCardDataFactory(),
 			collection: this.id,

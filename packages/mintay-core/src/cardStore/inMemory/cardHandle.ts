@@ -1,20 +1,18 @@
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { InMemoryCard, InMemoryDb } from "../../inMemoryDb/db"
 import { CardHandle } from "../defines/card"
 
-export class InMemoryCardHandle<T extends StorageTypeSpec>
-	implements CardHandle<T>
-{
-	public readonly id: CardId
+export class InMemoryCardHandle<T extends TypeSpec> implements CardHandle<T> {
+	public readonly id: MintayId
 	private readonly db: InMemoryDb<T>
-	private collectionId: CardId
+	private collectionId: MintayId
 
-	constructor({ id, db }: { id: CardId; db: InMemoryDb<T> }) {
+	constructor({ id, db }: { id: MintayId; db: InMemoryDb<T> }) {
 		this.id = id
 		this.db = db
 		const card = this.db.getCardById(id)
-		this.collectionId = card ? card.collection : ("" as CardId)
+		this.collectionId = card ? card.collection : ("" as MintayId)
 	}
 
 	public readonly save = async (data: T["cardData"]): Promise<void> => {
@@ -76,7 +74,7 @@ export class InMemoryCardHandle<T extends StorageTypeSpec>
 		this.db.deleteCardById(this.id)
 	}
 
-	public readonly setCollection = async (id: CardId): Promise<void> => {
+	public readonly setCollection = async (id: MintayId): Promise<void> => {
 		const card = this.db.getCardById(this.id)
 		if (!card) throw new Error("Card not found")
 		const updatedCard = { ...card, collection: id }

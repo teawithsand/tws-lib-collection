@@ -1,6 +1,6 @@
 import { RwLock } from "@teawithsand/lngext"
-import { CardId } from "../../defines/typings/defines"
-import { StorageTypeSpec } from "../../defines/typings/typeSpec"
+import { MintayId } from "../../defines/id"
+import { TypeSpec } from "../../defines/typeSpec"
 import { CardHandle } from "../defines/card"
 import {
 	CollectionGetCardsParams,
@@ -12,10 +12,10 @@ import {
  * Read operations (read, exists, getCardCount, getCards, getCard) use read locks.
  * Write operations (save, update, delete, createCard) use write locks.
  */
-export class RwLockedCollectionHandle<T extends StorageTypeSpec>
+export class RwLockedCollectionHandle<T extends TypeSpec>
 	implements CollectionHandle<T>
 {
-	public readonly id: CardId
+	public readonly id: MintayId
 	private readonly handle: CollectionHandle<T>
 	private readonly lock: RwLock
 
@@ -83,7 +83,7 @@ export class RwLockedCollectionHandle<T extends StorageTypeSpec>
 		})
 	}
 
-	public readonly getCard = async (id: CardId): Promise<CardHandle<T>> => {
+	public readonly getCard = async (id: MintayId): Promise<CardHandle<T>> => {
 		return await this.lock.withReadLock(async () => {
 			return await this.handle.getCard(id)
 		})
