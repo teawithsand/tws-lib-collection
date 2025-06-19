@@ -1,4 +1,4 @@
-import { Serializer } from "../serialization"
+import { SerializerReverse } from "../serialization/serializer"
 import { VersionedStorageObject, VersionedTypeDataMap } from "./types"
 import {
 	VersionedTypeDeserializer,
@@ -17,7 +17,6 @@ export type VersionedTypeConfig<
 	/**
 	 * Function to serialize an owned object into a versioned storage object
 	 * @param owned - The runtime object to serialize
-	 * @returns A versioned storage object containing the serialized data with version information
 	 */
 	serializer: (owned: TOwned) => VersionedStorageObject<TVersionedData>
 
@@ -30,7 +29,6 @@ export type VersionedTypeConfig<
 /**
  * Infers type of serialized(stored) data from VersionedType.
  * @template T - A VersionedType instance
- * @returns The type of the serialized (stored) data
  */
 export type VersionedTypeInfer<T extends VersionedType<any, any>> = ReturnType<
 	T["serialize"]
@@ -48,7 +46,7 @@ export type VersionedTypeInfer<T extends VersionedType<any, any>> = ReturnType<
  * @template TOwned - The runtime type used in application code
  */
 export class VersionedType<TVersionedData extends VersionedTypeDataMap, TOwned>
-	implements Serializer<VersionedStorageObject<TVersionedData>, TOwned>
+	implements SerializerReverse<TOwned, VersionedStorageObject<TVersionedData>>
 {
 	private readonly deserializer
 
@@ -68,8 +66,6 @@ export class VersionedType<TVersionedData extends VersionedTypeDataMap, TOwned>
 
 	/**
 	 * Returns the schema for validating versioned storage objects.
-	 *
-	 * @returns The zod schema that can validate any version of the stored data format
 	 */
 	public get schema() {
 		return this.deserializer.getSchema()
@@ -79,7 +75,6 @@ export class VersionedType<TVersionedData extends VersionedTypeDataMap, TOwned>
 	 * Serializes an owned (runtime) object into a versioned storage object.
 	 *
 	 * @param owned - The runtime object to serialize
-	 * @returns A versioned storage object containing the serialized data with version information
 	 */
 	public readonly serialize = (
 		owned: TOwned,
@@ -91,12 +86,47 @@ export class VersionedType<TVersionedData extends VersionedTypeDataMap, TOwned>
 	 * Deserializes a versioned storage object into an owned (runtime) object.
 	 *
 	 * @param stored - The versioned storage object to deserialize
-	 * @returns The deserialized runtime object
 	 * @throws Will throw an error if the stored data cannot be deserialized according to the configured deserializers
 	 */
-	public readonly deserialize = (
+	public readonly deserializeKnown = (
 		stored: VersionedStorageObject<TVersionedData>,
 	): TOwned => {
 		return this.deserializer.deserialize(stored)
+	}
+
+	/**
+	 * Deserializes a versioned storage object into an owned (runtime) object.
+	 *
+	 * @param stored - The versioned storage object to deserialize
+	 * @throws Will throw an error if the stored data cannot be deserialized according to the configured deserializers
+	 */
+	public readonly deserialize = (stored: unknown): TOwned => {
+		return this.deserializer.deserialize(stored)
+	}
+
+	/**
+	 * Returns a SerializerReverse with unknown stored type.
+	 */
+	public readonly getUnknownSerializer = (): SerializerReverse<
+		TOwned,
+		unknown
+	> => {
+		return {
+			serialize: this.serialize,
+			deserialize: this.deserialize,
+		}
+	}
+
+	/**
+	 * Returns a SerializerReverse with known stored type.
+	 */
+	public readonly getTypedSerializer = (): SerializerReverse<
+		TOwned,
+		VersionedStorageObject<TVersionedData>
+	> => {
+		return {
+			serialize: this.serialize,
+			deserialize: this.deserializeKnown,
+		}
 	}
 }

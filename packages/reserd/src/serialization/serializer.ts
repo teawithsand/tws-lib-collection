@@ -3,7 +3,7 @@
  * @template Stored The stored data type (serialized format)
  * @template Owned The owned data type (application format)
  *
- * @deprecated Use SerializerProper instead, which is more explicit about the direction of serialization.
+ * @deprecated Use SerializerReverse instead, which is more explicit about the direction of serialization.
  */
 export interface Serializer<Stored, Owned> {
 	/**
