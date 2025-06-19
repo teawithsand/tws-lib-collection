@@ -1,7 +1,13 @@
 import { defineWorkspace } from "vitest/config"
+import { resolve } from "node:path"
 
 export default defineWorkspace([
 	{
+		resolve: {
+			alias: {
+				"@": resolve(__dirname, "src"),
+			},
+		},
 		test: {
 			name: "jsdom",
 			globals: true,
@@ -11,6 +17,11 @@ export default defineWorkspace([
 		},
 	},
 	{
+		resolve: {
+			alias: {
+				"@": resolve(__dirname, "src"),
+			},
+		},
 		test: {
 			name: "node",
 			globals: true,
