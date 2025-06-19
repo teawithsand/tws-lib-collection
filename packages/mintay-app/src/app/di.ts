@@ -24,6 +24,7 @@ import {
 	SqliteWorkerClient,
 } from "@teawithsand/sqlite-web"
 import { AppBarService } from "../domain/appBar/appBarService"
+import { BackendClient } from "../domain/backend/client"
 import { CollectionService } from "../domain/collectionsService"
 import { DiReleaseHelper } from "./releaseHelper"
 import { TransService } from "./trans"
@@ -33,6 +34,7 @@ export type AppDiContents = {
 	sqliteClient: SqliteClient
 	mintay: Mintay<AppMintayTypeSpecParams>
 	atomStore: JotaiStore
+	backendClient: BackendClient
 
 	releaseHelper: DiReleaseHelper
 
@@ -46,6 +48,7 @@ const LOG_TAG = "makeAppDi"
 export type DiConfig = {
 	dbType: "opfs" | "inMemory"
 	throwFromRelease?: boolean
+	backendBaseUrl?: string
 }
 
 export class AppDi {
@@ -54,10 +57,12 @@ export class AppDi {
 	public static readonly DI_TEST_CONFIG: DiConfig = {
 		dbType: "inMemory",
 		throwFromRelease: true,
+		backendBaseUrl: "http://localhost:3000",
 	}
 
 	public static readonly DI_PROD_CONFIG: DiConfig = {
 		dbType: "opfs",
+		backendBaseUrl: "http://localhost:3000",
 	}
 
 	public static readonly makeDiBuilder = (config: DiConfig) =>
@@ -71,6 +76,12 @@ export class AppDi {
 			.setValue("atomStore", createStore())
 			.setValue("translationService", new TransService())
 			.setValue("appBarService", new AppBarService())
+			.setValue(
+				"backendClient",
+				new BackendClient({
+					baseUrl: config.backendBaseUrl || "http://localhost:3000",
+				}),
+			)
 			.setFactory(
 				"releaseHelper",
 				async (di) =>

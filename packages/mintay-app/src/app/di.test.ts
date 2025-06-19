@@ -16,6 +16,7 @@ describe("AppDi", () => {
 				releaseHelper: undefined,
 				translationService: undefined,
 				appBarService: undefined,
+				backendClient: undefined,
 			})
 			.build()
 

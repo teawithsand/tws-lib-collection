@@ -1,4 +1,5 @@
 import { DI } from "@teawithsand/lngext"
+import { BackendClient } from "../domain/backend/client"
 import { AppDiContents } from "./di"
 
 export class App {
@@ -8,6 +9,7 @@ export class App {
 	public readonly collectionService
 	public readonly transService
 	public readonly appBarService
+	public readonly backendClient: BackendClient
 	private readonly releaseHelper
 
 	constructor(di: DI<AppDiContents>) {
@@ -18,6 +20,7 @@ export class App {
 		this.releaseHelper = di.get("releaseHelper")
 		this.transService = di.get("translationService")
 		this.appBarService = di.get("appBarService")
+		this.backendClient = di.get("backendClient")
 	}
 
 	public readonly release = async () => {
