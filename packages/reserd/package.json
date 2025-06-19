@@ -38,7 +38,7 @@
     "rimraf": "~6.0.1"
   },
   "peerDependencies": {
-    "zod": "~3.25.42"
+    "zod": "~3.25.67"
   },
   "dependencies": {
     "@teawithsand/lngext": "workspace:*"
