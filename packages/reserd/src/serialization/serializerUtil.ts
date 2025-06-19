@@ -1,3 +1,4 @@
+import { z } from "zod"
 import { Encoder } from "../encoding"
 import { Serializer } from "./serializer"
 
@@ -104,5 +105,37 @@ export class SerializerUtil {
 	public static readonly identity = <T>(): Serializer<T, T> => ({
 		serialize: (value: T) => value,
 		deserialize: (value: T) => value,
+	})
+
+	/**
+	 * Creates a serializer from a Zod schema that validates unknown input.
+	 * The serializer handles deserialization by parsing unknown data with the schema,
+	 * and serialization by returning the validated data as-is (identity transformation).
+	 *
+	 * @template T The type inferred from the Zod schema
+	 * @param schema The Zod schema to use for validation
+	 * @returns A serializer that validates unknown input and returns typed output
+	 */
+	public static readonly fromZodSchema = <T>(
+		schema: z.ZodSchema<T>,
+	): Serializer<unknown, T> => ({
+		serialize: (owned: T) => owned,
+		deserialize: (stored: unknown) => schema.parse(stored),
+	})
+
+	/**
+	 * Creates a serializer from a Zod schema that validates input in both directions.
+	 * The serializer validates data during both serialization and deserialization,
+	 * ensuring type safety and data integrity at runtime.
+	 *
+	 * @template T The type inferred from the Zod schema
+	 * @param schema The Zod schema to use for validation
+	 * @returns A serializer that validates input in both serialize and deserialize operations
+	 */
+	public static readonly fromZodSchemaChecked = <T>(
+		schema: z.ZodSchema<T>,
+	): Serializer<unknown, T> => ({
+		serialize: (owned: T) => schema.parse(owned),
+		deserialize: (stored: unknown) => schema.parse(stored),
 	})
 }
