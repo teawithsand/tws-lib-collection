@@ -1,3 +1,4 @@
+import { AppCollectionData } from "@/mintay"
 import { WithMintayId } from "@/mintay/withId"
 import { Routes } from "@/router/routes"
 import {
@@ -11,12 +12,11 @@ import {
 	Title,
 } from "@mantine/core"
 import { IconBook, IconEdit } from "@tabler/icons-react"
-import { MintayCollectionData } from "@teawithsand/mintay-core"
 import { Link } from "react-router"
 import styles from "./collectionList.module.scss"
 
 interface CollectionListProps {
-	readonly collections: WithMintayId<MintayCollectionData>[]
+	readonly collections: WithMintayId<AppCollectionData>[]
 }
 
 /**
@@ -82,15 +82,14 @@ export const CollectionList = ({ collections }: CollectionListProps) => {
 										<Text size="xs" c="dimmed">
 											Created:{" "}
 											{new Date(
-												data.createdAtTimestamp,
+												data.createdAt,
 											).toLocaleDateString()}
 										</Text>
-										{data.lastUpdatedAtTimestamp !==
-											data.createdAtTimestamp && (
+										{data.updatedAt !== data.createdAt && (
 											<Text size="xs" c="dimmed">
 												Updated:{" "}
 												{new Date(
-													data.lastUpdatedAtTimestamp,
+													data.updatedAt,
 												).toLocaleDateString()}
 											</Text>
 										)}

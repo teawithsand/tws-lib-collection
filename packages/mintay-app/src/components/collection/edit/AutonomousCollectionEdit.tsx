@@ -1,16 +1,15 @@
 import { useApp } from "@/app"
 import { CollectionFormData } from "@/components/form"
-import { WithMintayId } from "@/domain/mintay"
+import { AppCollectionData, WithMintayId } from "@/mintay"
 import { Routes } from "@/router/routes"
 import { Atom, useAtomValue, useSetAtom } from "@teawithsand/fstate"
-import { MintayCollectionData } from "@teawithsand/mintay-core"
 import { useCallback } from "react"
 import { useNavigate } from "react-router"
 import { CollectionEdit } from "./CollectionEdit"
 
 interface AutonomousCollectionEditProps {
 	readonly collectionDataWithIdAtom: Atom<
-		Promise<WithMintayId<MintayCollectionData | null>>
+		Promise<WithMintayId<AppCollectionData | null>>
 	>
 }
 
@@ -29,11 +28,11 @@ export const AutonomousCollectionEdit = ({
 		async (data: CollectionFormData) => {
 			if (!collectionData) return
 
-			const updatedData: MintayCollectionData = {
+			const updatedData: AppCollectionData = {
 				...collectionData,
 				title: data.title,
 				description: data.description,
-				lastUpdatedAtTimestamp: Date.now(),
+				updatedAt: Date.now(),
 			}
 
 			const collection =

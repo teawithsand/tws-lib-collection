@@ -3,7 +3,7 @@ import {
 	AppCardDataVersionedType,
 	AppCollectionDataExtractor,
 	AppCollectionDataVersionedType,
-	AppMintayTypeSpec,
+	AppMintayTypeSpecParams,
 	defaultCardDataFactory,
 	defaultCollectionDataFactory,
 } from "@/mintay"
@@ -31,7 +31,7 @@ import { TransService } from "./trans"
 export type AppDiContents = {
 	logger: Logger
 	sqliteClient: SqliteClient
-	mintay: Mintay<AppMintayTypeSpec>
+	mintay: Mintay<AppMintayTypeSpecParams>
 	atomStore: JotaiStore
 
 	releaseHelper: DiReleaseHelper
@@ -116,7 +116,7 @@ export class AppDi {
 					{ version },
 				)
 
-				return LockingMintay.wrapSafe(
+				return LockingMintay.wrapSafe<AppMintayTypeSpecParams>(
 					new DrizzleMintay({
 						db: drizzle,
 						params: {

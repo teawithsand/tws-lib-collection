@@ -1,9 +1,9 @@
 import { useApp } from "@/app"
 import { CollectionFormData } from "@/components/form"
+import { AppCollectionData } from "@/mintay"
 import { Routes } from "@/router/routes"
 import { useSetAtom } from "@teawithsand/fstate"
 import { generateUuid } from "@teawithsand/lngext"
-import { MintayCollectionData } from "@teawithsand/mintay-core"
 import { useCallback } from "react"
 import { useNavigate } from "react-router"
 import { CollectionCreate } from "./CollectionCreate"
@@ -20,12 +20,12 @@ export const AutonomousCollectionCreate = () => {
 				await app.collectionService.collectionStore.create()
 
 			const now = Date.now()
-			const collectionData: MintayCollectionData = {
+			const collectionData: AppCollectionData = {
 				globalId: generateUuid(),
 				title: data.title,
 				description: data.description,
-				createdAtTimestamp: now,
-				lastUpdatedAtTimestamp: now,
+				createdAt: now,
+				updatedAt: now,
 			}
 
 			await collection.save(collectionData)
