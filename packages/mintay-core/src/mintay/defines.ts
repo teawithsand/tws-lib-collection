@@ -2,7 +2,6 @@ import { SerializerReverse } from "@teawithsand/reserd"
 import { CardStore, CollectionStore } from "../cardStore"
 import {
 	CardDataExtractor,
-	CardEngineExtractor,
 	CollectionDataExtractor,
 } from "../defines/extractor"
 import { MintayId } from "../defines/id"
@@ -30,14 +29,6 @@ export interface MintayParams<T extends MintayTypeSpecParams> {
 	 * This extractor defines how card data is accessed and manipulated within the system.
 	 */
 	cardDataExtractor: CardDataExtractor<MintayTypeSpec<T>>
-
-	/**
-	 * Extractor for card engine-specific data.
-	 * Responsible for extracting and processing card learning state and engine-related properties
-	 * required for spaced repetition algorithms. This extractor defines how the learning engine
-	 * accesses card performance data, scheduling information, and other engine-specific metadata.
-	 */
-	cardEngineExtractor: CardEngineExtractor<MintayTypeSpec<T>>
 
 	/**
 	 * Serializer for collection data persistence.

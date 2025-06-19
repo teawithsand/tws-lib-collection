@@ -16,7 +16,6 @@ import {
 	MintayCardEvent,
 	MintayCardEventType,
 } from "../types/card/event/cardEvent"
-import { MintayCardEngineExtractor } from "../types/engineExtractorBase"
 import { MintayCardQueue } from "../types/queue"
 import { MintayTypeSpec, MintayTypeSpecParams } from "../types/typeSpec"
 
@@ -61,31 +60,14 @@ class TestCollectionDataExtractor
 		data.globalId
 }
 
-class TestCardEngineExtractor extends MintayCardEngineExtractor<
-	MintayTypeSpec<TestMintayTypeSpecParams>
-> {
-	constructor(
-		cardDataExtractor: CardDataExtractor<
-			MintayTypeSpec<TestMintayTypeSpecParams>
-		>,
-	) {
-		super(cardDataExtractor)
-	}
-
-	public readonly getDiscoveryPriority = (data: TestCardData): number =>
-		data.discoveryPriority
-}
-
 // Create the MintayParams for our tests
 const createMintayParams = (): MintayParams<TestMintayTypeSpecParams> => {
 	const cardDataExtractor = new TestCardDataExtractor()
 	const collectionDataExtractor = new TestCollectionDataExtractor()
-	const cardEngineExtractor = new TestCardEngineExtractor(cardDataExtractor)
 
 	return {
 		collectionDataExtractor,
 		cardDataExtractor,
-		cardEngineExtractor,
 		collectionDataSerializer: {
 			serialize: (data: TestCollectionData) => data as unknown,
 			deserialize: (data: unknown) => data as TestCollectionData,
@@ -121,7 +103,7 @@ describe.each<{
 		name: "InMemoryMintay",
 		getMintay: async () => ({
 			mintay: LockingMintay.wrapSafe(
-				new InMemoryMintay(createMintayParams()),
+				new InMemoryMintay({ params: createMintayParams() }),
 			),
 		}),
 	},

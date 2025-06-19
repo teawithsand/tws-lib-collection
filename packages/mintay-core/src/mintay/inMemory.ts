@@ -9,6 +9,7 @@ import { InMemoryEngineStore } from "../engineStore/inMemory"
 import { FsrsParameters } from "../fsrs/params"
 import { InMemoryDb } from "../inMemoryDb/db"
 import { Mintay, MintayParams } from "./defines"
+import { MintayCardEngineExtractor } from "./types"
 import { MintayTypeSpec, MintayTypeSpecParams } from "./types/typeSpec"
 
 export class InMemoryMintay<T extends MintayTypeSpecParams>
@@ -17,13 +18,15 @@ export class InMemoryMintay<T extends MintayTypeSpecParams>
 	public readonly collectionStore: CollectionStore<MintayTypeSpec<T>>
 	public readonly cardStore: CardStore<MintayTypeSpec<T>>
 	private readonly db: InMemoryDb<MintayTypeSpec<T>>
+	private readonly params: MintayParams<T>
 
-	constructor(private readonly setup: MintayParams<T>) {
+	constructor({ params }: { params: MintayParams<T> }) {
+		this.params = params
 		this.db = new InMemoryDb<MintayTypeSpec<T>>()
 		this.collectionStore = new InMemoryCollectionStore<MintayTypeSpec<T>>({
 			db: this.db,
-			defaultCardDataFactory: setup.defaultCardDataFactory,
-			defaultCollectionDataFactory: setup.defaultCollectionDataFactory,
+			defaultCardDataFactory: params.defaultCardDataFactory,
+			defaultCollectionDataFactory: params.defaultCollectionDataFactory,
 		})
 		this.cardStore = new InMemoryCardStore<MintayTypeSpec<T>>({
 			db: this.db,
@@ -38,7 +41,9 @@ export class InMemoryMintay<T extends MintayTypeSpecParams>
 
 		const newStore = new InMemoryEngineStore<MintayTypeSpec<T>>({
 			reducer,
-			extractor: this.setup.cardEngineExtractor,
+			extractor: new MintayCardEngineExtractor(
+				this.params.cardDataExtractor,
+			),
 			db: this.db,
 			collectionId: id,
 		})

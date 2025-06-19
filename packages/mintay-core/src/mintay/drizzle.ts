@@ -11,6 +11,7 @@ import { DrizzleEngineStore, EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs/params"
 import { Mintay, MintayParams } from "./defines"
 import {
+	MintayCardEngineExtractor,
 	MintayCardEventVersionedType,
 	MintayCardStateVersionedType,
 } from "./types"
@@ -43,7 +44,9 @@ export class DrizzleMintay<T extends MintayTypeSpecParams>
 				MintayCardStateVersionedType.getUnknownSerializer(),
 			cardEventSerializer:
 				MintayCardEventVersionedType.getUnknownSerializer(),
-			cardExtractor: params.cardEngineExtractor,
+			cardExtractor: new MintayCardEngineExtractor(
+				params.cardDataExtractor,
+			),
 			collectionDataExtractor: params.collectionDataExtractor,
 		})
 		this.cardStore = new DrizzleCardStore<MintayTypeSpec<T>>({
@@ -53,7 +56,9 @@ export class DrizzleMintay<T extends MintayTypeSpecParams>
 			cardEventSerializer:
 				MintayCardEventVersionedType.getUnknownSerializer(),
 			cardDataSerializer: params.cardDataSerializer,
-			cardExtractor: params.cardEngineExtractor,
+			cardExtractor: new MintayCardEngineExtractor(
+				params.cardDataExtractor,
+			),
 		})
 	}
 
@@ -71,7 +76,9 @@ export class DrizzleMintay<T extends MintayTypeSpecParams>
 			cardEventSerializer:
 				MintayCardEventVersionedType.getUnknownSerializer(),
 			cardDataSerializer: this.params.cardDataSerializer,
-			extractor: this.params.cardEngineExtractor,
+			extractor: new MintayCardEngineExtractor(
+				this.params.cardDataExtractor,
+			),
 		})
 
 		return newStore
