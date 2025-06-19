@@ -26,6 +26,27 @@ export const translationPl: Readonly<AppTranslation> = {
 			formValidationErrors: () => "Błędy walidacji formularza",
 		},
 	},
+	auth: {
+		login: {
+			submit: () => "Zaloguj się",
+			username: () => "Nazwa użytkownika",
+			enterUsername: () => "Wprowadź nazwę użytkownika",
+			password: () => "Hasło",
+			enterPassword: () => "Wprowadź hasło",
+			formValidationErrors: () => "Błędy walidacji formularza",
+		},
+		register: {
+			submit: () => "Zarejestruj się",
+			username: () => "Nazwa użytkownika",
+			enterUsername: () => "Wprowadź nazwę użytkownika",
+			password: () => "Hasło",
+			enterPassword: () => "Wprowadź hasło",
+			confirmPassword: () => "Potwierdź hasło",
+			enterConfirmPassword: () => "Potwierdź swoje hasło",
+			formValidationErrors: () => "Błędy walidacji formularza",
+			passwordsDoNotMatch: () => "Hasła nie pasują do siebie",
+		},
+	},
 	about: {
 		title: () => "O Mintay",
 		subtitle: () => "System Interwałowego Powtarzania dla Lepszego Uczenia",

@@ -24,6 +24,27 @@ export interface AppTranslation {
 			formValidationErrors: () => string
 		}
 	}
+	auth: {
+		login: {
+			submit: () => string
+			username: () => string
+			enterUsername: () => string
+			password: () => string
+			enterPassword: () => string
+			formValidationErrors: () => string
+		}
+		register: {
+			submit: () => string
+			username: () => string
+			enterUsername: () => string
+			password: () => string
+			enterPassword: () => string
+			confirmPassword: () => string
+			enterConfirmPassword: () => string
+			formValidationErrors: () => string
+			passwordsDoNotMatch: () => string
+		}
+	}
 	about: {
 		title: () => string
 		subtitle: () => string

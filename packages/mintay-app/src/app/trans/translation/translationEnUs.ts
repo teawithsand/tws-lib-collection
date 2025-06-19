@@ -26,6 +26,27 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			formValidationErrors: () => "Form Validation Errors",
 		},
 	},
+	auth: {
+		login: {
+			submit: () => "Login",
+			username: () => "Username",
+			enterUsername: () => "Enter username",
+			password: () => "Password",
+			enterPassword: () => "Enter password",
+			formValidationErrors: () => "Form Validation Errors",
+		},
+		register: {
+			submit: () => "Register",
+			username: () => "Username",
+			enterUsername: () => "Enter username",
+			password: () => "Password",
+			enterPassword: () => "Enter password",
+			confirmPassword: () => "Confirm Password",
+			enterConfirmPassword: () => "Confirm your password",
+			formValidationErrors: () => "Form Validation Errors",
+			passwordsDoNotMatch: () => "Passwords do not match",
+		},
+	},
 	about: {
 		title: () => "About Mintay",
 		subtitle: () => "Spaced Repetition System for Enhanced Learning",

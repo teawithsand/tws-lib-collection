@@ -26,6 +26,27 @@ export const translationRu: Readonly<AppTranslation> = {
 			formValidationErrors: () => "Ошибки валидации формы",
 		},
 	},
+	auth: {
+		login: {
+			submit: () => "Войти",
+			username: () => "Имя пользователя",
+			enterUsername: () => "Введите имя пользователя",
+			password: () => "Пароль",
+			enterPassword: () => "Введите пароль",
+			formValidationErrors: () => "Ошибки валидации формы",
+		},
+		register: {
+			submit: () => "Зарегистрироваться",
+			username: () => "Имя пользователя",
+			enterUsername: () => "Введите имя пользователя",
+			password: () => "Пароль",
+			enterPassword: () => "Введите пароль",
+			confirmPassword: () => "Подтвердите пароль",
+			enterConfirmPassword: () => "Подтвердите ваш пароль",
+			formValidationErrors: () => "Ошибки валидации формы",
+			passwordsDoNotMatch: () => "Пароли не совпадают",
+		},
+	},
 	about: {
 		title: () => "О Mintay",
 		subtitle: () =>
