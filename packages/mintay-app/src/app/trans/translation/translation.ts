@@ -5,6 +5,7 @@ export interface AppTranslation {
 	generic: {
 		form: {
 			thisFieldMustNotBeEmpty: () => string
+			discoveryPriorityMustNotBeNegative: () => string
 		}
 		loading: () => string
 	}
@@ -21,6 +22,22 @@ export interface AppTranslation {
 			enterCollectionName: () => string
 			description: () => string
 			enterCollectionDescription: () => string
+			formValidationErrors: () => string
+		}
+	}
+	card: {
+		form: {
+			createCard: () => string
+			editCard: () => string
+			submit: () => string
+			cardId: () => string
+			enterCardId: () => string
+			questionContent: () => string
+			enterQuestionContent: () => string
+			answerContent: () => string
+			enterAnswerContent: () => string
+			discoveryPriority: () => string
+			enterDiscoveryPriority: () => string
 			formValidationErrors: () => string
 		}
 	}

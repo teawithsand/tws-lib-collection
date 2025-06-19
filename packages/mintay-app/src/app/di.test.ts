@@ -18,6 +18,7 @@ describe("AppDi", () => {
 				appBarService: undefined,
 				backendClient: undefined,
 				backendService: undefined,
+				cardService: undefined,
 			})
 			.build()
 

@@ -6,6 +6,8 @@ export const translationPl: Readonly<AppTranslation> = {
 	generic: {
 		form: {
 			thisFieldMustNotBeEmpty: () => "To pole nie może być puste",
+			discoveryPriorityMustNotBeNegative: () =>
+				"Priorytet odkrycia nie może być ujemny",
 		},
 		loading: () => "Ładowanie...",
 	},
@@ -23,6 +25,23 @@ export const translationPl: Readonly<AppTranslation> = {
 			description: () => "Opis",
 			enterCollectionDescription: () =>
 				"Wprowadź opis kolekcji (opcjonalnie)",
+			formValidationErrors: () => "Błędy walidacji formularza",
+		},
+	},
+	card: {
+		form: {
+			createCard: () => "Utwórz kartę",
+			editCard: () => "Edytuj kartę",
+			submit: () => "Zatwierdź",
+			cardId: () => "ID karty",
+			enterCardId: () => "Wprowadź ID karty",
+			questionContent: () => "Treść pytania",
+			enterQuestionContent: () => "Wprowadź treść pytania",
+			answerContent: () => "Treść odpowiedzi",
+			enterAnswerContent: () => "Wprowadź treść odpowiedzi",
+			discoveryPriority: () => "Priorytet odkrycia",
+			enterDiscoveryPriority: () =>
+				"Wprowadź priorytet odkrycia (0 lub więcej)",
 			formValidationErrors: () => "Błędy walidacji formularza",
 		},
 	},

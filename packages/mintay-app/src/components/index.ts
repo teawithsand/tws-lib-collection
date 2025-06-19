@@ -1,4 +1,6 @@
 export * from "./about"
 export * from "./appBar"
+export * from "./card"
 export * from "./collection"
+export * from "./form"
 export * from "./layout"

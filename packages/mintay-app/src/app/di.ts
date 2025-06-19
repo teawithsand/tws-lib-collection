@@ -26,6 +26,7 @@ import {
 import { AppBarService } from "../domain/appBar/appBarService"
 import { BackendService } from "../domain/backend/backendService"
 import { BackendClient } from "../domain/backend/client"
+import { CardService } from "../domain/card"
 import { CollectionService } from "../domain/collectionsService"
 import { DiReleaseHelper } from "./releaseHelper"
 import { TransService } from "./trans"
@@ -41,6 +42,7 @@ export type AppDiContents = {
 
 	translationService: TransService
 	collectionService: CollectionService
+	cardService: CardService
 	appBarService: AppBarService
 	backendService: BackendService
 }
@@ -148,6 +150,11 @@ export class AppDi {
 			.setFactory("collectionService", async (di) => {
 				return new CollectionService({
 					collectionStore: di.get("mintay").collectionStore,
+				})
+			})
+			.setFactory("cardService", async (di) => {
+				return new CardService({
+					cardStore: di.get("mintay").cardStore,
 				})
 			})
 			.setFactory("backendService", async (di) => {
