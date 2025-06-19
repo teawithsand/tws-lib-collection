@@ -1,19 +1,14 @@
+import { AppCollectionData, AppMintayTypeSpec, WithMintayId } from "@/mintay"
 import { atom, atomWithRefresh, loadable } from "@teawithsand/fstate"
-import {
-	CardId,
-	CollectionStore,
-	MintayCollectionData,
-	MintayTypeSpec,
-} from "@teawithsand/mintay-core"
-import { WithMintayId } from "./mintay"
+import { CollectionStore, MintayId } from "@teawithsand/mintay-core"
 
 export class CollectionService {
-	public readonly collectionStore: CollectionStore<MintayTypeSpec>
+	public readonly collectionStore: CollectionStore<AppMintayTypeSpec>
 
 	constructor({
 		collectionStore,
 	}: {
-		collectionStore: CollectionStore<MintayTypeSpec>
+		collectionStore: CollectionStore<AppMintayTypeSpec>
 	}) {
 		this.collectionStore = collectionStore
 	}
@@ -22,7 +17,7 @@ export class CollectionService {
 		set(this._collectionsList)
 	})
 
-	public readonly getCollection = (collectionId: CardId) => {
+	public readonly getCollection = (collectionId: MintayId) => {
 		const collectionDataAtom = atomWithRefresh(async () => {
 			const collection = this.collectionStore.get(collectionId)
 			return await collection.read()
@@ -32,7 +27,7 @@ export class CollectionService {
 
 		const updateCollection = atom(
 			null,
-			async (_get, set, data: MintayCollectionData) => {
+			async (_get, set, data: AppCollectionData) => {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
@@ -47,7 +42,7 @@ export class CollectionService {
 
 		const createCollection = atom(
 			null,
-			async (_get, set, data: MintayCollectionData) => {
+			async (_get, set, data: AppCollectionData) => {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
@@ -61,7 +56,7 @@ export class CollectionService {
 					({
 						id: collectionId,
 						data: await get(collectionDataAtom),
-					}) satisfies WithMintayId<MintayCollectionData | null>,
+					}) satisfies WithMintayId<AppCollectionData | null>,
 			),
 			dataLoadable: collectionDataLoadable,
 			update: updateCollection,
@@ -76,7 +71,7 @@ export class CollectionService {
 	private readonly _collectionsList = atomWithRefresh(async () => {
 		const ids = await this.collectionStore.list()
 
-		const collections: Array<WithMintayId<MintayCollectionData>> = []
+		const collections: Array<WithMintayId<AppCollectionData>> = []
 
 		for (const id of ids) {
 			const handle = this.collectionStore.get(id)

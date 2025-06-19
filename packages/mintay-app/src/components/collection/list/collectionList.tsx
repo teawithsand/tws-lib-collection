@@ -1,4 +1,4 @@
-import { WithMintayId } from "@/domain/mintay/mintay"
+import { WithMintayId } from "@/mintay/withId"
 import { Routes } from "@/router/routes"
 import {
 	ActionIcon,

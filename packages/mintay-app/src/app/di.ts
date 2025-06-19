@@ -1,3 +1,12 @@
+import {
+	AppCardDataExtractor,
+	AppCardDataVersionedType,
+	AppCollectionDataExtractor,
+	AppCollectionDataVersionedType,
+	AppMintayTypeSpec,
+	defaultCardDataFactory,
+	defaultCollectionDataFactory,
+} from "@/mintay"
 import { createStore, JotaiStore } from "@teawithsand/fstate"
 import { LibraryBaseLogger, Logger, LoggerImpl } from "@teawithsand/llog"
 import { DIBuilder, TypeAssert } from "@teawithsand/lngext"
@@ -22,7 +31,7 @@ import { TransService } from "./trans"
 export type AppDiContents = {
 	logger: Logger
 	sqliteClient: SqliteClient
-	mintay: Mintay
+	mintay: Mintay<AppMintayTypeSpec>
 	atomStore: JotaiStore
 
 	releaseHelper: DiReleaseHelper
@@ -110,6 +119,16 @@ export class AppDi {
 				return LockingMintay.wrapSafe(
 					new DrizzleMintay({
 						db: drizzle,
+						params: {
+							collectionDataExtractor:
+								new AppCollectionDataExtractor(),
+							cardDataExtractor: new AppCardDataExtractor(),
+							collectionDataSerializer:
+								AppCollectionDataVersionedType,
+							cardDataSerializer: AppCardDataVersionedType,
+							defaultCardDataFactory,
+							defaultCollectionDataFactory,
+						},
 					}),
 				)
 			})

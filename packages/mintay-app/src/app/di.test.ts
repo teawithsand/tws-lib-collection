@@ -15,6 +15,7 @@ describe("AppDi", () => {
 				collectionService: undefined,
 				releaseHelper: undefined,
 				translationService: undefined,
+				appBarService: undefined,
 			})
 			.build()
 
