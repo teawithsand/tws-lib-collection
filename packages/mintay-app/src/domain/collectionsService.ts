@@ -1,4 +1,9 @@
-import { AppCollectionData, AppMintayTypeSpec, WithMintayId } from "@/mintay"
+import {
+	AppCardData,
+	AppCollectionData,
+	AppMintayTypeSpec,
+	WithMintayId,
+} from "@/mintay"
 import { atom, atomWithRefresh, loadable } from "@teawithsand/fstate"
 import { CollectionStore, MintayId } from "@teawithsand/mintay-core"
 
@@ -73,6 +78,38 @@ export class CollectionService {
 			refresh: atom(null, (_get, set) => {
 				set(collectionDataAtom)
 				set(cardCountAtom)
+			}),
+		}
+	}
+
+	/**
+	 * Gets cards for a specific collection with reactive operations.
+	 * Returns atoms for card data access and refresh functionality.
+	 */
+	public readonly getCollectionCards = (collectionId: MintayId) => {
+		const cardsDataAtom = atomWithRefresh(async () => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandles = await collection.getCards()
+
+			const cardsWithIds: Array<WithMintayId<AppCardData>> = []
+
+			for (const handle of cardHandles) {
+				const data = await handle.read()
+				if (data) {
+					cardsWithIds.push({ id: handle.id, data })
+				}
+			}
+
+			return cardsWithIds
+		})
+
+		const cardsDataLoadable = loadable(cardsDataAtom)
+
+		return {
+			data: atom((get) => get(cardsDataAtom)),
+			dataLoadable: cardsDataLoadable,
+			refresh: atom(null, (_get, set) => {
+				set(cardsDataAtom)
 			}),
 		}
 	}

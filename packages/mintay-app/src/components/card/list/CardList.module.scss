@@ -1,0 +1,138 @@
+.card-list {
+	&__container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 1rem;
+	}
+
+	&__title {
+		margin-bottom: 2rem;
+		text-align: center;
+		color: var(--mantine-color-dark-9);
+		font-weight: 600;
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 1.5rem;
+		margin-bottom: 2rem;
+	}
+
+	&__empty-state {
+		text-align: center;
+		padding: 3rem 1rem;
+		color: var(--mantine-color-gray-6);
+
+		&-icon {
+			margin-bottom: 1rem;
+			opacity: 0.6;
+		}
+
+		&-title {
+			margin-bottom: 0.5rem;
+			font-size: 1.2rem;
+			font-weight: 500;
+			color: var(--mantine-color-gray-7);
+		}
+
+		&-text {
+			font-size: 0.9rem;
+		}
+	}
+
+	&__card-item {
+		background: var(--mantine-color-white);
+		border: 1px solid var(--mantine-color-gray-2);
+		border-radius: var(--mantine-radius-md);
+		padding: 1.5rem;
+		transition: all 0.2s ease;
+
+		&:hover {
+			border-color: var(--mantine-color-blue-3);
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+			transform: translateY(-2px);
+		}
+	}
+
+	&__card-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		margin-bottom: 1rem;
+	}
+
+	&__card-title {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--mantine-color-dark-8);
+		margin-bottom: 0.5rem;
+		line-height: 1.4;
+
+		&--truncated {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+	}
+
+	&__card-content {
+		color: var(--mantine-color-gray-7);
+		font-size: 0.9rem;
+		line-height: 1.5;
+		margin-bottom: 1rem;
+
+		&--truncated {
+			display: -webkit-box;
+			-webkit-line-clamp: 3;
+			line-clamp: 3;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+	}
+
+	&__card-footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-top: 1rem;
+		border-top: 1px solid var(--mantine-color-gray-1);
+	}
+
+	&__card-meta {
+		display: flex;
+		gap: 1rem;
+		font-size: 0.8rem;
+		color: var(--mantine-color-gray-5);
+	}
+
+	&__card-actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	&__loading {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 3rem;
+	}
+
+	&__error {
+		text-align: center;
+		padding: 3rem 1rem;
+		color: var(--mantine-color-red-6);
+
+		&-icon {
+			margin-bottom: 1rem;
+		}
+
+		&-title {
+			margin-bottom: 0.5rem;
+			font-size: 1.2rem;
+			font-weight: 500;
+		}
+	}
+}

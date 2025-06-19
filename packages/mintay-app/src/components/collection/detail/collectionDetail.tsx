@@ -1,22 +1,25 @@
-import { AppCollectionData, WithMintayId } from "@/mintay"
+import { AppCardData, AppCollectionData, WithMintayId } from "@/mintay"
 import { Routes } from "@/router/routes"
 import {
 	ActionIcon,
 	Badge,
 	Card,
+	Divider,
 	Group,
 	Stack,
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconBook, IconEdit } from "@tabler/icons-react"
+import { IconBook, IconCards, IconEdit } from "@tabler/icons-react"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
 import { Link } from "react-router"
+import { AutonomousCardList } from "../../card"
 import styles from "./collectionDetail.module.scss"
 
 interface CollectionDetailProps {
 	readonly collectionAtom: Atom<Promise<WithMintayId<AppCollectionData>>>
 	readonly cardCountAtom: Atom<Promise<number>>
+	readonly cardsAtom: Atom<Promise<WithMintayId<AppCardData>[]>>
 }
 
 /**
@@ -25,6 +28,7 @@ interface CollectionDetailProps {
 export const CollectionDetail = ({
 	collectionAtom,
 	cardCountAtom,
+	cardsAtom,
 }: CollectionDetailProps) => {
 	const collectionData = useAtomValue(collectionAtom)
 	const cardCount = useAtomValue(cardCountAtom)
@@ -124,6 +128,32 @@ export const CollectionDetail = ({
 							<Text size="sm">{formattedUpdatedAt}</Text>
 						</div>
 					</Group>
+
+					<Divider />
+
+					<div>
+						<Group justify="space-between" align="center" mb="md">
+							<Group gap="xs">
+								<IconCards size={20} />
+								<Title order={3}>Cards</Title>
+							</Group>
+							<ActionIcon
+								component={Link}
+								to={Routes.collectionCards.navigate(
+									id.toString(),
+								)}
+								variant="light"
+								size="sm"
+								aria-label="View all cards"
+							>
+								<IconCards size={16} />
+							</ActionIcon>
+						</Group>
+						<AutonomousCardList
+							cardsAtom={cardsAtom}
+							collectionId={id.toString()}
+						/>
+					</div>
 				</Stack>
 			</Card>
 		</div>

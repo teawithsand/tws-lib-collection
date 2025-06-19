@@ -1,57 +1,56 @@
-import { useApp } from "@/app"
-import { PageSuspense } from "@/components/boundary"
-import { CollectionDetail, CollectionNotFound } from "@/components/collection"
-import { LocalLayout } from "@/components/layout"
-import {
-	AppBarMutators,
-	AppBarPredefinedMutatorPriorities,
-	useAppBarMutator,
-} from "@/domain/appBar"
-import { CollectionService } from "@/domain/collectionsService"
 import { atom, useAtomValue } from "@teawithsand/fstate"
 import { TypeAssert } from "@teawithsand/lngext"
 import { useParams } from "react-router"
+import { useApp } from "../../app"
+import { PageSuspense } from "../../components/boundary"
+import { CollectionCardsList } from "../../components/card/list"
+import { CollectionNotFound } from "../../components/collection"
+import { LocalLayout } from "../../components/layout"
+import { CollectionService } from "../../domain/collectionsService"
 
-export const CollectionDetailPage = () => {
+/**
+ * Page component for displaying cards within a specific collection
+ * Shows collection info and a list of cards with actions
+ */
+export const CollectionCardsPage = () => {
 	const { id } = useParams<{ id: string }>()
 	const app = useApp()
-
-	useAppBarMutator(
-		AppBarMutators.ARROW_BACK_MUTATOR,
-		AppBarPredefinedMutatorPriorities.PAGE,
-	)
 
 	if (!id) {
 		return <CollectionNotFound />
 	}
 
 	const collectionService = app.collectionService.getCollection(id)
-	const cardsAtom = app.collectionService.getCollectionCards(id).data
+	const collectionCards = app.collectionService.getCollectionCards(id)
+
 	return (
 		<LocalLayout>
 			<PageSuspense>
-				<CollectionDetailContent
+				<CollectionCardsContent
 					collectionServiceAtom={collectionService}
-					cardsAtom={cardsAtom}
+					cardsAtom={collectionCards.data}
+					collectionId={id}
 				/>
 			</PageSuspense>
 		</LocalLayout>
 	)
 }
 
-interface CollectionDetailContentProps {
+interface CollectionCardsContentProps {
 	readonly collectionServiceAtom: ReturnType<
 		CollectionService["getCollection"]
 	>
 	readonly cardsAtom: ReturnType<
 		CollectionService["getCollectionCards"]
 	>["data"]
+	readonly collectionId: string
 }
 
-const CollectionDetailContent = ({
+const CollectionCardsContent = ({
 	collectionServiceAtom: collectionService,
 	cardsAtom,
-}: CollectionDetailContentProps) => {
+	collectionId,
+}: CollectionCardsContentProps) => {
 	const collectionData = useAtomValue(collectionService.dataWithId)
 
 	if (collectionData.data === null) {
@@ -66,10 +65,10 @@ const CollectionDetailContent = ({
 	)
 
 	return (
-		<CollectionDetail
+		<CollectionCardsList
 			collectionAtom={collectionAtom}
-			cardCountAtom={collectionService.cardCount}
 			cardsAtom={cardsAtom}
+			collectionId={collectionId}
 		/>
 	)
 }

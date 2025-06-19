@@ -78,6 +78,14 @@ export class Routes {
 	}
 
 	/**
+	 * Collection cards page route
+	 */
+	public static readonly collectionCards: RouteConfig = {
+		path: "/collections/:id/cards",
+		navigate: (id: string) => `/collections/${id}/cards`,
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
@@ -86,6 +94,7 @@ export class Routes {
 			Routes.about,
 			Routes.collections,
 			Routes.collectionDetail,
+			Routes.collectionCards,
 			Routes.createCollection,
 			Routes.editCollection,
 			Routes.login,
