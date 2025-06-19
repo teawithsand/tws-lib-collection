@@ -16,13 +16,18 @@ import styles from "./collectionDetail.module.scss"
 
 interface CollectionDetailProps {
 	readonly collectionAtom: Atom<Promise<WithMintayId<AppCollectionData>>>
+	readonly cardCountAtom: Atom<Promise<number>>
 }
 
 /**
  * Component for displaying detailed information about a single collection
  */
-export const CollectionDetail = ({ collectionAtom }: CollectionDetailProps) => {
+export const CollectionDetail = ({
+	collectionAtom,
+	cardCountAtom,
+}: CollectionDetailProps) => {
 	const collectionData = useAtomValue(collectionAtom)
+	const cardCount = useAtomValue(cardCountAtom)
 
 	const { data: collection, id } = collectionData
 
@@ -82,6 +87,18 @@ export const CollectionDetail = ({ collectionAtom }: CollectionDetailProps) => {
 					</Group>
 
 					<Group gap="xl">
+						<div>
+							<Text
+								size="xs"
+								c="dimmed"
+								tt="uppercase"
+								fw={700}
+								mb="xs"
+							>
+								Cards
+							</Text>
+							<Text size="sm">{cardCount}</Text>
+						</div>
 						<div>
 							<Text
 								size="xs"

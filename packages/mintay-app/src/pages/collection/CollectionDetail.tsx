@@ -60,5 +60,10 @@ const CollectionDetailContent = ({
 		} as WithMintayId<AppCollectionData>),
 	)
 
-	return <CollectionDetail collectionAtom={collectionAtom} />
+	return (
+		<CollectionDetail
+			collectionAtom={collectionAtom}
+			cardCountAtom={collectionService.cardCount}
+		/>
+	)
 }

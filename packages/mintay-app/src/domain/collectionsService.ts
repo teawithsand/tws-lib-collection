@@ -25,12 +25,18 @@ export class CollectionService {
 
 		const collectionDataLoadable = loadable(collectionDataAtom)
 
+		const cardCountAtom = atomWithRefresh(async () => {
+			const collection = this.collectionStore.get(collectionId)
+			return await collection.getCardCount()
+		})
+
 		const updateCollection = atom(
 			null,
 			async (_get, set, data: AppCollectionData) => {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
+				set(cardCountAtom)
 				set(this._collectionsList)
 			},
 		)
@@ -46,6 +52,7 @@ export class CollectionService {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
+				set(cardCountAtom)
 			},
 		)
 
@@ -59,11 +66,13 @@ export class CollectionService {
 					}) satisfies WithMintayId<AppCollectionData | null>,
 			),
 			dataLoadable: collectionDataLoadable,
+			cardCount: atom((get) => get(cardCountAtom)),
 			update: updateCollection,
 			delete: deleteCollection,
 			create: createCollection,
 			refresh: atom(null, (_get, set) => {
 				set(collectionDataAtom)
+				set(cardCountAtom)
 			}),
 		}
 	}
