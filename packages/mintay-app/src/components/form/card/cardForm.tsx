@@ -1,21 +1,16 @@
-import {
-	Alert,
-	Button,
-	NumberInput,
-	Paper,
-	Stack,
-	Textarea,
-	TextInput,
-} from "@mantine/core"
+import { Alert, Button, NumberInput, Paper, Stack, Text } from "@mantine/core"
 import { IconAlertCircle } from "@tabler/icons-react"
 import { useForm, useFormField } from "@teawithsand/fstate"
+import "@uiw/react-markdown-preview/markdown.css"
+import MDEditor from "@uiw/react-md-editor"
+import "@uiw/react-md-editor/markdown-editor.css"
 import { useCallback, useState } from "react"
 import { useTransResolver } from "../../../app"
 import styles from "./cardForm.module.scss"
-import { CardFormClass, CardFormData } from "./cardFormClass"
+import { CardFormClass, CardFormData, CardFormInput } from "./cardFormClass"
 
 interface CardFormProps {
-	initialData?: Partial<CardFormData>
+	initialData?: Partial<CardFormInput>
 	onSubmit: (data: CardFormData) => Promise<void>
 }
 
@@ -26,7 +21,6 @@ export const CardForm: React.FC<CardFormProps> = ({
 	const [formAtoms] = useState(() => new CardFormClass(initialData))
 
 	const form = useForm(formAtoms)
-	const globalIdField = useFormField(formAtoms.fields.globalId)
 	const questionContentField = useFormField(formAtoms.fields.questionContent)
 	const answerContentField = useFormField(formAtoms.fields.answerContent)
 	const discoveryPriorityField = useFormField(
@@ -42,9 +36,15 @@ export const CardForm: React.FC<CardFormProps> = ({
 			e.preventDefault()
 
 			if (form.isSubmitting || form.hasErrors) return
-			form.submit(onSubmit)
+
+			const handleFormSubmit = async (formData: CardFormInput) => {
+				const cardData = formAtoms.toCardData(formData)
+				return onSubmit(cardData)
+			}
+
+			form.submit(handleFormSubmit)
 		},
-		[form, onSubmit],
+		[form, formAtoms, onSubmit],
 	)
 
 	return (
@@ -76,89 +76,64 @@ export const CardForm: React.FC<CardFormProps> = ({
 						</Alert>
 					)}
 
-					<div className={styles["card-form__field-group"]}>
-						<TextInput
-							label={resolve((t) => t.card.form.cardId())}
-							placeholder={resolve((t) =>
-								t.card.form.enterCardId(),
-							)}
-							value={globalIdField.value}
-							onChange={(event) =>
-								globalIdField.set(event.currentTarget.value)
+					<div
+						className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
+					>
+						<Text component="label" size="sm" fw={500} mb="xs">
+							{resolve((t) => t.card.form.questionContent())}
+							<span
+								style={{ color: "var(--mantine-color-error)" }}
+							>
+								{" "}
+								*
+							</span>
+						</Text>
+						<MDEditor
+							value={questionContentField.value}
+							onChange={(value: string | undefined) =>
+								questionContentField.set(value || "")
 							}
-							error={
-								!globalIdField.errors.isEmpty &&
-								globalIdField.errors.first
-									? resolve(globalIdField.errors.first)
-									: undefined
-							}
-							disabled={globalIdField.disabled}
-							required
-							withAsterisk
+							preview="edit"
+							hideToolbar={false}
+							visibleDragbar={false}
+							data-disabled={questionContentField.disabled}
 						/>
+						{!questionContentField.errors.isEmpty &&
+							questionContentField.errors.first && (
+								<Text size="xs" c="red" mt="xs">
+									{resolve(questionContentField.errors.first)}
+								</Text>
+							)}
 					</div>
 
-					<div className={styles["card-form__two-column"]}>
-						<div
-							className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
-						>
-							<Textarea
-								label={resolve((t) =>
-									t.card.form.questionContent(),
-								)}
-								placeholder={resolve((t) =>
-									t.card.form.enterQuestionContent(),
-								)}
-								value={questionContentField.value}
-								onChange={(event) =>
-									questionContentField.set(
-										event.currentTarget.value,
-									)
-								}
-								error={
-									!questionContentField.errors.isEmpty &&
-									questionContentField.errors.first
-										? resolve(
-												questionContentField.errors
-													.first,
-											)
-										: undefined
-								}
-								disabled={questionContentField.disabled}
-								required
-								withAsterisk
-							/>
-						</div>
-
-						<div
-							className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
-						>
-							<Textarea
-								label={resolve((t) =>
-									t.card.form.answerContent(),
-								)}
-								placeholder={resolve((t) =>
-									t.card.form.enterAnswerContent(),
-								)}
-								value={answerContentField.value}
-								onChange={(event) =>
-									answerContentField.set(
-										event.currentTarget.value,
-									)
-								}
-								error={
-									!answerContentField.errors.isEmpty &&
-									answerContentField.errors.first
-										? resolve(
-												answerContentField.errors.first,
-											)
-										: undefined
-								}
-								disabled={answerContentField.disabled}
-								required
-								withAsterisk
-							/>
-						</div>
+					<div
+						className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
+					>
+						<Text component="label" size="sm" fw={500} mb="xs">
+							{resolve((t) => t.card.form.answerContent())}
+							<span
+								style={{ color: "var(--mantine-color-error)" }}
+							>
+								{" "}
+								*
+							</span>
+						</Text>
+						<MDEditor
+							value={answerContentField.value}
+							onChange={(value: string | undefined) =>
+								answerContentField.set(value || "")
+							}
+							preview="edit"
+							hideToolbar={false}
+							visibleDragbar={false}
+							data-disabled={answerContentField.disabled}
+						/>
+						{!answerContentField.errors.isEmpty &&
+							answerContentField.errors.first && (
+								<Text size="xs" c="red" mt="xs">
+									{resolve(answerContentField.errors.first)}
+								</Text>
+							)}
 					</div>
 
 					<div
@@ -191,7 +166,8 @@ export const CardForm: React.FC<CardFormProps> = ({
 									: undefined
 							}
 							disabled={discoveryPriorityField.disabled}
-							min={0}
+							decimalScale={0}
+							allowDecimal={false}
 						/>
 					</div>
 

@@ -74,7 +74,7 @@ export const CollectionCardsList = ({
 
 					<Button
 						component={Link}
-						to={`${Routes.collectionDetail.navigate(collectionId)}#create-card`}
+						to={Routes.createCollectionCard.navigate(collectionId)}
 						leftSection={<IconPlus size={16} />}
 						variant="filled"
 					>

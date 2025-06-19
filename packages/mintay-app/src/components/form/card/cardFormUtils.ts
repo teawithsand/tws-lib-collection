@@ -1,16 +1,15 @@
 import { AppCardData } from "../../../mintay/card/card"
-import { CardFormData } from "./cardFormClass"
+import { CardFormData, CardFormInput } from "./cardFormClass"
 
 export class CardFormUtils {
 	private constructor() {}
 
 	/**
-	 * Converts AppCardData to CardFormData for form editing
+	 * Converts AppCardData to CardFormInput for form editing
 	 */
 	public static readonly appCardDataToFormData = (
 		cardData: AppCardData,
-	): CardFormData => ({
-		globalId: cardData.globalId,
+	): CardFormInput => ({
 		questionContent: cardData.questionContent,
 		answerContent: cardData.answerContent,
 		discoveryPriority: cardData.discoveryPriority,

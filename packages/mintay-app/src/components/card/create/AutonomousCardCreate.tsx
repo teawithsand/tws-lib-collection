@@ -2,7 +2,6 @@ import { useApp } from "@/app"
 import { CardFormData, CardFormUtils } from "@/components/form/card"
 import { AppCardData } from "@/mintay/card/card"
 import { Routes } from "@/router/routes"
-import { generateUuid } from "@teawithsand/lngext"
 import { useCallback } from "react"
 import { useNavigate } from "react-router"
 import { CardCreate } from "./CardCreate"
@@ -32,10 +31,6 @@ export const AutonomousCardCreate = ({
 					updatedAt: now,
 				},
 			)
-
-			if (!cardData.globalId.trim()) {
-				cardData.globalId = generateUuid()
-			}
 
 			await cardHandle.save(cardData)
 

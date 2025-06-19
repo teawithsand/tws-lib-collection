@@ -1,3 +1,8 @@
+import {
+	AppBarMutators,
+	AppBarPredefinedMutatorPriorities,
+	useAppBarMutator,
+} from "@/domain/appBar"
 import { atom, useAtomValue } from "@teawithsand/fstate"
 import { TypeAssert } from "@teawithsand/lngext"
 import { useParams } from "react-router"
@@ -15,6 +20,11 @@ import { CollectionService } from "../../domain/collectionsService"
 export const CollectionCardsPage = () => {
 	const { id } = useParams<{ id: string }>()
 	const app = useApp()
+
+	useAppBarMutator(
+		AppBarMutators.ARROW_BACK_MUTATOR,
+		AppBarPredefinedMutatorPriorities.PAGE,
+	)
 
 	if (!id) {
 		return <CollectionNotFound />

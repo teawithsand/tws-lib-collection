@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router"
 import { GlobalLayout } from "../components/layout"
 import {
 	AboutPage,
+	CollectionCardCreatePage,
 	CollectionCardsPage,
 	CollectionCreatePage,
 	CollectionDetailPage,
@@ -35,6 +36,10 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.collectionCards.path}
 						element={<CollectionCardsPage />}
+					/>
+					<Route
+						path={AppRoutes.createCollectionCard.path}
+						element={<CollectionCardCreatePage />}
 					/>
 					<Route
 						path={AppRoutes.createCollection.path}

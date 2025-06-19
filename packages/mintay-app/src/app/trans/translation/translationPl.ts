@@ -8,6 +8,10 @@ export const translationPl: Readonly<AppTranslation> = {
 			thisFieldMustNotBeEmpty: () => "To pole nie może być puste",
 			discoveryPriorityMustNotBeNegative: () =>
 				"Priorytet odkrycia nie może być ujemny",
+			discoveryPriorityMustBeValidNumber: () =>
+				"Priorytet odkrycia musi być prawidłową liczbą",
+			discoveryPriorityMustBeInteger: () =>
+				"Priorytet odkrycia musi być liczbą całkowitą",
 		},
 		loading: () => "Ładowanie...",
 	},

@@ -26,6 +26,85 @@
 			min-height: 120px;
 			resize: vertical;
 		}
+
+		// Markdown editor styles
+		:global {
+			.w-md-editor {
+				min-height: 200px;
+				background-color: var(--mantine-color-white);
+				border: 1px solid var(--mantine-color-gray-4);
+				border-radius: var(--mantine-radius-sm);
+
+				@include mantine.dark {
+					background-color: var(--mantine-color-dark-7);
+					border-color: var(--mantine-color-dark-4);
+				}
+
+				.w-md-editor-text-container {
+					min-height: 150px;
+				}
+
+				.w-md-editor-text {
+					font-family: var(
+						--mantine-font-family-monospace
+					) !important;
+					font-size: var(--mantine-font-size-sm) !important;
+					line-height: 1.5 !important;
+					background-color: transparent !important;
+					color: var(--mantine-color-text) !important;
+				}
+
+				.w-md-editor-text-input {
+					background-color: transparent !important;
+					color: var(--mantine-color-text) !important;
+				}
+
+				.w-md-editor-preview {
+					font-family: var(--mantine-font-family) !important;
+					font-size: var(--mantine-font-size-sm) !important;
+					line-height: 1.6 !important;
+					background-color: transparent !important;
+					color: var(--mantine-color-text) !important;
+				}
+
+				.w-md-editor-toolbar {
+					background-color: var(--mantine-color-gray-0);
+					border-bottom: 1px solid var(--mantine-color-gray-3);
+
+					@include mantine.dark {
+						background-color: var(--mantine-color-dark-6);
+						border-bottom-color: var(--mantine-color-dark-3);
+					}
+				}
+
+				.w-md-editor-toolbar-item button {
+					color: var(--mantine-color-gray-7);
+
+					@include mantine.dark {
+						color: var(--mantine-color-dark-1);
+					}
+
+					&:hover {
+						background-color: var(--mantine-color-gray-1);
+
+						@include mantine.dark {
+							background-color: var(--mantine-color-dark-5);
+						}
+					}
+				}
+			}
+
+			.w-md-editor-focus {
+				border-color: var(--mantine-color-blue-5) !important;
+				box-shadow: 0 0 0 1px var(--mantine-color-blue-5) !important;
+			}
+
+			// When disabled
+			.w-md-editor[data-disabled="true"] {
+				opacity: 0.6;
+				pointer-events: none;
+			}
+		}
 	}
 
 	&__priority-field {
@@ -33,17 +112,6 @@
 
 		.mantine-NumberInput-input {
 			text-align: center;
-		}
-	}
-
-	&__two-column {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 2rem;
-
-		@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
-			grid-template-columns: 1fr;
-			gap: 1.5rem;
 		}
 	}
 

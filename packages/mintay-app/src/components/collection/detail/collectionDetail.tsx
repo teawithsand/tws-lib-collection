@@ -3,6 +3,7 @@ import { Routes } from "@/router/routes"
 import {
 	ActionIcon,
 	Badge,
+	Button,
 	Card,
 	Divider,
 	Group,
@@ -10,9 +11,10 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconBook, IconCards, IconEdit } from "@tabler/icons-react"
+import { IconBook, IconCards, IconEdit, IconPlus } from "@tabler/icons-react"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
 import { Link } from "react-router"
+import { useTransResolver } from "../../../app"
 import { AutonomousCardList } from "../../card"
 import styles from "./collectionDetail.module.scss"
 
@@ -30,6 +32,7 @@ export const CollectionDetail = ({
 	cardCountAtom,
 	cardsAtom,
 }: CollectionDetailProps) => {
+	const { resolve } = useTransResolver()
 	const collectionData = useAtomValue(collectionAtom)
 	const cardCount = useAtomValue(cardCountAtom)
 
@@ -137,17 +140,30 @@ export const CollectionDetail = ({
 								<IconCards size={20} />
 								<Title order={3}>Cards</Title>
 							</Group>
-							<ActionIcon
-								component={Link}
-								to={Routes.collectionCards.navigate(
-									id.toString(),
-								)}
-								variant="light"
-								size="sm"
-								aria-label="View all cards"
-							>
-								<IconCards size={16} />
-							</ActionIcon>
+							<Group gap="sm">
+								<Button
+									component={Link}
+									to={Routes.createCollectionCard.navigate(
+										id.toString(),
+									)}
+									leftSection={<IconPlus size={16} />}
+									variant="light"
+									size="sm"
+								>
+									{resolve((t) => t.card.form.createCard())}
+								</Button>
+								<ActionIcon
+									component={Link}
+									to={Routes.collectionCards.navigate(
+										id.toString(),
+									)}
+									variant="light"
+									size="sm"
+									aria-label="View all cards"
+								>
+									<IconCards size={16} />
+								</ActionIcon>
+							</Group>
 						</Group>
 						<AutonomousCardList
 							cardsAtom={cardsAtom}

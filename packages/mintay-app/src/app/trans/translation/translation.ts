@@ -6,6 +6,8 @@ export interface AppTranslation {
 		form: {
 			thisFieldMustNotBeEmpty: () => string
 			discoveryPriorityMustNotBeNegative: () => string
+			discoveryPriorityMustBeValidNumber: () => string
+			discoveryPriorityMustBeInteger: () => string
 		}
 		loading: () => string
 	}

@@ -1,10 +1,14 @@
 import { Title } from "@mantine/core"
 import { useTransResolver } from "../../../app"
-import { CardForm, type CardFormData } from "../../form/card"
+import {
+	CardForm,
+	type CardFormData,
+	type CardFormInput,
+} from "../../form/card"
 import styles from "./CardEdit.module.scss"
 
 interface CardEditProps {
-	readonly initialData: CardFormData
+	readonly initialData: CardFormInput
 	readonly onSubmit: (data: CardFormData) => Promise<void>
 }
 

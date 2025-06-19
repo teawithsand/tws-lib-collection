@@ -8,6 +8,10 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			thisFieldMustNotBeEmpty: () => "This field must not be empty",
 			discoveryPriorityMustNotBeNegative: () =>
 				"Discovery priority must not be negative",
+			discoveryPriorityMustBeValidNumber: () =>
+				"Discovery priority must be a valid number",
+			discoveryPriorityMustBeInteger: () =>
+				"Discovery priority must be a whole number",
 		},
 		loading: () => "Loading...",
 	},

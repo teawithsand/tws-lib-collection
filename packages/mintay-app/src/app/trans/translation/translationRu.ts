@@ -8,6 +8,10 @@ export const translationRu: Readonly<AppTranslation> = {
 			thisFieldMustNotBeEmpty: () => "Это поле не должно быть пустым",
 			discoveryPriorityMustNotBeNegative: () =>
 				"Приоритет обнаружения не может быть отрицательным",
+			discoveryPriorityMustBeValidNumber: () =>
+				"Приоритет обнаружения должен быть действительным числом",
+			discoveryPriorityMustBeInteger: () =>
+				"Приоритет обнаружения должен быть целым числом",
 		},
 		loading: () => "Загрузка...",
 	},
