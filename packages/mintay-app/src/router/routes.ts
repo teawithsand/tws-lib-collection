@@ -38,6 +38,14 @@ export class Routes {
 	}
 
 	/**
+	 * Collection detail page route
+	 */
+	public static readonly collectionDetail: RouteConfig = {
+		path: "/collections/:id",
+		navigate: (id: string) => `/collections/${id}`,
+	}
+
+	/**
 	 * Create collection page route
 	 */
 	public static readonly createCollection: RouteConfig = {
@@ -77,6 +85,7 @@ export class Routes {
 			Routes.home,
 			Routes.about,
 			Routes.collections,
+			Routes.collectionDetail,
 			Routes.createCollection,
 			Routes.editCollection,
 			Routes.login,

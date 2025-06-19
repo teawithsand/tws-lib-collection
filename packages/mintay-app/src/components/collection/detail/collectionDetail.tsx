@@ -1,0 +1,114 @@
+import { AppCollectionData, WithMintayId } from "@/mintay"
+import { Routes } from "@/router/routes"
+import {
+	ActionIcon,
+	Badge,
+	Card,
+	Group,
+	Stack,
+	Text,
+	Title,
+} from "@mantine/core"
+import { IconBook, IconEdit } from "@tabler/icons-react"
+import { Atom, useAtomValue } from "@teawithsand/fstate"
+import { Link } from "react-router"
+import styles from "./collectionDetail.module.scss"
+
+interface CollectionDetailProps {
+	readonly collectionAtom: Atom<Promise<WithMintayId<AppCollectionData>>>
+}
+
+/**
+ * Component for displaying detailed information about a single collection
+ */
+export const CollectionDetail = ({ collectionAtom }: CollectionDetailProps) => {
+	const collectionData = useAtomValue(collectionAtom)
+
+	const { data: collection, id } = collectionData
+
+	const formattedCreatedAt = new Date(
+		collection.createdAt,
+	).toLocaleDateString()
+	const formattedUpdatedAt = new Date(
+		collection.updatedAt,
+	).toLocaleDateString()
+
+	return (
+		<div className={styles.container}>
+			<Card shadow="sm" padding="lg" radius="md" withBorder>
+				<Stack gap="md">
+					<Group justify="space-between" align="flex-start">
+						<div>
+							<Title order={2} className={styles.title}>
+								{collection.title}
+							</Title>
+							<Text
+								size="sm"
+								c="dimmed"
+								className={styles.globalId}
+							>
+								ID: {collection.globalId}
+							</Text>
+						</div>
+						<ActionIcon
+							component={Link}
+							to={Routes.editCollection.navigate(id.toString())}
+							variant="light"
+							size="lg"
+							aria-label="Edit collection"
+						>
+							<IconEdit size={18} />
+						</ActionIcon>
+					</Group>
+
+					<div>
+						<Text fw={500} size="sm" mb="xs">
+							Description
+						</Text>
+						<Text size="sm" className={styles.description}>
+							{collection.description ||
+								"No description provided"}
+						</Text>
+					</div>
+
+					<Group>
+						<Badge
+							leftSection={<IconBook size={12} />}
+							variant="light"
+							color="blue"
+						>
+							Collection
+						</Badge>
+					</Group>
+
+					<Group gap="xl">
+						<div>
+							<Text
+								size="xs"
+								c="dimmed"
+								tt="uppercase"
+								fw={700}
+								mb="xs"
+							>
+								Created
+							</Text>
+							<Text size="sm">{formattedCreatedAt}</Text>
+						</div>
+						<div>
+							<Text
+								size="xs"
+								c="dimmed"
+								tt="uppercase"
+								fw={700}
+								mb="xs"
+							>
+								Last Updated
+							</Text>
+							<Text size="sm">{formattedUpdatedAt}</Text>
+						</div>
+					</Group>
+				</Stack>
+			</Card>
+		</div>
+	)
+}

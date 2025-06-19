@@ -3,6 +3,7 @@ import { GlobalLayout } from "../components/layout"
 import {
 	AboutPage,
 	CollectionCreatePage,
+	CollectionDetailPage,
 	CollectionEditPage,
 	CollectionListPage,
 	HomePage,
@@ -25,6 +26,10 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.collections.path}
 						element={<CollectionListPage />}
+					/>
+					<Route
+						path={AppRoutes.collectionDetail.path}
+						element={<CollectionDetailPage />}
 					/>
 					<Route
 						path={AppRoutes.createCollection.path}

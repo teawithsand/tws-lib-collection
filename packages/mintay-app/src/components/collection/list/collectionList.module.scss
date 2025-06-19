@@ -90,6 +90,20 @@
 	}
 }
 
+.titleLink {
+	text-decoration: none;
+	color: inherit;
+
+	&:hover {
+		text-decoration: none;
+		color: var(--mantine-color-blue-6);
+
+		@include mantine.dark {
+			color: var(--mantine-color-blue-4);
+		}
+	}
+}
+
 .collectionDescription {
 	line-height: 1.4;
 	margin-bottom: mantine.rem(16);
