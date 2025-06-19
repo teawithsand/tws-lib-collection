@@ -16,7 +16,7 @@ import {
 	MintayCardEvent,
 	MintayCardEventType,
 } from "../types/card/event/cardEvent"
-import { MintayCardEngineExtractorBase } from "../types/engineExtractorBase"
+import { MintayCardEngineExtractor } from "../types/engineExtractorBase"
 import { MintayCardQueue } from "../types/queue"
 import { MintayTypeSpec, MintayTypeSpecParams } from "../types/typeSpec"
 
@@ -61,7 +61,7 @@ class TestCollectionDataExtractor
 		data.globalId
 }
 
-class TestCardEngineExtractor extends MintayCardEngineExtractorBase<
+class TestCardEngineExtractor extends MintayCardEngineExtractor<
 	MintayTypeSpec<TestMintayTypeSpecParams>
 > {
 	constructor(

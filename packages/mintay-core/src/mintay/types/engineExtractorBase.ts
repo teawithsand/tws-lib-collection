@@ -7,7 +7,7 @@ import { MintayTypeSpec, MintayTypeSpecParams } from "./typeSpec"
 /**
  * Implements some default logic for CardEngineExtractor for mintay types.
  */
-export class MintayCardEngineExtractorBase<T extends MintayTypeSpecParams>
+export class MintayCardEngineExtractor<T extends MintayTypeSpecParams>
 	implements CardEngineExtractor<MintayTypeSpec<T>>
 {
 	constructor(
