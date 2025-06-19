@@ -40,7 +40,8 @@
     "@teawithsand/reserd": "workspace:*",
     "@tabler/icons-react": "~3.34.0",
     "react-router": "~7.6.2",
-    "zod": "~3.25.67"
+    "zod": "~3.25.67",
+    "@uiw/react-md-editor": "~4.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
