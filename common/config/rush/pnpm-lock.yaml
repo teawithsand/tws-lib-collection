@@ -571,6 +571,9 @@ importers:
 
   ../../packages/reserd:
     dependencies:
+      '@teawithsand/lngext':
+        specifier: workspace:*
+        version: link:../lngext
       zod:
         specifier: ~3.25.42
         version: 3.25.42
