@@ -87,24 +87,6 @@ export class RegisterFormClass extends FormAtomsDelegateBase<
 						})
 					},
 				)
-				.setGlobalValidator((formValues) => {
-					return atom((get) => {
-						const values = get(formValues)
-						const errors: AppTransString[] = []
-
-						if (
-							values.password &&
-							values.confirmPassword &&
-							values.password !== values.confirmPassword
-						) {
-							errors.push((trans) =>
-								trans.auth.register.passwordsDoNotMatch(),
-							)
-						}
-
-						return FormErrorBag.fromArray(errors)
-					})
-				})
 				.buildForm(),
 		)
 	}
