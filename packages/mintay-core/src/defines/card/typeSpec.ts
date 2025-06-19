@@ -1,15 +1,18 @@
-import {
-	MintayCardData,
-	MintayCardEvent,
-	MintayCardQueue,
-	MintayCardState,
-	MintayCollectionData,
-} from ".."
+import { MintayCardEvent, MintayCardQueue, MintayCardState } from ".."
 import { StorageTypeSpec } from "../typings/typeSpec"
 
-export interface MintayTypeSpec extends StorageTypeSpec {
-	collectionData: MintayCollectionData
-	cardData: MintayCardData
+/**
+ * Lets you customize preset mintay types with your own collection and card data types.
+ */
+export type MintayTypeSpecParams = {
+	collectionData: Record<string, unknown>
+	cardData: Record<string, unknown>
+}
+
+export interface MintayTypeSpec<T extends MintayTypeSpecParams>
+	extends StorageTypeSpec {
+	collectionData: T["collectionData"]
+	cardData: T["cardData"]
 	cardState: MintayCardState
 	cardEvent: MintayCardEvent
 	queue: MintayCardQueue

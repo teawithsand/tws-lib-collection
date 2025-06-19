@@ -5,50 +5,73 @@ import {
 	DrizzleCollectionStore,
 } from "../cardStore"
 import { MintayDrizzleDB } from "../db/db"
+import { MintayCardStateReducer, MintayTypeSpec } from "../defines"
 import {
-	MintayCardExtractor,
-	MintayCardStateReducer,
-	MintayTypeSpec,
-	MintayTypeSpecSerializer,
-} from "../defines"
-import { MintayCardDataUtil, MintayCollectionDataUtil } from "../defines/card"
+	MintayCardEventVersionedType,
+	MintayCardStateVersionedType,
+	MintayTypeSpecParams,
+} from "../defines/card"
 import { CardId } from "../defines/typings/defines"
 import { DrizzleEngineStore, EngineStore } from "../engineStore"
 import { FsrsParameters } from "../fsrs/params"
-import { Mintay } from "./defines"
+import { Mintay, MintayParams } from "./defines"
 
-export class DrizzleMintay implements Mintay {
-	public readonly collectionStore: CollectionStore<MintayTypeSpec>
-	public readonly cardStore: CardStore<MintayTypeSpec>
+export class DrizzleMintay<T extends MintayTypeSpecParams>
+	implements Mintay<T>
+{
+	public readonly collectionStore: CollectionStore<MintayTypeSpec<T>>
+	public readonly cardStore: CardStore<MintayTypeSpec<T>>
 	private readonly db: MintayDrizzleDB
+	private readonly params: MintayParams<T>
 
-	constructor({ db }: { db: MintayDrizzleDB }) {
+	constructor({
+		db,
+		params,
+	}: {
+		db: MintayDrizzleDB
+		params: MintayParams<T>
+	}) {
 		this.db = db
-		this.collectionStore = new DrizzleCollectionStore<MintayTypeSpec>({
+		this.params = params
+		this.collectionStore = new DrizzleCollectionStore<MintayTypeSpec<T>>({
 			db: this.db,
-			defaultCollectionHeader: MintayCollectionDataUtil.getDefaultData(),
-			defaultCardData: MintayCardDataUtil.getDefaultData(),
-			serializer: MintayTypeSpecSerializer,
-			cardExtractor: new MintayCardExtractor(),
+			defaultCardDataFactory: params.defaultCardDataFactory,
+			defaultCollectionDataFactory: params.defaultCollectionDataFactory,
+			cardDataSerializer: params.cardDataSerializer,
+			collectionDataSerializer: params.collectionDataSerializer,
+			cardStateSerializer:
+				MintayCardStateVersionedType.getUnknownSerializer(),
+			cardEventSerializer:
+				MintayCardEventVersionedType.getUnknownSerializer(),
+			cardExtractor: params.cardEngineExtractor,
+			collectionDataExtractor: params.collectionDataExtractor,
 		})
-		this.cardStore = new DrizzleCardStore<MintayTypeSpec>({
+		this.cardStore = new DrizzleCardStore<MintayTypeSpec<T>>({
 			db: this.db,
-			serializer: MintayTypeSpecSerializer,
-			cardExtractor: new MintayCardExtractor(),
+			cardStateSerializer:
+				MintayCardStateVersionedType.getUnknownSerializer(),
+			cardEventSerializer:
+				MintayCardEventVersionedType.getUnknownSerializer(),
+			cardDataSerializer: params.cardDataSerializer,
+			cardExtractor: params.cardEngineExtractor,
 		})
 	}
 
 	public readonly getEngineStore = (
 		id: CardId,
 		parameters: FsrsParameters,
-	): EngineStore<MintayTypeSpec> => {
+	): EngineStore<MintayTypeSpec<T>> => {
 		const reducer = new MintayCardStateReducer(parameters)
-		const newStore = new DrizzleEngineStore<MintayTypeSpec>({
+		const newStore = new DrizzleEngineStore<MintayTypeSpec<T>>({
 			reducer,
 			db: this.db,
 			collectionId: id,
-			serializer: MintayTypeSpecSerializer,
-			extractor: new MintayCardExtractor(),
+			cardStateSerializer:
+				MintayCardStateVersionedType.getUnknownSerializer(),
+			cardEventSerializer:
+				MintayCardEventVersionedType.getUnknownSerializer(),
+			cardDataSerializer: this.params.cardDataSerializer,
+			extractor: this.params.cardEngineExtractor,
 		})
 
 		return newStore

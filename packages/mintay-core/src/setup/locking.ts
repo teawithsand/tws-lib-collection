@@ -2,7 +2,7 @@ import { QueueLockAdapter, RwLockAdapter } from "@teawithsand/lngext"
 import { CardStore, CollectionStore } from "../cardStore"
 import { RwLockedCardStore } from "../cardStore/rwLocked/cardStore"
 import { RwLockedCollectionStore } from "../cardStore/rwLocked/collectionStore"
-import { CardId, MintayTypeSpec } from "../defines"
+import { CardId, MintayTypeSpec, MintayTypeSpecParams } from "../defines"
 import { EngineStore } from "../engineStore"
 import { RwLockedEngineStore } from "../engineStore/rwLocked/engineStore"
 import { FsrsParameters } from "../fsrs"
@@ -12,13 +12,17 @@ import { Mintay } from "./defines"
  * Thread-safe wrapper for Mintay implementations using read-write locks.
  * All stores (collection, card, engine) are wrapped with RwLocked* types to provide thread safety.
  */
-export class LockingMintay implements Mintay {
-	public readonly collectionStore: CollectionStore<MintayTypeSpec>
-	public readonly cardStore: CardStore<MintayTypeSpec>
-	private readonly mintay: Mintay
+export class LockingMintay<T extends MintayTypeSpecParams>
+	implements Mintay<T>
+{
+	public readonly collectionStore: CollectionStore<MintayTypeSpec<T>>
+	public readonly cardStore: CardStore<MintayTypeSpec<T>>
+	private readonly mintay: Mintay<T>
 	private readonly lockAdapter: RwLockAdapter
 
-	public static readonly wrapSafe = (mintay: Mintay) => {
+	public static readonly wrapSafe = <T extends MintayTypeSpecParams>(
+		mintay: Mintay<T>,
+	) => {
 		const lock = new QueueLockAdapter()
 		return new LockingMintay({
 			mintay,
@@ -33,18 +37,18 @@ export class LockingMintay implements Mintay {
 		mintay,
 		lockAdapter,
 	}: {
-		mintay: Mintay
+		mintay: Mintay<T>
 		lockAdapter: RwLockAdapter
 	}) {
 		this.mintay = mintay
 		this.lockAdapter = lockAdapter
 
-		this.collectionStore = new RwLockedCollectionStore<MintayTypeSpec>({
+		this.collectionStore = new RwLockedCollectionStore<MintayTypeSpec<T>>({
 			store: mintay.collectionStore,
 			lockAdapter: this.lockAdapter,
 		})
 
-		this.cardStore = new RwLockedCardStore<MintayTypeSpec>({
+		this.cardStore = new RwLockedCardStore<MintayTypeSpec<T>>({
 			store: mintay.cardStore,
 			lockAdapter: this.lockAdapter,
 		})
@@ -53,9 +57,9 @@ export class LockingMintay implements Mintay {
 	public readonly getEngineStore = (
 		id: CardId,
 		parameters: FsrsParameters,
-	): EngineStore<MintayTypeSpec> => {
+	): EngineStore<MintayTypeSpec<T>> => {
 		const underlyingStore = this.mintay.getEngineStore(id, parameters)
-		return new RwLockedEngineStore<MintayTypeSpec>({
+		return new RwLockedEngineStore<MintayTypeSpec<T>>({
 			store: underlyingStore,
 			lockAdapter: this.lockAdapter,
 		})

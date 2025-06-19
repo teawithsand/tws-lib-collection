@@ -6,9 +6,8 @@ import { getTestingDb } from "../../db/dbTest.test"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
 import { CardStats } from "../../defines/card/cardStats"
 import { CardStateReducer } from "../../defines/reducer/defines"
-import { CardExtractor } from "../../defines/typings/defines"
+import { CardEngineExtractor } from "../../defines/typings/defines"
 import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { DrizzleEngineStore } from "../drizzle"
 
@@ -47,7 +46,7 @@ interface TestTypeSpec extends StorageTypeSpec {
 }
 
 // Simplified test implementations
-const extractor: CardExtractor<TestTypeSpec> = {
+const extractor: CardEngineExtractor<TestTypeSpec> = {
 	getPriority: (state, data) => state?.duePriority ?? data.basePriority,
 	getQueue: (state) => state?.queue ?? TestQueue.NEW,
 	getStats: (state): CardStats => ({
@@ -95,15 +94,27 @@ const reducer: CardStateReducer<TestCardEvent, TestCardState> = {
 	},
 }
 
-const serializer: TypeSpecSerializer<TestTypeSpec> = {
-	serializeCardData: (data) => ({ basePriority: data.basePriority }),
-	deserializeCardData: (data: any) => ({ basePriority: data.basePriority }),
-	serializeCollectionHeader: (data) => ({ name: data.name }),
-	deserializeCollectionHeader: (data: any) => ({ name: data.name }),
-	serializeState: (state) => state,
-	deserializeState: (data: any) => data,
-	serializeEvent: (event) => event,
-	deserializeEvent: (data: any) => data,
+// Individual serializers
+const cardDataSerializer = {
+	serialize: (data: TestCardData) => ({ basePriority: data.basePriority }),
+	deserialize: (data: any): TestCardData => ({
+		basePriority: data.basePriority,
+	}),
+}
+
+const collectionDataSerializer = {
+	serialize: (data: TestCollectionData) => ({ name: data.name }),
+	deserialize: (data: any): TestCollectionData => ({ name: data.name }),
+}
+
+const cardStateSerializer = {
+	serialize: (state: TestCardState) => state,
+	deserialize: (data: any): TestCardState => data,
+}
+
+const cardEventSerializer = {
+	serialize: (event: TestCardEvent) => event,
+	deserialize: (data: any): TestCardEvent => data,
 }
 
 describe("Drizzle Computed Properties", () => {
@@ -131,7 +142,7 @@ describe("Drizzle Computed Properties", () => {
 			.insert(cardCollectionsTable)
 			.values({
 				id: collectionId,
-				collectionHeader: serializer.serializeCollectionHeader({
+				collectionHeader: collectionDataSerializer.serialize({
 					name: "Test Collection",
 				}),
 			})
@@ -140,7 +151,9 @@ describe("Drizzle Computed Properties", () => {
 		const cardHandle = new DrizzleCardHandle<TestTypeSpec>({
 			id: cardId,
 			db,
-			serializer,
+			cardStateSerializer,
+			cardDataSerializer,
+			cardEventSerializer,
 			collectionId,
 			cardExtractor: extractor,
 		})
@@ -162,7 +175,7 @@ describe("Drizzle Computed Properties", () => {
 		expect(savedCard!.lapses).toBe(0) // Should be 0 for no events
 
 		// Verify serialized data
-		const deserializedData = serializer.deserializeCardData(
+		const deserializedData = cardDataSerializer.deserialize(
 			savedCard!.cardData,
 		)
 		expect(deserializedData.basePriority).toBe(testCardData.basePriority)
@@ -180,7 +193,7 @@ describe("Drizzle Computed Properties", () => {
 			.insert(cardCollectionsTable)
 			.values({
 				id: collectionId,
-				collectionHeader: serializer.serializeCollectionHeader({
+				collectionHeader: collectionDataSerializer.serialize({
 					name: "Test Collection Update",
 				}),
 			})
@@ -189,7 +202,9 @@ describe("Drizzle Computed Properties", () => {
 		const cardHandle = new DrizzleCardHandle<TestTypeSpec>({
 			id: cardId,
 			db,
-			serializer,
+			cardStateSerializer,
+			cardDataSerializer,
+			cardEventSerializer,
 			collectionId,
 			cardExtractor: extractor,
 		})
@@ -214,7 +229,7 @@ describe("Drizzle Computed Properties", () => {
 		expect(updatedCard!.lapses).toBe(0) // Should remain 0 for no events
 
 		// Verify serialized data
-		const deserializedData = serializer.deserializeCardData(
+		const deserializedData = cardDataSerializer.deserialize(
 			updatedCard!.cardData,
 		)
 		expect(deserializedData.basePriority).toBe(updatedCardData.basePriority)
@@ -232,7 +247,7 @@ describe("Drizzle Computed Properties", () => {
 			.insert(cardCollectionsTable)
 			.values({
 				id: collectionId,
-				collectionHeader: serializer.serializeCollectionHeader({
+				collectionHeader: collectionDataSerializer.serialize({
 					name: "Test Collection Events",
 				}),
 			})
@@ -241,7 +256,9 @@ describe("Drizzle Computed Properties", () => {
 		const cardHandle = new DrizzleCardHandle<TestTypeSpec>({
 			id: cardId,
 			db,
-			serializer,
+			cardStateSerializer,
+			cardDataSerializer,
+			cardEventSerializer,
 			collectionId,
 			cardExtractor: extractor,
 		})
@@ -253,7 +270,9 @@ describe("Drizzle Computed Properties", () => {
 			db,
 			reducer,
 			extractor,
-			serializer,
+			cardStateSerializer,
+			cardEventSerializer,
+			cardDataSerializer,
 			collectionId,
 		})
 
@@ -302,7 +321,7 @@ describe("Drizzle Computed Properties", () => {
 			.insert(cardCollectionsTable)
 			.values({
 				id: collectionId,
-				collectionHeader: serializer.serializeCollectionHeader({
+				collectionHeader: collectionDataSerializer.serialize({
 					name: "Test Collection Save With Events",
 				}),
 			})
@@ -311,7 +330,9 @@ describe("Drizzle Computed Properties", () => {
 		const cardHandle = new DrizzleCardHandle<TestTypeSpec>({
 			id: cardId,
 			db,
-			serializer,
+			cardStateSerializer,
+			cardDataSerializer,
+			cardEventSerializer,
 			collectionId,
 			cardExtractor: extractor,
 		})
@@ -323,7 +344,9 @@ describe("Drizzle Computed Properties", () => {
 			db,
 			reducer,
 			extractor,
-			serializer,
+			cardStateSerializer,
+			cardEventSerializer,
+			cardDataSerializer,
 			collectionId,
 		})
 
@@ -356,7 +379,7 @@ describe("Drizzle Computed Properties", () => {
 		expect(savedCard!.lapses).toBe(1) // Should have 1 failure from events
 
 		// Verify card data is updated but computed properties use state from events
-		const deserializedData = serializer.deserializeCardData(
+		const deserializedData = cardDataSerializer.deserialize(
 			savedCard!.cardData,
 		)
 		expect(deserializedData.basePriority).toBe(newCardData.basePriority)
@@ -375,7 +398,7 @@ describe("Drizzle Computed Properties", () => {
 			.insert(cardCollectionsTable)
 			.values({
 				id: collectionId,
-				collectionHeader: serializer.serializeCollectionHeader({
+				collectionHeader: collectionDataSerializer.serialize({
 					name: "Test Collection Update With Events",
 				}),
 			})
@@ -384,7 +407,9 @@ describe("Drizzle Computed Properties", () => {
 		const cardHandle = new DrizzleCardHandle<TestTypeSpec>({
 			id: cardId,
 			db,
-			serializer,
+			cardStateSerializer,
+			cardDataSerializer,
+			cardEventSerializer,
 			collectionId,
 			cardExtractor: extractor,
 		})
@@ -396,7 +421,9 @@ describe("Drizzle Computed Properties", () => {
 			db,
 			reducer,
 			extractor,
-			serializer,
+			cardStateSerializer,
+			cardEventSerializer,
+			cardDataSerializer,
 			collectionId,
 		})
 
@@ -429,7 +456,7 @@ describe("Drizzle Computed Properties", () => {
 		expect(updatedCard!.lapses).toBe(0) // Should have 0 failures from events
 
 		// Verify card data is updated but computed properties use state from events
-		const deserializedData = serializer.deserializeCardData(
+		const deserializedData = cardDataSerializer.deserialize(
 			updatedCard!.cardData,
 		)
 		expect(deserializedData.basePriority).toBe(updatedCardData.basePriority)

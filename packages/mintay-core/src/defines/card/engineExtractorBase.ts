@@ -1,19 +1,29 @@
-import { CardExtractor } from "../typings/defines"
-import { MintayCardData } from "./cardData"
+import { CardDataExtractor, CardEngineExtractor } from "../typings/defines"
 import { MintayCardState } from "./cardState"
 import { CardStats } from "./cardStats"
 import { MintayCardQueue } from "./queue"
-import { MintayTypeSpec } from "./typeSpec"
+import { MintayTypeSpec, MintayTypeSpecParams } from "./typeSpec"
 
-export class MintayCardExtractor implements CardExtractor<MintayTypeSpec> {
+/**
+ * Implements some default logic for CardEngineExtractor for mintay types.
+ */
+export class MintayCardEngineExtractorBase<T extends MintayTypeSpecParams>
+	implements CardEngineExtractor<MintayTypeSpec<T>>
+{
+	constructor(
+		private readonly cardDataExtractor: CardDataExtractor<
+			MintayTypeSpec<T>
+		>,
+	) {}
+
 	public readonly getPriority = (
 		state: MintayCardState | null,
-		data: MintayCardData,
+		data: MintayTypeSpec<T>["cardData"],
 	): number => {
 		if (state && state.fsrs.dueTimestamp) {
 			return state.fsrs.dueTimestamp
 		} else {
-			return data.discoveryPriority
+			return this.cardDataExtractor.getDiscoveryPriority(data)
 		}
 	}
 

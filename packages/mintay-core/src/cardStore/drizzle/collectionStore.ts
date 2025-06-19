@@ -1,9 +1,9 @@
+import { Serializer } from "@teawithsand/reserd"
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable } from "../../db/schema"
-import { CardExtractor } from "../../defines"
+import { CardEngineExtractor, CollectionDataExtractor } from "../../defines"
 import { CardId } from "../../defines/typings/defines"
 import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CollectionHandle, CollectionStore } from "../defines/collection"
 import { DrizzleCollectionHandle } from "./collectionHandle"
@@ -13,34 +13,50 @@ export class DrizzleCollectionStore<
 > implements CollectionStore<T>
 {
 	private readonly db: MintayDrizzleDB
-	private readonly defaultCollectionHeader: T["collectionData"]
-	private readonly defaultCardData: T["cardData"]
-	private readonly serializer: TypeSpecSerializer<T>
-	private readonly cardExtractor: CardExtractor<T>
+	private readonly defaultCardDataFactory: () => T["cardData"]
+	private readonly collectionDataSerializer: Serializer<
+		unknown,
+		T["collectionData"]
+	>
+	private readonly cardDataSerializer: Serializer<unknown, T["cardData"]>
+	private readonly cardStateSerializer: Serializer<unknown, T["cardState"]>
+	private readonly cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+	private readonly cardExtractor: CardEngineExtractor<T>
+	private readonly defaultCollectionDataFactory: () => T["collectionData"]
+
 	constructor({
 		db,
-		serializer,
-		defaultCollectionHeader,
-		defaultCardData,
+		collectionDataSerializer,
+		cardDataSerializer,
+		cardStateSerializer,
+		cardEventSerializer,
+		defaultCardDataFactory,
+		defaultCollectionDataFactory,
 		cardExtractor,
 	}: {
 		db: MintayDrizzleDB
-		serializer: TypeSpecSerializer<T>
-		defaultCollectionHeader: T["collectionData"]
-		defaultCardData: T["cardData"]
-		cardExtractor: CardExtractor<T>
+		collectionDataSerializer: Serializer<unknown, T["collectionData"]>
+		cardDataSerializer: Serializer<unknown, T["cardData"]>
+		cardStateSerializer: Serializer<unknown, T["cardState"]>
+		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+		defaultCardDataFactory: () => T["cardData"]
+		defaultCollectionDataFactory: () => T["collectionData"]
+		cardExtractor: CardEngineExtractor<T>
+		collectionDataExtractor: CollectionDataExtractor<T>
 	}) {
 		this.db = db
-		this.serializer = serializer
-		this.defaultCollectionHeader = defaultCollectionHeader
-		this.defaultCardData = defaultCardData
+		this.collectionDataSerializer = collectionDataSerializer
+		this.cardDataSerializer = cardDataSerializer
+		this.cardStateSerializer = cardStateSerializer
+		this.cardEventSerializer = cardEventSerializer
+		this.defaultCardDataFactory = defaultCardDataFactory
+		this.defaultCollectionDataFactory = defaultCollectionDataFactory
 		this.cardExtractor = cardExtractor
 	}
 
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
-		const header = this.defaultCollectionHeader
-		const serializedHeader =
-			this.serializer.serializeCollectionHeader(header)
+		const header = this.defaultCollectionDataFactory()
+		const serializedHeader = this.collectionDataSerializer.serialize(header)
 		const insertedCollection = await this.db.transaction(async (tx) => {
 			await tx
 				.insert(cardCollectionsTable)
@@ -62,8 +78,11 @@ export class DrizzleCollectionStore<
 		return new DrizzleCollectionHandle<T>({
 			id: newId,
 			db: this.db,
-			defaultCardData: this.defaultCardData,
-			serializer: this.serializer,
+			defaultCardDataFactory: this.defaultCardDataFactory,
+			collectionDataSerializer: this.collectionDataSerializer,
+			cardStateSerializer: this.cardStateSerializer,
+			cardDataSerializer: this.cardDataSerializer,
+			cardEventSerializer: this.cardEventSerializer,
 			cardExtractor: this.cardExtractor,
 		})
 	}
@@ -72,8 +91,11 @@ export class DrizzleCollectionStore<
 		return new DrizzleCollectionHandle<T>({
 			id,
 			db: this.db,
-			defaultCardData: this.defaultCardData,
-			serializer: this.serializer,
+			defaultCardDataFactory: this.defaultCardDataFactory,
+			collectionDataSerializer: this.collectionDataSerializer,
+			cardStateSerializer: this.cardStateSerializer,
+			cardDataSerializer: this.cardDataSerializer,
+			cardEventSerializer: this.cardEventSerializer,
 			cardExtractor: this.cardExtractor,
 		})
 	}

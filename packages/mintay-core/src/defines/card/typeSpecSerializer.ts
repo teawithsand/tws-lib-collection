@@ -1,36 +1,37 @@
+import { Serializer } from "@teawithsand/reserd"
 import { TypeSpecSerializer } from "../typings/serializer"
-import {
-	storedMintayCardDataVersionedType,
-	storedMintayCollectionDataVersionedType,
-} from "./stored"
-import { StoredMintayCollectionDataSchema } from "./stored/collection/schema"
-import { StoredMintayCardDataSchema } from "./stored/data/schema"
-import { StoredMintayCardEventSchema } from "./stored/event/schema"
-import { storedMintayCardEventVersionedType } from "./stored/event/serializer"
-import { StoredMintayCardStateSchema } from "./stored/state/schema"
-import { storedMintayCardStateVersionedType } from "./stored/state/serializer"
-import { MintayTypeSpec } from "./typeSpec"
+import { MintayCardEvent } from "./cardEvent"
+import { MintayCardState } from "./cardState"
+import { MintayTypeSpec, MintayTypeSpecParams } from "./typeSpec"
 
-export const MintayTypeSpecSerializer: TypeSpecSerializer<MintayTypeSpec> = {
-	serializeCardData: storedMintayCardDataVersionedType.serialize,
-	deserializeCardData: (data: unknown) => {
-		const parsed = StoredMintayCardDataSchema.parse(data)
-		return storedMintayCardDataVersionedType.deserialize(parsed)
-	},
-	serializeCollectionHeader:
-		storedMintayCollectionDataVersionedType.serialize,
-	deserializeCollectionHeader: (data: unknown) => {
-		const parsed = StoredMintayCollectionDataSchema.parse(data)
-		return storedMintayCollectionDataVersionedType.deserialize(parsed)
-	},
-	serializeState: storedMintayCardStateVersionedType.serialize,
-	deserializeState: (data: unknown) => {
-		const parsed = StoredMintayCardStateSchema.parse(data)
-		return storedMintayCardStateVersionedType.deserialize(parsed)
-	},
-	serializeEvent: storedMintayCardEventVersionedType.serialize,
-	deserializeEvent: (data: unknown) => {
-		const parsed = StoredMintayCardEventSchema.parse(data)
-		return storedMintayCardEventVersionedType.deserialize(parsed)
-	},
+export class MintayTypeSpecSerializer<T extends MintayTypeSpecParams>
+	implements TypeSpecSerializer<MintayTypeSpec<T>>
+{
+	constructor(
+		public readonly collectionDataSerializer: Serializer<
+			unknown,
+			T["collectionData"]
+		>,
+		public readonly cardDataSerializer: Serializer<unknown, T["cardData"]>,
+	) {}
+
+	public readonly cardEventSerializer: Serializer<unknown, MintayCardEvent> =
+		{
+			serialize: (_event: MintayCardEvent): unknown => {
+				throw new Error("Function not implemented.")
+			},
+			deserialize: (_data: unknown): MintayCardEvent => {
+				throw new Error("Function not implemented.")
+			},
+		}
+
+	public readonly cardStateSerializer: Serializer<unknown, MintayCardState> =
+		{
+			serialize: (_owned: MintayCardState): unknown => {
+				throw new Error("Function not implemented.")
+			},
+			deserialize: (_stored: unknown): MintayCardState => {
+				throw new Error("Function not implemented.")
+			},
+		}
 }

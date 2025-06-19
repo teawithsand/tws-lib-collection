@@ -1,3 +1,4 @@
+import { Serializer } from "@teawithsand/reserd"
 import { asc, count, desc, eq } from "drizzle-orm"
 import { MintayDrizzleDB, MintayDrizzleDBTx } from "../../db/db"
 import {
@@ -5,9 +6,8 @@ import {
 	cardEventsTable,
 	cardsTable,
 } from "../../db/schema"
-import { CardExtractor, CardId } from "../../defines/typings/defines"
+import { CardEngineExtractor, CardId } from "../../defines/typings/defines"
 import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle } from "../defines/card"
 
@@ -19,26 +19,34 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	public readonly id: CardId
 	private readonly db: MintayDrizzleDB
 	private collectionId: CardId
-	private readonly serializer: TypeSpecSerializer<T>
-	private readonly cardExtractor: CardExtractor<T>
+	private readonly cardStateSerializer: Serializer<unknown, T["cardState"]>
+	private readonly cardDataSerializer: Serializer<unknown, T["cardData"]>
+	private readonly cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+	private readonly cardExtractor: CardEngineExtractor<T>
 
 	constructor({
 		id,
 		db,
-		serializer,
+		cardStateSerializer,
+		cardDataSerializer,
+		cardEventSerializer,
 		collectionId,
 		cardExtractor,
 	}: {
 		id: CardId
 		db: MintayDrizzleDB
-		serializer: TypeSpecSerializer<T>
+		cardStateSerializer: Serializer<unknown, T["cardState"]>
+		cardDataSerializer: Serializer<unknown, T["cardData"]>
+		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
 		collectionId: CardId
-		cardExtractor: CardExtractor<T>
+		cardExtractor: CardEngineExtractor<T>
 	}) {
 		this.id = id
 		this.db = db
 		this.collectionId = collectionId
-		this.serializer = serializer
+		this.cardStateSerializer = cardStateSerializer
+		this.cardDataSerializer = cardDataSerializer
+		this.cardEventSerializer = cardEventSerializer
 		this.cardExtractor = cardExtractor
 	}
 
@@ -83,7 +91,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 			.get()
 
 		return latestStateRes?.state
-			? this.serializer.deserializeState(latestStateRes.state)
+			? this.cardStateSerializer.deserialize(latestStateRes.state)
 			: null
 	}
 
@@ -140,7 +148,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 		await tx
 			.update(cardsTable)
 			.set({
-				cardData: this.serializer.serializeCardData(data),
+				cardData: this.cardDataSerializer.serialize(data),
 				priority,
 				queue,
 				lapses: stats.lapses,
@@ -178,7 +186,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 			.values({
 				id: this.getCardIdAsNumber(),
 				collectionId: this.getCollectionIdAsNumber(),
-				cardData: this.serializer.serializeCardData(data),
+				cardData: this.cardDataSerializer.serialize(data),
 				priority,
 				queue,
 				lapses: stats.lapses,
@@ -214,7 +222,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 		partial: Partial<T["cardData"]>,
 	): Promise<void> => {
 		await this.withExistingCard(async (tx, card) => {
-			const deserialized = this.serializer.deserializeCardData(
+			const deserialized = this.cardDataSerializer.deserialize(
 				card.cardData,
 			)
 			const updatedData = { ...deserialized, ...partial }
@@ -231,7 +239,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 			.where(eq(cardsTable.id, this.getCardIdAsNumber()))
 			.get()
 		if (!card) return null
-		return this.serializer.deserializeCardData(card.cardData)
+		return this.cardDataSerializer.deserialize(card.cardData)
 	}
 
 	public readonly mustRead = async (): Promise<T["cardData"]> => {
@@ -282,7 +290,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 	 */
 	public readonly recomputeMetadata = async (): Promise<void> => {
 		await this.withExistingCard(async (tx, card) => {
-			const cardData = this.serializer.deserializeCardData(card.cardData)
+			const cardData = this.cardDataSerializer.deserialize(card.cardData)
 			const latestState = await this.fetchLatestState(tx)
 			await this.updateCardMetadata(tx, cardData, latestState)
 		})
@@ -335,7 +343,7 @@ export class DrizzleCardHandle<T extends StorageTypeSpec & { queue: number }>
 				.all()
 
 			return events.map((event) =>
-				this.serializer.deserializeEvent(event.event),
+				this.cardEventSerializer.deserialize(event.event),
 			)
 		})
 	}

@@ -9,21 +9,21 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 	implements CollectionStore<T>
 {
 	private readonly db: InMemoryDb<T>
-	private readonly defaultCollectionHeader: T["collectionData"]
-	private readonly defaultCardData: T["cardData"]
+	private readonly defaultCardDataFactory
+	private readonly defaultCollectionDataFactory
 
 	constructor({
 		db,
-		defaultCollectionHeader,
-		defaultCardData,
+		defaultCardDataFactory,
+		defaultCollectionDataFactory,
 	}: {
 		db: InMemoryDb<T>
-		defaultCollectionHeader: T["collectionData"]
-		defaultCardData: T["cardData"]
+		defaultCardDataFactory: () => T["cardData"]
+		defaultCollectionDataFactory: () => T["collectionData"]
 	}) {
 		this.db = db
-		this.defaultCollectionHeader = defaultCollectionHeader
-		this.defaultCardData = defaultCardData
+		this.defaultCardDataFactory = defaultCardDataFactory
+		this.defaultCollectionDataFactory = defaultCollectionDataFactory
 	}
 
 	public readonly list = async (): Promise<CardId[]> => {
@@ -33,13 +33,13 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 	public readonly create = async (): Promise<CollectionHandle<T>> => {
 		const newId = generateUuid() as CardId
 		const newCollection: InMemoryCollection<T> = {
-			header: this.defaultCollectionHeader,
+			header: this.defaultCollectionDataFactory(),
 		}
 		this.db.upsertCollection(newId, newCollection)
 		return new InMemoryCollectionHandle<T>({
 			id: newId,
 			db: this.db,
-			defaultCardData: this.defaultCardData,
+			defaultCardDataFactory: this.defaultCardDataFactory,
 		})
 	}
 
@@ -47,7 +47,7 @@ export class InMemoryCollectionStore<T extends StorageTypeSpec>
 		return new InMemoryCollectionHandle<T>({
 			id,
 			db: this.db,
-			defaultCardData: this.defaultCardData,
+			defaultCardDataFactory: this.defaultCardDataFactory,
 		})
 	}
 }

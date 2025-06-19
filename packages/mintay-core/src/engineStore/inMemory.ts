@@ -1,5 +1,5 @@
 import { CardStateReducer } from "../defines/reducer/defines"
-import { CardExtractor, CardId } from "../defines/typings/defines"
+import { CardEngineExtractor, CardId } from "../defines/typings/defines"
 import { CardIdUtil } from "../defines/typings/internalCardIdUtil"
 import { StorageTypeSpec } from "../defines/typings/typeSpec"
 import { InMemoryDb } from "../inMemoryDb/db"
@@ -10,7 +10,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 {
 	private readonly db: InMemoryDb<T>
 	private readonly reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-	private readonly stateExtractor: CardExtractor<T>
+	private readonly stateExtractor: CardEngineExtractor<T>
 	private readonly lastPushedCardIds: CardId[] = []
 	private readonly collectionId: CardId
 
@@ -21,7 +21,7 @@ export class InMemoryEngineStore<T extends StorageTypeSpec>
 		collectionId,
 	}: {
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-		extractor: CardExtractor<T>
+		extractor: CardEngineExtractor<T>
 		db: InMemoryDb<T>
 		collectionId: CardId
 	}) {

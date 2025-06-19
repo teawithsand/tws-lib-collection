@@ -2,16 +2,19 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest"
 import { MintayDrizzleDB } from "../../db/db"
 import { getTestingDb } from "../../db/dbTest.test"
 import {
+	CardDataExtractor,
 	CardId,
+	CollectionDataExtractor,
 	MintayAnswer,
-	MintayCardData,
 	MintayCardEvent,
 	MintayCardEventType,
 	MintayCardQueue,
-	MintayCollectionData,
+	MintayTypeSpec,
+	MintayTypeSpecParams,
 } from "../../defines"
+import { MintayCardEngineExtractorBase } from "../../defines/card/engineExtractorBase"
 import { FsrsParameters } from "../../fsrs"
-import { Mintay } from "../defines"
+import { Mintay, MintayParams } from "../defines"
 import { DrizzleMintay } from "../drizzle"
 import { InMemoryMintay } from "../inMemory"
 import { LockingMintay } from "../locking"
@@ -19,14 +22,106 @@ import { LockingMintay } from "../locking"
 // Constants for deterministic testing
 const BASE_TIMESTAMP = 1700000000000
 
+// Define our test data types
+type TestCollectionData = {
+	globalId: string
+	content: string
+	createdAtTimestamp: number
+	lastUpdatedAtTimestamp: number
+}
+
+type TestCardData = {
+	globalId: string
+	content: string
+	createdAtTimestamp: number
+	lastUpdatedAtTimestamp: number
+	discoveryPriority: number
+}
+
+// Define our test type specification
+type TestMintayTypeSpecParams = MintayTypeSpecParams & {
+	collectionData: TestCollectionData
+	cardData: TestCardData
+}
+
+// Create extractors for our test setup
+class TestCardDataExtractor
+	implements CardDataExtractor<MintayTypeSpec<TestMintayTypeSpecParams>>
+{
+	public readonly getGlobalId = (data: TestCardData): string => data.globalId
+	public readonly getDiscoveryPriority = (data: TestCardData): number =>
+		data.discoveryPriority
+}
+
+class TestCollectionDataExtractor
+	implements CollectionDataExtractor<MintayTypeSpec<TestMintayTypeSpecParams>>
+{
+	public readonly getGlobalId = (data: TestCollectionData): string =>
+		data.globalId
+}
+
+class TestCardEngineExtractor extends MintayCardEngineExtractorBase<
+	MintayTypeSpec<TestMintayTypeSpecParams>
+> {
+	constructor(
+		cardDataExtractor: CardDataExtractor<
+			MintayTypeSpec<TestMintayTypeSpecParams>
+		>,
+	) {
+		super(cardDataExtractor)
+	}
+
+	public readonly getDiscoveryPriority = (data: TestCardData): number =>
+		data.discoveryPriority
+}
+
+// Create the MintayParams for our tests
+const createMintayParams = (): MintayParams<TestMintayTypeSpecParams> => {
+	const cardDataExtractor = new TestCardDataExtractor()
+	const collectionDataExtractor = new TestCollectionDataExtractor()
+	const cardEngineExtractor = new TestCardEngineExtractor(cardDataExtractor)
+
+	return {
+		collectionDataExtractor,
+		cardDataExtractor,
+		cardEngineExtractor,
+		collectionDataSerializer: {
+			serialize: (data: TestCollectionData) => data as unknown,
+			deserialize: (data: unknown) => data as TestCollectionData,
+		},
+		cardDataSerializer: {
+			serialize: (data: TestCardData) => data as unknown,
+			deserialize: (data: unknown) => data as TestCardData,
+		},
+		defaultCardDataFactory: (): TestCardData => ({
+			globalId: "",
+			content: "",
+			createdAtTimestamp: 0,
+			lastUpdatedAtTimestamp: 0,
+			discoveryPriority: 0,
+		}),
+		defaultCollectionDataFactory: (): TestCollectionData => ({
+			globalId: "",
+			content: "",
+			createdAtTimestamp: 0,
+			lastUpdatedAtTimestamp: 0,
+		}),
+	}
+}
+
 describe.each<{
 	name: string
-	getMintay: () => Promise<{ mintay: Mintay; cleanup?: () => Promise<void> }>
+	getMintay: () => Promise<{
+		mintay: Mintay<TestMintayTypeSpecParams>
+		cleanup?: () => Promise<void>
+	}>
 }>([
 	{
 		name: "InMemoryMintay",
 		getMintay: async () => ({
-			mintay: LockingMintay.wrapSafe(new InMemoryMintay()),
+			mintay: LockingMintay.wrapSafe(
+				new InMemoryMintay(createMintayParams()),
+			),
 		}),
 	},
 	{
@@ -35,14 +130,17 @@ describe.each<{
 			const { drizzle, close } = await getTestingDb()
 			return {
 				mintay: LockingMintay.wrapSafe(
-					new DrizzleMintay({ db: drizzle as MintayDrizzleDB }),
+					new DrizzleMintay({
+						db: drizzle as MintayDrizzleDB,
+						params: createMintayParams(),
+					}),
 				),
 				cleanup: close,
 			}
 		},
 	},
 ])("Mintay E2E Tests - $name", ({ getMintay }) => {
-	let mintay: Mintay
+	let mintay: Mintay<TestMintayTypeSpecParams>
 	let cleanup: (() => Promise<void>) | undefined
 
 	beforeAll(async () => {
@@ -66,7 +164,7 @@ describe.each<{
 		expect(await collection.exists()).toBe(true)
 
 		// Save collection data
-		const collectionData: MintayCollectionData = {
+		const collectionData: TestCollectionData = {
 			globalId: "test-collection-001",
 			content: `My First Collection
 
@@ -114,7 +212,7 @@ Testing card operations`,
 		expect(await collection.getCardCount()).toBe(1)
 
 		// Save card data
-		const cardData: MintayCardData = {
+		const cardData: TestCardData = {
 			globalId: "test-card-001",
 			content: "What is the capital of France?",
 			createdAtTimestamp: BASE_TIMESTAMP + 2000,
@@ -373,9 +471,9 @@ Testing card pagination`,
 
 		// Verify no duplicate cards in pages
 		const allPagedCardIds = [
-			...firstPage.map((c) => c.id),
-			...secondPage.map((c) => c.id),
-			...lastPage.map((c) => c.id),
+			...firstPage.map((c: any) => c.id),
+			...secondPage.map((c: any) => c.id),
+			...lastPage.map((c: any) => c.id),
 		]
 		const uniqueIds = new Set(allPagedCardIds)
 		expect(uniqueIds.size).toBe(5)

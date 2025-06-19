@@ -14,20 +14,20 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 {
 	public readonly id: CardId
 	private readonly db: InMemoryDb<T>
-	private readonly defaultCardData: T["cardData"]
+	private readonly defaultCardDataFactory: () => T["cardData"]
 
 	constructor({
 		id,
 		db,
-		defaultCardData,
+		defaultCardDataFactory,
 	}: {
 		id: CardId
 		db: InMemoryDb<T>
-		defaultCardData: T["cardData"]
+		defaultCardDataFactory: () => T["cardData"]
 	}) {
 		this.id = id
 		this.db = db
-		this.defaultCardData = defaultCardData
+		this.defaultCardDataFactory = defaultCardDataFactory
 	}
 
 	public readonly save = async (data: T["collectionData"]): Promise<void> => {
@@ -111,7 +111,7 @@ export class InMemoryCollectionHandle<T extends StorageTypeSpec>
 	public readonly createCard = async (): Promise<CardHandle<T>> => {
 		const newId = generateUuid() as CardId
 		const newCard: InMemoryCard<T> = {
-			data: this.defaultCardData,
+			data: this.defaultCardDataFactory(),
 			collection: this.id,
 			states: [],
 		}

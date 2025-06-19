@@ -1,10 +1,10 @@
+import { Serializer } from "@teawithsand/reserd"
 import { and, asc, desc, eq, inArray, max } from "drizzle-orm"
 import { MintayDrizzleDB, MintayDrizzleDBTx } from "../db"
 import { cardEventsTable, cardsTable } from "../db/schema"
 import { CardStateReducer } from "../defines/reducer/defines"
-import { CardExtractor, CardId } from "../defines/typings/defines"
+import { CardEngineExtractor, CardId } from "../defines/typings/defines"
 import { CardIdUtil } from "../defines/typings/internalCardIdUtil"
-import { TypeSpecSerializer } from "../defines/typings/serializer"
 import { StorageTypeSpec } from "../defines/typings/typeSpec"
 import { EngineStore } from "./defines"
 
@@ -12,28 +12,36 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 	implements EngineStore<T>
 {
 	private reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-	private extractor: CardExtractor<T>
+	private extractor: CardEngineExtractor<T>
 	private db: MintayDrizzleDB
-	private serializer: TypeSpecSerializer<T>
+	private readonly cardStateSerializer: Serializer<unknown, T["cardState"]>
+	private readonly cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+	private readonly cardDataSerializer: Serializer<unknown, T["cardData"]>
 	private readonly collectionId: number
 
 	constructor({
 		db,
 		reducer,
 		extractor,
-		serializer,
+		cardStateSerializer,
+		cardEventSerializer,
+		cardDataSerializer,
 		collectionId,
 	}: {
 		db: MintayDrizzleDB
 		reducer: CardStateReducer<T["cardEvent"], T["cardState"]>
-		extractor: CardExtractor<T>
-		serializer: TypeSpecSerializer<T>
+		extractor: CardEngineExtractor<T>
+		cardStateSerializer: Serializer<unknown, T["cardState"]>
+		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+		cardDataSerializer: Serializer<unknown, T["cardData"]>
 		collectionId: CardId
 	}) {
 		this.db = db
 		this.reducer = reducer
 		this.extractor = extractor
-		this.serializer = serializer
+		this.cardStateSerializer = cardStateSerializer
+		this.cardEventSerializer = cardEventSerializer
+		this.cardDataSerializer = cardDataSerializer
 		this.collectionId = CardIdUtil.toNumber(collectionId)
 	}
 
@@ -47,7 +55,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 			const lastEvent = await this.getLastCardEvent(parsedId, tx)
 
 			const prevState = lastEvent
-				? this.serializer.deserializeState(lastEvent.state)
+				? this.cardStateSerializer.deserialize(lastEvent.state)
 				: this.reducer.getDefaultState()
 			const newState = this.reducer.fold(prevState, event)
 
@@ -60,8 +68,8 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 			await tx.insert(cardEventsTable).values({
 				cardId: parsedId,
 				collectionId,
-				event: this.serializer.serializeEvent(event),
-				state: this.serializer.serializeState(newState),
+				event: this.cardEventSerializer.serialize(event),
+				state: this.cardStateSerializer.serialize(newState),
 				ordinalNumber,
 			})
 
@@ -131,7 +139,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 			return this.reducer.getDefaultState()
 		}
 
-		return this.serializer.deserializeState(lastEvent.state)
+		return this.cardStateSerializer.deserialize(lastEvent.state)
 	}
 
 	private readonly getLastCardEvent = async (
@@ -188,7 +196,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 		const previousEvent = await this.getLastCardEvent(cardId, tx)
 
 		const newState = previousEvent?.state
-			? this.serializer.deserializeState(previousEvent.state)
+			? this.cardStateSerializer.deserialize(previousEvent.state)
 			: null
 
 		await this.updateCardAfterModify(newState, cardId, tx)
@@ -210,7 +218,7 @@ export class DrizzleEngineStore<T extends StorageTypeSpec & { queue: number }>
 				`Card with id ${id} not found; But it should exist. This should be unreachable.`,
 			)
 
-		const cardData = this.serializer.deserializeCardData(card.cardData)
+		const cardData = this.cardDataSerializer.deserialize(card.cardData)
 
 		const queue = this.extractor.getQueue(state, cardData)
 		const priority = this.extractor.getPriority(state, cardData)

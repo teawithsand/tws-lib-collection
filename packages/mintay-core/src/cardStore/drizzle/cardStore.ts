@@ -1,9 +1,9 @@
+import { Serializer } from "@teawithsand/reserd"
 import { eq } from "drizzle-orm"
 import { MintayDrizzleDB } from "../../db/db"
 import { cardsTable } from "../../db/schema"
-import { CardExtractor, CardId } from "../../defines/typings/defines"
+import { CardEngineExtractor, CardId } from "../../defines/typings/defines"
 import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle, CardStore } from "../defines/card"
 import { DrizzleCardHandle } from "./cardHandle"
@@ -12,20 +12,28 @@ export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
 	implements CardStore<T>
 {
 	private readonly db: MintayDrizzleDB
-	private readonly serializer: TypeSpecSerializer<T>
-	private readonly extractor: CardExtractor<T>
+	private readonly cardStateSerializer: Serializer<unknown, T["cardState"]>
+	private readonly cardDataSerializer: Serializer<unknown, T["cardData"]>
+	private readonly cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+	private readonly extractor: CardEngineExtractor<T>
 
 	public constructor({
 		db,
-		serializer,
+		cardStateSerializer,
+		cardDataSerializer,
+		cardEventSerializer,
 		cardExtractor,
 	}: {
 		db: MintayDrizzleDB
-		serializer: TypeSpecSerializer<T>
-		cardExtractor: CardExtractor<T>
+		cardStateSerializer: Serializer<unknown, T["cardState"]>
+		cardDataSerializer: Serializer<unknown, T["cardData"]>
+		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+		cardExtractor: CardEngineExtractor<T>
 	}) {
 		this.db = db
-		this.serializer = serializer
+		this.cardStateSerializer = cardStateSerializer
+		this.cardDataSerializer = cardDataSerializer
+		this.cardEventSerializer = cardEventSerializer
 		this.extractor = cardExtractor
 	}
 
@@ -61,8 +69,10 @@ export class DrizzleCardStore<T extends StorageTypeSpec & { queue: number }>
 		return new DrizzleCardHandle<T>({
 			id,
 			db: this.db,
-			serializer: this.serializer,
-			collectionId: CardIdUtil.toNumber(card.collectionId),
+			cardStateSerializer: this.cardStateSerializer,
+			cardDataSerializer: this.cardDataSerializer,
+			cardEventSerializer: this.cardEventSerializer,
+			collectionId: card.collectionId as CardId,
 			cardExtractor: this.extractor,
 		})
 	}

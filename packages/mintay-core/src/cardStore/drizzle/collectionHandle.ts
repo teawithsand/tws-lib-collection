@@ -1,10 +1,10 @@
+import { Serializer } from "@teawithsand/reserd"
 import { and, count, eq } from "drizzle-orm"
 import { MintayDbUtil, MintayDrizzleDB } from "../../db/db"
 import { cardCollectionsTable, cardsTable } from "../../db/schema"
-import { CardExtractor } from "../../defines"
+import { CardEngineExtractor } from "../../defines"
 import { CardId } from "../../defines/typings/defines"
 import { CardIdUtil } from "../../defines/typings/internalCardIdUtil"
-import { TypeSpecSerializer } from "../../defines/typings/serializer"
 import { StorageTypeSpec } from "../../defines/typings/typeSpec"
 import { CardHandle } from "../defines/card"
 import {
@@ -19,27 +19,42 @@ export class DrizzleCollectionHandle<
 {
 	public readonly id: CardId
 	private readonly db: MintayDrizzleDB
-	private readonly defaultCardData: T["cardData"]
-	private readonly serializer: TypeSpecSerializer<T>
-	private readonly cardExtractor: CardExtractor<T>
+	private readonly defaultCardDataFactory: () => T["cardData"]
+	private readonly collectionDataSerializer: Serializer<
+		unknown,
+		T["collectionData"]
+	>
+	private readonly cardStateSerializer: Serializer<unknown, T["cardState"]>
+	private readonly cardDataSerializer: Serializer<unknown, T["cardData"]>
+	private readonly cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+	private readonly cardExtractor: CardEngineExtractor<T>
 
 	constructor({
 		id,
 		db,
-		defaultCardData,
-		serializer,
-		cardExtractor: cardExtractor,
+		defaultCardDataFactory,
+		collectionDataSerializer,
+		cardStateSerializer,
+		cardDataSerializer,
+		cardEventSerializer,
+		cardExtractor,
 	}: {
 		id: CardId
 		db: MintayDrizzleDB
-		defaultCardData: T["cardData"]
-		serializer: TypeSpecSerializer<T>
-		cardExtractor: CardExtractor<T>
+		defaultCardDataFactory: () => T["cardData"]
+		collectionDataSerializer: Serializer<unknown, T["collectionData"]>
+		cardStateSerializer: Serializer<unknown, T["cardState"]>
+		cardDataSerializer: Serializer<unknown, T["cardData"]>
+		cardEventSerializer: Serializer<unknown, T["cardEvent"]>
+		cardExtractor: CardEngineExtractor<T>
 	}) {
 		this.id = id
 		this.db = db
-		this.defaultCardData = defaultCardData
-		this.serializer = serializer
+		this.defaultCardDataFactory = defaultCardDataFactory
+		this.collectionDataSerializer = collectionDataSerializer
+		this.cardStateSerializer = cardStateSerializer
+		this.cardDataSerializer = cardDataSerializer
+		this.cardEventSerializer = cardEventSerializer
 		this.cardExtractor = cardExtractor
 	}
 
@@ -52,8 +67,7 @@ export class DrizzleCollectionHandle<
 					eq(cardCollectionsTable.id, CardIdUtil.toNumber(this.id)),
 				)
 				.get()
-			const serializedData =
-				this.serializer.serializeCollectionHeader(data)
+			const serializedData = this.collectionDataSerializer.serialize(data)
 			if (existing) {
 				await tx
 					.update(cardCollectionsTable)
@@ -88,13 +102,13 @@ export class DrizzleCollectionHandle<
 		if (!collection) throw new Error("Collection not found")
 
 		const updatedOwnedData = {
-			...this.serializer.deserializeCollectionHeader(
+			...this.collectionDataSerializer.deserialize(
 				collection.collectionHeader,
 			),
 			...partial,
 		}
 		const serializedUpdatedData =
-			this.serializer.serializeCollectionHeader(updatedOwnedData)
+			this.collectionDataSerializer.serialize(updatedOwnedData)
 
 		await this.db
 			.update(cardCollectionsTable)
@@ -114,7 +128,7 @@ export class DrizzleCollectionHandle<
 			return null
 		}
 
-		return this.serializer.deserializeCollectionHeader(
+		return this.collectionDataSerializer.deserialize(
 			collection.collectionHeader,
 		)
 	}
@@ -177,9 +191,11 @@ export class DrizzleCollectionHandle<
 		return cards.map(
 			(card) =>
 				new DrizzleCardHandle<T>({
-					id: CardIdUtil.toNumber(card.id),
+					id: card.id as CardId,
 					db: this.db,
-					serializer: this.serializer,
+					cardStateSerializer: this.cardStateSerializer,
+					cardDataSerializer: this.cardDataSerializer,
+					cardEventSerializer: this.cardEventSerializer,
 					collectionId: this.id,
 					cardExtractor: this.cardExtractor,
 				}),
@@ -206,14 +222,16 @@ export class DrizzleCollectionHandle<
 		return new DrizzleCardHandle<T>({
 			id,
 			db: this.db,
-			serializer: this.serializer,
+			cardStateSerializer: this.cardStateSerializer,
+			cardDataSerializer: this.cardDataSerializer,
+			cardEventSerializer: this.cardEventSerializer,
 			collectionId: this.id,
 			cardExtractor: this.cardExtractor,
 		})
 	}
 
 	public readonly createCard = async (): Promise<CardHandle<T>> => {
-		const newCardData = this.defaultCardData
+		const newCardData = this.defaultCardDataFactory()
 
 		const queue = this.cardExtractor.getQueue(null, newCardData)
 		const priority = this.cardExtractor.getPriority(null, newCardData)
@@ -224,7 +242,7 @@ export class DrizzleCollectionHandle<
 				.insert(cardsTable)
 				.values({
 					collectionId: CardIdUtil.toNumber(this.id),
-					cardData: this.serializer.serializeCardData(newCardData),
+					cardData: this.cardDataSerializer.serialize(newCardData),
 					queue: queue,
 					priority: priority,
 					repeats: stats.repeats,
@@ -241,9 +259,11 @@ export class DrizzleCollectionHandle<
 		const newId = insertedCard.id
 
 		return new DrizzleCardHandle<T>({
-			id: newId,
+			id: newId as CardId,
 			db: this.db,
-			serializer: this.serializer,
+			cardStateSerializer: this.cardStateSerializer,
+			cardDataSerializer: this.cardDataSerializer,
+			cardEventSerializer: this.cardEventSerializer,
 			collectionId: this.id,
 			cardExtractor: this.cardExtractor,
 		})
