@@ -6,6 +6,8 @@ import { useCallback } from "react"
 import { useNavigate } from "react-router"
 import { UserLogin } from "./UserLogin"
 
+const LOG_TAG = "AutonomousUserLogin"
+
 export const AutonomousUserLogin = () => {
 	const app = useApp()
 	const navigate = useNavigate()
@@ -14,13 +16,25 @@ export const AutonomousUserLogin = () => {
 		async (data: LoginFormData) => {
 			const loginData = convertLoginFormDataToBackendData(data)
 
-			const authResponse = await app.backendClient.login(loginData)
+			app.logger.info(LOG_TAG, "Attempting login", {
+				username: loginData.username,
+			})
 
-			// The backend client automatically sets the auth token
-			console.log("Login successful:", authResponse.user)
+			try {
+				await app.atomStore.set(app.backendService.login, loginData)
 
-			// Navigate to collections page after successful login
-			navigate(Routes.collections.navigate())
+				app.logger.info(LOG_TAG, "Login successful", {
+					username: loginData.username,
+				})
+
+				navigate(Routes.collections.navigate())
+			} catch (error) {
+				app.logger.error(LOG_TAG, "Login failed", {
+					username: loginData.username,
+					error,
+				})
+				throw error
+			}
 		},
 		[app, navigate],
 	)

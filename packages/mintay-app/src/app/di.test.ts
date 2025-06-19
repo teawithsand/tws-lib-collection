@@ -17,6 +17,7 @@ describe("AppDi", () => {
 				translationService: undefined,
 				appBarService: undefined,
 				backendClient: undefined,
+				backendService: undefined,
 			})
 			.build()
 

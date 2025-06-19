@@ -6,6 +6,8 @@ import { useCallback } from "react"
 import { useNavigate } from "react-router"
 import { UserRegister } from "./UserRegister"
 
+const LOG_TAG = "AutonomousUserRegister"
+
 export const AutonomousUserRegister = () => {
 	const app = useApp()
 	const navigate = useNavigate()
@@ -14,14 +16,28 @@ export const AutonomousUserRegister = () => {
 		async (data: RegisterFormData) => {
 			const registrationData = convertRegisterFormDataToBackendData(data)
 
-			const authResponse =
-				await app.backendClient.register(registrationData)
+			app.logger.info(LOG_TAG, "Attempting registration", {
+				username: registrationData.username,
+			})
 
-			// The backend client automatically sets the auth token
-			console.log("Registration successful:", authResponse.user)
+			try {
+				await app.atomStore.set(
+					app.backendService.register,
+					registrationData,
+				)
 
-			// Navigate to collections page after successful registration
-			navigate(Routes.collections.navigate())
+				app.logger.info(LOG_TAG, "Registration successful", {
+					username: registrationData.username,
+				})
+
+				navigate(Routes.collections.navigate())
+			} catch (error) {
+				app.logger.error(LOG_TAG, "Registration failed", {
+					username: registrationData.username,
+					error,
+				})
+				throw error
+			}
 		},
 		[app, navigate],
 	)

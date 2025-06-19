@@ -24,6 +24,7 @@ import {
 	SqliteWorkerClient,
 } from "@teawithsand/sqlite-web"
 import { AppBarService } from "../domain/appBar/appBarService"
+import { BackendService } from "../domain/backend/backendService"
 import { BackendClient } from "../domain/backend/client"
 import { CollectionService } from "../domain/collectionsService"
 import { DiReleaseHelper } from "./releaseHelper"
@@ -41,6 +42,7 @@ export type AppDiContents = {
 	translationService: TransService
 	collectionService: CollectionService
 	appBarService: AppBarService
+	backendService: BackendService
 }
 
 const LOG_TAG = "makeAppDi"
@@ -146,6 +148,11 @@ export class AppDi {
 			.setFactory("collectionService", async (di) => {
 				return new CollectionService({
 					collectionStore: di.get("mintay").collectionStore,
+				})
+			})
+			.setFactory("backendService", async (di) => {
+				return new BackendService({
+					backendClient: di.get("backendClient"),
 				})
 			})
 }
