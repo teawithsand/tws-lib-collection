@@ -176,7 +176,18 @@ describe("BackendClient", () => {
 
 		test("should save collection when authenticated", async () => {
 			const result = await client.saveCollection("test-collection", {
-				test: "collection data",
+				collection: {
+					globalId: "test-collection-global-id",
+					title: "Test Collection",
+					description: "A test collection",
+				},
+				cards: [
+					{
+						globalId: "card-1",
+						questionContent: "What is 2+2?",
+						answerContent: "4",
+					},
+				],
 			})
 
 			expect(result.message).toBe("Collection saved successfully")
@@ -189,7 +200,11 @@ describe("BackendClient", () => {
 
 			await expect(
 				client.saveCollection("test-collection", {
-					test: "data",
+					collection: {
+						globalId: "test-collection-global-id",
+						title: "Test Collection",
+					},
+					cards: [],
 				}),
 			).rejects.toThrow(BackendError)
 		})
@@ -197,13 +212,27 @@ describe("BackendClient", () => {
 		test("should get collection after saving", async () => {
 			// Save a collection first
 			await client.saveCollection("test-collection", {
-				test: "collection data",
+				collection: {
+					globalId: "test-collection-global-id",
+					title: "Test Collection",
+					description: "A test collection",
+				},
+				cards: [
+					{
+						globalId: "card-1",
+						questionContent: "What is 2+2?",
+						answerContent: "4",
+					},
+				],
 			})
 
 			// Retrieve the collection
 			const result = await client.getCollection("test-collection")
 
-			expect(result.test).toBe("collection data")
+			expect(result.collection.title).toBe("Test Collection")
+			expect(result.collection.description).toBe("A test collection")
+			expect(result.cards).toHaveLength(1)
+			expect(result.cards[0].questionContent).toBe("What is 2+2?")
 			expect(result.id).toBe("test-collection")
 			expect(result.savedAt).toBeDefined()
 			expect(result.savedBy).toBe("testuser")
@@ -217,7 +246,13 @@ describe("BackendClient", () => {
 
 		test("should validate collection ID", async () => {
 			await expect(
-				client.saveCollection("", { test: "data" }),
+				client.saveCollection("", {
+					collection: {
+						globalId: "test-global-id",
+						title: "Test Collection",
+					},
+					cards: [],
+				}),
 			).rejects.toThrow(BackendError)
 
 			await expect(client.getCollection("")).rejects.toThrow(BackendError)
@@ -226,11 +261,33 @@ describe("BackendClient", () => {
 		test("should list collections", async () => {
 			// Save a few collections first
 			await client.saveCollection("collection1", {
-				test: "data1",
+				collection: {
+					globalId: "collection1-global-id",
+					title: "Collection 1",
+					description: "First test collection",
+				},
+				cards: [
+					{
+						globalId: "card-1-1",
+						questionContent: "Question 1",
+						answerContent: "Answer 1",
+					},
+				],
 			})
 
 			await client.saveCollection("collection2", {
-				test: "data2",
+				collection: {
+					globalId: "collection2-global-id",
+					title: "Collection 2",
+					description: "Second test collection",
+				},
+				cards: [
+					{
+						globalId: "card-2-1",
+						questionContent: "Question 2",
+						answerContent: "Answer 2",
+					},
+				],
 			})
 
 			// List collections
@@ -284,7 +341,13 @@ describe("BackendClient", () => {
 			client.setAuthToken("invalid-token")
 
 			await expect(
-				client.saveCollection("test", { test: "data" }),
+				client.saveCollection("test", {
+					collection: {
+						globalId: "test-global-id",
+						title: "Test Collection",
+					},
+					cards: [],
+				}),
 			).rejects.toThrow(BackendError)
 		})
 
@@ -300,7 +363,13 @@ describe("BackendClient", () => {
 			client.setAuthToken(expiredToken)
 
 			await expect(
-				client.saveCollection("test", { test: "data" }),
+				client.saveCollection("test", {
+					collection: {
+						globalId: "test-global-id",
+						title: "Test Collection",
+					},
+					cards: [],
+				}),
 			).rejects.toThrow(BackendError)
 		})
 
@@ -338,7 +407,19 @@ describe("BackendClient", () => {
 			const saveResponse = await client.saveCollection(
 				"workflow-collection",
 				{
-					test: "workflow data",
+					collection: {
+						globalId: "workflow-collection-global-id",
+						title: "Workflow Collection",
+						description:
+							"A collection for testing complete workflow",
+					},
+					cards: [
+						{
+							globalId: "workflow-card-1",
+							questionContent: "Workflow question",
+							answerContent: "Workflow answer",
+						},
+					],
 				},
 			)
 			expect(saveResponse.message).toBe("Collection saved successfully")
@@ -357,7 +438,14 @@ describe("BackendClient", () => {
 
 			// Retrieve collection
 			const collection = await client.getCollection("workflow-collection")
-			expect(collection.test).toBe("workflow data")
+			expect(collection.collection.title).toBe("Workflow Collection")
+			expect(collection.collection.description).toBe(
+				"A collection for testing complete workflow",
+			)
+			expect(collection.cards).toHaveLength(1)
+			expect(collection.cards[0].questionContent).toBe(
+				"Workflow question",
+			)
 			expect(collection.savedBy).toBe("workflowuser")
 		})
 
@@ -370,7 +458,18 @@ describe("BackendClient", () => {
 
 			// Save collection as user1
 			await client.saveCollection("user1-collection", {
-				test: "user1 data",
+				collection: {
+					globalId: "user1-collection-global-id",
+					title: "User 1 Collection",
+					description: "Collection created by user1",
+				},
+				cards: [
+					{
+						globalId: "user1-card-1",
+						questionContent: "User1 question",
+						answerContent: "User1 answer",
+					},
+				],
 			})
 
 			// Logout and register second user
@@ -382,7 +481,18 @@ describe("BackendClient", () => {
 
 			// Save collection as user2
 			await client.saveCollection("user2-collection", {
-				test: "user2 data",
+				collection: {
+					globalId: "user2-collection-global-id",
+					title: "User 2 Collection",
+					description: "Collection created by user2",
+				},
+				cards: [
+					{
+						globalId: "user2-card-1",
+						questionContent: "User2 question",
+						answerContent: "User2 answer",
+					},
+				],
 			})
 
 			// Both users should exist and collections should be separate
@@ -391,9 +501,9 @@ describe("BackendClient", () => {
 			const user2Collection =
 				await client.getCollection("user2-collection")
 
-			expect(user1Collection.test).toBe("user1 data")
+			expect(user1Collection.collection.title).toBe("User 1 Collection")
 			expect(user1Collection.savedBy).toBe("user1")
-			expect(user2Collection.test).toBe("user2 data")
+			expect(user2Collection.collection.title).toBe("User 2 Collection")
 			expect(user2Collection.savedBy).toBe("user2")
 		})
 	})
