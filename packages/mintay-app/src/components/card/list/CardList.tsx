@@ -85,9 +85,10 @@ export const CardList = ({ cards, isLoading, collectionId }: CardListProps) => {
 									component={Link}
 									to={
 										collectionId
-											? Routes.collectionDetail.navigate(
+											? Routes.cardDetail.navigate(
 													collectionId,
-												) + `#card-${cardWithId.id}`
+													cardWithId.id.toString(),
+												)
 											: "#"
 									}
 									variant="light"
