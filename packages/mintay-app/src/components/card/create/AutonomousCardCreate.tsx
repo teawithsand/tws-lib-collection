@@ -8,10 +8,12 @@ import { CardCreate } from "./CardCreate"
 
 interface AutonomousCardCreateProps {
 	readonly collectionId: string
+	readonly onPostSubmitSuccess?: () => void
 }
 
 export const AutonomousCardCreate = ({
 	collectionId,
+	onPostSubmitSuccess,
 }: AutonomousCardCreateProps) => {
 	const app = useApp()
 	const navigate = useNavigate()
@@ -34,9 +36,18 @@ export const AutonomousCardCreate = ({
 
 			await cardHandle.save(cardData)
 
-			navigate(Routes.collections.navigate())
+			if (onPostSubmitSuccess) {
+				onPostSubmitSuccess()
+			} else {
+				navigate(Routes.collectionDetail.navigate(collectionId))
+			}
 		},
-		[app.collectionService.collectionStore, collectionId, navigate],
+		[
+			app.collectionService.collectionStore,
+			collectionId,
+			navigate,
+			onPostSubmitSuccess,
+		],
 	)
 
 	return <CardCreate onSubmit={handleSubmit} />

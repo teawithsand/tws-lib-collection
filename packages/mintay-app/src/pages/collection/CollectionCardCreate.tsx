@@ -9,7 +9,8 @@ import {
 } from "@/domain/appBar"
 import { CollectionService } from "@/domain/collectionsService"
 import { useAtomValue } from "@teawithsand/fstate"
-import { useParams } from "react-router"
+import { useCallback } from "react"
+import { useNavigate, useParams } from "react-router"
 import { AutonomousCardCreate } from "../../components/card/create"
 
 /**
@@ -53,10 +54,20 @@ const CollectionCardCreateContent = ({
 	collectionId,
 }: CollectionCardCreateContentProps) => {
 	const collectionData = useAtomValue(collectionService.dataWithId)
+	const navigate = useNavigate()
+
+	const handlePostSubmit = useCallback(() => {
+		navigate(-1) // Navigate to previous page
+	}, [navigate])
 
 	if (collectionData.data === null) {
 		return <CollectionNotFound />
 	}
 
-	return <AutonomousCardCreate collectionId={collectionId} />
+	return (
+		<AutonomousCardCreate
+			collectionId={collectionId}
+			onPostSubmitSuccess={handlePostSubmit}
+		/>
+	)
 }

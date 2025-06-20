@@ -1,14 +1,5 @@
-import {
-	ActionIcon,
-	Badge,
-	Button,
-	Group,
-	Paper,
-	Stack,
-	Text,
-	Title,
-} from "@mantine/core"
-import { IconArrowLeft, IconPlus } from "@tabler/icons-react"
+import { Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core"
+import { IconPlus } from "@tabler/icons-react"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
 import { Link } from "react-router"
 import { useTransResolver } from "../../../app"
@@ -41,17 +32,6 @@ export const CollectionCardsList = ({
 				<Group justify="space-between" align="flex-start">
 					<div>
 						<Group gap="md" align="center" mb="md">
-							<ActionIcon
-								component={Link}
-								to={Routes.collectionDetail.navigate(
-									collectionId,
-								)}
-								variant="light"
-								size="lg"
-								aria-label="Back to collection"
-							>
-								<IconArrowLeft size={18} />
-							</ActionIcon>
 							<div>
 								<Title order={2}>Collection Cards</Title>
 								<Text size="sm" c="dimmed">

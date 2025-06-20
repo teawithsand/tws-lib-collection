@@ -1,5 +1,19 @@
-import { Alert, Button, NumberInput, Paper, Stack, Text } from "@mantine/core"
-import { IconAlertCircle } from "@tabler/icons-react"
+import {
+	Alert,
+	Button,
+	NumberInput,
+	Paper,
+	Stack,
+	Tabs,
+	Text,
+} from "@mantine/core"
+import {
+	IconAlertCircle,
+	IconArrowRight,
+	IconMessageCircle,
+	IconQuestionMark,
+	IconSettings,
+} from "@tabler/icons-react"
 import { useForm, useFormField } from "@teawithsand/fstate"
 import "@uiw/react-markdown-preview/markdown.css"
 import MDEditor from "@uiw/react-md-editor"
@@ -8,6 +22,18 @@ import { useCallback, useState } from "react"
 import { useTransResolver } from "../../../app"
 import styles from "./cardForm.module.scss"
 import { CardFormClass, CardFormData, CardFormInput } from "./cardFormClass"
+
+enum CardFormTab {
+	QUESTION = "question",
+	ANSWER = "answer",
+	SETTINGS = "settings",
+}
+
+const CARD_FORM_TABS_ORDER = [
+	CardFormTab.QUESTION,
+	CardFormTab.ANSWER,
+	CardFormTab.SETTINGS,
+] as const
 
 interface CardFormProps {
 	initialData?: Partial<CardFormInput>
@@ -19,6 +45,9 @@ export const CardForm: React.FC<CardFormProps> = ({
 	onSubmit,
 }) => {
 	const [formAtoms] = useState(() => new CardFormClass(initialData))
+	const [activeTab, setActiveTab] = useState<CardFormTab>(
+		CardFormTab.QUESTION,
+	)
 
 	const form = useForm(formAtoms)
 	const questionContentField = useFormField(formAtoms.fields.questionContent)
@@ -46,6 +75,22 @@ export const CardForm: React.FC<CardFormProps> = ({
 		},
 		[form, formAtoms, onSubmit],
 	)
+
+	const handleTabChange = useCallback((value: string | null) => {
+		if (
+			value &&
+			Object.values(CardFormTab).includes(value as CardFormTab)
+		) {
+			setActiveTab(value as CardFormTab)
+		}
+	}, [])
+
+	const handleNextTab = useCallback(() => {
+		const currentIndex = CARD_FORM_TABS_ORDER.indexOf(activeTab)
+		if (currentIndex < CARD_FORM_TABS_ORDER.length - 1) {
+			setActiveTab(CARD_FORM_TABS_ORDER[currentIndex + 1])
+		}
+	}, [activeTab])
 
 	return (
 		<Paper
@@ -76,111 +121,189 @@ export const CardForm: React.FC<CardFormProps> = ({
 						</Alert>
 					)}
 
-					<div
-						className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
-					>
-						<Text component="label" size="sm" fw={500} mb="xs">
-							{resolve((t) => t.card.form.questionContent())}
-							<span
-								style={{ color: "var(--mantine-color-error)" }}
-							>
-								{" "}
-								*
-							</span>
-						</Text>
-						<MDEditor
-							value={questionContentField.value}
-							onChange={(value: string | undefined) =>
-								questionContentField.set(value || "")
-							}
-							preview="edit"
-							hideToolbar={false}
-							visibleDragbar={false}
-							data-disabled={questionContentField.disabled}
-						/>
-						{!questionContentField.errors.isEmpty &&
-							questionContentField.errors.first && (
-								<Text size="xs" c="red" mt="xs">
-									{resolve(questionContentField.errors.first)}
-								</Text>
-							)}
-					</div>
+					<Tabs value={activeTab} onChange={handleTabChange}>
+						<Tabs.List justify="space-between">
+							<Tabs.Tab value={CardFormTab.QUESTION}>
+								<IconQuestionMark size="1.2rem" />
+							</Tabs.Tab>
+							<Tabs.Tab value={CardFormTab.ANSWER}>
+								<IconMessageCircle size="1.2rem" />
+							</Tabs.Tab>
+							<Tabs.Tab value={CardFormTab.SETTINGS}>
+								<IconSettings size="1.2rem" />
+							</Tabs.Tab>
+						</Tabs.List>
 
-					<div
-						className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
-					>
-						<Text component="label" size="sm" fw={500} mb="xs">
-							{resolve((t) => t.card.form.answerContent())}
-							<span
-								style={{ color: "var(--mantine-color-error)" }}
-							>
-								{" "}
-								*
-							</span>
-						</Text>
-						<MDEditor
-							value={answerContentField.value}
-							onChange={(value: string | undefined) =>
-								answerContentField.set(value || "")
-							}
-							preview="edit"
-							hideToolbar={false}
-							visibleDragbar={false}
-							data-disabled={answerContentField.disabled}
-						/>
-						{!answerContentField.errors.isEmpty &&
-							answerContentField.errors.first && (
-								<Text size="xs" c="red" mt="xs">
-									{resolve(answerContentField.errors.first)}
-								</Text>
-							)}
-					</div>
+						<Tabs.Panel value={CardFormTab.QUESTION} pt="lg">
+							<Stack gap="lg">
+								<div
+									className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
+								>
+									<Text
+										component="label"
+										size="sm"
+										fw={500}
+										mb="xs"
+									>
+										{resolve((t) =>
+											t.card.form.questionContent(),
+										)}
+									</Text>
+									<MDEditor
+										value={questionContentField.value}
+										onChange={(value: string | undefined) =>
+											questionContentField.set(
+												value || "",
+											)
+										}
+										preview="edit"
+										hideToolbar={false}
+										visibleDragbar={false}
+										data-disabled={
+											questionContentField.disabled
+										}
+									/>
+									{!questionContentField.errors.isEmpty &&
+										questionContentField.errors.first && (
+											<Text size="xs" c="red" mt="xs">
+												{resolve(
+													questionContentField.errors
+														.first,
+												)}
+											</Text>
+										)}
+								</div>
 
-					<div
-						className={`${styles["card-form__field-group"]} ${styles["card-form__priority-field"]}`}
-					>
-						<NumberInput
-							label={resolve((t) =>
-								t.card.form.discoveryPriority(),
-							)}
-							placeholder={resolve((t) =>
-								t.card.form.enterDiscoveryPriority(),
-							)}
-							value={discoveryPriorityField.value}
-							onChange={(value) => {
-								if (
-									typeof value === "number" &&
-									!isNaN(value)
-								) {
-									discoveryPriorityField.set(value)
-								} else {
-									discoveryPriorityField.set(0)
-								}
-							}}
-							error={
-								!discoveryPriorityField.errors.isEmpty &&
-								discoveryPriorityField.errors.first
-									? resolve(
-											discoveryPriorityField.errors.first,
-										)
-									: undefined
-							}
-							disabled={discoveryPriorityField.disabled}
-							decimalScale={0}
-							allowDecimal={false}
-						/>
-					</div>
+								<div className={styles["card-form__actions"]}>
+									<Button
+										className={
+											styles["card-form__next-button"]
+										}
+										onClick={handleNextTab}
+										rightSection={
+											<IconArrowRight size="1rem" />
+										}
+									>
+										Next
+									</Button>
+								</div>
+							</Stack>
+						</Tabs.Panel>
 
-					<div className={styles["card-form__actions"]}>
-						<Button
-							className={styles["card-form__submit-button"]}
-							type="submit"
-							loading={form.isSubmitting}
-							disabled={form.hasErrors || form.isSubmitting}
-						>
-							{resolvedSubmitLabel}
-						</Button>
-					</div>
+						<Tabs.Panel value={CardFormTab.ANSWER} pt="lg">
+							<Stack gap="lg">
+								<div
+									className={`${styles["card-form__field-group"]} ${styles["card-form__content-field"]}`}
+								>
+									<Text
+										component="label"
+										size="sm"
+										fw={500}
+										mb="xs"
+									>
+										{resolve((t) =>
+											t.card.form.answerContent(),
+										)}
+									</Text>
+									<MDEditor
+										value={answerContentField.value}
+										onChange={(value: string | undefined) =>
+											answerContentField.set(value || "")
+										}
+										preview="edit"
+										hideToolbar={false}
+										visibleDragbar={false}
+										data-disabled={
+											answerContentField.disabled
+										}
+									/>
+									{!answerContentField.errors.isEmpty &&
+										answerContentField.errors.first && (
+											<Text size="xs" c="red" mt="xs">
+												{resolve(
+													answerContentField.errors
+														.first,
+												)}
+											</Text>
+										)}
+								</div>
+
+								<div className={styles["card-form__actions"]}>
+									<Button
+										className={
+											styles["card-form__next-button"]
+										}
+										onClick={handleNextTab}
+										rightSection={
+											<IconArrowRight size="1rem" />
+										}
+									>
+										Next
+									</Button>
+								</div>
+							</Stack>
+						</Tabs.Panel>
+
+						<Tabs.Panel value={CardFormTab.SETTINGS} pt="lg">
+							<Stack gap="lg">
+								<div
+									className={`${styles["card-form__field-group"]} ${styles["card-form__priority-field"]}`}
+								>
+									<NumberInput
+										label={resolve((t) =>
+											t.card.form.discoveryPriority(),
+										)}
+										placeholder={resolve((t) =>
+											t.card.form.enterDiscoveryPriority(),
+										)}
+										value={discoveryPriorityField.value}
+										onChange={(value) => {
+											if (
+												typeof value === "number" &&
+												!isNaN(value)
+											) {
+												discoveryPriorityField.set(
+													value,
+												)
+											} else {
+												discoveryPriorityField.set(0)
+											}
+										}}
+										error={
+											!discoveryPriorityField.errors
+												.isEmpty &&
+											discoveryPriorityField.errors.first
+												? resolve(
+														discoveryPriorityField
+															.errors.first,
+													)
+												: undefined
+										}
+										disabled={
+											discoveryPriorityField.disabled
+										}
+										decimalScale={0}
+										allowDecimal={false}
+									/>
+								</div>
+
+								<div className={styles["card-form__actions"]}>
+									<Button
+										className={
+											styles["card-form__submit-button"]
+										}
+										type="submit"
+										loading={form.isSubmitting}
+										disabled={
+											form.hasErrors || form.isSubmitting
+										}
+									>
+										{resolvedSubmitLabel}
+									</Button>
+								</div>
+							</Stack>
+						</Tabs.Panel>
+					</Tabs>
 				</Stack>
 			</form>
 		</Paper>
