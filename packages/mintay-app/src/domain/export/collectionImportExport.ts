@@ -63,7 +63,10 @@ export class CollectionImportExport {
 		backendData: BackendCollectionData,
 	): Promise<MintayId> => {
 		const now = Date.now()
-		const collectionId = generateUuid()
+
+		// First create collection to get auto-assigned ID
+		const collection = await this.collectionStore.create()
+		const collectionId = collection.id
 
 		const collectionData: AppCollectionData = {
 			globalId: generateUuid(),
@@ -73,7 +76,6 @@ export class CollectionImportExport {
 			updatedAt: now,
 		}
 
-		const collection = this.collectionStore.get(collectionId)
 		await collection.save(collectionData)
 
 		for (const backendCard of backendData.cards) {

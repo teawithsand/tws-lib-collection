@@ -9,6 +9,7 @@ import {
 	IconHome,
 	IconLogin,
 	IconLogout,
+	IconPlus,
 	IconUser,
 	IconUserPlus,
 } from "@tabler/icons-react"
@@ -23,8 +24,7 @@ interface LayoutProps {
 export const GlobalLayout = ({ children }: LayoutProps) => {
 	const app = useApp()
 	const authState = useAtomValue(app.backendService.authState)
-
-	console.log({ authState })
+	const translation = useAtomValue(app.transService.translation)
 
 	const callback: AppBarMutator = useCallback(
 		(state) => {
@@ -39,6 +39,18 @@ export const GlobalLayout = ({ children }: LayoutProps) => {
 					label: "Collections",
 					icon: IconBook as ComponentType<{ size?: number }>,
 					href: Routes.collections.navigate(),
+					linkType: AppBarLinkType.LOCAL_LINK as const,
+				},
+				{
+					label: "Add Collection",
+					icon: IconPlus as ComponentType<{ size?: number }>,
+					href: Routes.createCollection.navigate(),
+					linkType: AppBarLinkType.LOCAL_LINK as const,
+				},
+				{
+					label: "Backend Collections",
+					icon: IconBook as ComponentType<{ size?: number }>,
+					href: Routes.backendCollections.navigate(),
 					linkType: AppBarLinkType.LOCAL_LINK as const,
 				},
 			]
@@ -81,11 +93,16 @@ export const GlobalLayout = ({ children }: LayoutProps) => {
 
 			return {
 				...state,
-				title: () => "home.title",
+				title: () => translation.appBar.title(),
 				drawerItems: [...baseItems, ...authItems],
 			}
 		},
-		[authState.isAuthenticated, app],
+		[
+			authState.isAuthenticated,
+			app.atomStore,
+			app.backendService.logout,
+			translation.appBar,
+		],
 	)
 
 	useAppBarMutator(callback)

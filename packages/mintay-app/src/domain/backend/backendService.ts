@@ -1,4 +1,5 @@
 import { atom, loadable } from "@teawithsand/fstate"
+import { BackendCollectionData } from "./backendCollectionData"
 import {
 	BackendClient,
 	BackendError,
@@ -134,6 +135,69 @@ export class BackendService {
 			const token = this.backendClient.getAuthToken()
 			if (token) {
 				set(this._authToken, token)
+			}
+		},
+	)
+
+	// Collection-related atoms and methods
+	private readonly _collections = atom<BackendCollectionData[]>([])
+	private readonly _selectedCollection = atom<BackendCollectionData | null>(
+		null,
+	)
+
+	public readonly collections = atom<BackendCollectionData[]>((get) => {
+		return get(this._collections)
+	})
+
+	public readonly collectionsLoadable = loadable(this.collections)
+
+	public readonly selectedCollection = atom<BackendCollectionData | null>(
+		(get) => {
+			return get(this._selectedCollection)
+		},
+	)
+
+	public readonly selectedCollectionLoadable = loadable(
+		this.selectedCollection,
+	)
+
+	public readonly fetchCollections = atom(
+		null,
+		async (_get, set): Promise<void> => {
+			try {
+				const collections = await this.backendClient.listCollections()
+				set(this._collections, collections)
+			} catch (error) {
+				console.error("Failed to fetch collections:", error)
+				throw error
+			}
+		},
+	)
+
+	public readonly fetchCollection = atom(
+		null,
+		async (_get, set, collectionId: string): Promise<void> => {
+			try {
+				const collection =
+					await this.backendClient.getCollection(collectionId)
+				set(this._selectedCollection, collection)
+			} catch (error) {
+				console.error("Failed to fetch collection:", error)
+				set(this._selectedCollection, null)
+				throw error
+			}
+		},
+	)
+
+	public readonly saveCollection = atom(
+		null,
+		async (_get, _set, data: BackendCollectionData): Promise<void> => {
+			try {
+				await this.backendClient.saveCollection(data)
+				// Optionally refresh collections list after saving
+			} catch (error) {
+				console.error("Failed to save collection:", error)
+				throw error
 			}
 		},
 	)

@@ -1,0 +1,98 @@
+@use "sass:color";
+
+.collection-download-modal {
+	// Modal specific styles
+
+	// Success state styling
+	:global(.mantine-Modal-content) {
+		.success-state {
+			text-align: center;
+			padding: var(--mantine-spacing-lg);
+		}
+	}
+
+	// Loading state for download button
+	.download-button {
+		min-width: 160px;
+
+		&--loading {
+			pointer-events: none;
+		}
+	}
+
+	// Error alert styling
+	.error-alert {
+		.mantine-Alert-message {
+			font-size: var(--mantine-font-size-sm);
+		}
+	}
+
+	// Button group spacing
+	.button-group {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--mantine-spacing-md);
+		margin-top: var(--mantine-spacing-lg);
+
+		// Tablets and phones - center the buttons
+		@include mantine.smaller-than(md) {
+			justify-content: center;
+		}
+
+		// Phones - full width buttons
+		@include mantine.smaller-than(sm) {
+			flex-direction: column-reverse;
+
+			button {
+				width: 100%;
+			}
+		}
+	}
+
+	// Collection info section
+	.collection-info {
+		padding: var(--mantine-spacing-md);
+		background-color: var(--mantine-color-gray-0);
+		border-radius: var(--mantine-radius-sm);
+		border: 1px solid var(--mantine-color-gray-3);
+
+		@include mantine.dark {
+			background-color: var(--mantine-color-dark-6);
+			border-color: var(--mantine-color-dark-4);
+		}
+	}
+
+	// View collection button styling
+	.view-collection-button {
+		background: linear-gradient(
+			45deg,
+			var(--mantine-color-blue-6),
+			var(--mantine-color-green-6)
+		);
+		border: none;
+
+		&:hover {
+			background: linear-gradient(
+				45deg,
+				var(--mantine-color-blue-7),
+				var(--mantine-color-green-7)
+			);
+		}
+	}
+
+	// Collection stats styling
+	.collection-stats {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: var(--mantine-spacing-xs) 0;
+
+		&:not(:last-child) {
+			border-bottom: 1px solid var(--mantine-color-gray-2);
+
+			@include mantine.dark {
+				border-bottom-color: var(--mantine-color-dark-4);
+			}
+		}
+	}
+}

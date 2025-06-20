@@ -128,6 +128,22 @@ export class Routes {
 	}
 
 	/**
+	 * Backend collections list page route
+	 */
+	public static readonly backendCollections: RouteConfig = {
+		path: "/backend/collections",
+		navigate: () => "/backend/collections",
+	}
+
+	/**
+	 * Backend collection detail page route
+	 */
+	public static readonly backendCollectionDetail: RouteConfig = {
+		path: "/backend/collections/:id",
+		navigate: (id: string) => `/backend/collections/${id}`,
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
@@ -143,6 +159,8 @@ export class Routes {
 			Routes.createCollection,
 			Routes.editCollection,
 			Routes.collectionLearn,
+			Routes.backendCollections,
+			Routes.backendCollectionDetail,
 			Routes.login,
 			Routes.register,
 			Routes.profile,

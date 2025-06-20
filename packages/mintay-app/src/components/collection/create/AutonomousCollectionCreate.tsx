@@ -37,7 +37,5 @@ export const AutonomousCollectionCreate = () => {
 		[app, navigate, refresh],
 	)
 
-	console.log({ handleSubmit })
-
 	return <CollectionCreate onSubmit={handleSubmit} />
 }

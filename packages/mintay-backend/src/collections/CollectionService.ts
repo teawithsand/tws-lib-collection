@@ -121,14 +121,7 @@ export class CollectionService {
 				try {
 					const data = await fs.readFile(collectionPath, "utf-8")
 					const collection = JSON.parse(data)
-
-					// Return summary information about each collection
-					collections.push({
-						id: collection.id || file.replace(".json", ""),
-						savedAt: collection.savedAt,
-						savedBy: collection.savedBy,
-						// Add any other metadata you want to include in the list
-					})
+					collections.push(collection)
 				} catch (error) {
 					// Skip invalid JSON files
 					console.warn(
@@ -149,10 +142,7 @@ export class CollectionService {
 				)
 			})
 
-			res.json({
-				collections,
-				total: collections.length,
-			})
+			res.json(collections)
 		} catch (error) {
 			console.error("List collections error:", error)
 			res.status(500).json({ error: "Internal server error" })

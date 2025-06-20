@@ -28,6 +28,7 @@ import { BackendService } from "../domain/backend/backendService"
 import { BackendClient } from "../domain/backend/client"
 import { CardService } from "../domain/card"
 import { CollectionService } from "../domain/collectionsService"
+import { CollectionImportExport } from "../domain/export/collectionImportExport"
 import { DiReleaseHelper } from "./releaseHelper"
 import { TransService } from "./trans"
 
@@ -45,6 +46,7 @@ export type AppDiContents = {
 	cardService: CardService
 	appBarService: AppBarService
 	backendService: BackendService
+	collectionImportExport: CollectionImportExport
 }
 
 const LOG_TAG = "makeAppDi"
@@ -61,12 +63,12 @@ export class AppDi {
 	public static readonly DI_TEST_CONFIG: DiConfig = {
 		dbType: "inMemory",
 		throwFromRelease: true,
-		backendBaseUrl: "http://localhost:3000",
+		backendBaseUrl: "http://localhost:3001",
 	}
 
 	public static readonly DI_PROD_CONFIG: DiConfig = {
 		dbType: "opfs",
-		backendBaseUrl: "http://localhost:3000",
+		backendBaseUrl: "http://localhost:3001",
 	}
 
 	public static readonly makeDiBuilder = (config: DiConfig) =>
@@ -160,6 +162,11 @@ export class AppDi {
 			.setFactory("backendService", async (di) => {
 				return new BackendService({
 					backendClient: di.get("backendClient"),
+				})
+			})
+			.setFactory("collectionImportExport", async (di) => {
+				return new CollectionImportExport({
+					collectionStore: di.get("mintay").collectionStore,
 				})
 			})
 }

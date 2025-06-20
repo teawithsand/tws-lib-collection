@@ -17,11 +17,18 @@ import {
 	IconCards,
 	IconEdit,
 	IconPlus,
+	IconTrash,
+	IconUpload,
 } from "@tabler/icons-react"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { useTransResolver } from "../../../app"
+import {
+	CollectionUploadModal,
+	useCollectionUploadModal,
+} from "../../backend/upload"
 import { AutonomousCardList } from "../../card"
+import { CollectionDeleteModal, useCollectionDeleteModal } from "../delete"
 import styles from "./collectionDetail.module.scss"
 
 interface CollectionDetailProps {
@@ -39,8 +46,11 @@ export const CollectionDetail = ({
 	cardsAtom,
 }: CollectionDetailProps) => {
 	const { resolve } = useTransResolver()
+	const navigate = useNavigate()
 	const collectionData = useAtomValue(collectionAtom)
 	const cardCount = useAtomValue(cardCountAtom)
+	const uploadModal = useCollectionUploadModal()
+	const deleteModal = useCollectionDeleteModal()
 
 	const { data: collection, id } = collectionData
 
@@ -81,6 +91,17 @@ export const CollectionDetail = ({
 							>
 								Study
 							</Button>
+							<Button
+								leftSection={<IconUpload size={16} />}
+								color="blue"
+								variant="light"
+								size="sm"
+								onClick={() =>
+									uploadModal.openModal(id, collection.title)
+								}
+							>
+								Upload
+							</Button>
 							<ActionIcon
 								component={Link}
 								to={Routes.editCollection.navigate(
@@ -91,6 +112,17 @@ export const CollectionDetail = ({
 								aria-label="Edit collection"
 							>
 								<IconEdit size={18} />
+							</ActionIcon>
+							<ActionIcon
+								color="red"
+								variant="light"
+								size="lg"
+								aria-label="Delete collection"
+								onClick={() =>
+									deleteModal.openModal(collectionData)
+								}
+							>
+								<IconTrash size={18} />
 							</ActionIcon>
 						</Group>
 					</Group>
@@ -194,6 +226,25 @@ export const CollectionDetail = ({
 					</div>
 				</Stack>
 			</Card>
+
+			{uploadModal.collectionId && (
+				<CollectionUploadModal
+					opened={uploadModal.opened}
+					onClose={uploadModal.closeModal}
+					collectionId={uploadModal.collectionId}
+					collectionTitle={uploadModal.collectionTitle}
+				/>
+			)}
+
+			<CollectionDeleteModal
+				opened={deleteModal.opened}
+				onClose={deleteModal.closeModal}
+				collection={deleteModal.collection}
+				onDeleted={() => {
+					deleteModal.closeModal()
+					navigate(Routes.collections.navigate(), { replace: true })
+				}}
+			/>
 		</div>
 	)
 }

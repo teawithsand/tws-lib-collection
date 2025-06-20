@@ -19,6 +19,7 @@ describe("AppDi", () => {
 				backendClient: undefined,
 				backendService: undefined,
 				cardService: undefined,
+				collectionImportExport: undefined,
 			})
 			.build()
 

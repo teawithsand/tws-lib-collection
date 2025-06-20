@@ -67,32 +67,6 @@ const collectionSaveResponseSchema = z.object({
 })
 
 /**
- * Collection response schema (includes metadata added by backend)
- */
-const collectionResponseSchema = backendCollectionDataSchema.extend({
-	id: z.string(),
-	savedAt: z.string(),
-	savedBy: z.string().optional(),
-})
-
-/**
- * Collection summary schema for list endpoint
- */
-const collectionSummarySchema = z.object({
-	id: z.string(),
-	savedAt: z.string().optional(),
-	savedBy: z.string().optional(),
-})
-
-/**
- * List collections response schema
- */
-const listCollectionsResponseSchema = z.object({
-	collections: z.array(collectionSummarySchema),
-	total: z.number(),
-})
-
-/**
  * Error response schema
  */
 const errorResponseSchema = z.object({
@@ -111,10 +85,6 @@ export type User = z.infer<typeof userSchema>
 export type AuthResponse = z.infer<typeof authResponseSchema>
 export type CollectionSaveResponse = z.infer<
 	typeof collectionSaveResponseSchema
->
-export type CollectionResponse = z.infer<typeof collectionResponseSchema>
-export type ListCollectionsResponse = z.infer<
-	typeof listCollectionsResponseSchema
 >
 export type ErrorResponse = z.infer<typeof errorResponseSchema>
 export type HealthResponse = z.infer<typeof healthResponseSchema>
@@ -227,13 +197,12 @@ export class BackendClient {
 	 * Save a collection to the backend (requires authentication)
 	 */
 	public readonly saveCollection = async (
-		collectionId: string,
 		data: BackendCollectionData,
 	): Promise<CollectionSaveResponse> => {
 		this.ensureAuthenticated()
 
 		const response = await this.makeRequest(
-			`/api/collections/${encodeURIComponent(collectionId)}`,
+			`/api/collections/${encodeURIComponent(data.collection.globalId)}`,
 			{
 				method: "PUT",
 				body: JSON.stringify(data),
@@ -251,7 +220,7 @@ export class BackendClient {
 	 */
 	public readonly getCollection = async (
 		collectionId: string,
-	): Promise<CollectionResponse> => {
+	): Promise<BackendCollectionData> => {
 		const response = await this.makeRequest(
 			`/api/collections/${encodeURIComponent(collectionId)}`,
 			{
@@ -259,23 +228,26 @@ export class BackendClient {
 			},
 		)
 
-		return this.validateResponse(response, collectionResponseSchema)
+		return this.validateResponse(response, backendCollectionDataSchema)
 	}
 
 	/**
 	 * List all collections from the backend
 	 */
-	public readonly listCollections =
-		async (): Promise<ListCollectionsResponse> => {
-			const response = await this.makeRequest("/api/collections", {
-				method: "GET",
-			})
+	public readonly listCollections = async (): Promise<
+		BackendCollectionData[]
+	> => {
+		const response = await this.makeRequest("/api/collections", {
+			method: "GET",
+		})
 
-			return this.validateResponse(
-				response,
-				listCollectionsResponseSchema,
-			)
-		}
+		const listResponse = await this.validateResponse(
+			response,
+			z.array(backendCollectionDataSchema),
+		)
+
+		return listResponse
+	}
 
 	/**
 	 * Check the health of the backend service

@@ -1,5 +1,7 @@
 export * from "./About"
 export * from "./auth"
+export { BackendCollectionDetailPage } from "./BackendCollectionDetailPage"
+export { BackendCollectionListPage } from "./BackendCollectionListPage"
 export * from "./collection"
 export * from "./Home"
 export * from "./NotFound"
