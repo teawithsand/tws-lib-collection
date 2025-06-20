@@ -1,55 +1,66 @@
-import { AppCardData, WithMintayId } from "@/mintay"
-import { Card, Text, Title, useMantineColorScheme } from "@mantine/core"
-import MarkdownPreview from "@uiw/react-markdown-preview"
+import { Markdown } from "@/components/markdown"
+import { AppCardData } from "@/mintay"
+import { Badge, Card, Group, Text, Title } from "@mantine/core"
+import { MintayCardState, MintayId } from "@teawithsand/mintay-core"
 import styles from "./CollectionLearn.module.scss"
 
+type CardWithState = {
+	readonly id: MintayId
+	readonly data: AppCardData
+	readonly state: MintayCardState
+}
+
 interface CollectionLearnCardProps {
-	readonly card: WithMintayId<AppCardData>
-	readonly isQuestion?: boolean
-	readonly title: string
-	readonly bgColor?: string
+	readonly card: CardWithState
 }
 
 /**
- * Component for displaying a single card with question or answer content
+ * Formats scheduled days into a human-readable interval string
  */
-export const CollectionLearnCard = ({
-	card,
-	isQuestion = true,
-	title,
-	bgColor = "gray.0",
-}: CollectionLearnCardProps) => {
-	const { colorScheme } = useMantineColorScheme()
-	const content = isQuestion
-		? card.data.questionContent
-		: card.data.answerContent
-	const emptyMessage = isQuestion
-		? "No question provided"
-		: "No answer provided"
+const formatInterval = (scheduledDays: number): string => {
+	if (scheduledDays < 1) {
+		return "< 1 day"
+	}
+	if (scheduledDays === 1) {
+		return "1 day"
+	}
+	if (scheduledDays < 30) {
+		return `${Math.round(scheduledDays)} days`
+	}
+	if (scheduledDays < 365) {
+		const months = Math.round(scheduledDays / 30)
+		return months === 1 ? "1 month" : `${months} months`
+	}
+	const years = Math.round(scheduledDays / 365)
+	return years === 1 ? "1 year" : `${years} years`
+}
+
+/**
+ * Component for displaying the question content of a card
+ */
+export const CollectionLearnCard = ({ card }: CollectionLearnCardProps) => {
+	const content = card.data.questionContent
+	const emptyMessage = "No question provided"
 
 	return (
-		<div className={isQuestion ? styles.question : styles.answer}>
-			<Title order={3} mb="sm">
-				{title}
-			</Title>
+		<div className={styles.question}>
+			<Group justify="space-between" align="center" mb="sm">
+				<Title order={3}>Question</Title>
+				{card.state.fsrs.scheduledDays > 0 && (
+					<Badge variant="light" color="blue" size="sm">
+						Interval:{" "}
+						{formatInterval(card.state.fsrs.scheduledDays)}
+					</Badge>
+				)}
+			</Group>
 			<Card
 				withBorder
 				p="md"
-				bg={bgColor}
-				className={
-					isQuestion
-						? styles.question__content
-						: styles.answer__content
-				}
+				bg="gray.0"
+				className={styles.question__content}
 			>
 				{content ? (
-					<MarkdownPreview
-						source={content}
-						wrapperElement={{
-							"data-color-mode":
-								colorScheme === "auto" ? "light" : colorScheme,
-						}}
-					/>
+					<Markdown source={content} />
 				) : (
 					<Text size="sm" c="dimmed">
 						{emptyMessage}

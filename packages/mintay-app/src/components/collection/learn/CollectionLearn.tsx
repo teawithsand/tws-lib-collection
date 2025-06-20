@@ -1,16 +1,26 @@
-import { AppCardData, WithMintayId } from "@/mintay"
+import { AppCardData } from "@/mintay"
 import { Card, Stack } from "@mantine/core"
-import { MintayAnswer, MintayId } from "@teawithsand/mintay-core"
-import { useCallback, useState } from "react"
+import {
+	MintayAnswer,
+	MintayCardState,
+	MintayId,
+} from "@teawithsand/mintay-core"
+import { useCallback, useEffect, useState } from "react"
 import styles from "./CollectionLearn.module.scss"
 import { CollectionLearnActions } from "./CollectionLearnActions"
+import { CollectionLearnAnswer } from "./CollectionLearnAnswer"
 import { CollectionLearnCard } from "./CollectionLearnCard"
 import { CollectionLearnEmptyState } from "./CollectionLearnEmptyState"
-import { CollectionLearnErrorState } from "./CollectionLearnErrorState"
 import { CollectionLearnLoadingState } from "./CollectionLearnLoadingState"
 
+type CardWithState = {
+	readonly id: MintayId
+	readonly data: AppCardData
+	readonly state: MintayCardState
+}
+
 interface CollectionLearnProps {
-	readonly getNextCard: () => Promise<WithMintayId<AppCardData> | null>
+	readonly getNextCard: () => Promise<CardWithState | null>
 	readonly submitAnswer: (
 		cardId: MintayId,
 		answer: MintayAnswer,
@@ -25,15 +35,12 @@ export const CollectionLearn = ({
 	getNextCard,
 	submitAnswer,
 }: CollectionLearnProps) => {
-	const [currentCard, setCurrentCard] =
-		useState<WithMintayId<AppCardData> | null>(null)
+	const [currentCard, setCurrentCard] = useState<CardWithState | null>(null)
 	const [showAnswer, setShowAnswer] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
-	const [error, setError] = useState<Error | null>(null)
 
 	const loadNextCard = useCallback(async () => {
 		setIsLoading(true)
-		setError(null)
 		try {
 			const cardData = await getNextCard()
 			if (cardData) {
@@ -42,13 +49,6 @@ export const CollectionLearn = ({
 			} else {
 				setCurrentCard(null)
 			}
-		} catch (err) {
-			setError(
-				err instanceof Error
-					? err
-					: new Error("An unexpected error occurred"),
-			)
-			setCurrentCard(null)
 		} finally {
 			setIsLoading(false)
 		}
@@ -59,16 +59,9 @@ export const CollectionLearn = ({
 			if (!currentCard) return
 
 			setIsLoading(true)
-			setError(null)
 			try {
 				await submitAnswer(currentCard.id, answer)
 				await loadNextCard()
-			} catch (err) {
-				setError(
-					err instanceof Error
-						? err
-						: new Error("Failed to process answer"),
-				)
 			} finally {
 				setIsLoading(false)
 			}
@@ -80,51 +73,26 @@ export const CollectionLearn = ({
 		setShowAnswer(true)
 	}, [])
 
-	const handleStartLearning = useCallback(() => {
+	// Auto-start learning when component mounts
+	useEffect(() => {
 		loadNextCard()
 	}, [loadNextCard])
-
-	const handleRetry = useCallback(() => {
-		setError(null)
-		loadNextCard()
-	}, [loadNextCard])
-
-	if (error) {
-		return <CollectionLearnErrorState error={error} onRetry={handleRetry} />
-	}
 
 	if (isLoading && !currentCard) {
 		return <CollectionLearnLoadingState />
 	}
 
 	if (!currentCard) {
-		return (
-			<CollectionLearnEmptyState
-				isLoading={isLoading}
-				onStartLearning={handleStartLearning}
-			/>
-		)
+		return <CollectionLearnEmptyState isLoading={isLoading} />
 	}
 
 	return (
 		<div className={styles.container}>
 			<Card shadow="sm" padding="lg" radius="md" withBorder>
 				<Stack gap="lg">
-					<CollectionLearnCard
-						card={currentCard}
-						isQuestion={true}
-						title="Question"
-						bgColor="gray.0"
-					/>
+					<CollectionLearnCard card={currentCard} />
 
-					{showAnswer && (
-						<CollectionLearnCard
-							card={currentCard}
-							isQuestion={false}
-							title="Answer"
-							bgColor="blue.0"
-						/>
-					)}
+					{showAnswer && <CollectionLearnAnswer card={currentCard} />}
 
 					<CollectionLearnActions
 						showAnswer={showAnswer}

@@ -1,43 +1,42 @@
-import { Button, Card, Center, Loader, Stack, Text, Title } from "@mantine/core"
+import { Card, Center, Loader, Stack, Text, Title } from "@mantine/core"
 import styles from "./CollectionLearn.module.scss"
 
 interface CollectionLearnEmptyStateProps {
 	readonly isLoading: boolean
-	readonly onStartLearning: () => void
 }
 
 /**
- * Component for displaying the initial state before learning begins
+ * Component for displaying the empty state when no cards are available for learning
  */
 export const CollectionLearnEmptyState = ({
 	isLoading,
-	onStartLearning,
 }: CollectionLearnEmptyStateProps) => {
 	return (
 		<div className={styles.container}>
 			<Card shadow="sm" padding="lg" radius="md" withBorder>
 				<Stack gap="lg" align="center">
-					<Title order={2}>Ready to Learn?</Title>
-					<Text ta="center" c="dimmed">
-						Start your learning session to review cards using spaced
-						repetition. The system will show you cards that are due
-						for review.
-					</Text>
 					{isLoading ? (
-						<Center>
-							<Stack gap="sm" align="center">
-								<Loader size="md" />
-								<Text size="sm">Starting session...</Text>
-							</Stack>
-						</Center>
+						<>
+							<Title order={2}>Loading...</Title>
+							<Text ta="center" c="dimmed">
+								Preparing your learning session...
+							</Text>
+							<Center>
+								<Stack gap="sm" align="center">
+									<Loader size="md" />
+									<Text size="sm">Loading cards...</Text>
+								</Stack>
+							</Center>
+						</>
 					) : (
-						<Button
-							onClick={onStartLearning}
-							size="lg"
-							disabled={isLoading}
-						>
-							Start Learning
-						</Button>
+						<>
+							<Title order={2}>No Cards Available</Title>
+							<Text ta="center" c="dimmed">
+								There are no cards available for review at this
+								time. All cards may be scheduled for future
+								review, or the collection might be empty.
+							</Text>
+						</>
 					)}
 				</Stack>
 			</Card>

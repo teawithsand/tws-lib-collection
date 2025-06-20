@@ -1,3 +1,4 @@
+import { Markdown } from "@/components/markdown"
 import { AppCardData, WithMintayId } from "@/mintay"
 import { Routes } from "@/router/routes"
 import {
@@ -10,10 +11,8 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { useColorScheme } from "@mantine/hooks"
 import { IconCards, IconEdit } from "@tabler/icons-react"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
-import MarkdownPreview from "@uiw/react-markdown-preview"
 import { Link } from "react-router"
 import styles from "./cardDetail.module.scss"
 
@@ -27,9 +26,6 @@ interface CardDetailProps {
  */
 export const CardDetail = ({ cardAtom, collectionId }: CardDetailProps) => {
 	const cardData = useAtomValue(cardAtom)
-	const rawColorScheme = useColorScheme()
-	// Swap dark/light since the markdown library expects opposite values
-	const colorScheme = rawColorScheme === "dark" ? "light" : "dark"
 
 	const { data: card, id } = cardData
 
@@ -90,12 +86,7 @@ export const CardDetail = ({ cardAtom, collectionId }: CardDetailProps) => {
 							className={styles.content}
 						>
 							{card.questionContent ? (
-								<MarkdownPreview
-									source={card.questionContent}
-									wrapperElement={{
-										"data-color-mode": colorScheme,
-									}}
-								/>
+								<Markdown source={card.questionContent} />
 							) : (
 								<Text size="sm" c="dimmed">
 									No question provided
@@ -116,12 +107,7 @@ export const CardDetail = ({ cardAtom, collectionId }: CardDetailProps) => {
 							className={styles.content}
 						>
 							{card.answerContent ? (
-								<MarkdownPreview
-									source={card.answerContent}
-									wrapperElement={{
-										"data-color-mode": colorScheme,
-									}}
-								/>
+								<Markdown source={card.answerContent} />
 							) : (
 								<Text size="sm" c="dimmed">
 									No answer provided

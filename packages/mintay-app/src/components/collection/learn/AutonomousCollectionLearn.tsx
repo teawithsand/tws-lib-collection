@@ -1,10 +1,11 @@
 import { useApp } from "@/app"
-import { AppCardData, WithMintayId } from "@/mintay"
+import { AppCardData } from "@/mintay"
 import {
 	FsrsParameters,
 	MintayAnswer,
 	MintayCardEvent,
 	MintayCardEventType,
+	MintayCardState,
 	MintayId,
 } from "@teawithsand/mintay-core"
 import { useCallback, useMemo } from "react"
@@ -14,6 +15,12 @@ import { DEFAULT_FSRS_PARAMETERS } from "./constants"
 interface AutonomousCollectionLearnProps {
 	readonly collectionId: MintayId
 	readonly fsrsParameters?: FsrsParameters
+}
+
+type CardWithState = {
+	readonly id: MintayId
+	readonly data: AppCardData
+	readonly state: MintayCardState
 }
 
 /**
@@ -50,7 +57,7 @@ export const AutonomousCollectionLearn = ({
 	}, [app.mintay, collectionId, fsrsParameters])
 
 	const getCardData = useCallback(
-		async (cardId: MintayId): Promise<WithMintayId<AppCardData> | null> => {
+		async (cardId: MintayId): Promise<CardWithState | null> => {
 			const cardHandle = await app.mintay.cardStore.getCardById(cardId)
 			if (!cardHandle) {
 				return null
@@ -61,22 +68,25 @@ export const AutonomousCollectionLearn = ({
 				return null
 			}
 
+			// Get the card state from the engine store
+			const cardState = await engineStore.getCardData(cardId)
+
 			return {
 				id: cardId,
 				data: cardData,
+				state: cardState,
 			}
 		},
-		[app.mintay.cardStore],
+		[app.mintay.cardStore, engineStore],
 	)
 
-	const getNextCard =
-		useCallback(async (): Promise<WithMintayId<AppCardData> | null> => {
-			const nextCardId = await engineStore.getTopCard()
-			if (!nextCardId) {
-				return null
-			}
-			return await getCardData(nextCardId)
-		}, [engineStore, getCardData])
+	const getNextCard = useCallback(async (): Promise<CardWithState | null> => {
+		const nextCardId = await engineStore.getTopCard()
+		if (!nextCardId) {
+			return null
+		}
+		return await getCardData(nextCardId)
+	}, [engineStore, getCardData])
 
 	const submitAnswer = useCallback(
 		async (cardId: MintayId, answer: MintayAnswer) => {
