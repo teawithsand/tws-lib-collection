@@ -1,3 +1,4 @@
+import { Provider } from "@teawithsand/fstate"
 import { inPlace } from "@teawithsand/lngext"
 import { ReactNode, useEffect, useState } from "react"
 import { App } from "./app"
@@ -23,5 +24,9 @@ export const AppProvider = ({ children }: { children?: ReactNode }) => {
 		}
 	}, [])
 
-	return <AppContext.Provider value={app}>{children}</AppContext.Provider>
+	return (
+		<AppContext.Provider value={app}>
+			<Provider store={app?.atomStore}>{children}</Provider>
+		</AppContext.Provider>
+	)
 }
