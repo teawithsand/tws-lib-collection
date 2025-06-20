@@ -63,7 +63,7 @@ export default defineConfig({
 		exclude: ['@sqlite.org/sqlite-wasm'],
 	},
 	build: {
-		chunkSizeWarningLimit: 1024, // Increase chunk size warning limit to 1024 KB
+		chunkSizeWarningLimit: 1024000, // Increase chunk size warning limit to 1024000 KB
 	},
 	server: {
 		fs: {
