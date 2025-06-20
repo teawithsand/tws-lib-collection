@@ -11,7 +11,13 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconBook, IconCards, IconEdit, IconPlus } from "@tabler/icons-react"
+import {
+	IconBook,
+	IconBrain,
+	IconCards,
+	IconEdit,
+	IconPlus,
+} from "@tabler/icons-react"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
 import { Link } from "react-router"
 import { useTransResolver } from "../../../app"
@@ -62,15 +68,31 @@ export const CollectionDetail = ({
 								ID: {collection.globalId}
 							</Text>
 						</div>
-						<ActionIcon
-							component={Link}
-							to={Routes.editCollection.navigate(id.toString())}
-							variant="light"
-							size="lg"
-							aria-label="Edit collection"
-						>
-							<IconEdit size={18} />
-						</ActionIcon>
+						<Group gap="sm">
+							<Button
+								component={Link}
+								to={Routes.collectionLearn.navigate(
+									id.toString(),
+								)}
+								leftSection={<IconBrain size={16} />}
+								color="green"
+								variant="filled"
+								size="sm"
+							>
+								Study
+							</Button>
+							<ActionIcon
+								component={Link}
+								to={Routes.editCollection.navigate(
+									id.toString(),
+								)}
+								variant="light"
+								size="lg"
+								aria-label="Edit collection"
+							>
+								<IconEdit size={18} />
+							</ActionIcon>
+						</Group>
 					</Group>
 
 					<div>

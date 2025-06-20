@@ -9,6 +9,7 @@ import {
 	CollectionCreatePage,
 	CollectionDetailPage,
 	CollectionEditPage,
+	CollectionLearnPage,
 	CollectionListPage,
 	HomePage,
 	NotFoundPage,
@@ -38,6 +39,10 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.collectionCards.path}
 						element={<CollectionCardsPage />}
+					/>
+					<Route
+						path={AppRoutes.collectionLearn.path}
+						element={<CollectionLearnPage />}
 					/>
 					<Route
 						path={AppRoutes.cardDetail.path}

@@ -112,6 +112,14 @@ export class Routes {
 	}
 
 	/**
+	 * Collection learn page route
+	 */
+	public static readonly collectionLearn: RouteConfig = {
+		path: "/collections/:id/learn",
+		navigate: (id: string) => `/collections/${id}/learn`,
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
@@ -126,6 +134,7 @@ export class Routes {
 			Routes.editCollectionCard,
 			Routes.createCollection,
 			Routes.editCollection,
+			Routes.collectionLearn,
 			Routes.login,
 			Routes.register,
 		]

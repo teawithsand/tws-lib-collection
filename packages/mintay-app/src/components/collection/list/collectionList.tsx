@@ -11,7 +11,7 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconBook, IconEdit } from "@tabler/icons-react"
+import { IconBook, IconBrain, IconEdit } from "@tabler/icons-react"
 import { Link } from "react-router"
 import styles from "./collectionList.module.scss"
 
@@ -106,6 +106,18 @@ export const CollectionList = ({ collections }: CollectionListProps) => {
 
 								<Card.Section className={styles.cardActions}>
 									<Group justify="flex-end" p="md">
+										<ActionIcon
+											component={Link}
+											to={Routes.collectionLearn.navigate(
+												id.toString(),
+											)}
+											variant="subtle"
+											color="green"
+											size="sm"
+											title="Study collection"
+										>
+											<IconBrain size={16} />
+										</ActionIcon>
 										<ActionIcon
 											component={Link}
 											to={Routes.editCollection.navigate(

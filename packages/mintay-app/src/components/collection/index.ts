@@ -1,5 +1,6 @@
 export * from "./create"
 export * from "./detail"
 export * from "./edit"
+export * from "./learn"
 export * from "./list"
 export * from "./notFound"
