@@ -78,6 +78,14 @@ export class Routes {
 	}
 
 	/**
+	 * User profile page route
+	 */
+	public static readonly profile: RouteConfig = {
+		path: "/profile",
+		navigate: () => "/profile",
+	}
+
+	/**
 	 * Collection cards page route
 	 */
 	public static readonly collectionCards: RouteConfig = {
@@ -137,6 +145,7 @@ export class Routes {
 			Routes.collectionLearn,
 			Routes.login,
 			Routes.register,
+			Routes.profile,
 		]
 	}
 }

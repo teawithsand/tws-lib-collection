@@ -14,6 +14,7 @@ import {
 	HomePage,
 	NotFoundPage,
 	UserLoginPage,
+	UserProfilePage,
 	UserRegisterPage,
 } from "../pages"
 import { Routes as AppRoutes } from "./routes"
@@ -71,6 +72,10 @@ export const Router = () => {
 					<Route
 						path={AppRoutes.register.path}
 						element={<UserRegisterPage />}
+					/>
+					<Route
+						path={AppRoutes.profile.path}
+						element={<UserProfilePage />}
 					/>
 					<Route path={"*"} element={<NotFoundPage />} />
 				</Routes>
