@@ -1,0 +1,4 @@
+#Fri Jun 20 04:51:12 GMT 2025
+base.0=/workspaces/tws-lib-collecton/packages/mintay-app/bubblewrap/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
