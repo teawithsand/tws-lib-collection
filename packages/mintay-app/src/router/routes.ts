@@ -94,6 +94,15 @@ export class Routes {
 	}
 
 	/**
+	 * Edit card in collection page route
+	 */
+	public static readonly editCollectionCard: RouteConfig = {
+		path: "/collections/:id/cards/:cardId/edit",
+		navigate: (id: string, cardId: string) =>
+			`/collections/${id}/cards/${cardId}/edit`,
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
@@ -104,6 +113,7 @@ export class Routes {
 			Routes.collectionDetail,
 			Routes.collectionCards,
 			Routes.createCollectionCard,
+			Routes.editCollectionCard,
 			Routes.createCollection,
 			Routes.editCollection,
 			Routes.login,

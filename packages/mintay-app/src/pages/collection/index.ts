@@ -1,4 +1,5 @@
 export * from "./CollectionCardCreate"
+export * from "./CollectionCardEdit"
 export * from "./CollectionCards"
 export * from "./CollectionCreate"
 export * from "./CollectionDetail"

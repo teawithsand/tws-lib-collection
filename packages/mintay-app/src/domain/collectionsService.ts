@@ -114,6 +114,55 @@ export class CollectionService {
 		}
 	}
 
+	/**
+	 * Gets a specific card from a collection with reactive operations.
+	 * Returns atoms for card data access and operations.
+	 */
+	public readonly getCollectionCard = (
+		collectionId: MintayId,
+		cardId: MintayId,
+	) => {
+		const cardDataAtom = atomWithRefresh(async () => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandle = await collection.getCard(cardId)
+			const data = await cardHandle.read()
+			return data
+		})
+
+		const cardDataLoadable = loadable(cardDataAtom)
+
+		const updateCard = atom(null, async (_get, set, data: AppCardData) => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandle = await collection.getCard(cardId)
+			await cardHandle.save(data)
+			set(cardDataAtom)
+		})
+
+		const deleteCard = atom(null, async (_get, set) => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandle = await collection.getCard(cardId)
+			await cardHandle.delete()
+			set(cardDataAtom)
+		})
+
+		return {
+			data: atom((get) => get(cardDataAtom)),
+			dataWithId: atom(
+				async (get) =>
+					({
+						id: cardId,
+						data: await get(cardDataAtom),
+					}) satisfies WithMintayId<AppCardData | null>,
+			),
+			dataLoadable: cardDataLoadable,
+			update: updateCard,
+			delete: deleteCard,
+			refresh: atom(null, (_get, set) => {
+				set(cardDataAtom)
+			}),
+		}
+	}
+
 	private readonly _collectionsList = atomWithRefresh(async () => {
 		const ids = await this.collectionStore.list()
 

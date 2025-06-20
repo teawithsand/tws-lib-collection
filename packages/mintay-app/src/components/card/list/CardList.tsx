@@ -1,5 +1,6 @@
 import { ActionIcon, Badge, Card, Group, Loader, Text } from "@mantine/core"
 import { IconEdit, IconEye, IconFileText } from "@tabler/icons-react"
+import { useMemo } from "react"
 import { Link } from "react-router"
 import { useTransResolver } from "../../../app"
 import { WithMintayId } from "../../../mintay"
@@ -20,6 +21,11 @@ interface CardListProps {
 export const CardList = ({ cards, isLoading, collectionId }: CardListProps) => {
 	const { resolve } = useTransResolver()
 
+	const sortedCards = useMemo(
+		() => cards.sort((a, b) => b.data.createdAt - a.data.createdAt),
+		[cards],
+	)
+
 	if (isLoading) {
 		return (
 			<div className={styles["card-list__loading"]}>
@@ -28,7 +34,7 @@ export const CardList = ({ cards, isLoading, collectionId }: CardListProps) => {
 		)
 	}
 
-	if (cards.length === 0) {
+	if (sortedCards.length === 0) {
 		return (
 			<div className={styles["card-list__empty-state"]}>
 				<IconFileText
@@ -51,7 +57,7 @@ export const CardList = ({ cards, isLoading, collectionId }: CardListProps) => {
 	return (
 		<div className={styles["card-list__container"]}>
 			<div className={styles["card-list__grid"]}>
-				{cards.map((cardWithId) => (
+				{sortedCards.map((cardWithId) => (
 					<Card
 						key={cardWithId.id}
 						className={styles["card-list__card-item"]}
@@ -94,9 +100,10 @@ export const CardList = ({ cards, isLoading, collectionId }: CardListProps) => {
 									component={Link}
 									to={
 										collectionId
-											? Routes.editCollection.navigate(
+											? Routes.editCollectionCard.navigate(
 													collectionId,
-												) + `#card-${cardWithId.id}`
+													String(cardWithId.id),
+												)
 											: "#"
 									}
 									variant="light"
