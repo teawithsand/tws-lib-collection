@@ -57,18 +57,20 @@ export type DiConfig = {
 	backendBaseUrl?: string
 }
 
+const addr = "/"
+
 export class AppDi {
 	private constructor() {}
 
 	public static readonly DI_TEST_CONFIG: DiConfig = {
 		dbType: "inMemory",
 		throwFromRelease: true,
-		backendBaseUrl: "http://localhost:3001",
+		backendBaseUrl: addr,
 	}
 
 	public static readonly DI_PROD_CONFIG: DiConfig = {
 		dbType: "opfs",
-		backendBaseUrl: "http://localhost:3001",
+		backendBaseUrl: addr,
 	}
 
 	public static readonly makeDiBuilder = (config: DiConfig) =>
@@ -85,7 +87,7 @@ export class AppDi {
 			.setValue(
 				"backendClient",
 				new BackendClient({
-					baseUrl: config.backendBaseUrl || "http://localhost:3000",
+					baseUrl: config.backendBaseUrl || "/",
 				}),
 			)
 			.setFactory(

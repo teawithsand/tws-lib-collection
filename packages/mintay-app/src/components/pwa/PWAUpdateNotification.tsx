@@ -18,7 +18,6 @@ export const PWAUpdateNotification = () => {
 			setUpdateAvailable(true)
 		}
 
-		// Listen for the custom event dispatched by the service worker
 		window.addEventListener("sw-update-available", handleUpdateAvailable)
 
 		return () => {
@@ -32,8 +31,8 @@ export const PWAUpdateNotification = () => {
 	const handleUpdate = () => {
 		if (registration?.waiting) {
 			registration.waiting.postMessage({ type: "SKIP_WAITING" })
-			window.location.reload()
 		}
+		window.location.reload()
 	}
 
 	const handleDismiss = () => {
