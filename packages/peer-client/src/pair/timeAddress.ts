@@ -1,5 +1,3 @@
-import { webcrypto } from "crypto"
-
 export enum AddressGeneratorAlgorithm {
 	SHA_256 = "SHA-256",
 	SHA_512 = "SHA-512",
@@ -36,7 +34,7 @@ export class TimeAddressGenerator {
 	) {
 		this.timeWindowMs = timeWindowMs
 		const keyData = new Uint8Array(secret)
-		this.keyPromise = webcrypto.subtle.importKey(
+		this.keyPromise = crypto.subtle.importKey(
 			"raw",
 			keyData,
 			{ name: "HMAC", hash: hash },
@@ -62,7 +60,7 @@ export class TimeAddressGenerator {
 			true,
 		)
 		const key = await this.keyPromise
-		const signature = await webcrypto.subtle.sign("HMAC", key, windowBytes)
+		const signature = await crypto.subtle.sign("HMAC", key, windowBytes)
 		return signature
 	}
 }
