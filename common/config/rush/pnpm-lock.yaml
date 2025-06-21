@@ -67,6 +67,9 @@ importers:
       '@teawithsand/lngext':
         specifier: workspace:*
         version: link:../lngext
+      '@teawithsand/reserd':
+        specifier: workspace:*
+        version: link:../reserd
       immer:
         specifier: ^10.1.1
         version: 10.1.1
