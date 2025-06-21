@@ -24,7 +24,7 @@ export class MockConn<T> implements Conn<T> {
 		return [conn1, conn2]
 	}
 
-	public readonly send = (message: T): void => {
+	public readonly send = async (message: T): Promise<void> => {
 		if (this.closed) {
 			throw new Error("Connection is closed. Cannot send message.")
 		}

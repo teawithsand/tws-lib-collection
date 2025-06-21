@@ -50,7 +50,7 @@ class ConnImpl implements Conn<ArrayBuffer> {
 		return this.receiveQueue.receive()
 	}
 
-	public readonly send = (message: ArrayBuffer): void => {
+	public readonly send = async (message: ArrayBuffer): Promise<void> => {
 		if (this.dataChannel.readyState === "open") {
 			this.dataChannel.send(message)
 		} else {

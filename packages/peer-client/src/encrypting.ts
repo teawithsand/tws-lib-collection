@@ -57,7 +57,11 @@ export interface EncryptingConnConfig {
 	/**
 	 * The encryption key to use for AES-GCM encryption
 	 */
-	readonly key: CryptoKey
+	readonly encryptKey: CryptoKey
+	/**
+	 * The decryption key to use for AES-GCM decryption
+	 */
+	readonly decryptKey: CryptoKey
 }
 
 /**
@@ -65,27 +69,48 @@ export interface EncryptingConnConfig {
  */
 export class EncryptingConn implements Conn<ArrayBuffer> {
 	private readonly innerConn: Conn<ArrayBuffer>
-	private readonly key: CryptoKey
+	private readonly encryptKey: CryptoKey
+	private readonly decryptKey: CryptoKey
 
-	public constructor(
+	/**
+	 * Creates an EncryptingConn using the same key for both encryption and decryption.
+	 * @param innerConn The underlying connection
+	 * @param key The key to use for both encryption and decryption
+	 */
+	public static readonly createWithSingleKey = (
 		innerConn: Conn<ArrayBuffer>,
-		{ key }: EncryptingConnConfig,
-	) {
-		this.innerConn = innerConn
-		this.key = key
-	}
-
-	public readonly send = (message: ArrayBuffer): void => {
-		// Encrypt and send asynchronously to avoid blocking
-		this.encryptAndSend(message).catch((error) => {
-			// Log error but don't throw since send is synchronous
-			console.error("Failed to encrypt and send message:", error)
+		key: CryptoKey,
+	): EncryptingConn => {
+		return new EncryptingConn(innerConn, {
+			encryptKey: key,
+			decryptKey: key,
 		})
 	}
 
-	private readonly encryptAndSend = async (
-		message: ArrayBuffer,
-	): Promise<void> => {
+	/**
+	 * Creates an EncryptingConn using separate keys for encryption and decryption.
+	 * @param innerConn The underlying connection
+	 * @param encryptKey The key to use for encryption
+	 * @param decryptKey The key to use for decryption
+	 */
+	public static readonly createWithKeys = (
+		innerConn: Conn<ArrayBuffer>,
+		encryptKey: CryptoKey,
+		decryptKey: CryptoKey,
+	): EncryptingConn => {
+		return new EncryptingConn(innerConn, { encryptKey, decryptKey })
+	}
+
+	private constructor(
+		innerConn: Conn<ArrayBuffer>,
+		{ encryptKey, decryptKey }: EncryptingConnConfig,
+	) {
+		this.innerConn = innerConn
+		this.encryptKey = encryptKey
+		this.decryptKey = decryptKey
+	}
+
+	public readonly send = async (message: ArrayBuffer): Promise<void> => {
 		// Generate a random IV (12 bytes for AES-GCM)
 		const iv = crypto.getRandomValues(new Uint8Array(12))
 
@@ -95,7 +120,7 @@ export class EncryptingConn implements Conn<ArrayBuffer> {
 				name: "AES-GCM",
 				iv,
 			},
-			this.key,
+			this.encryptKey,
 			message,
 		)
 
@@ -105,7 +130,7 @@ export class EncryptingConn implements Conn<ArrayBuffer> {
 		combined.set(new Uint8Array(encrypted), iv.length)
 
 		// Send the combined buffer
-		this.innerConn.send(combined.buffer)
+		await this.innerConn.send(combined.buffer)
 	}
 
 	public readonly receive = async (): Promise<ArrayBuffer> => {
@@ -129,7 +154,7 @@ export class EncryptingConn implements Conn<ArrayBuffer> {
 				name: "AES-GCM",
 				iv,
 			},
-			this.key,
+			this.decryptKey,
 			encrypted,
 		)
 

@@ -53,7 +53,7 @@ export class PeerJsConn implements Conn<string> {
 		}
 	}
 
-	public readonly send = (message: string): void => {
+	public readonly send = async (message: string): Promise<void> => {
 		if (!this.dataConnection.open) {
 			throw new Error("Connection is not open.")
 		}

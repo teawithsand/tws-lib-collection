@@ -1,6 +1,5 @@
 export * from "./conn"
 export * from "./decodingConn"
 export * from "./encrypting"
-export * from "./pairing"
-export * from "./pairingConn"
+export * from "./pair"
 export * from "./util"

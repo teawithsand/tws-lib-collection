@@ -145,13 +145,13 @@ describe("MessageQueue", () => {
 
 		// Mix sends and receives
 		for (let i = 0; i < numMessages / 2; i++) {
-			queue.send(messages[i]!)
+			await queue.send(messages[i]!)
 		}
 		for (let i = 0; i < numMessages; i++) {
 			receivePromises.push(queue.receive())
 		}
 		for (let i = numMessages / 2; i < numMessages; i++) {
-			queue.send(messages[i]!)
+			await queue.send(messages[i]!)
 		}
 
 		const receivedMessages = await Promise.all(receivePromises)
@@ -175,8 +175,8 @@ describe("MessageQueue", () => {
 		const p1 = queue.receive()
 		const p2 = queue.receive()
 
-		queue.send(message1)
-		queue.send(message2)
+		await queue.send(message1)
+		await queue.send(message2)
 
 		const [r1, r2] = await Promise.all([p1, p2])
 		// The order of resolution of p1 and p2 depends on the internal promise scheduling,
@@ -186,7 +186,7 @@ describe("MessageQueue", () => {
 
 	test("setError: should reject waiting promises even if queue was not empty", async () => {
 		const queue = new MessageQueue<string>()
-		queue.send("buffered message")
+		await queue.send("buffered message")
 		// receivePromise consumes "buffered message" and is set to resolve with it.
 		// It is NOT a waiting promise in this setup.
 		const receivePromise = queue.receive()
@@ -203,8 +203,8 @@ describe("MessageQueue", () => {
 
 	test("setError: should clear buffered messages if rejectBufferedMessages is true", async () => {
 		const queue = new MessageQueue<string>()
-		queue.send("buffered1")
-		queue.send("buffered2")
+		await queue.send("buffered1")
+		await queue.send("buffered2")
 		const error = new Error("Test error with rejectBufferedMessages true")
 
 		queue.setError(error, true) // rejectBufferedMessages is true
@@ -216,8 +216,8 @@ describe("MessageQueue", () => {
 
 	test("setError: should not clear buffered messages if rejectBufferedMessages is false (default)", async () => {
 		const queue = new MessageQueue<string>()
-		queue.send("buffered1")
-		queue.send("buffered2")
+		await queue.send("buffered1")
+		await queue.send("buffered2")
 
 		const error = new Error("Test error with rejectBufferedMessages false")
 		queue.setError(error) // rejectBufferedMessages is false by default

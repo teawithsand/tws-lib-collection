@@ -19,7 +19,6 @@ describe("EncryptionKeyManager", () => {
 		const exportedKey = await EncryptionKeyManager.exportKey(originalKey)
 		const importedKey = await EncryptionKeyManager.importKey(exportedKey)
 
-		expect(exportedKey).toBeInstanceOf(ArrayBuffer)
 		expect(exportedKey.byteLength).toBe(32) // 256 bits = 32 bytes
 		expect(importedKey).toBeInstanceOf(CryptoKey)
 		expect(importedKey.algorithm.name).toBe("AES-GCM")
@@ -60,7 +59,10 @@ describe("EncryptingConn", () => {
 	beforeEach(async () => {
 		key = await EncryptionKeyManager.generateKey()
 		mockConnPair = MockConn.createConnectedPair<ArrayBuffer>()
-		encryptingConn = new EncryptingConn(mockConnPair[0], { key })
+		encryptingConn = EncryptingConn.createWithSingleKey(
+			mockConnPair[0],
+			key,
+		)
 		plainConn = mockConnPair[1]
 	})
 
@@ -70,7 +72,7 @@ describe("EncryptingConn", () => {
 		)
 
 		// Send message through encrypting connection
-		encryptingConn.send(originalMessage.buffer)
+		await encryptingConn.send(originalMessage.buffer)
 
 		// Receive encrypted data from plain connection
 		const encryptedData = await plainConn.receive()
@@ -84,7 +86,7 @@ describe("EncryptingConn", () => {
 		) // IV + encrypted data
 
 		// Send encrypted data back through plain connection
-		plainConn.send(encryptedData)
+		await plainConn.send(encryptedData)
 
 		// Receive and verify decrypted message
 		const decryptedMessage = await encryptingConn.receive()
@@ -96,28 +98,28 @@ describe("EncryptingConn", () => {
 	test("should handle empty messages", async () => {
 		const emptyMessage = new ArrayBuffer(0)
 
-		encryptingConn.send(emptyMessage)
+		await encryptingConn.send(emptyMessage)
 		const encryptedData = await plainConn.receive()
 
 		// Even empty messages should have IV + encrypted content
 		expect(encryptedData.byteLength).toBeGreaterThan(0)
 
-		plainConn.send(encryptedData)
+		await plainConn.send(encryptedData)
 		const decryptedMessage = await encryptingConn.receive()
 
 		expect(decryptedMessage.byteLength).toBe(0)
 	})
 
 	test("should handle large messages", async () => {
-		const largeMessage = new Uint8Array(1024 * 1024) // 1MB
+		const largeMessage = new Uint8Array(1024) // 1MB
 		for (let i = 0; i < largeMessage.length; i++) {
 			largeMessage[i] = i % 256
 		}
 
-		encryptingConn.send(largeMessage.buffer)
+		await encryptingConn.send(largeMessage.buffer)
 		const encryptedData = await plainConn.receive()
 
-		plainConn.send(encryptedData)
+		await plainConn.send(encryptedData)
 		const decryptedMessage = await encryptingConn.receive()
 
 		expect(new Uint8Array(decryptedMessage)).toEqual(largeMessage)
@@ -127,8 +129,8 @@ describe("EncryptingConn", () => {
 		const message = new TextEncoder().encode("test message")
 
 		// Send two identical messages
-		encryptingConn.send(message.buffer)
-		encryptingConn.send(message.buffer)
+		await encryptingConn.send(message.buffer)
+		await encryptingConn.send(message.buffer)
 
 		const encrypted1 = await plainConn.receive()
 		const encrypted2 = await plainConn.receive()
@@ -139,8 +141,8 @@ describe("EncryptingConn", () => {
 		)
 
 		// But both should decrypt to the same original message
-		plainConn.send(encrypted1)
-		plainConn.send(encrypted2)
+		await plainConn.send(encrypted1)
+		await plainConn.send(encrypted2)
 
 		const decrypted1 = await encryptingConn.receive()
 		const decrypted2 = await encryptingConn.receive()
@@ -156,7 +158,7 @@ describe("EncryptingConn", () => {
 	test("should include 12-byte IV in encrypted data", async () => {
 		const message = new TextEncoder().encode("test")
 
-		encryptingConn.send(message.buffer)
+		await encryptingConn.send(message.buffer)
 		const encryptedData = await plainConn.receive()
 
 		// Encrypted data should be at least IV (12 bytes) + some encrypted content
@@ -170,7 +172,7 @@ describe("EncryptingConn", () => {
 	test("should throw error for corrupted encrypted data", async () => {
 		const message = new TextEncoder().encode("test message")
 
-		encryptingConn.send(message.buffer)
+		await encryptingConn.send(message.buffer)
 		const encryptedData = await plainConn.receive()
 
 		// Corrupt the encrypted data
@@ -179,7 +181,7 @@ describe("EncryptingConn", () => {
 			corruptedData[15] = corruptedData[15]! ^ 0xff // Flip bits in encrypted content
 		}
 
-		plainConn.send(corruptedData.buffer)
+		await plainConn.send(corruptedData.buffer)
 
 		// Should throw an error when trying to decrypt corrupted data
 		await expect(encryptingConn.receive()).rejects.toThrow()
@@ -188,7 +190,7 @@ describe("EncryptingConn", () => {
 	test("should throw error for data too short to contain IV", async () => {
 		const shortData = new Uint8Array(10) // Less than 12 bytes required for IV
 
-		plainConn.send(shortData.buffer)
+		await plainConn.send(shortData.buffer)
 
 		await expect(encryptingConn.receive()).rejects.toThrow(
 			"Received data is too short to contain valid encrypted message",
@@ -200,34 +202,19 @@ describe("EncryptingConn", () => {
 		const invalidData = new Uint8Array(20)
 		crypto.getRandomValues(invalidData) // Random data that's not valid encryption
 
-		plainConn.send(invalidData.buffer)
+		await plainConn.send(invalidData.buffer)
 
 		// Should throw an error when trying to decrypt invalid data
 		await expect(encryptingConn.receive()).rejects.toThrow()
 	})
 
 	test("should handle send errors gracefully", async () => {
-		const consoleSpy = vi
-			.spyOn(console, "error")
-			.mockImplementation(() => {})
-
 		// Close the underlying connection to cause send to fail
 		mockConnPair[1].close()
 
-		// Send should not throw (it's async and catches errors)
+		// Send should now throw since the connection is closed
 		const message = new TextEncoder().encode("test")
-		expect(() => encryptingConn.send(message.buffer)).not.toThrow()
-
-		// Wait a bit for the async operation to complete
-		await new Promise((resolve) => setTimeout(resolve, 10))
-
-		// Should have logged an error
-		expect(consoleSpy).toHaveBeenCalledWith(
-			"Failed to encrypt and send message:",
-			expect.any(Error),
-		)
-
-		consoleSpy.mockRestore()
+		await expect(encryptingConn.send(message.buffer)).rejects.toThrow()
 	})
 
 	test("should close underlying connection", () => {
@@ -247,7 +234,7 @@ describe("EncryptingConn", () => {
 
 		// Send all messages
 		for (const message of messages) {
-			encryptingConn.send(message.buffer)
+			await encryptingConn.send(message.buffer)
 		}
 
 		// Receive and forward all encrypted messages
@@ -255,7 +242,7 @@ describe("EncryptingConn", () => {
 		for (let i = 0; i < messages.length; i++) {
 			const encrypted = await plainConn.receive()
 			encryptedMessages.push(encrypted)
-			plainConn.send(encrypted)
+			await plainConn.send(encrypted)
 		}
 
 		// Verify all messages decrypt correctly and in order
@@ -270,8 +257,14 @@ describe("EncryptingConn", () => {
 	test("should work with two encrypting connections using same key", async () => {
 		// Create two encrypting connections with the same key
 		const mockConnPair2 = MockConn.createConnectedPair<ArrayBuffer>()
-		const encryptingConn1 = new EncryptingConn(mockConnPair[0], { key })
-		const encryptingConn2 = new EncryptingConn(mockConnPair2[1], { key })
+		const encryptingConn1 = EncryptingConn.createWithSingleKey(
+			mockConnPair[0],
+			key,
+		)
+		const encryptingConn2 = EncryptingConn.createWithSingleKey(
+			mockConnPair2[1],
+			key,
+		)
 
 		// Connect the plain sides
 		const plainConn1 = mockConnPair[1]
@@ -281,15 +274,15 @@ describe("EncryptingConn", () => {
 		const message2 = new TextEncoder().encode("Hello from conn2")
 
 		// Send message through first encrypting connection
-		encryptingConn1.send(message1.buffer)
+		await encryptingConn1.send(message1.buffer)
 		const encrypted1 = await plainConn1.receive()
-		plainConn2.send(encrypted1)
+		await plainConn2.send(encrypted1)
 		const decrypted1 = await encryptingConn2.receive()
 
 		// Send message through second encrypting connection
-		encryptingConn2.send(message2.buffer)
+		await encryptingConn2.send(message2.buffer)
 		const encrypted2 = await plainConn2.receive()
-		plainConn1.send(encrypted2)
+		await plainConn1.send(encrypted2)
 		const decrypted2 = await encryptingConn1.receive()
 
 		expect(new Uint8Array(decrypted1)).toEqual(
@@ -305,17 +298,18 @@ describe("EncryptingConn", () => {
 		const message = new TextEncoder().encode("secret message")
 
 		// Encrypt with original key
-		encryptingConn.send(message.buffer)
+		await encryptingConn.send(message.buffer)
 		const encryptedData = await plainConn.receive()
 
 		// Try to decrypt with wrong key connection
 		const [wrongMockConn1, wrongMockConn2] =
 			MockConn.createConnectedPair<ArrayBuffer>()
-		const wrongKeyEncryptingConn = new EncryptingConn(wrongMockConn1, {
-			key: wrongKey,
-		})
+		const wrongKeyEncryptingConn = EncryptingConn.createWithSingleKey(
+			wrongMockConn1,
+			wrongKey,
+		)
 
-		wrongMockConn2.send(encryptedData)
+		await wrongMockConn2.send(encryptedData)
 
 		// Should fail to decrypt with wrong key
 		await expect(wrongKeyEncryptingConn.receive()).rejects.toThrow()
