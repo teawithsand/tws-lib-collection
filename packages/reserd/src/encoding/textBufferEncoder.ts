@@ -3,25 +3,25 @@ import { Encoder } from "./encoder"
 /**
  * Text buffer encoder implementation that converts between ArrayBuffer and string using TextEncoder/TextDecoder
  */
-export class TextBufferEncoder implements Encoder<ArrayBuffer, string> {
+export class TextBufferEncoder implements Encoder<string, ArrayBuffer> {
 	private readonly textEncoder = new TextEncoder()
 	private readonly textDecoder = new TextDecoder()
 
 	/**
-	 * Encodes ArrayBuffer to string using TextDecoder
-	 * @param raw ArrayBuffer to encode
-	 * @returns String representation
+	 * Encodes string to ArrayBuffer using TextEncoder
+	 * @param raw String to encode
+	 * @returns Encoded ArrayBuffer
 	 */
-	public readonly encode = (raw: ArrayBuffer): string => {
-		return this.textDecoder.decode(raw)
+	public readonly encode = (raw: string): ArrayBuffer => {
+		return this.textEncoder.encode(raw).buffer
 	}
 
 	/**
-	 * Decodes string to ArrayBuffer using TextEncoder
-	 * @param encoded String to decode
-	 * @returns Decoded ArrayBuffer
+	 * Decodes ArrayBuffer to string using TextDecoder
+	 * @param encoded ArrayBuffer to decode
+	 * @returns Decoded string
 	 */
-	public readonly decode = (encoded: string): ArrayBuffer => {
-		return this.textEncoder.encode(encoded).buffer
+	public readonly decode = (encoded: ArrayBuffer): string => {
+		return this.textDecoder.decode(encoded)
 	}
 }
