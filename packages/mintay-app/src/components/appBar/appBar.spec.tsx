@@ -1,11 +1,17 @@
 import { MantineProvider } from "@mantine/core"
 import { IconHome, IconSettings } from "@tabler/icons-react"
 import "@testing-library/jest-dom"
-import { render, screen } from "@testing-library/react"
+import {
+	fireEvent,
+	render,
+	screen,
+	waitForElementToBeRemoved,
+} from "@testing-library/react"
 import { BrowserRouter } from "react-router"
-import { describe, expect, test } from "vitest"
+import { describe, expect, test, vi } from "vitest"
 import { AppBar } from "./appBar"
 import { AppBarLinkType } from "./appBarLinkType"
+import { AppBarNavigationButtonType } from "./appBarTypes"
 
 const renderWithProviders = (ui: React.ReactElement) => {
 	return render(
@@ -19,7 +25,14 @@ describe("AppBar", () => {
 	test("renders title correctly", () => {
 		renderWithProviders(<AppBar title="Test Title" />)
 
+		expect(screen.getByTestId("app-bar-title")).toBeInTheDocument()
 		expect(screen.getByText("Test Title")).toBeInTheDocument()
+	})
+
+	test("renders header with correct test id", () => {
+		renderWithProviders(<AppBar title="Test" />)
+
+		expect(screen.getByTestId("app-bar-header")).toBeInTheDocument()
 	})
 
 	test("renders action buttons", () => {
@@ -39,6 +52,8 @@ describe("AppBar", () => {
 
 		renderWithProviders(<AppBar title="Test" actions={actions} />)
 
+		expect(screen.getByTestId("app-bar-action-0")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-action-1")).toBeInTheDocument()
 		expect(screen.getByLabelText("Home")).toBeInTheDocument()
 		expect(screen.getByLabelText("Settings")).toBeInTheDocument()
 	})
@@ -54,22 +69,28 @@ describe("AppBar", () => {
 
 		renderWithProviders(<AppBar title="Test" moreActions={moreActions} />)
 
+		expect(screen.getByTestId("app-bar-more-actions")).toBeInTheDocument()
 		expect(screen.getByLabelText("More actions")).toBeInTheDocument()
 	})
 
 	test("renders children content", () => {
+		const testContent = "Test Content"
 		renderWithProviders(
 			<AppBar title="Test">
-				<div>Test Content</div>
+				<div data-testid="test-content">{testContent}</div>
 			</AppBar>,
 		)
 
-		expect(screen.getByText("Test Content")).toBeInTheDocument()
+		expect(screen.getByTestId("test-content")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-content")).toBeInTheDocument()
 	})
 
 	test("does not render more actions menu when empty", () => {
 		renderWithProviders(<AppBar title="Test" moreActions={[]} />)
 
+		expect(
+			screen.queryByTestId("app-bar-more-actions"),
+		).not.toBeInTheDocument()
 		expect(screen.queryByLabelText("More actions")).not.toBeInTheDocument()
 	})
 
@@ -143,15 +164,302 @@ describe("AppBar", () => {
 			/>,
 		)
 
-		// Verify regular actions are rendered
-		expect(screen.getByLabelText("Action No Link")).toBeInTheDocument()
-		expect(screen.getByLabelText("Action Local Link")).toBeInTheDocument()
-		expect(screen.getByLabelText("Action Remote Link")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-action-0")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-action-1")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-action-2")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-more-actions")).toBeInTheDocument()
+		expect(screen.getByTestId("app-bar-drawer-button")).toBeInTheDocument()
+	})
 
-		// Verify more actions menu is rendered
-		expect(screen.getByLabelText("More actions")).toBeInTheDocument()
+	test("navigation button opens and closes drawer", async () => {
+		const actions = [
+			{
+				label: "Home",
+				icon: IconHome,
+				onClick: () => {},
+			},
+		]
 
-		// Verify drawer items are available (drawer itself is not visible by default)
-		expect(screen.getByLabelText("Open navigation")).toBeInTheDocument()
+		const drawerItems = [
+			{
+				label: "Drawer Item 1",
+				icon: IconHome,
+				onClick: () => {},
+			},
+		]
+
+		renderWithProviders(
+			<AppBar
+				title="Test Navigation Button"
+				actions={actions}
+				drawerItems={drawerItems}
+			/>,
+		)
+
+		const openButton = screen.getByTestId("app-bar-drawer-button")
+
+		expect(screen.queryByText("Drawer Item 1")).not.toBeInTheDocument()
+
+		fireEvent.click(openButton)
+
+		expect(await screen.findByText("Drawer Item 1")).toBeInTheDocument()
+
+		const closeButton = document.querySelector(".mantine-Drawer-close")
+		fireEvent.click(closeButton!)
+
+		await waitForElementToBeRemoved(() =>
+			screen.queryByText("Drawer Item 1"),
+		)
+	})
+
+	describe("Navigation Button Behavior", () => {
+		test("renders no navigation button when type is NONE", () => {
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.NONE,
+					}}
+				/>,
+			)
+
+			expect(
+				screen.queryByTestId("app-bar-drawer-button"),
+			).not.toBeInTheDocument()
+			expect(
+				screen.queryByTestId("app-bar-back-button"),
+			).not.toBeInTheDocument()
+			expect(
+				screen.queryByLabelText("Open navigation"),
+			).not.toBeInTheDocument()
+			expect(screen.queryByLabelText("Go back")).not.toBeInTheDocument()
+		})
+
+		test("renders drawer button when type is DRAWER", () => {
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.DRAWER,
+					}}
+					drawerItems={[
+						{
+							label: "Test Item",
+							icon: IconHome,
+							onClick: () => {},
+						},
+					]}
+				/>,
+			)
+
+			expect(
+				screen.getByTestId("app-bar-drawer-button"),
+			).toBeInTheDocument()
+			expect(
+				screen.queryByTestId("app-bar-back-button"),
+			).not.toBeInTheDocument()
+			expect(screen.getByLabelText("Open navigation")).toBeInTheDocument()
+			expect(screen.queryByLabelText("Go back")).not.toBeInTheDocument()
+		})
+
+		test("renders back button when type is BACK", () => {
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.BACK,
+					}}
+				/>,
+			)
+
+			expect(
+				screen.getByTestId("app-bar-back-button"),
+			).toBeInTheDocument()
+			expect(
+				screen.queryByTestId("app-bar-drawer-button"),
+			).not.toBeInTheDocument()
+			expect(screen.getByLabelText("Go back")).toBeInTheDocument()
+			expect(
+				screen.queryByLabelText("Open navigation"),
+			).not.toBeInTheDocument()
+		})
+
+		test("calls custom onClick handler for drawer button instead of default toggle", () => {
+			const customOnClick = vi.fn()
+
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.DRAWER,
+						onClick: customOnClick,
+					}}
+					drawerItems={[
+						{
+							label: "Test Item",
+							icon: IconHome,
+							onClick: () => {},
+						},
+					]}
+				/>,
+			)
+
+			const navigationButton = screen.getByTestId("app-bar-drawer-button")
+
+			expect(screen.queryByText("Test Item")).not.toBeInTheDocument()
+
+			fireEvent.click(navigationButton)
+
+			expect(customOnClick).toHaveBeenCalledTimes(1)
+			expect(screen.queryByText("Test Item")).not.toBeInTheDocument()
+		})
+
+		test("calls custom onClick handler for back button", () => {
+			const customOnClick = vi.fn()
+
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.BACK,
+						onClick: customOnClick,
+					}}
+				/>,
+			)
+
+			const backButton = screen.getByTestId("app-bar-back-button")
+			fireEvent.click(backButton)
+
+			expect(customOnClick).toHaveBeenCalledTimes(1)
+		})
+
+		test("drawer button uses default toggle behavior when no custom onClick provided", async () => {
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.DRAWER,
+					}}
+					drawerItems={[
+						{
+							label: "Test Item",
+							icon: IconHome,
+							onClick: () => {},
+						},
+					]}
+				/>,
+			)
+
+			const navigationButton = screen.getByTestId("app-bar-drawer-button")
+
+			expect(screen.queryByText("Test Item")).not.toBeInTheDocument()
+
+			fireEvent.click(navigationButton)
+
+			expect(await screen.findByText("Test Item")).toBeInTheDocument()
+		})
+
+		test("back button has no default behavior when no custom onClick provided", () => {
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.BACK,
+					}}
+				/>,
+			)
+
+			const backButton = screen.getByTestId("app-bar-back-button")
+
+			expect(() => fireEvent.click(backButton)).not.toThrow()
+		})
+
+		test("calls onNavigateBack prop when back button clicked without custom onClick", () => {
+			const onNavigateBack = vi.fn()
+
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.BACK,
+					}}
+					onNavigateBack={onNavigateBack}
+				/>,
+			)
+
+			const backButton = screen.getByTestId("app-bar-back-button")
+			fireEvent.click(backButton)
+
+			expect(onNavigateBack).toHaveBeenCalledTimes(1)
+		})
+
+		test("custom onClick takes precedence over onNavigateBack prop", () => {
+			const customOnClick = vi.fn()
+			const onNavigateBack = vi.fn()
+
+			renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.BACK,
+						onClick: customOnClick,
+					}}
+					onNavigateBack={onNavigateBack}
+				/>,
+			)
+
+			const backButton = screen.getByTestId("app-bar-back-button")
+			fireEvent.click(backButton)
+
+			expect(customOnClick).toHaveBeenCalledTimes(1)
+			expect(onNavigateBack).not.toHaveBeenCalled()
+		})
+
+		test("multiple clicks on custom onClick handlers work correctly", () => {
+			const drawerOnClick = vi.fn()
+			const backOnClick = vi.fn()
+
+			const { rerender } = renderWithProviders(
+				<AppBar
+					title="Test"
+					navigationConfig={{
+						buttonType: AppBarNavigationButtonType.DRAWER,
+						onClick: drawerOnClick,
+					}}
+					drawerItems={[
+						{
+							label: "Test Item",
+							icon: IconHome,
+							onClick: () => {},
+						},
+					]}
+				/>,
+			)
+
+			const drawerButton = screen.getByTestId("app-bar-drawer-button")
+			fireEvent.click(drawerButton)
+			fireEvent.click(drawerButton)
+			expect(drawerOnClick).toHaveBeenCalledTimes(2)
+
+			rerender(
+				<BrowserRouter>
+					<MantineProvider>
+						<AppBar
+							title="Test"
+							navigationConfig={{
+								buttonType: AppBarNavigationButtonType.BACK,
+								onClick: backOnClick,
+							}}
+						/>
+					</MantineProvider>
+				</BrowserRouter>,
+			)
+
+			const backButton = screen.getByTestId("app-bar-back-button")
+			fireEvent.click(backButton)
+			fireEvent.click(backButton)
+			fireEvent.click(backButton)
+			expect(backOnClick).toHaveBeenCalledTimes(3)
+		})
 	})
 })

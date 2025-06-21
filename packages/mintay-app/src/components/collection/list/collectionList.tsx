@@ -11,7 +11,7 @@ import {
 	Text,
 	Title,
 } from "@mantine/core"
-import { IconBook, IconEdit } from "@tabler/icons-react"
+import { IconBook, IconBrain, IconEdit } from "@tabler/icons-react"
 import { Link } from "react-router"
 import styles from "./collectionList.module.scss"
 
@@ -57,13 +57,21 @@ export const CollectionList = ({ collections }: CollectionListProps) => {
 								</Card.Section>
 
 								<Stack gap="sm" className={styles.cardContent}>
-									<Title
-										order={4}
-										className={styles.collectionTitle}
-										lineClamp={2}
+									<Link
+										to={Routes.collectionDetail.navigate(
+											id.toString(),
+										)}
+										className={styles.titleLink}
 									>
-										{data.title || "Untitled Collection"}
-									</Title>
+										<Title
+											order={4}
+											className={styles.collectionTitle}
+											lineClamp={2}
+										>
+											{data.title ||
+												"Untitled Collection"}
+										</Title>
+									</Link>
 
 									<Text
 										size="sm"
@@ -100,6 +108,18 @@ export const CollectionList = ({ collections }: CollectionListProps) => {
 									<Group justify="flex-end" p="md">
 										<ActionIcon
 											component={Link}
+											to={Routes.collectionLearn.navigate(
+												id.toString(),
+											)}
+											variant="subtle"
+											color="green"
+											size="sm"
+											title="Study collection"
+										>
+											<IconBrain size={16} />
+										</ActionIcon>
+										<ActionIcon
+											component={Link}
 											to={Routes.editCollection.navigate(
 												id.toString(),
 											)}
@@ -111,9 +131,14 @@ export const CollectionList = ({ collections }: CollectionListProps) => {
 											<IconEdit size={16} />
 										</ActionIcon>
 										<ActionIcon
+											component={Link}
+											to={Routes.collectionDetail.navigate(
+												id.toString(),
+											)}
 											variant="subtle"
 											color="blue"
 											size="sm"
+											title="View collection details"
 										>
 											<IconBook size={16} />
 										</ActionIcon>

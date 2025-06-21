@@ -1,4 +1,9 @@
-import { AppCollectionData, AppMintayTypeSpec, WithMintayId } from "@/mintay"
+import {
+	AppCardData,
+	AppCollectionData,
+	AppMintayTypeSpec,
+	WithMintayId,
+} from "@/mintay"
 import { atom, atomWithRefresh, loadable } from "@teawithsand/fstate"
 import { CollectionStore, MintayId } from "@teawithsand/mintay-core"
 
@@ -25,12 +30,18 @@ export class CollectionService {
 
 		const collectionDataLoadable = loadable(collectionDataAtom)
 
+		const cardCountAtom = atomWithRefresh(async () => {
+			const collection = this.collectionStore.get(collectionId)
+			return await collection.getCardCount()
+		})
+
 		const updateCollection = atom(
 			null,
 			async (_get, set, data: AppCollectionData) => {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
+				set(cardCountAtom)
 				set(this._collectionsList)
 			},
 		)
@@ -46,6 +57,7 @@ export class CollectionService {
 				const collection = this.collectionStore.get(collectionId)
 				await collection.save(data)
 				set(collectionDataAtom)
+				set(cardCountAtom)
 			},
 		)
 
@@ -59,11 +71,94 @@ export class CollectionService {
 					}) satisfies WithMintayId<AppCollectionData | null>,
 			),
 			dataLoadable: collectionDataLoadable,
+			cardCount: atom((get) => get(cardCountAtom)),
 			update: updateCollection,
 			delete: deleteCollection,
 			create: createCollection,
 			refresh: atom(null, (_get, set) => {
 				set(collectionDataAtom)
+				set(cardCountAtom)
+			}),
+		}
+	}
+
+	/**
+	 * Gets cards for a specific collection with reactive operations.
+	 * Returns atoms for card data access and refresh functionality.
+	 */
+	public readonly getCollectionCards = (collectionId: MintayId) => {
+		const cardsDataAtom = atomWithRefresh(async () => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandles = await collection.getCards()
+
+			const cardsWithIds: Array<WithMintayId<AppCardData>> = []
+
+			for (const handle of cardHandles) {
+				const data = await handle.read()
+				if (data) {
+					cardsWithIds.push({ id: handle.id, data })
+				}
+			}
+
+			return cardsWithIds
+		})
+
+		const cardsDataLoadable = loadable(cardsDataAtom)
+
+		return {
+			data: atom((get) => get(cardsDataAtom)),
+			dataLoadable: cardsDataLoadable,
+			refresh: atom(null, (_get, set) => {
+				set(cardsDataAtom)
+			}),
+		}
+	}
+
+	/**
+	 * Gets a specific card from a collection with reactive operations.
+	 * Returns atoms for card data access and operations.
+	 */
+	public readonly getCollectionCard = (
+		collectionId: MintayId,
+		cardId: MintayId,
+	) => {
+		const cardDataAtom = atomWithRefresh(async () => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandle = await collection.getCard(cardId)
+			const data = await cardHandle.read()
+			return data
+		})
+
+		const cardDataLoadable = loadable(cardDataAtom)
+
+		const updateCard = atom(null, async (_get, set, data: AppCardData) => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandle = await collection.getCard(cardId)
+			await cardHandle.save(data)
+			set(cardDataAtom)
+		})
+
+		const deleteCard = atom(null, async (_get, set) => {
+			const collection = this.collectionStore.get(collectionId)
+			const cardHandle = await collection.getCard(cardId)
+			await cardHandle.delete()
+			set(cardDataAtom)
+		})
+
+		return {
+			data: atom((get) => get(cardDataAtom)),
+			dataWithId: atom(
+				async (get) =>
+					({
+						id: cardId,
+						data: await get(cardDataAtom),
+					}) satisfies WithMintayId<AppCardData | null>,
+			),
+			dataLoadable: cardDataLoadable,
+			update: updateCard,
+			delete: deleteCard,
+			refresh: atom(null, (_get, set) => {
+				set(cardDataAtom)
 			}),
 		}
 	}

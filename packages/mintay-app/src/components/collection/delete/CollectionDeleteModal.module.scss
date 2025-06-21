@@ -1,0 +1,36 @@
+.collection-delete-modal {
+	.collection-info {
+		padding: 1rem;
+		background-color: var(--mantine-color-gray-0);
+		border-radius: var(--mantine-radius-md);
+		border: 1px solid var(--mantine-color-gray-2);
+	}
+
+	.warning-alert {
+		border-left: 4px solid var(--mantine-color-red-6);
+	}
+
+	.button-group {
+		margin-top: 1rem;
+	}
+
+	.delete-button {
+		&:hover {
+			background-color: var(--mantine-color-red-7);
+		}
+
+		&:active {
+			background-color: var(--mantine-color-red-8);
+		}
+	}
+}
+
+// Dark theme support
+[data-mantine-color-scheme="dark"] {
+	.collection-delete-modal {
+		.collection-info {
+			background-color: var(--mantine-color-dark-7);
+			border-color: var(--mantine-color-dark-5);
+		}
+	}
+}

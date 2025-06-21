@@ -1,0 +1,65 @@
+@use "sass:color";
+
+.collection-upload-modal {
+	// Modal specific styles can be added here if needed
+
+	// Success state styling
+	:global(.mantine-Modal-content) {
+		.success-state {
+			text-align: center;
+			padding: var(--mantine-spacing-lg);
+		}
+	}
+
+	// Loading state for upload button
+	.upload-button {
+		min-width: 140px;
+
+		&--loading {
+			pointer-events: none;
+		}
+	}
+
+	// Error alert styling
+	.error-alert {
+		.mantine-Alert-message {
+			font-size: var(--mantine-font-size-sm);
+		}
+	}
+
+	// Authentication required alert
+	.auth-alert {
+		border-left: 4px solid var(--mantine-color-blue-5);
+
+		@include mantine.dark {
+			border-left-color: var(--mantine-color-blue-4);
+		}
+	}
+
+	// Button group spacing
+	.button-group {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--mantine-spacing-md);
+		margin-top: var(--mantine-spacing-lg);
+
+		@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+			flex-direction: column-reverse;
+
+			button {
+				width: 100%;
+			}
+		}
+	}
+
+	// Collection info section
+	.collection-info {
+		padding: var(--mantine-spacing-md);
+		background-color: var(--mantine-color-gray-0);
+		border-radius: var(--mantine-radius-sm);
+
+		@include mantine.dark {
+			background-color: var(--mantine-color-dark-6);
+		}
+	}
+}

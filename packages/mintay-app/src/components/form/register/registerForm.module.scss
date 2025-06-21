@@ -1,0 +1,22 @@
+.register-form__container {
+	max-width: 400px;
+	margin: 0 auto;
+}
+
+.register-form__global-errors {
+	margin-bottom: 1rem;
+}
+
+.register-form__field-group {
+	margin-bottom: 1rem;
+}
+
+.register-form__actions {
+	display: flex;
+	justify-content: center;
+	margin-top: 1.5rem;
+}
+
+.register-form__submit-button {
+	min-width: 120px;
+}

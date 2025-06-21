@@ -1,7 +1,19 @@
-import { useAtomValue, useSetAtom } from "@teawithsand/fstate"
+import { AppBarNavigationButtonType } from "@/components"
+import { produce, useAtomValue, useSetAtom } from "@teawithsand/fstate"
 import { useEffect } from "react"
 import { useApp } from "../../app"
 import { AppBarMutator } from "./appBarService"
+
+export class AppBarMutators {
+	private constructor() {}
+
+	public static readonly ARROW_BACK_MUTATOR: AppBarMutator = (state) =>
+		produce(state, (draft) => {
+			draft.navigationConfig = {
+				buttonType: AppBarNavigationButtonType.BACK,
+			}
+		})
+}
 
 /**
  * Hook that pushes an AppBarMutator onto the mutators stack with specified priority

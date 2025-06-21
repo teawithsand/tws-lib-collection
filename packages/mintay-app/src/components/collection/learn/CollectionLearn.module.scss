@@ -1,0 +1,81 @@
+.container {
+	padding: 1rem;
+	max-width: 800px;
+	margin: 0 auto;
+	min-height: 400px;
+	display: flex;
+	flex-direction: column;
+}
+
+.question {
+	margin-bottom: 1rem;
+
+	&__content {
+		transition: all 0.2s ease-in-out;
+	}
+}
+
+.answer {
+	margin-bottom: 1rem;
+	animation: fadeIn 0.3s ease-in-out;
+
+	&__content {
+		transition: all 0.2s ease-in-out;
+	}
+}
+
+.actions {
+	margin-top: 1.5rem;
+
+	&__buttons {
+		gap: 0.75rem;
+
+		@media (max-width: 480px) {
+			flex-direction: column;
+			width: 100%;
+
+			button {
+				width: 100%;
+			}
+		}
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: 0.75rem;
+		max-width: none;
+		margin: 0;
+	}
+
+	.actions button {
+		font-size: 0.875rem;
+		padding: 0.625rem 1rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.container {
+		padding: 0.5rem;
+	}
+
+	.question,
+	.answer {
+		margin-bottom: 0.75rem;
+	}
+
+	.actions {
+		margin-top: 1rem;
+	}
+}

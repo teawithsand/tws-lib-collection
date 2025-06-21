@@ -6,6 +6,12 @@ export const translationRu: Readonly<AppTranslation> = {
 	generic: {
 		form: {
 			thisFieldMustNotBeEmpty: () => "Это поле не должно быть пустым",
+			discoveryPriorityMustNotBeNegative: () =>
+				"Приоритет обнаружения не может быть отрицательным",
+			discoveryPriorityMustBeValidNumber: () =>
+				"Приоритет обнаружения должен быть действительным числом",
+			discoveryPriorityMustBeInteger: () =>
+				"Приоритет обнаружения должен быть целым числом",
 		},
 		loading: () => "Загрузка...",
 	},
@@ -24,6 +30,50 @@ export const translationRu: Readonly<AppTranslation> = {
 			enterCollectionDescription: () =>
 				"Введите описание коллекции (необязательно)",
 			formValidationErrors: () => "Ошибки валидации формы",
+		},
+	},
+	card: {
+		form: {
+			createCard: () => "Создать карточку",
+			editCard: () => "Редактировать карточку",
+			submit: () => "Отправить",
+			cardId: () => "ID карточки",
+			enterCardId: () => "Введите ID карточки",
+			questionContent: () => "Содержание вопроса",
+			enterQuestionContent: () => "Введите содержание вопроса",
+			answerContent: () => "Содержание ответа",
+			enterAnswerContent: () => "Введите содержание ответа",
+			discoveryPriority: () => "Приоритет обнаружения",
+			enterDiscoveryPriority: () =>
+				"Введите приоритет обнаружения (0 или больше)",
+			formValidationErrors: () => "Ошибки валидации формы",
+		},
+	},
+	auth: {
+		login: {
+			submit: () => "Войти",
+			username: () => "Имя пользователя",
+			enterUsername: () => "Введите имя пользователя",
+			password: () => "Пароль",
+			enterPassword: () => "Введите пароль",
+			formValidationErrors: () => "Ошибки валидации формы",
+			submissionError: () => "Ошибка отправки",
+			unexpectedError: () =>
+				"Произошла непредвиденная ошибка. Попробуйте еще раз.",
+		},
+		register: {
+			submit: () => "Зарегистрироваться",
+			username: () => "Имя пользователя",
+			enterUsername: () => "Введите имя пользователя",
+			password: () => "Пароль",
+			enterPassword: () => "Введите пароль",
+			confirmPassword: () => "Подтвердите пароль",
+			enterConfirmPassword: () => "Подтвердите ваш пароль",
+			formValidationErrors: () => "Ошибки валидации формы",
+			passwordsDoNotMatch: () => "Пароли не совпадают",
+			submissionError: () => "Ошибка отправки",
+			unexpectedError: () =>
+				"Произошла непредвиденная ошибка. Попробуйте еще раз.",
 		},
 	},
 	about: {

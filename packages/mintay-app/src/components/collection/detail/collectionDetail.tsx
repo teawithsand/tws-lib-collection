@@ -1,0 +1,250 @@
+import { AppCardData, AppCollectionData, WithMintayId } from "@/mintay"
+import { Routes } from "@/router/routes"
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Card,
+	Divider,
+	Group,
+	Stack,
+	Text,
+	Title,
+} from "@mantine/core"
+import {
+	IconBook,
+	IconBrain,
+	IconCards,
+	IconEdit,
+	IconPlus,
+	IconTrash,
+	IconUpload,
+} from "@tabler/icons-react"
+import { Atom, useAtomValue } from "@teawithsand/fstate"
+import { Link, useNavigate } from "react-router"
+import { useTransResolver } from "../../../app"
+import {
+	CollectionUploadModal,
+	useCollectionUploadModal,
+} from "../../backend/upload"
+import { AutonomousCardList } from "../../card"
+import { CollectionDeleteModal, useCollectionDeleteModal } from "../delete"
+import styles from "./collectionDetail.module.scss"
+
+interface CollectionDetailProps {
+	readonly collectionAtom: Atom<Promise<WithMintayId<AppCollectionData>>>
+	readonly cardCountAtom: Atom<Promise<number>>
+	readonly cardsAtom: Atom<Promise<WithMintayId<AppCardData>[]>>
+}
+
+/**
+ * Component for displaying detailed information about a single collection
+ */
+export const CollectionDetail = ({
+	collectionAtom,
+	cardCountAtom,
+	cardsAtom,
+}: CollectionDetailProps) => {
+	const { resolve } = useTransResolver()
+	const navigate = useNavigate()
+	const collectionData = useAtomValue(collectionAtom)
+	const cardCount = useAtomValue(cardCountAtom)
+	const uploadModal = useCollectionUploadModal()
+	const deleteModal = useCollectionDeleteModal()
+
+	const { data: collection, id } = collectionData
+
+	const formattedCreatedAt = new Date(
+		collection.createdAt,
+	).toLocaleDateString()
+	const formattedUpdatedAt = new Date(
+		collection.updatedAt,
+	).toLocaleDateString()
+
+	return (
+		<div className={styles.container}>
+			<Card shadow="sm" padding="lg" radius="md" withBorder>
+				<Stack gap="md">
+					<Group justify="space-between" align="flex-start">
+						<div>
+							<Title order={2} className={styles.title}>
+								{collection.title}
+							</Title>
+							<Text
+								size="sm"
+								c="dimmed"
+								className={styles.globalId}
+							>
+								ID: {collection.globalId}
+							</Text>
+						</div>
+						<Group gap="sm">
+							<Button
+								component={Link}
+								to={Routes.collectionLearn.navigate(
+									id.toString(),
+								)}
+								leftSection={<IconBrain size={16} />}
+								color="green"
+								variant="filled"
+								size="sm"
+							>
+								Study
+							</Button>
+							<Button
+								leftSection={<IconUpload size={16} />}
+								color="blue"
+								variant="light"
+								size="sm"
+								onClick={() =>
+									uploadModal.openModal(id, collection.title)
+								}
+							>
+								Upload
+							</Button>
+							<ActionIcon
+								component={Link}
+								to={Routes.editCollection.navigate(
+									id.toString(),
+								)}
+								variant="light"
+								size="lg"
+								aria-label="Edit collection"
+							>
+								<IconEdit size={18} />
+							</ActionIcon>
+							<ActionIcon
+								color="red"
+								variant="light"
+								size="lg"
+								aria-label="Delete collection"
+								onClick={() =>
+									deleteModal.openModal(collectionData)
+								}
+							>
+								<IconTrash size={18} />
+							</ActionIcon>
+						</Group>
+					</Group>
+
+					<div>
+						<Text fw={500} size="sm" mb="xs">
+							Description
+						</Text>
+						<Text size="sm" className={styles.description}>
+							{collection.description ||
+								"No description provided"}
+						</Text>
+					</div>
+
+					<Group>
+						<Badge
+							leftSection={<IconBook size={12} />}
+							variant="light"
+							color="blue"
+						>
+							Collection
+						</Badge>
+					</Group>
+
+					<Group gap="xl">
+						<div>
+							<Text
+								size="xs"
+								c="dimmed"
+								tt="uppercase"
+								fw={700}
+								mb="xs"
+							>
+								Cards
+							</Text>
+							<Text size="sm">{cardCount}</Text>
+						</div>
+						<div>
+							<Text
+								size="xs"
+								c="dimmed"
+								tt="uppercase"
+								fw={700}
+								mb="xs"
+							>
+								Created
+							</Text>
+							<Text size="sm">{formattedCreatedAt}</Text>
+						</div>
+						<div>
+							<Text
+								size="xs"
+								c="dimmed"
+								tt="uppercase"
+								fw={700}
+								mb="xs"
+							>
+								Last Updated
+							</Text>
+							<Text size="sm">{formattedUpdatedAt}</Text>
+						</div>
+					</Group>
+
+					<Divider />
+
+					<div>
+						<Group justify="space-between" align="center" mb="md">
+							<Group gap="xs">
+								<IconCards size={20} />
+								<Title order={3}>Cards</Title>
+							</Group>
+							<Group gap="sm">
+								<Button
+									component={Link}
+									to={Routes.createCollectionCard.navigate(
+										id.toString(),
+									)}
+									leftSection={<IconPlus size={16} />}
+									variant="light"
+									size="sm"
+								>
+									{resolve((t) => t.card.form.createCard())}
+								</Button>
+								<ActionIcon
+									component={Link}
+									to={Routes.collectionCards.navigate(
+										id.toString(),
+									)}
+									variant="light"
+									size="sm"
+									aria-label="View all cards"
+								>
+									<IconCards size={16} />
+								</ActionIcon>
+							</Group>
+						</Group>
+						<AutonomousCardList
+							cardsAtom={cardsAtom}
+							collectionId={id.toString()}
+						/>
+					</div>
+				</Stack>
+			</Card>
+
+			{uploadModal.collectionId && (
+				<CollectionUploadModal
+					opened={uploadModal.opened}
+					onClose={uploadModal.closeModal}
+					collectionId={uploadModal.collectionId}
+					collectionTitle={uploadModal.collectionTitle}
+				/>
+			)}
+
+			<CollectionDeleteModal
+				opened={deleteModal.opened}
+				onClose={deleteModal.closeModal}
+				collection={deleteModal.collection}
+				onDeleted={() => {
+					deleteModal.closeModal()
+					navigate(Routes.collections.navigate(), { replace: true })
+				}}
+			/>
+		</div>
+	)
+}

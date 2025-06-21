@@ -4,7 +4,6 @@ import { IconAlertCircle } from "@tabler/icons-react"
 import { useAtomValue } from "@teawithsand/fstate"
 import { CollectionList } from "./collectionList"
 import styles from "./collectionList.module.scss"
-import { CollectionListHeader } from "./collectionListHeader"
 import { EmptyCollectionsState } from "./emptyCollectionsState"
 
 const CollectionsLoadingState = () => (
@@ -63,15 +62,6 @@ export const AutonomousCollectionList = () => {
 
 	return (
 		<Container size="xl" className={styles.container}>
-			<CollectionListHeader
-				isLoading={collectionsLoadable.state === "loading"}
-				collectionsCount={
-					collectionsLoadable.state === "hasData"
-						? collectionsLoadable.data?.length
-						: undefined
-				}
-			/>
-
 			<div className={styles.content}>{renderContent()}</div>
 		</Container>
 	)

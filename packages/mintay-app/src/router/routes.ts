@@ -38,6 +38,14 @@ export class Routes {
 	}
 
 	/**
+	 * Collection detail page route
+	 */
+	public static readonly collectionDetail: RouteConfig = {
+		path: "/collections/:id",
+		navigate: (id: string) => `/collections/${id}`,
+	}
+
+	/**
 	 * Create collection page route
 	 */
 	public static readonly createCollection: RouteConfig = {
@@ -54,6 +62,88 @@ export class Routes {
 	}
 
 	/**
+	 * Login page route
+	 */
+	public static readonly login: RouteConfig = {
+		path: "/auth/login",
+		navigate: () => "/auth/login",
+	}
+
+	/**
+	 * Register page route
+	 */
+	public static readonly register: RouteConfig = {
+		path: "/auth/register",
+		navigate: () => "/auth/register",
+	}
+
+	/**
+	 * User profile page route
+	 */
+	public static readonly profile: RouteConfig = {
+		path: "/profile",
+		navigate: () => "/profile",
+	}
+
+	/**
+	 * Collection cards page route
+	 */
+	public static readonly collectionCards: RouteConfig = {
+		path: "/collections/:id/cards",
+		navigate: (id: string) => `/collections/${id}/cards`,
+	}
+
+	/**
+	 * Create card in collection page route
+	 */
+	public static readonly createCollectionCard: RouteConfig = {
+		path: "/collections/:id/cards/create",
+		navigate: (id: string) => `/collections/${id}/cards/create`,
+	}
+
+	/**
+	 * Edit card in collection page route
+	 */
+	public static readonly editCollectionCard: RouteConfig = {
+		path: "/collections/:id/cards/:cardId/edit",
+		navigate: (id: string, cardId: string) =>
+			`/collections/${id}/cards/${cardId}/edit`,
+	}
+
+	/**
+	 * Card detail page route
+	 */
+	public static readonly cardDetail: RouteConfig = {
+		path: "/collections/:id/cards/:cardId",
+		navigate: (id: string, cardId: string) =>
+			`/collections/${id}/cards/${cardId}`,
+	}
+
+	/**
+	 * Collection learn page route
+	 */
+	public static readonly collectionLearn: RouteConfig = {
+		path: "/collections/:id/learn",
+		navigate: (id: string) => `/collections/${id}/learn`,
+	}
+
+	/**
+	 * Backend collections list page route
+	 */
+	public static readonly backendCollections: RouteConfig = {
+		path: "/backend/collections",
+		navigate: () => "/backend/collections",
+	}
+
+	/**
+	 * Backend collection detail page route
+	 */
+	public static readonly backendCollectionDetail: RouteConfig = {
+		path: "/backend/collections/:id",
+		navigate: (id: string) => `/backend/collections/${id}`,
+	}
+
+	/**
 	 * Get all available routes
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
@@ -61,8 +151,19 @@ export class Routes {
 			Routes.home,
 			Routes.about,
 			Routes.collections,
+			Routes.collectionDetail,
+			Routes.collectionCards,
+			Routes.cardDetail,
+			Routes.createCollectionCard,
+			Routes.editCollectionCard,
 			Routes.createCollection,
 			Routes.editCollection,
+			Routes.collectionLearn,
+			Routes.backendCollections,
+			Routes.backendCollectionDetail,
+			Routes.login,
+			Routes.register,
+			Routes.profile,
 		]
 	}
 }

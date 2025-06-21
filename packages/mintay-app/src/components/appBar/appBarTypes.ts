@@ -45,3 +45,20 @@ export type AppBarDrawerItem = (
 ) & {
 	readonly icon: ComponentType<{ size?: number }>
 }
+
+export enum AppBarNavigationButtonType {
+	NONE = "none",
+	DRAWER = "drawer",
+	BACK = "back",
+}
+
+export type AppBarNavigationConfig =
+	| {
+			buttonType: AppBarNavigationButtonType.NONE
+	  }
+	| {
+			buttonType:
+				| AppBarNavigationButtonType.DRAWER
+				| AppBarNavigationButtonType.BACK
+			onClick?: () => void
+	  }

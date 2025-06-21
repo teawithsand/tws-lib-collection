@@ -44,20 +44,6 @@ export class CollectionFormClass extends FormAtomsDelegateBase<
 				.setFieldPreSubmitMapper("title", (fieldValue) =>
 					fieldValue.trim(),
 				)
-				.setFieldValidator("description", (fieldValue) => {
-					return atom((get) => {
-						const description = get(fieldValue)
-						const errors: AppTransString[] = []
-
-						if (!description.trim()) {
-							errors.push((trans) =>
-								trans.generic.form.thisFieldMustNotBeEmpty(),
-							)
-						}
-
-						return FormErrorBag.fromArray(errors)
-					})
-				})
 				.setFieldPreSubmitMapper("description", (fieldValue) =>
 					fieldValue.trim(),
 				)

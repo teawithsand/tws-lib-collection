@@ -1,12 +1,19 @@
+import { testId } from "@/util/testIdUtil"
 import { ActionIcon, Burger, Group, Menu, Title } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { IconDotsVertical } from "@tabler/icons-react"
+import { IconArrowLeft, IconDotsVertical } from "@tabler/icons-react"
 import { ReactNode } from "react"
 import { Link } from "react-router"
 import styles from "./appBar.module.scss"
 import { AppBarDrawer } from "./appBarDrawer"
 import { AppBarLinkType } from "./appBarLinkType"
-import { AppBarAction, AppBarDrawerItem, AppBarMoreAction } from "./appBarTypes"
+import {
+	AppBarAction,
+	AppBarDrawerItem,
+	AppBarMoreAction,
+	AppBarNavigationButtonType,
+	AppBarNavigationConfig,
+} from "./appBarTypes"
 
 interface AppBarActionButtonProps {
 	readonly action: AppBarAction
@@ -17,6 +24,8 @@ interface AppBarActionButtonProps {
  * Individual action button component for the AppBar
  */
 const AppBarActionButton = ({ action, index }: AppBarActionButtonProps) => {
+	const actionTestId = testId(`app-bar-action-${index}`)
+
 	if (action.linkType === AppBarLinkType.LOCAL_LINK) {
 		return (
 			<ActionIcon
@@ -27,6 +36,7 @@ const AppBarActionButton = ({ action, index }: AppBarActionButtonProps) => {
 				variant="subtle"
 				disabled={action.disabled}
 				aria-label={action.label}
+				data-testid={actionTestId}
 			>
 				{action.icon && <action.icon size={18} />}
 			</ActionIcon>
@@ -45,6 +55,7 @@ const AppBarActionButton = ({ action, index }: AppBarActionButtonProps) => {
 				variant="subtle"
 				disabled={action.disabled}
 				aria-label={action.label}
+				data-testid={actionTestId}
 			>
 				{action.icon && <action.icon size={18} />}
 			</ActionIcon>
@@ -58,6 +69,7 @@ const AppBarActionButton = ({ action, index }: AppBarActionButtonProps) => {
 			variant="subtle"
 			disabled={action.disabled}
 			aria-label={action.label}
+			data-testid={actionTestId}
 		>
 			{action.icon && <action.icon size={18} />}
 		</ActionIcon>
@@ -70,6 +82,8 @@ interface AppBarMoreActionItemProps {
 }
 
 const AppBarMoreActionItem = ({ action, index }: AppBarMoreActionItemProps) => {
+	const moreActionTestId = testId(`app-bar-more-action-${index}`)
+
 	if (action.linkType === AppBarLinkType.LOCAL_LINK) {
 		return (
 			<Menu.Item
@@ -79,6 +93,7 @@ const AppBarMoreActionItem = ({ action, index }: AppBarMoreActionItemProps) => {
 				leftSection={action.icon && <action.icon size={16} />}
 				onClick={action.onClick}
 				disabled={action.disabled}
+				data-testid={moreActionTestId}
 			>
 				{action.label}
 			</Menu.Item>
@@ -96,6 +111,7 @@ const AppBarMoreActionItem = ({ action, index }: AppBarMoreActionItemProps) => {
 				leftSection={action.icon && <action.icon size={16} />}
 				onClick={action.onClick}
 				disabled={action.disabled}
+				data-testid={moreActionTestId}
 			>
 				{action.label}
 			</Menu.Item>
@@ -108,6 +124,7 @@ const AppBarMoreActionItem = ({ action, index }: AppBarMoreActionItemProps) => {
 			leftSection={action.icon && <action.icon size={16} />}
 			onClick={action.onClick}
 			disabled={action.disabled}
+			data-testid={moreActionTestId}
 		>
 			{action.label}
 		</Menu.Item>
@@ -120,6 +137,8 @@ export interface AppBarProps {
 	readonly moreActions?: AppBarMoreAction[]
 	readonly drawerItems?: AppBarDrawerItem[]
 	readonly drawerTitle?: string
+	readonly navigationConfig?: AppBarNavigationConfig
+	readonly onNavigateBack?: () => void
 	readonly children?: ReactNode
 }
 
@@ -133,25 +152,78 @@ export const AppBar = ({
 	moreActions = [],
 	drawerItems = [],
 	drawerTitle,
+	navigationConfig = { buttonType: AppBarNavigationButtonType.DRAWER },
+	onNavigateBack,
 	children,
 }: AppBarProps) => {
 	const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
 		useDisclosure(false)
 
+	const handleNavigationClick = () => {
+		if (navigationConfig.buttonType === AppBarNavigationButtonType.DRAWER) {
+			if (navigationConfig.onClick) {
+				navigationConfig.onClick()
+			} else {
+				toggleDrawer()
+			}
+		} else if (
+			navigationConfig.buttonType === AppBarNavigationButtonType.BACK
+		) {
+			if (navigationConfig.onClick) {
+				navigationConfig.onClick()
+			} else if (onNavigateBack) {
+				onNavigateBack()
+			}
+		}
+	}
+
+	const renderNavigationButton = () => {
+		if (navigationConfig.buttonType === AppBarNavigationButtonType.NONE) {
+			return null
+		}
+
+		if (navigationConfig.buttonType === AppBarNavigationButtonType.DRAWER) {
+			return (
+				<Burger
+					opened={drawerOpened}
+					onClick={handleNavigationClick}
+					size="sm"
+					aria-label="Open navigation"
+					data-testid={testId("app-bar-drawer-button")}
+				/>
+			)
+		}
+
+		if (navigationConfig.buttonType === AppBarNavigationButtonType.BACK) {
+			return (
+				<ActionIcon
+					onClick={handleNavigationClick}
+					variant="subtle"
+					aria-label="Go back"
+					data-testid={testId("app-bar-back-button")}
+				>
+					<IconArrowLeft size={18} />
+				</ActionIcon>
+			)
+		}
+
+		return null
+	}
+
 	return (
 		<>
-			<header className={styles.appBar}>
+			<header
+				className={styles.appBar}
+				data-testid={testId("app-bar-header")}
+			>
 				<Group justify="space-between" h="100%" px="md">
 					<Group gap="sm">
-						{drawerItems.length > 0 ? (
-							<Burger
-								opened={drawerOpened}
-								onClick={toggleDrawer}
-								size="sm"
-								aria-label="Open navigation"
-							/>
-						) : null}
-						<Title order={3} className={styles.title}>
+						{renderNavigationButton()}
+						<Title
+							order={3}
+							className={styles.title}
+							data-testid={testId("app-bar-title")}
+						>
 							{title}
 						</Title>
 					</Group>
@@ -171,12 +243,19 @@ export const AppBar = ({
 									<ActionIcon
 										variant="subtle"
 										aria-label="More actions"
+										data-testid={testId(
+											"app-bar-more-actions",
+										)}
 									>
 										<IconDotsVertical size={18} />
 									</ActionIcon>
 								</Menu.Target>
 
-								<Menu.Dropdown>
+								<Menu.Dropdown
+									data-testid={testId(
+										"app-bar-more-actions-dropdown",
+									)}
+								>
 									{moreActions.map((action, index) => (
 										<AppBarMoreActionItem
 											key={index}
@@ -191,13 +270,21 @@ export const AppBar = ({
 				</Group>
 			</header>
 
-			{children && <div className={styles.content}>{children}</div>}
+			{children && (
+				<div
+					className={styles.content}
+					data-testid={testId("app-bar-content")}
+				>
+					{children}
+				</div>
+			)}
 
 			<AppBarDrawer
 				opened={drawerOpened}
 				onClose={closeDrawer}
 				items={drawerItems}
 				drawerTitle={drawerTitle}
+				data-testid={testId("app-bar-drawer")}
 			/>
 		</>
 	)

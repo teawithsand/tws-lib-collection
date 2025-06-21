@@ -5,6 +5,9 @@ export interface AppTranslation {
 	generic: {
 		form: {
 			thisFieldMustNotBeEmpty: () => string
+			discoveryPriorityMustNotBeNegative: () => string
+			discoveryPriorityMustBeValidNumber: () => string
+			discoveryPriorityMustBeInteger: () => string
 		}
 		loading: () => string
 	}
@@ -22,6 +25,47 @@ export interface AppTranslation {
 			description: () => string
 			enterCollectionDescription: () => string
 			formValidationErrors: () => string
+		}
+	}
+	card: {
+		form: {
+			createCard: () => string
+			editCard: () => string
+			submit: () => string
+			cardId: () => string
+			enterCardId: () => string
+			questionContent: () => string
+			enterQuestionContent: () => string
+			answerContent: () => string
+			enterAnswerContent: () => string
+			discoveryPriority: () => string
+			enterDiscoveryPriority: () => string
+			formValidationErrors: () => string
+		}
+	}
+	auth: {
+		login: {
+			submit: () => string
+			username: () => string
+			enterUsername: () => string
+			password: () => string
+			enterPassword: () => string
+			formValidationErrors: () => string
+			submissionError: () => string
+			unexpectedError: () => string
+		}
+		register: {
+			submit: () => string
+			username: () => string
+			enterUsername: () => string
+			password: () => string
+			enterPassword: () => string
+			confirmPassword: () => string
+			enterConfirmPassword: () => string
+			formValidationErrors: () => string
+			passwordsDoNotMatch: () => string
+			submissionError: () => string
+			unexpectedError: () => string
 		}
 	}
 	about: {

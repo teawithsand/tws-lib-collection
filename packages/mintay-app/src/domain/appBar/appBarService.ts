@@ -3,6 +3,8 @@ import {
 	AppBarAction,
 	AppBarDrawerItem,
 	AppBarMoreAction,
+	AppBarNavigationButtonType,
+	AppBarNavigationConfig,
 } from "@/components/appBar/appBarTypes"
 import { atom } from "@teawithsand/fstate"
 
@@ -12,6 +14,7 @@ export interface AppBarState {
 	moreActions: AppBarMoreAction[]
 	drawerItems: AppBarDrawerItem[]
 	drawerTitle: AppTransString
+	navigationConfig: AppBarNavigationConfig
 }
 
 export type AppBarMutator = (state: Readonly<AppBarState>) => AppBarState
@@ -31,6 +34,9 @@ export class AppBarService {
 		moreActions: [],
 		drawerItems: [],
 		drawerTitle: (t) => t.appBar.navigation(),
+		navigationConfig: {
+			buttonType: AppBarNavigationButtonType.DRAWER,
+		},
 	})
 	private _sequenceCounter = 0
 
