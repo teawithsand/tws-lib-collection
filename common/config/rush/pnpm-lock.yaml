@@ -10,60 +10,8 @@ importers:
 
   .: {}
 
-  ../../packages/blob-store:
-    dependencies:
-      idb:
-        specifier: ^8.0.3
-        version: 8.0.3
-    devDependencies:
-      '@stryker-mutator/vitest-runner':
-        specifier: ~9.0.1
-        version: 9.0.1(@stryker-mutator/core@9.0.1(@types/node@22.15.21))(vitest@3.2.4)
-      '@typescript-eslint/parser':
-        specifier: ^8.32.0
-        version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
-      '@vitest/coverage-istanbul':
-        specifier: ~3.2.4
-        version: 3.2.4(vitest@3.2.4)
-      eslint:
-        specifier: ^9.26.0
-        version: 9.27.0
-      eslint-plugin-unused-imports:
-        specifier: ^4.1.4
-        version: 4.1.4(@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)
-      fake-indexeddb:
-        specifier: ^6.0.1
-        version: 6.0.1
-      globals:
-        specifier: ^16.1.0
-        version: 16.1.0
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
-      prettier:
-        specifier: ^3.5.3
-        version: 3.5.3
-      prettier-plugin-organize-imports:
-        specifier: ^4.1.0
-        version: 4.1.0(prettier@3.5.3)(typescript@5.8.3)
-      rimraf:
-        specifier: ~6.0.1
-        version: 6.0.1
-      typescript:
-        specifier: ^5.8.3
-        version: 5.8.3
-      typescript-eslint:
-        specifier: ^8.32.0
-        version: 8.32.1(eslint@9.27.0)(typescript@5.8.3)
-      vitest:
-        specifier: 3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.15.21)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(jsdom@26.1.0)(sass-embedded@1.89.1)(sugarss@4.0.1(postcss@8.5.4))(terser@5.43.1)(tsx@4.20.3)
-
   ../../packages/booklibr:
     dependencies:
-      '@teawithsand/blob-store':
-        specifier: workspace:*
-        version: link:../blob-store
       '@teawithsand/lngext':
         specifier: workspace:*
         version: link:../lngext
@@ -128,6 +76,9 @@ importers:
       '@teawithsand/reserd':
         specifier: workspace:*
         version: link:../reserd
+      idb:
+        specifier: ~8.0.3
+        version: 8.0.3
       immer:
         specifier: ^10.1.1
         version: 10.1.1

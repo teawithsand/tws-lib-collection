@@ -1,26 +1,22 @@
+import type { SerializerReverse } from "@teawithsand/reserd"
 import type { ObjectStore } from "./objectStore"
 
 /**
  * OPFS-based implementation of ObjectStore (non-atomic).
- * All methods are NIY (Not Implemented Yet).
  */
 export class OpfsObjectStore<Header> implements ObjectStore<Header> {
 	private folder
-	private serializeHeader
-	private deserializeHeader
+	private headerSerializer
 
 	constructor({
 		folder,
-		serializeHeader,
-		deserializeHeader,
+		headerSerializer,
 	}: {
 		folder: FileSystemDirectoryHandle
-		serializeHeader: (header: Header) => ArrayBuffer | Blob
-		deserializeHeader: (data: Blob) => Header
+		headerSerializer: SerializerReverse<Header, ArrayBuffer | Blob>
 	}) {
 		this.folder = folder
-		this.serializeHeader = serializeHeader
-		this.deserializeHeader = deserializeHeader
+		this.headerSerializer = headerSerializer
 	}
 
 	public readonly getBlob = async (key: string): Promise<Blob | null> => {
@@ -73,7 +69,7 @@ export class OpfsObjectStore<Header> implements ObjectStore<Header> {
 			const dir = await this.folder.getDirectoryHandle(key)
 			const fileHandle = await dir.getFileHandle("header")
 			const file = await fileHandle.getFile()
-			return this.deserializeHeader(file)
+			return this.headerSerializer.deserialize(file)
 		} catch (e) {
 			if (e instanceof DOMException && e.name === "NotFoundError")
 				return null
@@ -109,7 +105,7 @@ export class OpfsObjectStore<Header> implements ObjectStore<Header> {
 		}
 		const fileHandle = await dir.getFileHandle("header", { create: true })
 		const writable = await fileHandle.createWritable()
-		await writable.write(this.serializeHeader(header))
+		await writable.write(this.headerSerializer.serialize(header))
 		await writable.close()
 	}
 

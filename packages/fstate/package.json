@@ -44,7 +44,8 @@
     "jotai": "^2.12.4",
     "jotai-immer": "^0.4.1",
     "@teawithsand/lngext": "workspace:*",
-    "@teawithsand/reserd": "workspace:*"
+    "@teawithsand/reserd": "workspace:*",
+    "idb": "~8.0.3"
   },
   "peerDependencies": {
     "zod": "~3.25.67"

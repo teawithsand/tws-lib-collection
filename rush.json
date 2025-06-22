@@ -336,10 +336,6 @@
       "projectFolder": "packages/fstate"
     },
     {
-      "packageName": "@teawithsand/blob-store",
-      "projectFolder": "packages/blob-store"
-    },
-    {
       "packageName": "@teawithsand/mintay-core",
       "projectFolder": "packages/mintay-core"
     },

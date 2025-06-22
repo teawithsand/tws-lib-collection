@@ -42,7 +42,6 @@
     "jotai": "^2.12.4",
     "jotai-immer": "^0.4.1",
     "zod": "~3.25.67",
-    "@teawithsand/blob-store": "workspace:*",
     "@teawithsand/lngext": "workspace:*",
     "@teawithsand/reserd": "workspace:*"
   }
