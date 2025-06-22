@@ -10,12 +10,12 @@ describe("TextBufferEncoder", () => {
 		const emptyBuffer = new ArrayBuffer(0)
 
 		// Act
-		const encodedFromBuffer = encoder.encode(emptyBuffer)
-		const decodedToBuffer = encoder.decode(emptyString)
+		const encodedBuffer = encoder.encode(emptyString)
+		const decodedString = encoder.decode(emptyBuffer)
 
 		// Assert
-		expect(encodedFromBuffer).toBe("")
-		expect(decodedToBuffer.byteLength).toBe(0)
+		expect(encodedBuffer.byteLength).toBe(0)
+		expect(decodedString).toBe("")
 	})
 
 	test("should encode and decode basic ASCII text", () => {
@@ -24,14 +24,14 @@ describe("TextBufferEncoder", () => {
 		const expectedBuffer = new TextEncoder().encode(text).buffer
 
 		// Act
-		const encodedString = encoder.encode(expectedBuffer)
-		const decodedBuffer = encoder.decode(text)
+		const encodedBuffer = encoder.encode(text)
+		const decodedString = encoder.decode(expectedBuffer)
 
 		// Assert
-		expect(encodedString).toBe(text)
-		expect(new Uint8Array(decodedBuffer)).toEqual(
+		expect(new Uint8Array(encodedBuffer)).toEqual(
 			new Uint8Array(expectedBuffer),
 		)
+		expect(decodedString).toBe(text)
 	})
 
 	test("should handle Unicode characters correctly", () => {
@@ -40,14 +40,14 @@ describe("TextBufferEncoder", () => {
 		const expectedBuffer = new TextEncoder().encode(unicodeText).buffer
 
 		// Act
-		const encodedString = encoder.encode(expectedBuffer)
-		const decodedBuffer = encoder.decode(unicodeText)
+		const encodedBuffer = encoder.encode(unicodeText)
+		const decodedString = encoder.decode(expectedBuffer)
 
 		// Assert
-		expect(encodedString).toBe(unicodeText)
-		expect(new Uint8Array(decodedBuffer)).toEqual(
+		expect(new Uint8Array(encodedBuffer)).toEqual(
 			new Uint8Array(expectedBuffer),
 		)
+		expect(decodedString).toBe(unicodeText)
 	})
 
 	test("should handle complex Unicode with various scripts", () => {
@@ -57,14 +57,14 @@ describe("TextBufferEncoder", () => {
 		const expectedBuffer = new TextEncoder().encode(complexUnicode).buffer
 
 		// Act
-		const encodedString = encoder.encode(expectedBuffer)
-		const decodedBuffer = encoder.decode(complexUnicode)
+		const encodedBuffer = encoder.encode(complexUnicode)
+		const decodedString = encoder.decode(expectedBuffer)
 
 		// Assert
-		expect(encodedString).toBe(complexUnicode)
-		expect(new Uint8Array(decodedBuffer)).toEqual(
+		expect(new Uint8Array(encodedBuffer)).toEqual(
 			new Uint8Array(expectedBuffer),
 		)
+		expect(decodedString).toBe(complexUnicode)
 	})
 
 	test("should handle special Unicode characters and symbols", () => {
@@ -73,14 +73,14 @@ describe("TextBufferEncoder", () => {
 		const expectedBuffer = new TextEncoder().encode(specialChars).buffer
 
 		// Act
-		const encodedString = encoder.encode(expectedBuffer)
-		const decodedBuffer = encoder.decode(specialChars)
+		const encodedBuffer = encoder.encode(specialChars)
+		const decodedString = encoder.decode(expectedBuffer)
 
 		// Assert
-		expect(encodedString).toBe(specialChars)
-		expect(new Uint8Array(decodedBuffer)).toEqual(
+		expect(new Uint8Array(encodedBuffer)).toEqual(
 			new Uint8Array(expectedBuffer),
 		)
+		expect(decodedString).toBe(specialChars)
 	})
 
 	test("should handle newlines and whitespace", () => {
@@ -92,14 +92,14 @@ describe("TextBufferEncoder", () => {
 		).buffer
 
 		// Act
-		const encodedString = encoder.encode(expectedBuffer)
-		const decodedBuffer = encoder.decode(textWithWhitespace)
+		const encodedBuffer = encoder.encode(textWithWhitespace)
+		const decodedString = encoder.decode(expectedBuffer)
 
 		// Assert
-		expect(encodedString).toBe(textWithWhitespace)
-		expect(new Uint8Array(decodedBuffer)).toEqual(
+		expect(new Uint8Array(encodedBuffer)).toEqual(
 			new Uint8Array(expectedBuffer),
 		)
+		expect(decodedString).toBe(textWithWhitespace)
 	})
 
 	test("should be reversible for all operations", () => {
@@ -107,8 +107,8 @@ describe("TextBufferEncoder", () => {
 		const originalText = "Reversibility test: 可逆性测试 🔄⚡"
 
 		// Act
-		const buffer = encoder.decode(originalText)
-		const reconstructedText = encoder.encode(buffer)
+		const buffer = encoder.encode(originalText)
+		const reconstructedText = encoder.decode(buffer)
 
 		// Assert
 		expect(reconstructedText).toBe(originalText)
@@ -120,14 +120,14 @@ describe("TextBufferEncoder", () => {
 		const expectedBuffer = new TextEncoder().encode(largeText).buffer
 
 		// Act
-		const encodedString = encoder.encode(expectedBuffer)
-		const decodedBuffer = encoder.decode(largeText)
+		const encodedBuffer = encoder.encode(largeText)
+		const decodedString = encoder.decode(expectedBuffer)
 
 		// Assert
-		expect(encodedString).toBe(largeText)
-		expect(new Uint8Array(decodedBuffer)).toEqual(
+		expect(new Uint8Array(encodedBuffer)).toEqual(
 			new Uint8Array(expectedBuffer),
 		)
+		expect(decodedString).toBe(largeText)
 	})
 
 	test("should produce consistent results for the same input", () => {
@@ -135,10 +135,10 @@ describe("TextBufferEncoder", () => {
 		const testText = "Consistency test: 一致性测试 🔄"
 
 		// Act
-		const buffer1 = encoder.decode(testText)
-		const buffer2 = encoder.decode(testText)
-		const text1 = encoder.encode(buffer1)
-		const text2 = encoder.encode(buffer2)
+		const buffer1 = encoder.encode(testText)
+		const buffer2 = encoder.encode(testText)
+		const text1 = encoder.decode(buffer1)
+		const text2 = encoder.decode(buffer2)
 
 		// Assert
 		expect(text1).toBe(text2)
