@@ -308,6 +308,10 @@
    */
   "projects": [
     {
+      "packageName": "@teawithsand/sandbox",
+      "projectFolder": "packages/sandbox"
+    },
+    {
       "packageName": "@teawithsand/mintay-backend",
       "projectFolder": "packages/mintay-backend",
     },
