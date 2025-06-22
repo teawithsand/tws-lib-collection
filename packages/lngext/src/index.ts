@@ -1,5 +1,6 @@
 export * from "./deepCopy"
 export * from "./di"
+export * from "./error"
 export * from "./flux"
 export * from "./inPlaceCall"
 export * from "./latePromise"
