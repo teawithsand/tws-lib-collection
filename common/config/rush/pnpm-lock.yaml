@@ -92,6 +92,9 @@ importers:
         specifier: ~3.25.67
         version: 3.25.67
     devDependencies:
+      '@stryker-mutator/core':
+        specifier: ~9.0.1
+        version: 9.0.1(@types/node@22.15.21)
       '@stryker-mutator/vitest-runner':
         specifier: ~9.0.1
         version: 9.0.1(@stryker-mutator/core@9.0.1(@types/node@22.15.21))(vitest@3.2.4)
