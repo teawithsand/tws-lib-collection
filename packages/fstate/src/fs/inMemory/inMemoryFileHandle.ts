@@ -2,7 +2,9 @@ import { FsErrorBadType, FsErrorNotFound } from "../defines/error"
 import { FileHandle } from "../defines/fileHandle"
 import { FileStatResult } from "../defines/fileStatResult"
 import { Path } from "../defines/path"
+import { FsWriteMode, FsWriteOptions, FsWriter } from "../defines/writer"
 import { InMemoryDirNode, InMemoryNodeUtil } from "./db"
+import { InMemoryFsWriter } from "./inMemoryFsWriter"
 
 /**
  * In-memory implementation of FileHandle.
@@ -135,5 +137,39 @@ export class InMemoryFileHandle implements FileHandle {
 			exists: true,
 			size: node.content.size,
 		}
+	}
+
+	/**
+	 * Writes contents to this file.
+	 *
+	 * @param options Write options.
+	 * @returns Writer for writing to the file.
+	 */
+	public readonly write = async (
+		options?: FsWriteOptions,
+	): Promise<FsWriter> => {
+		const node = InMemoryNodeUtil.getEntryByPath(
+			this.rootNode,
+			this.filePath,
+		)
+		if (!node || node.deleted) {
+			throw new FsErrorNotFound(
+				`File not found: ${this.filePath.toString()}`,
+			)
+		}
+		if (!InMemoryNodeUtil.isFileNode(node)) {
+			throw new FsErrorBadType(
+				`Expected file but found directory: ${this.filePath.toString()}`,
+			)
+		}
+
+		const writerOptions: { fileNode: typeof node; mode?: FsWriteMode } = {
+			fileNode: node,
+		}
+		if (options?.mode !== undefined) {
+			writerOptions.mode = options.mode
+		}
+
+		return new InMemoryFsWriter(writerOptions)
 	}
 }

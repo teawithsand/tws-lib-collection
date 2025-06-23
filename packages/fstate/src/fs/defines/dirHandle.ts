@@ -21,6 +21,8 @@ export interface DirHandle extends BaseHandle {
 	/**
 	 * Creates a subdirectory (recursive).
 	 * @param name Name of the subdirectory.
+	 *
+	 * @deprecated Use openDir instead.
 	 */
 	readonly mkdir: (name: string) => Promise<void>
 
