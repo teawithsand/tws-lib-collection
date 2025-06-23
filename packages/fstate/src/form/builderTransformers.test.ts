@@ -185,7 +185,7 @@ describe("FormAtomsBuilder - Submit Transforms", () => {
 						transformationSteps.length > 0
 							? transformationSteps[
 									transformationSteps.length - 1
-								].data.count
+								]!.data.count
 							: 10,
 				},
 			})
@@ -203,7 +203,7 @@ describe("FormAtomsBuilder - Submit Transforms", () => {
 			transformationSteps.push({
 				step: "field mapper",
 				data: {
-					name: transformationSteps[transformationSteps.length - 1]
+					name: transformationSteps[transformationSteps.length - 1]!
 						.data.name,
 					count: result,
 				},

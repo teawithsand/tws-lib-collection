@@ -78,7 +78,7 @@ describe("FormZodValidatorFactory", () => {
 			formData: { email: "", age: 0, name: "" } as TestFormData,
 		})
 		const schema = createTestSchema()
-		const store = createStore()
+
 		const formDataAtom = atom<TestFormData>({
 			email: "test@example.com",
 			age: 25,

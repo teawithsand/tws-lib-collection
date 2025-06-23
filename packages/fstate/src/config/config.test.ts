@@ -242,11 +242,6 @@ describe("Config", () => {
 
 		await storage.set("testField", "invalid-data")
 
-		const config = ConfigImpl.builder<{ testField: string }>()
-			.addField("testField", "default", stringSerializer)
-			.setStorage(storage)
-			.build({ store })
-
 		const corruptedSerializer = {
 			serialize: (value: string) => value,
 			deserialize: (stored: unknown) => {

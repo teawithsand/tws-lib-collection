@@ -1,4 +1,4 @@
-import { Atom, atom, createStore } from "jotai"
+import { atom, createStore } from "jotai"
 import { describe, expect, test } from "vitest"
 import { z } from "zod"
 import { FormAtomsBuilder } from "./builder"
