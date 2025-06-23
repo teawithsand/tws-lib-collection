@@ -239,6 +239,11 @@ export class InMemoryDirHandle implements DirHandle {
 		path: string,
 		settings?: DirOpenSettings,
 	): Promise<DirHandle> => {
+		// Validate that path is not empty
+		if (path === "") {
+			throw new FsErrorBadType("Directory name cannot be empty")
+		}
+
 		const subDirPath = this.dirPath.join(path)
 		const existingNode = InMemoryNodeUtil.getEntryByPath(
 			this.rootNode,
