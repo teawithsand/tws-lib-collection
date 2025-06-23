@@ -1,20 +1,43 @@
-import { BaseHandle } from "./baseHandle"
-import { FileStatResult } from "./fileStatResult"
-import { FsWriteOptions, FsWriter } from "./writer"
+import { FsBaseHandle, FsHandleType } from "./baseHandle"
+import { FsWriteSettings, FsWriter } from "./writer"
+
+export enum FsFileOpenMode {
+	READ = "read",
+	READ_WRITE = "read-write",
+}
+
+/**
+ * Result of stat operation for a file.
+ */
+export type FileStatResult =
+	| {
+			exists: true
+			size: number
+	  }
+	| {
+			exists: false
+			size: 0
+	  }
 
 /**
  * Handle for an open file.
  */
-export interface FileHandle extends BaseHandle {
+export interface FsFileHandle extends FsBaseHandle {
+	readonly type: FsHandleType.FILE
+
+	/**
+	 * Mode that this handle was created with.
+	 *
+	 * Contents of this handle are purely for guidance and may not be accurate.
+	 *
+	 * If writing works on read only handle, it's OK as far as this type is concerned.
+	 */
+	readonly openMode: FsFileOpenMode
+
 	/**
 	 * Checks if the file exists.
 	 */
 	readonly exists: () => Promise<boolean>
-
-	/**
-	 * Reads the entire file as a Uint8Array.
-	 */
-	readonly read: () => Promise<Uint8Array>
 
 	/**
 	 * Gets a File object representing the file.
@@ -37,5 +60,5 @@ export interface FileHandle extends BaseHandle {
 	 * @param options Write options.
 	 * @returns Writer for writing to the file.
 	 */
-	readonly write: (options?: FsWriteOptions) => Promise<FsWriter>
+	readonly write: (options?: FsWriteSettings) => Promise<FsWriter>
 }

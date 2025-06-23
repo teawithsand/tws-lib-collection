@@ -59,7 +59,7 @@ export class Path {
 	 */
 	public readonly toString = (): string => {
 		if (this.segments.length === 0) {
-			return "."
+			return ""
 		}
 
 		return this.segments.join("/")

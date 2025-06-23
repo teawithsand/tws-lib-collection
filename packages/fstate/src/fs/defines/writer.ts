@@ -3,9 +3,9 @@ export enum FsWriteMode {
 	OVERWRITE = "overwrite",
 }
 
-export interface FsWriteOptions {
+export interface FsWriteSettings {
 	/**
-	 * Defaults to `FsWriteMode.OVERWRITE`
+	 * @default FsWriteMode.OVERWRITE
 	 */
 	mode?: FsWriteMode
 }

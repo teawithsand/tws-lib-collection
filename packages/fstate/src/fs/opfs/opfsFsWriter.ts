@@ -1,69 +1,80 @@
-import { FsWriteMode, FsWriteOptions, FsWriter } from "../defines/writer"
+import { FsWriteMode, FsWriter, FsWriteSettings } from "../defines/writer"
+import { OpfsErrorUtil } from "./opfsError"
 
 /**
- * OPFS implementation of FsWriter.
- *
- * Uses FileSystemWritableFileStream to write data to OPFS files.
- * The stream is created when the writer is instantiated and closed when close() is called.
+ * OPFS implementation of FsWriter for writing files using the FileSystemWritableFileStream API.
  */
 export class OpfsFsWriter implements FsWriter {
-	private readonly fileHandle: FileSystemFileHandle
-	private readonly mode: FsWriteMode
-	private writableStream: FileSystemWritableFileStream | null = null
+	private readonly stream: FileSystemWritableFileStream
 	private closed = false
 
-	public constructor({
-		fileHandle,
-		options,
-	}: {
-		fileHandle: FileSystemFileHandle
-		options?: FsWriteOptions
-	}) {
-		this.fileHandle = fileHandle
-		this.mode = options?.mode ?? FsWriteMode.OVERWRITE
+	/**
+	 * @param stream FileSystemWritableFileStream to write to
+	 * @param settings Optional write settings
+	 * @param fileSize Optional file size (required for append mode)
+	 */
+	public constructor(stream: FileSystemWritableFileStream) {
+		this.stream = stream
 	}
 
 	/**
-	 * Writes data to the file. Creates the writable stream on first write.
+	 * Writes data to the file. In append mode, seeks to the end before the first write only.
+	 * @param data Data to write (ArrayBuffer or Blob)
 	 */
 	public readonly write = async (data: ArrayBuffer | Blob): Promise<void> => {
-		if (this.closed) {
-			throw new Error("Cannot write to a closed writer")
+		if (this.closed) throw new Error("Writer is already closed")
+		try {
+			await this.stream.write(data)
+		} catch (e) {
+			throw OpfsErrorUtil.convertToFsError(
+				e,
+				"Failed to write data to file",
+			)
 		}
-
-		// Create writable stream on first write
-		if (!this.writableStream) {
-			this.writableStream = await this.fileHandle.createWritable({
-				keepExistingData: this.mode === FsWriteMode.APPEND,
-			})
-
-			// If appending, seek to the end of the file
-			if (this.mode === FsWriteMode.APPEND) {
-				try {
-					const file = await this.fileHandle.getFile()
-					await this.writableStream.seek(file.size)
-				} catch {
-					// If we can't get file size, we'll just write at current position
-				}
-			}
-		}
-
-		await this.writableStream.write(data)
 	}
 
 	/**
-	 * Closes the writer and commits all writes to the file.
+	 * Closes the writer and underlying stream.
 	 */
 	public readonly close = async (): Promise<void> => {
-		if (this.closed) {
-			return
+		if (this.closed) return
+		try {
+			await this.stream.close()
+		} catch (e) {
+			throw OpfsErrorUtil.convertToFsError(
+				e,
+				"Failed to close file writer",
+			)
 		}
-
 		this.closed = true
+	}
 
-		if (this.writableStream) {
-			await this.writableStream.close()
-			this.writableStream = null
+	/**
+	 * Creates an OpfsFsWriter for a given FileSystemFileHandle.
+	 * @param handle FileSystemFileHandle to write to
+	 * @param settings Optional write settings
+	 * @returns OpfsFsWriter instance
+	 */
+	public static readonly fromFileHandle = async (
+		handle: FileSystemFileHandle,
+		settings: FsWriteSettings = {},
+	): Promise<OpfsFsWriter> => {
+		const mode = settings.mode ?? FsWriteMode.OVERWRITE
+		let stream: FileSystemWritableFileStream
+		try {
+			stream = await handle.createWritable({
+				keepExistingData: mode === FsWriteMode.APPEND,
+			})
+			if (mode === FsWriteMode.APPEND) {
+				const file = await handle.getFile()
+				await stream.seek(file.size)
+			}
+		} catch (e) {
+			throw OpfsErrorUtil.convertToFsError(
+				e,
+				"Failed to create writable file stream",
+			)
 		}
+		return new OpfsFsWriter(stream)
 	}
 }

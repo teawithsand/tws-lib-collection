@@ -1,1 +1,1 @@
-export * from "./inMemoryFs"
+export * from "./fs"

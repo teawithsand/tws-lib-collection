@@ -1,1 +1,1 @@
-export * from "./opfsFs.js"
+export * from "./fs"

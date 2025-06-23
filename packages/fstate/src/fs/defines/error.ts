@@ -6,6 +6,7 @@ export const FsErrorAccessDenied = Errors.makeErrorType(
 	"FsErrorAccessDenied",
 	FsError,
 )
+export const FsErrorBadPath = Errors.makeErrorType("FsErrorBadPath", FsError)
 export const FsErrorNotFound = Errors.makeErrorType("FsErrorNotFound", FsError)
 
 export const FsErrorAlreadyExists = Errors.makeErrorType(
@@ -30,21 +31,6 @@ export const FsErrorNoModificationAllowed = Errors.makeErrorType(
 
 export const FsErrorInvalidState = Errors.makeErrorType(
 	"FsErrorInvalidState",
-	FsError,
-)
-
-export const FsErrorSecurity = Errors.makeErrorType("FsErrorSecurity", FsError)
-
-export const FsErrorNetwork = Errors.makeErrorType("FsErrorNetwork", FsError)
-
-export const FsErrorAbort = Errors.makeErrorType("FsErrorAbort", FsError)
-
-export const FsErrorTimeout = Errors.makeErrorType("FsErrorTimeout", FsError)
-
-export const FsErrorEncoding = Errors.makeErrorType("FsErrorEncoding", FsError)
-
-export const FsErrorDataClone = Errors.makeErrorType(
-	"FsErrorDataClone",
 	FsError,
 )
 

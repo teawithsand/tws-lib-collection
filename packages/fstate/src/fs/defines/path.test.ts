@@ -12,7 +12,7 @@ describe("Path", () => {
 
 	test("should handle empty path as current directory", () => {
 		const path = new Path("")
-		expect(path.toString()).toBe(".")
+		expect(path.toString()).toBe("")
 	})
 
 	test("should join segments correctly", () => {

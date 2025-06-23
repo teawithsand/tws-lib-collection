@@ -1,6 +1,6 @@
 import { Fs } from "../defines/fs"
-import { InMemoryFs } from "../inMemory"
-import { OpfsFs } from "../opfs"
+import { InMemoryFs } from "../inMemory/fs"
+import { OpfsFs } from "../opfs/fs"
 
 /**
  * Available file system types for testing.
@@ -102,6 +102,7 @@ const createOpfsTestFs = async (): Promise<TestFs> => {
 		create: true,
 	})
 
+	// Import OPFS implementation
 	const fs = new OpfsFs(testDirectory)
 
 	return {
