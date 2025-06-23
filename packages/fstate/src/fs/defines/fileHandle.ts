@@ -1,9 +1,10 @@
+import { BaseHandle } from "./baseHandle"
 import { FileStatResult } from "./fileStatResult"
 
 /**
  * Handle for an open file.
  */
-export interface FileHandle {
+export interface FileHandle extends BaseHandle {
 	/**
 	 * Checks if the file exists.
 	 */
@@ -15,20 +16,9 @@ export interface FileHandle {
 	readonly read: () => Promise<Uint8Array>
 
 	/**
-	 * Writes data to the file, replacing if exists.
-	 * @param data Data to write.
-	 */
-	readonly write: (data: Uint8Array) => Promise<void>
-
-	/**
 	 * Gets a File object representing the file.
 	 */
 	readonly getFile: () => Promise<File>
-
-	/**
-	 * Opens a writable stream for the file.
-	 */
-	readonly openWriteStream: () => Promise<WritableStream<Uint8Array>>
 
 	/**
 	 * Deletes the file.

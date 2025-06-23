@@ -1,3 +1,4 @@
+import { BaseHandle } from "./baseHandle"
 import { DirOpenSettings } from "./dirOpenSettings"
 import { FileHandle } from "./fileHandle"
 import { FileOpenSettings } from "./fileOpenSettings"
@@ -6,7 +7,7 @@ import { FsEntry } from "./fsEntry"
 /**
  * Handle for an open directory.
  */
-export interface DirHandle {
+export interface DirHandle extends BaseHandle {
 	/**
 	 * Checks if the directory exists.
 	 */

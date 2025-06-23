@@ -6,3 +6,9 @@ export const FsErrorAccessDenied = Errors.makeErrorType(
 	"FsErrorAccessDenied",
 	FsError,
 )
+export const FsErrorNotFound = Errors.makeErrorType("FsErrorNotFound", FsError)
+
+export const FsErrorAlreadyExists = Errors.makeErrorType(
+	"FsErrorAlreadyExists",
+	FsError,
+)
