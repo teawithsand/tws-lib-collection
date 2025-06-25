@@ -113,6 +113,9 @@ importers:
       fake-indexeddb:
         specifier: ~6.0.1
         version: 6.0.1
+      fast-check:
+        specifier: ~4.1.1
+        version: 4.1.1
       globals:
         specifier: ^16.1.0
         version: 16.1.0
