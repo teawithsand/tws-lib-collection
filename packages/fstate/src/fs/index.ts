@@ -1,3 +1,4 @@
 export * from "./defines"
+export * from "./indexedDb"
 export * from "./inMemory"
 export * from "./opfs"

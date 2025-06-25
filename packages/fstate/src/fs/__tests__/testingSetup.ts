@@ -1,6 +1,6 @@
 import { Fs } from "../defines/fs"
 import { InMemoryFs } from "../inMemory/fs"
-import { IndexedDbFs } from "../indexedb/fs"
+import { IndexedDbFs } from "../indexedDb/fs"
 import { OpfsFs } from "../opfs/fs"
 
 /**
