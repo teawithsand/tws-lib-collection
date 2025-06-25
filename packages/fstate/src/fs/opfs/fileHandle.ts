@@ -1,4 +1,5 @@
 import { FsHandleType } from "../defines/baseHandle"
+import { FsErrorNotFound } from "../defines/error"
 import {
 	FileStatResult,
 	FsFileHandle,
@@ -49,7 +50,22 @@ export class OpfsFileHandle implements FsFileHandle {
 	}
 
 	public readonly getFile = async (): Promise<File> => {
-		return await this.handle.getFile()
+		try {
+			return await this.handle.getFile()
+		} catch (error) {
+			throw OpfsErrorUtil.convertToFsError(error, "Failed to get file")
+		}
+	}
+
+	public readonly getFileOrNull = async (): Promise<File | null> => {
+		try {
+			return await this.handle.getFile()
+		} catch (error) {
+			if (OpfsErrorUtil.isNotFoundError(error)) {
+				return null
+			}
+			throw OpfsErrorUtil.convertToFsError(error, "Failed to get file")
+		}
 	}
 
 	/**

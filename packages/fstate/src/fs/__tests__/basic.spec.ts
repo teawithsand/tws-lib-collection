@@ -1,3 +1,4 @@
+import { Blobs } from "@teawithsand/lngext"
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
 import {
 	Fs,
@@ -658,7 +659,66 @@ fsTypes.forEach((fsType) => {
 			})
 		})
 
-		describe("file read and write", () => {
+		describe("getFile", () => {
+			test("gets empty file when file was just created", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				const file = await root.openFile(Path.from("nonexistent.txt"), {
+					create: true,
+				})
+
+				// Act
+				const content = await file.getFile()
+
+				// Assert
+				expect(content.size).toBe(0)
+			})
+
+			test("throws when file does not exist", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				const file = await root.openFile(Path.from("nonexistent.txt"), {
+					create: true,
+				})
+				await file.delete()
+
+				// Act & Assert
+				await expect(file.getFile()).rejects.toThrow(FsErrorNotFound)
+			})
+		})
+
+		describe("getFileOrNull", () => {
+			test("gets empty file when file was just created", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				const file = await root.openFile(Path.from("nonexistent.txt"), {
+					create: true,
+				})
+
+				// Act
+				const content = await file.getFileOrNull()
+
+				// Assert
+				expect(content?.size).toBe(0)
+			})
+
+			test("returns null when file does not exist", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				const file = await root.openFile(Path.from("nonexistent.txt"), {
+					create: true,
+				})
+				await file.delete()
+
+				// Act
+				const data = await file.getFileOrNull()
+
+				// Assert
+				expect(data).toBe(null)
+			})
+		})
+
+		describe("file write", () => {
 			test.each([
 				[FsWriteMode.OVERWRITE, true],
 				[FsWriteMode.OVERWRITE, false],

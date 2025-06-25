@@ -40,9 +40,18 @@ export interface FsFileHandle extends FsBaseHandle {
 	readonly exists: () => Promise<boolean>
 
 	/**
-	 * Gets a File object representing the file.
+	 * Gets a File object representing the file. Throws an error if the file does not exist.
+	 *
+	 * @throws Error when file does not exist.
 	 */
 	readonly getFile: () => Promise<File>
+
+	/**
+	 * Gets a File object representing the file.  Does not throw when file does not exist. Returns null instead.
+	 *
+	 * @throws When file exists, but there is some issue with it.
+	 */
+	readonly getFileOrNull: () => Promise<File | null>
 
 	/**
 	 * Deletes the file.

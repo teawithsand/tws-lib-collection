@@ -1,4 +1,5 @@
 import { FsHandleType } from "../defines/baseHandle"
+import { FsErrorNotFound } from "../defines/error"
 import {
 	FileStatResult,
 	FsFileHandle,
@@ -42,7 +43,16 @@ export class IndexedDbFileHandle implements FsFileHandle {
 	public readonly getFile = async (): Promise<File> => {
 		const entry = await this.handle.read()
 		if (!entry || entry.type !== FsHandleType.FILE) {
-			throw new Error("File does not exist.")
+			throw new FsErrorNotFound("File does not exist.")
+		}
+		// IndexedDB Blob to File conversion for compatibility
+		return new File([entry.content], this.name)
+	}
+
+	public readonly getFileOrNull = async (): Promise<File | null> => {
+		const entry = await this.handle.read()
+		if (!entry || entry.type !== FsHandleType.FILE) {
+			return null
 		}
 		// IndexedDB Blob to File conversion for compatibility
 		return new File([entry.content], this.name)
