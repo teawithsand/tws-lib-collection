@@ -95,4 +95,77 @@ describe("OPFS handle recreation", () => {
 		// Clean up
 		await root.removeEntry(dirName, { recursive: true })
 	})
+
+	test("removeEntry throws when file has an active (not closed) writer", async () => {
+		const root = await getOPFSRoot()
+		const fileName = "active-writer.txt"
+
+		// Create file and open a writable stream
+		const fileHandle = await root.getFileHandle(fileName, { create: true })
+		const writable = await fileHandle.createWritable()
+		await writable.write("test data")
+
+		// Try to delete the file while the writer is still open
+		// This behavior may vary by browser, but spec-compliant implementations should throw
+		let threw = false
+		try {
+			await root.removeEntry(fileName)
+		} catch (e) {
+			threw = true
+			expect(e).toBeDefined()
+		}
+
+		expect(threw).toBe(true)
+
+		// Clean up: close writer and delete the file
+		await writable.close()
+		await root.removeEntry(fileName)
+	})
+
+	test.each([
+		[false, true],
+		[false, false],
+		[true, true],
+		[true, false],
+	])(
+		"last-close-wins (keepExistingData=%s): isWriterOneClosesFirst=%s",
+		async (keepExistingData, isWriterOneClosesFirst) => {
+			// Arrange
+			const root = await getOPFSRoot()
+			const fileName = `concurrent-writers-${keepExistingData ? "append" : "overwrite"}.txt`
+			const fileHandle = await root.getFileHandle(fileName, {
+				create: true,
+			})
+
+			// Act
+			const writer1 = await fileHandle.createWritable({
+				keepExistingData,
+			})
+			const writer2 = await fileHandle.createWritable({
+				keepExistingData,
+			})
+			const writerOneContent = "first"
+			const writerTwoContent = "second1234567890"
+			await writer1.write(writerOneContent)
+			await writer2.write(writerTwoContent)
+
+			if (isWriterOneClosesFirst) {
+				await writer1.close()
+				await writer2.close()
+			} else {
+				await writer2.close()
+				await writer1.close()
+			}
+
+			// Assert
+			const file = await fileHandle.getFile()
+			const text = await file.text()
+			const expectedContent = isWriterOneClosesFirst
+				? writerTwoContent
+				: writerOneContent
+			expect(text).toBe(expectedContent)
+
+			await root.removeEntry(fileName)
+		},
+	)
 })

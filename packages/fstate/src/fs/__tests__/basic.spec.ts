@@ -660,6 +660,53 @@ fsTypes.forEach((fsType) => {
 
 		describe("file read and write", () => {
 			test.each([
+				[FsWriteMode.OVERWRITE, true],
+				[FsWriteMode.OVERWRITE, false],
+				[FsWriteMode.APPEND, true],
+				[FsWriteMode.APPEND, false],
+			])(
+				"last-close-wins (mode=%s): isWriterOneClosesFirst=%s",
+				async (writeMode, isWriterOneClosesFirst) => {
+					// Arrange
+					const root = await fs.getRootDir()
+					const filePath = Path.from(
+						`concurrent-writers-${writeMode}.txt`,
+					)
+					const file = await root.openFile(filePath, { create: true })
+
+					// Act
+					const writer1 = await file.write({ mode: writeMode })
+					const writer2 = await file.write({ mode: writeMode })
+
+					const writerOneContent = "first"
+					const writerTwoContent = "second1234567890"
+					await writer1.write(
+						new TextEncoder().encode(writerOneContent),
+					)
+					await writer2.write(
+						new TextEncoder().encode(writerTwoContent),
+					)
+
+					if (isWriterOneClosesFirst) {
+						await writer1.close()
+						await writer2.close()
+					} else {
+						await writer2.close()
+						await writer1.close()
+					}
+
+					// Assert
+					const blob = await file.getFile()
+					const text = await blobToString(blob)
+
+					const expectedContent = isWriterOneClosesFirst
+						? writerTwoContent
+						: writerOneContent
+					expect(text).toBe(expectedContent)
+				},
+			)
+
+			test.each([
 				{},
 				{ mode: FsWriteMode.OVERWRITE },
 				{ mode: FsWriteMode.APPEND },
