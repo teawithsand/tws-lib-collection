@@ -1,4 +1,3 @@
-import { Blobs } from "@teawithsand/lngext"
 import { afterEach, beforeEach, describe, expect, test } from "vitest"
 import {
 	Fs,
@@ -876,6 +875,75 @@ fsTypes.forEach((fsType) => {
 		})
 
 		describe("deleted entries behavior", () => {
+			test("deleted entry is removed from directory listing", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				const dirOne = await root.openDir(Path.from("dir1"), {
+					create: true,
+				})
+
+				// Act
+				await dirOne.delete(false)
+
+				// Assert
+				const stat = await root.stat()
+				expect(stat.entries).toEqual([])
+			})
+
+			test.each([true, false])(
+				"deleted entry does not remove other entries",
+				async (recursive: boolean) => {
+					// Arrange
+					const root = await fs.getRootDir()
+					const dirOne = await root.openDir(Path.from("dir1"), {
+						create: true,
+					})
+					await root.openDir(Path.from("dir2"), {
+						create: true,
+					})
+					await root.openDir(Path.from("dir3"), {
+						create: true,
+					})
+
+					// Act
+					await dirOne.delete(recursive)
+
+					// Assert
+					const stat = await root.stat()
+					expect(stat.entries.map((e) => e.name).sort()).toEqual([
+						"dir2",
+						"dir3",
+					])
+				},
+			)
+
+			test("deleted entry is removed from directory listing when deleted via parent", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				const dirOne = await root.openDir(Path.from("dir1"), {
+					create: true,
+				})
+				const dirTwo = await dirOne.openDir(Path.from("dir2"), {
+					create: true,
+				})
+				const dirThree = await dirTwo.openDir(Path.from("dir3"), {
+					create: true,
+				})
+				await dirThree.openFile(Path.from("file1.txt"), {
+					create: true,
+				})
+
+				// Act
+				await dirOne.delete(true)
+
+				// Assert
+				const dirThreeStat = await dirThree.stat()
+				expect(dirThreeStat.entries).toEqual([])
+
+				const rootStat = await root.stat()
+				expect(rootStat.entries).toEqual([])
+			})
+
 			test("delete method throws when there is at least one writer active", async () => {
 				// Arrange
 				const root = await fs.getRootDir()

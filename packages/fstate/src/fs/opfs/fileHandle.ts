@@ -1,5 +1,4 @@
 import { FsHandleType } from "../defines/baseHandle"
-import { FsErrorNotFound } from "../defines/error"
 import {
 	FileStatResult,
 	FsFileHandle,

@@ -62,6 +62,23 @@ export class IndexedDbFileHandle implements FsFileHandle {
 		if (this.activeWriters.size > 0) {
 			throw new Error("Cannot delete file while there are active writers")
 		}
+
+		// Update parent directory's children list to remove this file
+		const parentPath = this.path.parent()
+		if (parentPath) {
+			const parentHandle = this.db.getHandle(parentPath)
+			const parentEntry = await parentHandle.read()
+			if (parentEntry && parentEntry.type === FsHandleType.DIR) {
+				const updatedChildren = parentEntry.children.filter(
+					(childName) => childName !== this.name,
+				)
+				await parentHandle.writeForce({
+					type: FsHandleType.DIR,
+					children: updatedChildren,
+				})
+			}
+		}
+
 		await this.handle.delete()
 	}
 
