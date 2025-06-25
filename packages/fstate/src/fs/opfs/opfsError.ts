@@ -37,7 +37,6 @@ export class OpfsErrorUtil {
 					return new FsErrorBadType(msg, e)
 				case "NotFoundError":
 					return new FsErrorNotFound(msg, e)
-				case "SecurityError":
 				case "NoModificationAllowedError":
 					return new FsErrorNoModificationAllowed(msg, e)
 				case "InvalidModificationError":

@@ -13,7 +13,7 @@ import { Path } from "../defines/path"
 import { FsWriteMode, FsWriteSettings } from "../defines/writer"
 import { createTestFs, FsType, TestFs } from "./testingSetup"
 
-const fsTypes = [FsType.IN_MEMORY, FsType.OPFS]
+const fsTypes = [FsType.IN_MEMORY, FsType.INDEXED_DB, FsType.OPFS]
 
 function blobToString(blob: Blob): Promise<string> {
 	return new Promise((resolve, reject) => {

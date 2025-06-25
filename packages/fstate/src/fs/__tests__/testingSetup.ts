@@ -1,5 +1,6 @@
 import { Fs } from "../defines/fs"
 import { InMemoryFs } from "../inMemory/fs"
+import { IndexedDbFs } from "../indexedb/fs"
 import { OpfsFs } from "../opfs/fs"
 
 /**
@@ -7,6 +8,7 @@ import { OpfsFs } from "../opfs/fs"
  */
 export enum FsType {
 	IN_MEMORY = "in-memory",
+	INDEXED_DB = "indexed-db",
 	OPFS = "opfs",
 }
 
@@ -57,6 +59,9 @@ export const createTestFs = async (type: FsType): Promise<TestFs> => {
 		case FsType.IN_MEMORY:
 			return await createInMemoryTestFs()
 
+		case FsType.INDEXED_DB:
+			return await createIndexedDbTestFs()
+
 		case FsType.OPFS:
 			return await createOpfsTestFs()
 
@@ -77,6 +82,40 @@ const createInMemoryTestFs = async (): Promise<TestFs> => {
 		release: async () => {
 			// In-memory file system doesn't need explicit cleanup
 			// Data will be garbage collected when the instance is no longer referenced
+		},
+	}
+}
+
+/**
+ * Creates an IndexedDB test file system.
+ * The cleanup function removes the entire database on release.
+ */
+const createIndexedDbTestFs = async (): Promise<TestFs> => {
+	// Create a unique database name for each test to avoid conflicts
+	const testDbName = `test-fs-${Date.now()}-${Math.random().toString(36).substring(2)}`
+
+	const fs = new IndexedDbFs({
+		dbName: testDbName,
+		storeName: "entries",
+	})
+
+	return {
+		fs,
+		release: async () => {
+			// Close the database connection first
+			fs.close()
+
+			// Delete the entire database
+			return new Promise<void>((resolve, reject) => {
+				const deleteRequest = indexedDB.deleteDatabase(testDbName)
+				deleteRequest.onsuccess = () => resolve()
+				deleteRequest.onerror = () =>
+					reject(
+						new Error(
+							`Failed to delete test database: ${deleteRequest.error?.message}`,
+						),
+					)
+			})
 		},
 	}
 }
