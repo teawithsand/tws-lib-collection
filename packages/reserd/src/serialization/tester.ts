@@ -1,4 +1,15 @@
+import {
+	BaseError,
+	DeepEqualComparator,
+	EqualComparator,
+	Errors,
+} from "@teawithsand/lngext"
 import { Serializer } from "./serializer"
+
+export const SerializerTesterError = Errors.makeErrorType(
+	"SerializerTesterError",
+	BaseError,
+)
 
 /**
  * TestData class for providing test data to SerializerTester.
@@ -86,6 +97,7 @@ export class TestData<Stored, Owned> {
 export class SerializerTester<Stored, Owned> {
 	private readonly testData: TestData<Stored, Owned>
 	private readonly serializer: Serializer<Stored, Owned>
+	private readonly equalComparator: EqualComparator<any>
 
 	/**
 	 * Creates a new SerializerTester instance
@@ -95,12 +107,15 @@ export class SerializerTester<Stored, Owned> {
 	public constructor({
 		testData,
 		serializer,
+		equalComparator = new DeepEqualComparator(),
 	}: {
 		testData: TestData<Stored, Owned>
 		serializer: Serializer<Stored, Owned>
+		equalComparator?: EqualComparator<any>
 	}) {
 		this.testData = testData
 		this.serializer = serializer
+		this.equalComparator = equalComparator
 	}
 
 	/**
@@ -113,8 +128,9 @@ export class SerializerTester<Stored, Owned> {
 			try {
 				this.serializer.serialize(owned)
 			} catch (error) {
-				throw new Error(
+				throw new SerializerTesterError(
 					`Serialization failed for owned object: ${JSON.stringify(owned)}\nError: ${error}`,
+					error,
 				)
 			}
 		}
@@ -129,8 +145,9 @@ export class SerializerTester<Stored, Owned> {
 					"Serialized owned object does not match expected stored format",
 				)
 			} catch (error) {
-				throw new Error(
+				throw new SerializerTesterError(
 					`Serialization failed for paired example: ${JSON.stringify(owned)}\nError: ${error}`,
+					error,
 				)
 			}
 		}
@@ -146,8 +163,9 @@ export class SerializerTester<Stored, Owned> {
 			try {
 				this.serializer.deserialize(stored)
 			} catch (error) {
-				throw new Error(
+				throw new SerializerTesterError(
 					`Deserialization failed for stored object: ${JSON.stringify(stored)}\nError: ${error}`,
+					error,
 				)
 			}
 		}
@@ -162,8 +180,9 @@ export class SerializerTester<Stored, Owned> {
 					"Deserialized stored object does not match expected owned format",
 				)
 			} catch (error) {
-				throw new Error(
+				throw new SerializerTesterError(
 					`Deserialization failed for paired example: ${JSON.stringify(stored)}\nError: ${error}`,
+					error,
 				)
 			}
 		}
@@ -189,8 +208,9 @@ export class SerializerTester<Stored, Owned> {
 					"Round trip Owned->Stored->Owned failed",
 				)
 			} catch (error) {
-				throw new Error(
+				throw new SerializerTesterError(
 					`Round trip Owned->Stored->Owned failed for: ${JSON.stringify(owned)}\nError: ${error}`,
+					error,
 				)
 			}
 		}
@@ -219,71 +239,16 @@ export class SerializerTester<Stored, Owned> {
 		message: string,
 	): void => {
 		try {
-			if (!this.deepEqual(actual, expected)) {
-				throw new Error(
+			if (!this.equalComparator.equals(actual, expected)) {
+				throw new SerializerTesterError(
 					`${message}\nExpected: ${JSON.stringify(expected)}\nActual: ${JSON.stringify(actual)}`,
 				)
 			}
 		} catch (error) {
-			throw new Error(`Comparison failed: ${error}`)
+			throw new SerializerTesterError(
+				`Comparison failed: ${error}`,
+				error,
+			)
 		}
-	}
-
-	/**
-	 * Performs a deep equality comparison between two values
-	 *
-	 * @param a First value to compare
-	 * @param b Second value to compare
-	 * @returns True if values are deeply equal, false otherwise
-	 */
-	private readonly deepEqual = (a: unknown, b: unknown): boolean => {
-		// Handle NaN special case - NaN should equal NaN
-		if (Number.isNaN(a) && Number.isNaN(b)) return true
-
-		// Check if values are strictly equal
-		if (a === b) return true
-
-		// If either is null/undefined and they're not strictly equal
-		if (a == null || b == null) return false
-
-		// Check if both are objects
-		if (typeof a !== "object" || typeof b !== "object") return false
-
-		// Check if one is an array and the other is not
-		if (Array.isArray(a) !== Array.isArray(b)) return false
-
-		// Handle arrays
-		if (Array.isArray(a) && Array.isArray(b)) {
-			if (a.length !== b.length) return false
-			return a.every((item, index) => this.deepEqual(item, b[index]))
-		}
-
-		// Handle Date objects
-		if (a instanceof Date && b instanceof Date) {
-			return a.getTime() === b.getTime()
-		}
-
-		// Handle if one is Date and the other is not
-		if (
-			(a instanceof Date && !(b instanceof Date)) ||
-			(!(a instanceof Date) && b instanceof Date)
-		) {
-			return false
-		}
-
-		// Handle other objects
-		const keysA = Object.keys(a as object)
-		const keysB = Object.keys(b as object)
-
-		if (keysA.length !== keysB.length) return false
-
-		return keysA.every(
-			(key) =>
-				Object.prototype.hasOwnProperty.call(b, key) &&
-				this.deepEqual(
-					(a as Record<string, unknown>)[key],
-					(b as Record<string, unknown>)[key],
-				),
-		)
 	}
 }

@@ -1,3 +1,4 @@
+import { Timestamp } from "@teawithsand/lngext"
 import { describe, expect, test } from "vitest"
 import { Serializer } from "./serializer"
 import { SerializerTester, type TestData } from "./tester"
@@ -377,6 +378,69 @@ describe("SerializerTester", () => {
 			expect(deepEqual(NaN, undefined)).toBe(false)
 			expect(deepEqual({ value: NaN }, { value: 0 })).toBe(false)
 			expect(deepEqual([1, NaN, 3], [1, 0, 3])).toBe(false)
+		})
+
+		test("handles custom objects with equals() method correctly", () => {
+			const { deepEqual } = createTesterWithExposedDeepEqual()
+
+			// Test Timestamp objects with same values
+			const timestamp1 = Timestamp.fromNumber(1609459200000) // 2021-01-01 00:00:00 UTC
+			const timestamp2 = Timestamp.fromNumber(1609459200000) // Same timestamp
+			const timestamp3 = Timestamp.fromNumber(1609462800000) // Different timestamp (1 hour later)
+
+			expect(deepEqual(timestamp1, timestamp2)).toBe(true)
+			expect(deepEqual(timestamp1, timestamp3)).toBe(false)
+
+			// Test Timestamp objects in nested structures
+			const obj1 = {
+				id: 1,
+				createdAt: timestamp1,
+				data: {
+					updatedAt: timestamp2,
+					values: [timestamp1, timestamp3],
+				},
+			}
+
+			const obj2 = {
+				id: 1,
+				createdAt: Timestamp.fromNumber(1609459200000),
+				data: {
+					updatedAt: Timestamp.fromNumber(1609459200000),
+					values: [
+						Timestamp.fromNumber(1609459200000),
+						Timestamp.fromNumber(1609462800000),
+					],
+				},
+			}
+
+			const obj3 = {
+				id: 1,
+				createdAt: timestamp1,
+				data: {
+					updatedAt: timestamp2,
+					values: [timestamp1, timestamp1], // Different value in array
+				},
+			}
+
+			expect(deepEqual(obj1, obj2)).toBe(true)
+			expect(deepEqual(obj1, obj3)).toBe(false)
+
+			// Test that Timestamp is not equal to raw numbers or Date objects
+			expect(deepEqual(timestamp1, 1609459200000)).toBe(false)
+			expect(deepEqual(timestamp1, new Date(1609459200000))).toBe(false)
+			expect(deepEqual(timestamp1, "1609459200000")).toBe(false)
+
+			// Test arrays of Timestamps
+			const timestampArray1 = [timestamp1, timestamp2, timestamp3]
+			const timestampArray2 = [
+				Timestamp.fromNumber(1609459200000),
+				Timestamp.fromNumber(1609459200000),
+				Timestamp.fromNumber(1609462800000),
+			]
+			const timestampArray3 = [timestamp1, timestamp3, timestamp2] // Different order
+
+			expect(deepEqual(timestampArray1, timestampArray2)).toBe(true)
+			expect(deepEqual(timestampArray1, timestampArray3)).toBe(false)
 		})
 	})
 })
