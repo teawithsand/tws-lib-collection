@@ -14,7 +14,7 @@
     "test:mutate": "stryker run",
     "test": "vitest",
     "test:ss": "vitest -u",
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc --project tsconfig.prod.json",
     "build:check": "tsc --noEmit",
     "fix": "npm run format:fix && npm run lint:fix",
     "pre-commit-check": "npm run build:check && npm run lint:cached && npm run format:check:cached",
