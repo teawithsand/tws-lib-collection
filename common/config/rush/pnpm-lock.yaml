@@ -12,6 +12,9 @@ importers:
 
   ../../packages/booklibr:
     dependencies:
+      '@teawithsand/fstate':
+        specifier: workspace:*
+        version: link:../fstate
       '@teawithsand/lngext':
         specifier: workspace:*
         version: link:../lngext
