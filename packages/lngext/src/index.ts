@@ -1,4 +1,5 @@
 export * from "./blob"
+export * from "./compare"
 export * from "./deepCopy"
 export * from "./di"
 export * from "./error"
