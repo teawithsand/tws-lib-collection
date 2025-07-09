@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest"
 import { z } from "zod"
-import type { VersionedTypeDataMap } from "./types"
 import {
 	VersionedTypeDeserializer,
 	type VersionedTypeDeserializerConfig,
