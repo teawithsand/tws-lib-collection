@@ -1,6 +1,6 @@
 import { BaseError, Errors } from "@teawithsand/lngext"
 import { describe, expect, test } from "vitest"
-import { SerializedError } from "./serialize"
+import { SerializedError } from "./serializedError"
 
 describe("SerializedError", () => {
 	describe("SerializerReverse", () => {
@@ -10,7 +10,6 @@ describe("SerializedError", () => {
 
 			const result = SerializedError.serializer.serialize(serializedError)
 
-			expect(result).toEqual(serializedError.toPlainObject())
 			expect(result).toHaveProperty("type", "object")
 			expect(result).toHaveProperty("message", "Test error")
 			expect(result).toHaveProperty("name", "Error")
@@ -291,7 +290,7 @@ describe("SerializedError", () => {
 		})
 	})
 
-	describe("toPlainObject and fromPlainObject", () => {
+	describe("serializer round trip", () => {
 		test("should convert to plain object and back", () => {
 			const originalError = new BaseError(
 				"Test message",
@@ -299,8 +298,9 @@ describe("SerializedError", () => {
 			)
 			const serialized = SerializedError.fromAny(originalError)
 
-			const plainObject = serialized.toPlainObject()
-			const deserialized = SerializedError.fromPlainObject(plainObject)
+			const plainObject = SerializedError.serializer.serialize(serialized)
+			const deserialized =
+				SerializedError.serializer.deserialize(plainObject)
 
 			expect(deserialized.type).toBe(serialized.type)
 			expect(deserialized.name).toBe(serialized.name)
@@ -320,9 +320,10 @@ describe("SerializedError", () => {
 			)
 			const serialized = SerializedError.fromAny(originalError)
 
-			const json = JSON.stringify(serialized.toPlainObject())
+			const plainObject = SerializedError.serializer.serialize(serialized)
+			const json = JSON.stringify(plainObject)
 			const parsed = JSON.parse(json)
-			const deserialized = SerializedError.fromPlainObject(parsed)
+			const deserialized = SerializedError.serializer.deserialize(parsed)
 
 			expect(deserialized.type).toBe(serialized.type)
 			expect(deserialized.name).toBe(serialized.name)
@@ -332,14 +333,26 @@ describe("SerializedError", () => {
 			)
 		})
 
-		test("should throw error for invalid object in fromPlainObject", () => {
-			expect(() => SerializedError.fromPlainObject(null)).toThrow()
-			expect(() => SerializedError.fromPlainObject("invalid")).toThrow()
-			expect(() => SerializedError.fromPlainObject(123)).toThrow()
+		test("should throw error for invalid object in deserializer", () => {
+			expect(() => SerializedError.serializer.deserialize(null)).toThrow()
+			expect(() =>
+				SerializedError.serializer.deserialize("invalid"),
+			).toThrow()
+			expect(() => SerializedError.serializer.deserialize(123)).toThrow()
 		})
 
-		test("should handle empty or partial objects in fromPlainObject", () => {
-			const deserialized = SerializedError.fromPlainObject({})
+		test("should handle empty or partial objects in deserializer", () => {
+			const minimalObject = {
+				type: "unknown",
+				name: null,
+				message: "Unknown error",
+				callStack: [],
+				rawStack: null,
+				causeChain: [],
+			}
+
+			const deserialized =
+				SerializedError.serializer.deserialize(minimalObject)
 
 			expect(deserialized.type).toBe("unknown")
 			expect(deserialized.name).toBeNull()
@@ -461,6 +474,190 @@ describe("SerializedError", () => {
 
 			expect(serialized.type).toBe("function")
 			expect(serialized.message).toContain("testFunction")
+		})
+	})
+
+	describe("equals method", () => {
+		test("should return true for identical simple errors without stack", () => {
+			// Arrange
+			const plainError1 = { message: "Test error", name: "Error" }
+			const plainError2 = { message: "Test error", name: "Error" }
+
+			const error1 = SerializedError.fromAny(plainError1)
+			const error2 = SerializedError.fromAny(plainError2)
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(true)
+		})
+
+		test("should return false for different error messages", () => {
+			// Arrange
+			const plainError1 = { message: "Test error 1", name: "Error" }
+			const plainError2 = { message: "Test error 2", name: "Error" }
+
+			const error1 = SerializedError.fromAny(plainError1)
+			const error2 = SerializedError.fromAny(plainError2)
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(false)
+		})
+
+		test("should return true for same reference", () => {
+			// Arrange
+			const error1 = SerializedError.fromAny(new Error("Test error"))
+
+			// Act & Assert
+			expect(error1.equals(error1)).toBe(true)
+		})
+
+		test("should return false for errors with different stack traces", () => {
+			// Arrange - Real Error objects will have different stack traces
+			const error1 = SerializedError.fromAny(new Error("Test error"))
+			const error2 = SerializedError.fromAny(new Error("Test error"))
+
+			// Act & Assert - These should be false because stack traces differ
+			expect(error1.equals(error2)).toBe(false)
+		})
+
+		test("should return false for different error names", () => {
+			// Arrange
+			const error1 = new Error("Test error")
+			error1.name = "Error"
+			const error2 = new Error("Test error")
+			error2.name = "TypeError"
+
+			const serializedError1 = SerializedError.fromAny(error1)
+			const serializedError2 = SerializedError.fromAny(error2)
+
+			// Act & Assert
+			expect(serializedError1.equals(serializedError2)).toBe(false)
+		})
+
+		test("should return false for different error types", () => {
+			// Arrange
+			const error1 = SerializedError.fromAny("string error")
+			const error2 = SerializedError.fromAny(123)
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(false)
+		})
+
+		test("should return true for deserialized identical errors", () => {
+			// Arrange
+			const originalError = SerializedError.fromAny({
+				message: "Test error",
+				name: "Error",
+			})
+			const serializedData =
+				SerializedError.serializer.serialize(originalError)
+			const deserializedError1 =
+				SerializedError.serializer.deserialize(serializedData)
+			const deserializedError2 =
+				SerializedError.serializer.deserialize(serializedData)
+
+			// Act & Assert
+			expect(deserializedError1.equals(deserializedError2)).toBe(true)
+		})
+
+		test("should return false for different cause chain lengths", () => {
+			// Arrange
+			const error1 = SerializedError.fromAny(
+				new BaseError("Base error", new Error("Cause")),
+			)
+			const error2 = SerializedError.fromAny(new BaseError("Base error"))
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(false)
+		})
+
+		test("should return false for different cause chain content", () => {
+			// Arrange
+			const rootCause1 = { message: "Root cause 1", name: "Error" }
+			const rootCause2 = { message: "Root cause 2", name: "Error" }
+			const baseError1 = new BaseError("Base error", rootCause1)
+			const baseError2 = new BaseError("Base error", rootCause2)
+
+			const error1 = SerializedError.fromAny(baseError1)
+			const error2 = SerializedError.fromAny(baseError2)
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(false)
+		})
+
+		test("should handle null and undefined values correctly", () => {
+			// Arrange
+			const error1 = SerializedError.fromAny(null)
+			const error2 = SerializedError.fromAny(null)
+			const error3 = SerializedError.fromAny(undefined)
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(true)
+			expect(error1.equals(error3)).toBe(false)
+		})
+
+		test("should compare call stack frames correctly", () => {
+			// Arrange
+			const serializedData1 = {
+				type: "object",
+				name: "Error",
+				message: "Test error",
+				callStack: [
+					{
+						functionName: "testFunc",
+						fileName: "test.js",
+						lineNumber: 10,
+						columnNumber: 5,
+						raw: "at testFunc (test.js:10:5)",
+					},
+				],
+				rawStack: null,
+				causeChain: [],
+			}
+
+			const serializedData2 = {
+				type: "object",
+				name: "Error",
+				message: "Test error",
+				callStack: [
+					{
+						functionName: "testFunc",
+						fileName: "test.js",
+						lineNumber: 10,
+						columnNumber: 5,
+						raw: "at testFunc (test.js:10:5)",
+					},
+				],
+				rawStack: null,
+				causeChain: [],
+			}
+
+			const serializedData3 = {
+				type: "object",
+				name: "Error",
+				message: "Test error",
+				callStack: [
+					{
+						functionName: "differentFunc",
+						fileName: "test.js",
+						lineNumber: 10,
+						columnNumber: 5,
+						raw: "at differentFunc (test.js:10:5)",
+					},
+				],
+				rawStack: null,
+				causeChain: [],
+			}
+
+			const error1 =
+				SerializedError.serializer.deserialize(serializedData1)
+			const error2 =
+				SerializedError.serializer.deserialize(serializedData2)
+			const error3 =
+				SerializedError.serializer.deserialize(serializedData3)
+
+			// Act & Assert
+			expect(error1.equals(error2)).toBe(true)
+			expect(error1.equals(error3)).toBe(false)
 		})
 	})
 })

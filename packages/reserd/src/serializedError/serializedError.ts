@@ -1,6 +1,11 @@
-import { BaseError, Errors, type StackFrame } from "@teawithsand/lngext"
+import {
+	BaseError,
+	Errors,
+	type StackFrame,
+	globalEqualComparatorRegistry,
+} from "@teawithsand/lngext"
 import { z } from "zod"
-import { SerializerReverse } from "../serialization/serializer"
+import { SerializerUnknown } from "../serialization/serializer"
 
 /**
  * Zod schema for validating StackFrame objects
@@ -14,18 +19,36 @@ const stackFrameSchema = z.object({
 })
 
 /**
+ * Stored representation of StackFrame for serialization
+ */
+type StackFrameStored = z.infer<typeof stackFrameSchema>
+
+/**
  * Zod schema for validating SerializedError plain objects
  */
-const serializedErrorSchema: z.ZodType<any> = z.lazy(() =>
-	z.object({
-		type: z.string(),
-		name: z.string().nullable(),
-		message: z.string(),
-		callStack: z.array(stackFrameSchema),
-		rawStack: z.string().nullable(),
-		causeChain: z.array(serializedErrorSchema),
-	}),
+const serializedErrorStoredSchema: z.ZodType<SerializedErrorStored> = z.lazy(
+	() =>
+		z.object({
+			type: z.string(),
+			name: z.string().nullable(),
+			message: z.string(),
+			callStack: z.array(stackFrameSchema),
+			rawStack: z.string().nullable(),
+			causeChain: z.array(serializedErrorStoredSchema),
+		}),
 )
+
+/**
+ * Stored representation of SerializedError for serialization
+ */
+type SerializedErrorStored = {
+	type: string
+	name: string | null
+	message: string
+	callStack: StackFrameStored[]
+	rawStack: string | null
+	causeChain: SerializedErrorStored[]
+}
 
 /**
  * Represents a serialized error that captures all error information
@@ -54,16 +77,47 @@ export class SerializedError {
 	/**
 	 * Static serializer for converting between SerializedError and plain objects
 	 */
-	public static readonly serializer: SerializerReverse<
+	public static readonly serializer: SerializerUnknown<
 		SerializedError,
-		unknown
+		SerializedErrorStored
 	> = {
-		serialize: (owned: SerializedError): unknown => {
-			return owned.toPlainObject()
+		serialize: (owned: SerializedError): SerializedErrorStored => {
+			return {
+				type: owned.type,
+				name: owned.name,
+				message: owned.message,
+				callStack: owned.callStack,
+				rawStack: owned.rawStack,
+				causeChain: owned.causeChain.map((cause) =>
+					SerializedError.serializer.serialize(cause),
+				),
+			}
 		},
 		deserialize: (stored: unknown): SerializedError => {
-			const validated = serializedErrorSchema.parse(stored)
-			return SerializedError.fromPlainObject(validated)
+			const validated = serializedErrorStoredSchema.parse(stored)
+
+			if (!validated || typeof validated !== "object") {
+				throw new Error(
+					"Invalid object for SerializedError deserialization",
+				)
+			}
+
+			const causeChain = Array.isArray(validated.causeChain)
+				? validated.causeChain.map((cause: any) =>
+						SerializedError.serializer.deserialize(cause),
+					)
+				: []
+
+			return new SerializedError({
+				type: validated.type || "unknown",
+				name: validated.name || null,
+				message: validated.message || "Unknown error",
+				callStack: Array.isArray(validated.callStack)
+					? validated.callStack
+					: [],
+				rawStack: validated.rawStack || null,
+				causeChain,
+			})
 		},
 	}
 
@@ -153,49 +207,6 @@ export class SerializedError {
 	}
 
 	/**
-	 * Converts the serialized error to a plain object for JSON serialization.
-	 * @returns A plain object representation of the serialized error
-	 */
-	public readonly toPlainObject = (): Record<string, any> => {
-		return {
-			type: this.type,
-			name: this.name,
-			message: this.message,
-			callStack: this.callStack,
-			rawStack: this.rawStack,
-			causeChain: this.causeChain.map((cause) => cause.toPlainObject()),
-		}
-	}
-
-	/**
-	 * Creates a SerializedError from a plain object (e.g., from JSON).
-	 * @param obj - The plain object to deserialize
-	 * @returns A new SerializedError instance
-	 */
-	public static readonly fromPlainObject = (obj: any): SerializedError => {
-		if (!obj || typeof obj !== "object") {
-			throw new Error(
-				"Invalid object for SerializedError deserialization",
-			)
-		}
-
-		const causeChain = Array.isArray(obj.causeChain)
-			? obj.causeChain.map((cause: any) =>
-					SerializedError.fromPlainObject(cause),
-				)
-			: []
-
-		return new SerializedError({
-			type: obj.type || "unknown",
-			name: obj.name || null,
-			message: obj.message || "Unknown error",
-			callStack: Array.isArray(obj.callStack) ? obj.callStack : [],
-			rawStack: obj.rawStack || null,
-			causeChain,
-		})
-	}
-
-	/**
 	 * Returns a string representation of the serialized error.
 	 * @returns A formatted string representation
 	 */
@@ -258,4 +269,64 @@ export class SerializedError {
 
 		return [header, ...stackLines].join("\n")
 	}
+
+	/**
+	 * Compares this SerializedError with another for equality.
+	 * Two SerializedErrors are considered equal if all their properties match.
+	 * @param other - The other SerializedError to compare with
+	 * @returns true if both errors are equal, false otherwise
+	 */
+	public readonly equals = (other: SerializedError): boolean => {
+		if (this === other) {
+			return true
+		}
+
+		if (
+			this.type !== other.type ||
+			this.name !== other.name ||
+			this.message !== other.message ||
+			this.rawStack !== other.rawStack ||
+			this.callStack.length !== other.callStack.length ||
+			this.causeChain.length !== other.causeChain.length
+		) {
+			return false
+		}
+
+		// Compare call stack frames
+		for (let i = 0; i < this.callStack.length; i++) {
+			const thisFrame = this.callStack[i]
+			const otherFrame = other.callStack[i]
+
+			if (!thisFrame || !otherFrame) {
+				return false
+			}
+
+			if (
+				thisFrame.functionName !== otherFrame.functionName ||
+				thisFrame.fileName !== otherFrame.fileName ||
+				thisFrame.lineNumber !== otherFrame.lineNumber ||
+				thisFrame.columnNumber !== otherFrame.columnNumber ||
+				thisFrame.raw !== otherFrame.raw
+			) {
+				return false
+			}
+		}
+
+		// Compare cause chain
+		for (let i = 0; i < this.causeChain.length; i++) {
+			const thisCause = this.causeChain[i]
+			const otherCause = other.causeChain[i]
+
+			if (!thisCause || !otherCause || !thisCause.equals(otherCause)) {
+				return false
+			}
+		}
+
+		return true
+	}
 }
+
+// Register SerializedError comparator in the global registry
+globalEqualComparatorRegistry.register(SerializedError as any, {
+	equals: (a: SerializedError, b: SerializedError) => a.equals(b),
+})
