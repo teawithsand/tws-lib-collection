@@ -1,3 +1,4 @@
+import { globalEqualComparatorRegistry } from "./compare/equalComparatorRegistry"
 import { BaseError, Errors } from "./error"
 
 export const TimestampError = Errors.makeErrorType("TimestampError", BaseError)
@@ -8,6 +9,25 @@ export const TimestampError = Errors.makeErrorType("TimestampError", BaseError)
  */
 export class Timestamp {
 	private readonly value: number
+
+	/**
+	 * Serializer capable of serializing and deserializing this type.
+	 *
+	 * Unfortunately, reserd types couldn't be used here due to circular dependencies.
+	 */
+	public static readonly serializer = {
+		serialize: (timestamp: Timestamp): number => {
+			return timestamp.toNumberMillis()
+		},
+		deserialize: (value: unknown): Timestamp => {
+			if (typeof value !== "number") {
+				throw new Error(
+					`Timestamp deserialization filed. Expected number, got ${typeof value}`,
+				)
+			}
+			return Timestamp.fromNumber(value)
+		},
+	}
 
 	/**
 	 * Private constructor. Use static methods to create instances.
@@ -54,6 +74,13 @@ export class Timestamp {
 	}
 
 	/**
+	 * Returns true if the timestamp is valid (finite and non-negative).
+	 */
+	public readonly isValid = (): boolean => {
+		return Number.isFinite(this.value) && this.value >= 0
+	}
+
+	/**
 	 * Compares this timestamp to another for equality.
 	 * @param other The other Timestamp instance.
 	 */
@@ -61,3 +88,8 @@ export class Timestamp {
 		return this.value === other.value
 	}
 }
+
+// Register Timestamp comparator in the global registry
+globalEqualComparatorRegistry.register(Timestamp as any, {
+	equals: (a: Timestamp, b: Timestamp) => a.equals(b),
+})

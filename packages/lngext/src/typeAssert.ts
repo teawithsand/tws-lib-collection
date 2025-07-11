@@ -62,6 +62,11 @@ export class TypeAssert {
 	}
 }
 
+/**
+ * Constructor type for class-based types
+ */
+export type Constructor<T = {}> = new (...args: any[]) => T
+
 // See https://stackoverflow.com/questions/57683303/how-can-i-see-the-full-expanded-contract-of-a-typescript-type
 
 /**

@@ -1,11 +1,20 @@
-import { Timestamp } from "../timestamp"
 import { EqualComparator } from "./equalComparator"
+import {
+	EqualComparatorRegistry,
+	globalEqualComparatorRegistry,
+} from "./equalComparatorRegistry"
 
 /**
  * Deep equality comparator that performs recursive deep comparison.
- * Handles primitives, objects, arrays, dates, regexes, NaN values, and Timestamp instances.
+ * Handles primitives, objects, arrays, dates, regexes, NaN values etc.
+ *
+ * It also uses registry to compare custom class instances.
  */
 export class DeepEqualComparator implements EqualComparator<any> {
+	constructor(
+		private readonly registry: EqualComparatorRegistry = globalEqualComparatorRegistry,
+	) {}
+
 	/**
 	 * Performs deep equality comparison between two values.
 	 * @param a First value to compare
@@ -49,16 +58,6 @@ export class DeepEqualComparator implements EqualComparator<any> {
 			return false
 		}
 
-		// Handle Timestamp instances
-		if (a instanceof Timestamp && b instanceof Timestamp) {
-			return a.equals(b)
-		}
-
-		// Only one is Timestamp
-		if (a instanceof Timestamp || b instanceof Timestamp) {
-			return false
-		}
-
 		// Handle Date objects
 		if (a instanceof Date && b instanceof Date) {
 			return a.getTime() === b.getTime()
@@ -82,6 +81,25 @@ export class DeepEqualComparator implements EqualComparator<any> {
 		// Handle primitives that didn't pass strict equality
 		if (typeof a !== "object") {
 			return false
+		}
+
+		// Check for custom class instances using registry
+		if (
+			a.constructor &&
+			a.constructor !== Object &&
+			b.constructor &&
+			b.constructor !== Object
+		) {
+			// Both objects have the same constructor
+			if (a.constructor === b.constructor) {
+				const comparator = this.registry.get(a.constructor)
+				if (comparator) {
+					return comparator.equals(a, b)
+				}
+			} else {
+				// Different constructors
+				return false
+			}
 		}
 
 		// Check for circular references
