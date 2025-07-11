@@ -1,4 +1,7 @@
-import { SerializerReverse } from "../serialization/serializer"
+import {
+	SerializerReverse,
+	SerializerUnknown,
+} from "../serialization/serializer"
 import { VersionedStorageObject, VersionedTypeDataMap } from "./types"
 import {
 	VersionedTypeDeserializer,
@@ -105,11 +108,11 @@ export class VersionedType<TVersionedData extends VersionedTypeDataMap, TOwned>
 	}
 
 	/**
-	 * Returns a SerializerReverse with unknown stored type.
+	 * Returns a SerializerUnknown.
 	 */
-	public readonly getUnknownSerializer = (): SerializerReverse<
+	public readonly getUnknownSerializer = (): SerializerUnknown<
 		TOwned,
-		unknown
+		VersionedStorageObject<TVersionedData>
 	> => {
 		return {
 			serialize: this.serialize,
