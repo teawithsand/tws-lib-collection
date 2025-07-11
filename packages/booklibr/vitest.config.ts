@@ -6,10 +6,31 @@ export default defineConfig({
 		environment: "node",
 		coverage: {
 			reporter: ["text", "json", "html", "lcov"],
-			exclude: ["node_modules/", "test/"], 
+			exclude: ["node_modules/", "test/"],
 			provider: "istanbul",
 		},
-		include: ["src/**/*.test.ts"],
+		include: [],
 		watch: false,
+		projects: [
+			{
+				test: {
+					include: ["src/**/*.spec.ts"],
+					browser: {
+						enabled: true,
+						provider: "playwright",
+						isolate: true,
+						instances: [
+							// { browser: "chromium", headless: true },
+							{ browser: "firefox", headless: true },
+						],
+					},
+				},
+			},
+			{
+				test: {
+					include: ["src/**/*.test.ts"],
+				},
+			},
+		],
 	},
 })
