@@ -148,12 +148,21 @@ export class SerializedError {
 	 * Creates a SerializedError from any value.
 	 * Extracts as much error information as possible.
 	 * @param error - The error value to serialize
+	 * @returns A new SerializedError instance
+	 */
+	public static readonly fromAny = (error: any): SerializedError => {
+		return SerializedError.fromAnyInternal(error, new Set<any>())
+	}
+
+	/**
+	 * Internal helper method for fromAny that handles recursion tracking.
+	 * @param error - The error value to serialize
 	 * @param visited - Set of already visited errors to prevent infinite recursion
 	 * @returns A new SerializedError instance
 	 */
-	public static readonly fromAny = (
+	private static readonly fromAnyInternal = (
 		error: any,
-		visited = new Set<any>(),
+		visited: Set<any>,
 	): SerializedError => {
 		const type = typeof error
 		let name: string | null = null
@@ -192,7 +201,7 @@ export class SerializedError {
 			newVisited.add(error)
 
 			causeChain = filteredCauses.map((cause: any) =>
-				SerializedError.fromAny(cause, newVisited),
+				SerializedError.fromAnyInternal(cause, newVisited),
 			)
 		}
 
