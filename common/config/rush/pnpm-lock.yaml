@@ -18,6 +18,9 @@ importers:
       '@teawithsand/lngext':
         specifier: workspace:*
         version: link:../lngext
+      '@teawithsand/player':
+        specifier: workspace:*
+        version: link:../player
       '@teawithsand/reserd':
         specifier: workspace:*
         version: link:../reserd

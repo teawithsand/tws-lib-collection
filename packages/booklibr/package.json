@@ -44,6 +44,7 @@
     "zod": "~3.25.67",
     "@teawithsand/lngext": "workspace:*",
     "@teawithsand/reserd": "workspace:*",
-    "@teawithsand/fstate": "workspace:*"
+    "@teawithsand/fstate": "workspace:*",
+    "@teawithsand/player": "workspace:*"
   }
 }
