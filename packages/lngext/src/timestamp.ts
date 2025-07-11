@@ -46,8 +46,18 @@ export class Timestamp {
 	/**
 	 * Creates a Timestamp from a number (milliseconds).
 	 * @param value The timestamp in milliseconds.
+	 *
+	 * @deprecated Use `fromMillis` instead.
 	 */
 	public static readonly fromNumber = (value: number): Timestamp => {
+		return new Timestamp(value)
+	}
+
+	/**
+	 * Creates a Timestamp from a number (milliseconds).
+	 * @param value The timestamp in milliseconds.
+	 */
+	public static readonly fromMillis = (value: number): Timestamp => {
 		return new Timestamp(value)
 	}
 
