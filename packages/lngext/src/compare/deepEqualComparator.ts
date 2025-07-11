@@ -1,8 +1,5 @@
 import { EqualComparator } from "./equalComparator"
-import {
-	EqualComparatorRegistry,
-	globalEqualComparatorRegistry,
-} from "./equalComparatorRegistry"
+import { EqualComparatorRegistry } from "./equalComparatorRegistry"
 
 /**
  * Deep equality comparator that performs recursive deep comparison.
@@ -12,7 +9,7 @@ import {
  */
 export class DeepEqualComparator implements EqualComparator<any> {
 	constructor(
-		private readonly registry: EqualComparatorRegistry = globalEqualComparatorRegistry,
+		private readonly registry: EqualComparatorRegistry = EqualComparatorRegistry.getGlobal(),
 	) {}
 
 	/**

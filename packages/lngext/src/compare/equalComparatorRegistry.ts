@@ -6,6 +6,10 @@ import { EqualComparator } from "./equalComparator"
  * Allows global registration and retrieval of comparators based on constructor functions.
  */
 export class EqualComparatorRegistry {
+	public static readonly getGlobal = (): EqualComparatorRegistry => {
+		return globalEqualComparatorRegistry
+	}
+
 	private readonly comparators = new Map<
 		Constructor<any>,
 		EqualComparator<any>
@@ -70,5 +74,7 @@ export class EqualComparatorRegistry {
 
 /**
  * Global instance of the EqualComparatorRegistry for convenient access.
+ *
+ * @deprecated use EqualComparatorRegistry.getGlobal() instead
  */
 export const globalEqualComparatorRegistry = new EqualComparatorRegistry()
