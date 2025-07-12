@@ -19,7 +19,10 @@ type FaultPointHandlers<T extends Record<string, readonly unknown[]>> = {
 export class FaultProviderBuilder<
 	T extends Record<string, readonly unknown[]>,
 > {
-	private readonly handlers: Partial<FaultPointHandlers<T>> = {}
+	private readonly handlers = new Map<
+		keyof T,
+		FaultPointHandler<readonly unknown[]>
+	>()
 
 	private constructor() {}
 
@@ -34,7 +37,10 @@ export class FaultProviderBuilder<
 		faultPointName: K,
 		handler: FaultPointHandler<T[K]>,
 	): FaultProviderBuilder<T> => {
-		this.handlers[faultPointName] = handler
+		this.handlers.set(
+			faultPointName,
+			handler as FaultPointHandler<readonly unknown[]>,
+		)
 		return this
 	}
 
@@ -47,7 +53,14 @@ export class FaultProviderBuilder<
 	public readonly registerAll = (
 		handlerMap: Partial<FaultPointHandlers<T>>,
 	): FaultProviderBuilder<T> => {
-		Object.assign(this.handlers, handlerMap)
+		for (const [faultPointName, handler] of Object.entries(handlerMap)) {
+			if (handler) {
+				this.handlers.set(
+					faultPointName as keyof T,
+					handler as FaultPointHandler<readonly unknown[]>,
+				)
+			}
+		}
 		return this
 	}
 
@@ -64,13 +77,11 @@ export class FaultProviderBuilder<
 					? FaultPointsRecord<T>[K]["data"]
 					: never
 			): void => {
-				const handler = this.handlers[faultPointName as keyof T]
+				const handler = this.handlers.get(faultPointName as keyof T)
 				if (handler) {
 					// Type assertion is necessary here because we need to convert between the FaultProvider's
 					// expected data format and the builder's internal data format
-					;(handler as FaultPointHandler<readonly unknown[]>)(
-						...(data as readonly unknown[]),
-					)
+					handler(...(data as readonly unknown[]))
 				}
 			},
 		}
