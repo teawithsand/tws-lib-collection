@@ -1,3 +1,5 @@
+import { SimpleSerializedError } from "@teawithsand/reserd"
+
 export enum AbookEntryBlobType {
 	IMAGE = "image",
 	AUDIO = "audio",
@@ -16,7 +18,11 @@ export type BlobMetadataResult<T> =
 	  }
 	| {
 			type: BlobMetadataResultType.ERROR
-			error: string
+			/**
+			 * For zod schema use SimpleSerializedError.schema
+			 * For serialization use SimpleSerializedError.serialize
+			 */
+			error: SimpleSerializedError
 	  }
 
 export type BlobImageMetadata = {

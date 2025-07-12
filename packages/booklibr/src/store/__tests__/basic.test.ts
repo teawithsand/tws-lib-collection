@@ -1,4 +1,5 @@
 import { DeepEqualComparator, Timestamp } from "@teawithsand/lngext"
+import { SimpleSerializedError } from "@teawithsand/reserd"
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
 import {
 	AbookAggregateData,
@@ -49,7 +50,7 @@ const mockAbookEntryAggregator: AbookEntryAggregator = {
 					},
 					image: {
 						type: BlobMetadataResultType.ERROR,
-						error: "asdf",
+						error: SimpleSerializedError.fromAny("asdf"),
 					},
 				},
 			},
@@ -669,7 +670,9 @@ fsTypes.forEach((fsType) => {
 							},
 							image: {
 								type: BlobMetadataResultType.ERROR,
-								error: "Error message",
+								error: SimpleSerializedError.fromAny(
+									"Error message",
+								),
 							},
 						},
 					},

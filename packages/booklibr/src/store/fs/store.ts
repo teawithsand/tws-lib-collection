@@ -1,5 +1,5 @@
 import { FsDirHandle, FsHandleType } from "@teawithsand/fstate"
-import { generateUuid, TypeAssert } from "@teawithsand/lngext"
+import { generateUuid } from "@teawithsand/lngext"
 import { SerializerReverse } from "@teawithsand/reserd"
 import {
 	AbookAggregateData,
@@ -33,6 +33,9 @@ export type FsAbookStoreConfig = {
 	abookEntryAggregator: AbookEntryAggregator
 }
 
+/**
+ * File system implementation of AbookStore.
+ */
 export class FsAbookStore implements AbookStore {
 	constructor(private readonly config: FsAbookStoreConfig) {}
 
@@ -44,15 +47,16 @@ export class FsAbookStore implements AbookStore {
 	}
 
 	public readonly listAbooks = async (): Promise<AbookHandle[]> => {
-		const entries = (await this.config.root.stat()).entries
+		const stat = await this.config.root.stat()
 
-		return entries
+		return stat.entries
 			.filter((entry) => entry.type === FsHandleType.DIR)
-			.map((entry) =>
-				entry.type === FsHandleType.DIR
-					? (entry as FsDirHandle)
-					: TypeAssert.unreachable(),
-			)
-			.map((handle) => new FsAbookHandle(this.config, handle))
+			.map((entry) => this.createAbookHandle(entry as FsDirHandle))
+	}
+
+	private readonly createAbookHandle = (
+		dirHandle: FsDirHandle,
+	): FsAbookHandle => {
+		return new FsAbookHandle(this.config, dirHandle)
 	}
 }

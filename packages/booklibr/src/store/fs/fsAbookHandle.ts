@@ -7,6 +7,7 @@ import {
 import { Blobs, generateUuid, Timestamp } from "@teawithsand/lngext"
 import {
 	Abook,
+	AbookAggregateData,
 	AbookEntry,
 	AbookEntryData,
 	AbookHeaderData,
@@ -20,6 +21,7 @@ import {
 } from "../defines"
 import { AbookWriteAggregateType } from "../defines/aggregate"
 import {
+	createEntryDataPath,
 	FS_STORE_ENTRIES_DIR,
 	FS_STORE_ENTRY_BLOB_EXTENSION,
 	FS_STORE_ENTRY_DATA_EXTENSION,
@@ -51,12 +53,16 @@ export class FsAbookHandle implements AbookHandle {
 
 	/**
 	 * Creates a new audiobook in the file system.
+	 * @param id - Unique identifier for the audiobook
+	 * @param config - Configuration for the store
+	 * @param data - Initial header data for the audiobook
+	 * @returns Promise resolving to the created audiobook handle
 	 */
 	public static readonly create = async (
 		id: string,
 		config: FsAbookStoreConfig,
 		data: AbookHeaderData,
-	) => {
+	): Promise<FsAbookHandle> => {
 		const abookRoot = await config.root.openDir(Path.from(id), {
 			create: true,
 			allowExisting: false,
@@ -129,44 +135,12 @@ export class FsAbookHandle implements AbookHandle {
 		options: AbookWriteHeaderOptions,
 	): Promise<void> => {
 		const existingData = await this.readAbookData()
-		const headerData =
-			options.data ??
-			existingData?.header ??
-			this.createDefaultHeaderData()
-
-		let aggregate = existingData?.aggregate ?? null
-
-		const aggregateOptions = options.aggregate
-		if (aggregateOptions) {
-			switch (aggregateOptions.type) {
-				case AbookWriteAggregateType.RECOMPUTE:
-					await this.computeAggregate()
-					return
-				case AbookWriteAggregateType.CLEAR:
-					aggregate = this.createClearedAggregate()
-					break
-				case AbookWriteAggregateType.LEAVE_UNMODIFIED:
-					break
-				case AbookWriteAggregateType.SET:
-					aggregate = aggregateOptions.data
-					break
-			}
-		} else {
-			// If no aggregate options and no existing data, use default aggregate
-			// Otherwise, recompute the aggregate after saving the header
-			if (!existingData) {
-				aggregate = this.createDefaultAggregate()
-			} else {
-				// We need to save the header first, then recompute aggregate
-				const dataToSave: FsAbookStoreAbookData = {
-					header: headerData,
-					aggregate: existingData.aggregate,
-				}
-				await this.saveAbookData(dataToSave)
-				await this.computeAggregate()
-				return
-			}
-		}
+		const headerData = this.resolveHeaderData(options, existingData)
+		const aggregate = await this.resolveAggregateData(
+			options,
+			existingData,
+			headerData,
+		)
 
 		const dataToSave: FsAbookStoreAbookData = {
 			header: headerData,
@@ -174,6 +148,85 @@ export class FsAbookHandle implements AbookHandle {
 		}
 
 		await this.saveAbookData(dataToSave)
+	}
+
+	/**
+	 * Resolves the header data based on options and existing data.
+	 */
+	private readonly resolveHeaderData = (
+		options: AbookWriteHeaderOptions,
+		existingData: FsAbookStoreAbookData | null,
+	): AbookHeaderData => {
+		return (
+			options.data ??
+			existingData?.header ??
+			this.createDefaultHeaderData()
+		)
+	}
+
+	/**
+	 * Resolves the aggregate data based on options and existing data.
+	 * Returns null if recomputation was triggered (method handles the save internally).
+	 */
+	private readonly resolveAggregateData = async (
+		options: AbookWriteHeaderOptions,
+		existingData: FsAbookStoreAbookData | null,
+		headerData: AbookHeaderData,
+	): Promise<AbookAggregateData | null> => {
+		const aggregateOptions = options.aggregate
+
+		if (aggregateOptions) {
+			return await this.handleExplicitAggregateOptions(
+				aggregateOptions,
+				existingData,
+			)
+		}
+
+		return await this.handleImplicitAggregateOptions(
+			existingData,
+			headerData,
+		)
+	}
+
+	/**
+	 * Handles explicit aggregate options from the write request.
+	 */
+	private readonly handleExplicitAggregateOptions = async (
+		aggregateOptions: NonNullable<AbookWriteHeaderOptions["aggregate"]>,
+		existingData: FsAbookStoreAbookData | null,
+	): Promise<AbookAggregateData | null> => {
+		switch (aggregateOptions.type) {
+			case AbookWriteAggregateType.RECOMPUTE:
+				await this.computeAggregate()
+				return null // Indicates that computation was handled internally
+			case AbookWriteAggregateType.CLEAR:
+				return this.createClearedAggregate()
+			case AbookWriteAggregateType.LEAVE_UNMODIFIED:
+				return existingData?.aggregate ?? this.createDefaultAggregate()
+			case AbookWriteAggregateType.SET:
+				return aggregateOptions.data
+		}
+	}
+
+	/**
+	 * Handles implicit aggregate options when no explicit options are provided.
+	 */
+	private readonly handleImplicitAggregateOptions = async (
+		existingData: FsAbookStoreAbookData | null,
+		headerData: AbookHeaderData,
+	): Promise<AbookAggregateData | null> => {
+		if (!existingData) {
+			return this.createDefaultAggregate()
+		}
+
+		// For existing data, save header first then recompute aggregate
+		const dataToSave: FsAbookStoreAbookData = {
+			header: headerData,
+			aggregate: existingData.aggregate,
+		}
+		await this.saveAbookData(dataToSave)
+		await this.computeAggregate()
+		return null // Indicates that computation was handled internally
 	}
 
 	/**
@@ -193,13 +246,10 @@ export class FsAbookHandle implements AbookHandle {
 			},
 		}
 
-		const entryFile = await entriesDir.openFile(
-			Path.from(id + FS_STORE_ENTRY_DATA_EXTENSION),
-			{
-				create: true,
-				allowExisting: false,
-			},
-		)
+		const entryFile = await entriesDir.openFile(createEntryDataPath(id), {
+			create: true,
+			allowExisting: false,
+		})
 
 		const serialized = this.config.abookEntrySerializer.serialize(entryData)
 		const writer = await entryFile.write()

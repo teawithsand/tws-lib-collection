@@ -1,4 +1,4 @@
-import { FsDirHandle, Path } from "@teawithsand/fstate"
+import { FsDirHandle } from "@teawithsand/fstate"
 import { Blobs, Timestamp } from "@teawithsand/lngext"
 import {
 	AbookAggregateData,
@@ -19,10 +19,7 @@ import {
 	AbookWriteAggregate,
 	AbookWriteAggregateType,
 } from "../defines/aggregate"
-import {
-	FS_STORE_ENTRY_BLOB_EXTENSION,
-	FS_STORE_ENTRY_DATA_EXTENSION,
-} from "./constants"
+import { createEntryBlobPath, createEntryDataPath } from "./constants"
 import { FsAbookStoreAbookEntryData, FsAbookStoreConfig } from "./store"
 
 // Interface for FsAbookHandle to avoid circular dependency
@@ -48,11 +45,28 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 		try {
 			const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 			const entryFile = await entriesDir.openFile(
-				Path.from(this.id + FS_STORE_ENTRY_DATA_EXTENSION),
+				createEntryDataPath(this.id),
 			)
 			return await entryFile.exists()
 		} catch {
 			return false
+		}
+	}
+
+	/**
+	 * Validates that the entry exists and throws appropriate error if not.
+	 * @throws {AbookEntryNotFoundError} When the entry doesn't exist
+	 */
+	private readonly validateEntryExists = async (): Promise<void> => {
+		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
+		const entryFile = await entriesDir.openFileOrNull(
+			createEntryDataPath(this.id),
+		)
+
+		if (!entryFile || !(await entryFile.exists())) {
+			throw new AbookEntryNotFoundError(
+				`Entry with id ${this.id} not found`,
+			)
 		}
 	}
 
@@ -64,7 +78,7 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 		try {
 			const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 			const entryFile = await entriesDir.openFile(
-				Path.from(this.id + FS_STORE_ENTRY_DATA_EXTENSION),
+				createEntryDataPath(this.id),
 			)
 			const file = await entryFile.getFileOrNull()
 			if (!file) return null
@@ -147,7 +161,7 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 	public readonly getBlobWriter = async () => {
 		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 		const blobFile = await entriesDir.openFile(
-			Path.from(this.id + FS_STORE_ENTRY_BLOB_EXTENSION),
+			createEntryBlobPath(this.id),
 			{
 				create: true,
 			},
@@ -160,29 +174,19 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 	 * Returns null if the blob file doesn't exist.
 	 */
 	public readonly readBlob = async (): Promise<Blob | null> => {
-		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
-
 		// Check if entry data file exists first
-		const entryFile = await entriesDir.openFileOrNull(
-			Path.from(this.id + FS_STORE_ENTRY_DATA_EXTENSION),
-		)
-		if (!entryFile || !(await entryFile.exists())) {
-			throw new AbookEntryNotFoundError(
-				`Entry with id ${this.id} not found`,
-			)
-		}
+		await this.validateEntryExists()
 
+		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 		const blobFile = await entriesDir.openFileOrNull(
-			Path.from(this.id + FS_STORE_ENTRY_BLOB_EXTENSION),
+			createEntryBlobPath(this.id),
 		)
 		if (!blobFile) {
 			return null
 		}
+
 		const file = await blobFile.getFileOrNull()
-		if (!file) {
-			return null
-		}
-		return file
+		return file ?? null
 	}
 
 	/**
@@ -190,32 +194,26 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 	 * Throws AbookEntryBlobNotFoundError if the blob file doesn't exist.
 	 */
 	public readonly mustReadBlob = async (): Promise<Blob> => {
-		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
-
 		// Check if entry data file exists first
-		const entryFile = await entriesDir.openFileOrNull(
-			Path.from(this.id + FS_STORE_ENTRY_DATA_EXTENSION),
-		)
-		if (!entryFile || !(await entryFile.exists())) {
-			throw new AbookEntryNotFoundError(
-				`Entry with id ${this.id} not found`,
-			)
-		}
+		await this.validateEntryExists()
 
+		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 		const blobFile = await entriesDir.openFileOrNull(
-			Path.from(this.id + FS_STORE_ENTRY_BLOB_EXTENSION),
+			createEntryBlobPath(this.id),
 		)
 		if (!blobFile) {
 			throw new AbookEntryBlobNotFoundError(
 				`No blob found for entry ${this.id}`,
 			)
 		}
+
 		const file = await blobFile.getFileOrNull()
 		if (!file) {
 			throw new AbookEntryBlobNotFoundError(
 				`No blob found for entry ${this.id}`,
 			)
 		}
+
 		return file
 	}
 
@@ -225,17 +223,17 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 	public readonly delete = async (): Promise<void> => {
 		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 
-		// Delete the entry file
+		// Delete the entry data file
 		const entryFile = await entriesDir.openFileOrNull(
-			Path.from(this.id + FS_STORE_ENTRY_DATA_EXTENSION),
+			createEntryDataPath(this.id),
 		)
 		if (entryFile) {
 			await entryFile.delete()
 		}
 
-		// Also delete the blob file if it exists
+		// Delete the blob file if it exists
 		const blobFile = await entriesDir.openFileOrNull(
-			Path.from(this.id + FS_STORE_ENTRY_BLOB_EXTENSION),
+			createEntryBlobPath(this.id),
 		)
 		if (blobFile) {
 			await blobFile.delete()
@@ -294,7 +292,7 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 	): Promise<void> => {
 		const entriesDir = await this.abookHandle.getOrCreateEntriesDir()
 		const entryFile = await entriesDir.openFile(
-			Path.from(this.id + FS_STORE_ENTRY_DATA_EXTENSION),
+			createEntryDataPath(this.id),
 			{
 				create: true,
 			},
