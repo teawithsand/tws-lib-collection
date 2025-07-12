@@ -1,5 +1,5 @@
-import { globalEqualComparatorRegistry } from "./compare/equalComparatorRegistry"
-import { BaseError, Errors } from "./error"
+import { EqualComparatorRegistry } from "../compare"
+import { BaseError, Errors } from "../error"
 
 export const TimestampError = Errors.makeErrorType("TimestampError", BaseError)
 
@@ -99,7 +99,7 @@ export class Timestamp {
 	}
 }
 
-// Register Timestamp comparator in the global registry
-globalEqualComparatorRegistry.register(Timestamp as any, {
+// any cast required due to private constructor
+EqualComparatorRegistry.getGlobal().register(Timestamp as any, {
 	equals: (a: Timestamp, b: Timestamp) => a.equals(b),
 })
