@@ -27,21 +27,15 @@
 - Adhere to the project's ESLint and Prettier configurations. Aim to generate code that would pass their checks.
 - Define a consistent error handling strategy. For example, specify whether to use custom error classes, how errors should be logged, or if functions that can fail should return a result type (e.g., `{ success: true, data: T } | { success: false, error: Error }`).
 - Do not prefix interfaces with I letter like `IXYZ`. Instead use just `XYZ` in case like that.
-# Builder Classes
+- Do not use `export { ... }` syntax for exporting types, classes, or functions. Instead, use `export class XYZ {}`, `export type XYZ = ...`, or `export function xyz() {}` or `export const a = 42` directly.
+- When possible, use enum values instead of literals.
 
-- Builder classes must accept all mandatory arguments via a single object parameter in the constructor.
-- Optional arguments should be set via setter methods that return `this` for method chaining.
-- If the constructor provides default values for any arguments, the builder should apply the same defaults.
-- In the constructor of a builder class, use inline destructuring syntax, for example: `constructor({ x }: { x: number })` instead of `constructor(params: { x: number })`.
-- For default parameters, avoid using `??` or `if`; instead, use inline destructuring with defaults like `constructor({ x = 20 }: { x: number })` where `20` is the default value of `x`.
-- Types for the builder's constructor parameters and internal state should be derived directly from the target class's definition (e.g., its constructor arguments or properties) rather than introducing new, builder-specific types for the data it handles. Try not to import external types if it's not required. All types for builder class should be provided in target class definition.
-- Do not explicitly specify types in class fields. Use `private x` instead of `private x: number` when possible.
+# Stored (Versioned) types
 
-# Stored types
-
+- Stored and Versioned types are the same things. The Versioned name is newer and should be used instead.
 - Stored types are used for ensuring that types used in application code can change without affecting serialized data.
 - Stored types should support versioning.
-- When user asks you to write a stored version of some type, write a proper versioned stored type with appropriate zod schema. Preferrably, do not write type separately, rather use z.infer .
+ When user asks you to write a stored version of some type, write a proper versioned stored type with appropriate zod schema. Preferrably, do not write type separately, rather use z.infer .
 - A serializer class in context of stored types, is one with private constructor, which can perform two operations: serialize and deserialize value from owned to stored version.
 - Serializer class may have private functions doing other operations.
 - When it comes to stored enums, write copies of them so that values of stored enums can change independently of those of owned enums.
@@ -49,6 +43,11 @@
 - When writing versioned stored schemas, also add a schema, which has no version in name and can be of any version.
 - When defining stored types and schemas ensure that they also use only stored types and schemas.
 - When writing serializer classes, try not to use `as any` or `as unknown` casts, unless strictly required or you were asked to do so. 
+- Do not use `z.any()` or `z.unknown()` in zod schemas unless explicitly instructed to do so. Instead, use more specific types that accurately represent the data structure.
+- When writing unit tests after creating versioned types, write single unit test, which uses `runAllTests` method from `SerializerTester` class from `reserd` library.
+- When writing test data serialized data examples, do not use `serialize` method of the serializer class, which is being tested. Instead write objects on your own. You are allowed and should use serialize method for other types, than the one tested.
+- Unless instructed otherwise, export only const with versioned type and nothing else. Do not export types or schemas separately.
+- As a rule of thumb, there should be single file per versioned/schema type.
 
 # Testing Guidelines
 
