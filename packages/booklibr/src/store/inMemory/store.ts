@@ -1,5 +1,6 @@
 import { generateUuid } from "@teawithsand/lngext"
 import { AbookHeaderData } from "../../defines"
+import { AbookAggregatorImpl } from "../aggregate/abookAggregator"
 import { AbookStore } from "../defines"
 import { AbookAggregator, AbookHandle } from "../defines/abookHandle"
 import { AbookEntryAggregator } from "../defines/entryHandle"
@@ -9,10 +10,17 @@ import { InternalAbook } from "./internal"
 export class InMemoryAbookStore implements AbookStore {
 	private abooks = new Map<string, InternalAbook>()
 
-	public constructor(
-		public readonly abookAggregator: AbookAggregator,
-		public readonly abookEntryAggregator: AbookEntryAggregator,
-	) {}
+	public readonly abookAggregator: AbookAggregator
+	public readonly abookEntryAggregator: AbookEntryAggregator
+
+	public constructor(options: {
+		abookEntryAggregator: AbookEntryAggregator
+		abookAggregator?: AbookAggregator
+	}) {
+		this.abookAggregator =
+			options.abookAggregator ?? AbookAggregatorImpl.create()
+		this.abookEntryAggregator = options.abookEntryAggregator
+	}
 
 	public getAbook(id: string): InternalAbook | undefined {
 		return this.abooks.get(id)

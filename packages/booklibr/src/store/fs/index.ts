@@ -1,3 +1,4 @@
+export * from "./configBuilder"
 export * from "./fsAbookEntryHandle"
 export * from "./fsAbookHandle"
 export * from "./serializer"

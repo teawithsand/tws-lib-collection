@@ -10,7 +10,15 @@ export type AbookPosition = {
 }
 
 export type AbookAggregateData = {
+	/**
+	 * Total duration of all audio entries in milliseconds.
+	 * Contains -1 if any entry has invalid duration or loading error.
+	 */
 	totalDurationMillis: number
+
+	/**
+	 * Number of all entries, including non-audio entries.
+	 */
 	totalEntries: number
 }
 

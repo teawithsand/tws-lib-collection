@@ -53,10 +53,10 @@ export const createTestStore = async (
 	switch (type) {
 		case StoreType.IN_MEMORY:
 			return {
-				store: new InMemoryAbookStore(
-					mockAbookAggregator,
-					mockAbookEntryAggregator,
-				),
+				store: new InMemoryAbookStore({
+					abookAggregator: mockAbookAggregator,
+					abookEntryAggregator: mockAbookEntryAggregator,
+				}),
 				release: async () => {
 					// Does nothing, since it's in-memory store.
 				},

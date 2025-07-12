@@ -1,6 +1,14 @@
 import { DeepEqualComparator, Timestamp } from "@teawithsand/lngext"
 import { SimpleSerializedError } from "@teawithsand/reserd"
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	test,
+	vi,
+	type MockInstance,
+} from "vitest"
 import {
 	AbookAggregateData,
 	AbookData,
@@ -12,6 +20,7 @@ import {
 	AbookHeaderData,
 	BlobMetadataResultType,
 } from "../../defines"
+import { AbookAggregatorImpl } from "../aggregate"
 import {
 	AbookEntryBlobNotFoundError,
 	AbookEntryNotFoundError,
@@ -19,18 +28,11 @@ import {
 	AbookStore,
 	AbookWriteAggregateType,
 } from "../defines"
-import { AbookAggregator, AbookHandle } from "../defines/abookHandle"
+import { AbookHandle } from "../defines/abookHandle"
 import { AbookEntryAggregator, AbookEntryHandle } from "../defines/entryHandle"
 import { createTestStore, StoreType, TestAbookStore } from "./testingSetup"
 
 const fsTypes = [StoreType.IN_MEMORY, StoreType.FS]
-
-const mockAbookAggregator: AbookAggregator = {
-	aggregate: vi.fn(async (data: AbookData) => ({
-		totalEntries: data.entries.size,
-		totalDurationMillis: data.entries.size,
-	})),
-}
 
 const mockAbookEntryAggregator: AbookEntryAggregator = {
 	aggregate: vi.fn(
@@ -73,13 +75,18 @@ fsTypes.forEach((fsType) => {
 	describe(`AbookStore tests - ${fsType}`, () => {
 		let testStore: TestAbookStore
 		let store: AbookStore
+		let aggregateSpy: MockInstance<
+			(data: AbookData) => Promise<AbookAggregateData>
+		>
 		beforeEach(async () => {
+			vi.clearAllMocks()
+
 			testStore = await createTestStore(fsType, {
-				abookAggregator: mockAbookAggregator,
+				abookAggregator: AbookAggregatorImpl.create(),
 				abookEntryAggregator: mockAbookEntryAggregator,
 			})
 			store = testStore.store
-			vi.clearAllMocks()
+			aggregateSpy = vi.spyOn(testStore.abookAggregator, "aggregate")
 		})
 
 		afterEach(async () => {
@@ -213,7 +220,7 @@ fsTypes.forEach((fsType) => {
 					expect(updatedAbook.aggregate.totalDurationMillis).toEqual(
 						-1,
 					)
-					expect(mockAbookAggregator.aggregate).not.toHaveBeenCalled()
+					expect(aggregateSpy).not.toHaveBeenCalled()
 				})
 
 				test("leave unmodified should leave aggregate data unmodified", async () => {
@@ -240,9 +247,7 @@ fsTypes.forEach((fsType) => {
 					expect(updatedAbook.aggregate.totalDurationMillis).toBe(
 						sampleAbookAggregateDataOne.totalDurationMillis,
 					)
-					expect(
-						testStore.abookAggregator.aggregate,
-					).not.toHaveBeenCalled()
+					expect(aggregateSpy).not.toHaveBeenCalled()
 				})
 
 				test("recompute should recompute aggregate data", async () => {
@@ -263,9 +268,7 @@ fsTypes.forEach((fsType) => {
 
 					// Assert
 					await handle.mustRead()
-					expect(
-						testStore.abookAggregator.aggregate,
-					).toHaveBeenCalled()
+					expect(aggregateSpy).toHaveBeenCalled()
 				})
 			})
 
@@ -364,9 +367,7 @@ fsTypes.forEach((fsType) => {
 							description: "New Description",
 							privateUserNote: "new note",
 						},
-					}
-
-					// Act
+					} // Act
 					await handle.write({ data: newHeader })
 					const updatedAbook = await handle.mustRead()
 
@@ -377,9 +378,7 @@ fsTypes.forEach((fsType) => {
 					expect(updatedAbook.data.header.metadata.description).toBe(
 						"New Description",
 					)
-					expect(
-						testStore.abookAggregator.aggregate,
-					).toHaveBeenCalledOnce()
+					expect(aggregateSpy).toHaveBeenCalledOnce()
 				})
 			})
 
@@ -597,7 +596,7 @@ fsTypes.forEach((fsType) => {
 					expect(updatedAbook.aggregate.totalDurationMillis).toEqual(
 						-1,
 					)
-					expect(mockAbookAggregator.aggregate).not.toHaveBeenCalled()
+					expect(aggregateSpy).not.toHaveBeenCalled()
 				})
 
 				test("leave unmodified should leave aggregate data unmodified", async () => {
@@ -624,9 +623,7 @@ fsTypes.forEach((fsType) => {
 					expect(updatedAbook.aggregate.totalDurationMillis).toBe(
 						sampleAbookAggregateDataOne.totalDurationMillis,
 					)
-					expect(
-						testStore.abookAggregator.aggregate,
-					).not.toHaveBeenCalled()
+					expect(aggregateSpy).not.toHaveBeenCalled()
 				})
 
 				test("recompute should recompute aggregate data", async () => {
@@ -647,9 +644,7 @@ fsTypes.forEach((fsType) => {
 
 					// Assert
 					await handle.mustRead()
-					expect(
-						testStore.abookAggregator.aggregate,
-					).toHaveBeenCalled()
+					expect(aggregateSpy).toHaveBeenCalled()
 				})
 			})
 

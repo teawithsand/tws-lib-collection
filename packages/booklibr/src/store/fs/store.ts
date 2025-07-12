@@ -37,7 +37,11 @@ export type FsAbookStoreConfig = {
  * File system implementation of AbookStore.
  */
 export class FsAbookStore implements AbookStore {
-	constructor(private readonly config: FsAbookStoreConfig) {}
+	private readonly config: FsAbookStoreConfig
+
+	constructor(config: FsAbookStoreConfig) {
+		this.config = config
+	}
 
 	public readonly createAbook = async (
 		data: AbookHeaderData,
