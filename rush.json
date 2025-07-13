@@ -307,6 +307,10 @@
    * 3. It's useful to have a centralized inventory of all projects and their important metadata.
    */
   "projects": [
+    { 
+      "packageName": "@teawithsand/palmabooks",
+      "projectFolder": "packages/palmabooks"
+    },
     {
       "packageName": "@teawithsand/mlui",
       "projectFolder": "packages/mlui"
