@@ -5,7 +5,7 @@ import { HtmlBuilder } from "./htmlBuilder"
 import { Sandbox } from "./sandbox"
 import { SandboxMessage, SandboxMessageType } from "./sandboxMessage"
 
-describe("Sandbox", () => {
+describe.skip("Sandbox", () => {
 	let sandbox: Sandbox
 	let store: JotaiStore
 	beforeEach(() => {

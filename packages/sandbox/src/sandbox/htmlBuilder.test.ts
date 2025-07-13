@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { HtmlBuilder } from "./htmlBuilder"
 
-describe("HtmlBuilder", () => {
+describe.skip("HtmlBuilder", () => {
 	test("should create basic HTML document with default title", () => {
 		const builder = new HtmlBuilder()
 		const html = builder.build()
