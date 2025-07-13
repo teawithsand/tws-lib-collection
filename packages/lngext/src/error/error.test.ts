@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { BaseError, Errors, StackFrame } from "./error"
+import { BaseError, Errors } from "./error"
 
 describe("BaseError", () => {
 	test("should create error with message and no cause", () => {

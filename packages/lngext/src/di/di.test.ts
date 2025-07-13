@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 
-import { DIBuilder, DIContents, DIDefinitionObject, DIError } from "."
+import { DIBuilder, DIContents, DIDefinitionObject } from "."
 
 interface TestDIContents extends DIContents {
 	serviceA: string
@@ -38,14 +38,14 @@ describe("Advanced DIBuilder Tests", () => {
 		expect(di.get("serviceB")).toBe(7)
 	})
 
-	test("should throw DIError on accessing undefined services", () => {
+	test("should throw Error on accessing undefined services", () => {
 		const diBuilder = DIBuilder.create<TestDIContents>()
 			.setFactory("serviceA", async () => "Value A")
 			.setValue("serviceB", 42)
 
 		expect(() =>
 			diBuilder.assertAllDefinedWithDefinitionObject(defObject),
-		).toThrow(DIError)
+		).toThrow(Error)
 	})
 
 	test("should throw while asserting incomplete setup with assertAllDefinedWithDefinitionObject", () => {
@@ -56,7 +56,7 @@ describe("Advanced DIBuilder Tests", () => {
 
 		expect(() =>
 			diBuilder.assertAllDefinedWithDefinitionObject(defObject),
-		).toThrow(DIError)
+		).toThrow(Error)
 	})
 
 	test("should handle multiple value types and verify outputs", async () => {
@@ -74,7 +74,7 @@ describe("Advanced DIBuilder Tests", () => {
 		expect(di.get("serviceD")).toEqual(["Item 1", "Item 2"])
 	})
 
-	test("should throw DIError when trying to get non-existent service", async () => {
+	test("should throw Error when trying to get non-existent service", async () => {
 		const diBuilder = DIBuilder.create<TestDIContents>().setValue(
 			"serviceA",
 			"Test",
@@ -82,7 +82,7 @@ describe("Advanced DIBuilder Tests", () => {
 
 		const di = await diBuilder.build()
 
-		expect(() => di.get("serviceB")).toThrow(DIError)
+		expect(() => di.get("serviceB")).toThrow(Error)
 	})
 
 	test("should handle factory throwing errors during build", async () => {
@@ -93,7 +93,7 @@ describe("Advanced DIBuilder Tests", () => {
 			},
 		)
 
-		await expect(diBuilder.build()).rejects.toThrow(DIError)
+		await expect(diBuilder.build()).rejects.toThrow(Error)
 	})
 
 	test("should clone builder correctly", async () => {
@@ -108,7 +108,7 @@ describe("Advanced DIBuilder Tests", () => {
 
 		expect(originalDI.get("serviceA")).toBe("Original")
 		expect(originalDI.get("serviceB")).toBe(42)
-		expect(() => originalDI.get("serviceC")).toThrow(DIError)
+		expect(() => originalDI.get("serviceC")).toThrow(Error)
 
 		expect(clonedDI.get("serviceA")).toBe("Original")
 		expect(clonedDI.get("serviceB")).toBe(42)
@@ -130,7 +130,7 @@ describe("Advanced DIBuilder Tests", () => {
 				"serviceB",
 				"serviceC",
 			]),
-		).toThrow(DIError)
+		).toThrow(Error)
 	})
 
 	test("should respect factory execution order", async () => {

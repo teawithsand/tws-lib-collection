@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { Timestamp } from "../timestamp"
+import { Timestamp } from "../time/timestamp"
 import { DeepEqualComparator } from "./deepEqualComparator"
 
 describe("DeepEquals", () => {

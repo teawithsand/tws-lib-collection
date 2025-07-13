@@ -143,7 +143,7 @@ describe("deepCopy", () => {
 		expect(copy.items.length).toBe(2)
 		expect(copy.items[0]).toBeInstanceOf(InnerClass)
 		expect(copy.items[0]).not.toBe(original.items[0])
-		expect(copy.items[0].getData()).toBe("item1")
+		expect(copy.items[0]?.getData()).toBe("item1")
 	})
 
 	test("should deep copy Date objects", () => {
@@ -336,7 +336,7 @@ describe("deepCopy", () => {
 
 	test("should handle circular references by default", () => {
 		const circular: Record<string, unknown> = { a: 1 }
-		circular.self = circular
+		circular["self"] = circular
 
 		// This should not cause a stack overflow
 		expect(() => deepCopy(circular)).not.toThrow()
@@ -344,7 +344,7 @@ describe("deepCopy", () => {
 
 	test("should throw with circular references when disallowCircularReferences is true", () => {
 		const circular: Record<string, unknown> = { a: 1 }
-		circular.self = circular
+		circular["self"] = circular
 
 		// This should throw an error
 		expect(() =>

@@ -7,7 +7,6 @@ const uuidRegex =
 
 describe("generateUuid", () => {
 	const originalGlobalCrypto = globalThis.crypto
-	const originalMathRandom = Math.random
 
 	afterEach(() => {
 		// Restore all mocks and stubs
@@ -48,7 +47,7 @@ describe("generateUuid", () => {
 
 		const uuid = generateUuid()
 		expect(mockGetRandomValues).toHaveBeenCalledTimes(1)
-		const calledBuffer = mockGetRandomValues.mock.calls[0][0]
+		const calledBuffer = mockGetRandomValues.mock.calls[0]?.[0]
 		expect(calledBuffer).toBeInstanceOf(Uint8Array)
 		expect((calledBuffer as Uint8Array).length).toBe(16)
 		expect(uuid).toMatch(uuidRegex)
