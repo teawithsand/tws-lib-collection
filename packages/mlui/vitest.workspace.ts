@@ -1,8 +1,10 @@
 import { defineWorkspace } from "vitest/config"
 import { resolve } from "node:path"
+import react from '@vitejs/plugin-react-swc'
 
 export default defineWorkspace([
 	{
+		plugins: [react()],
 		resolve: {
 			alias: {
 				"@": resolve(__dirname, "src"),
@@ -17,6 +19,7 @@ export default defineWorkspace([
 		},
 	},
 	{
+		plugins: [react()],
 		resolve: {
 			alias: {
 				"@": resolve(__dirname, "src"),

@@ -8,6 +8,9 @@ export default defineConfig({
 		},
 	},
 	test: {
+		globals: true,
+		environment: "jsdom",
+		setupFiles: ["./vitest.setup.mjs"],
 		coverage: {
 			reporter: ["text", "json", "html", "lcov"],
 			exclude: ["node_modules/", "test/"], 

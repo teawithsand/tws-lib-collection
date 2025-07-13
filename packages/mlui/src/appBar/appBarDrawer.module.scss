@@ -1,0 +1,23 @@
+.navLink {
+	border-radius: var(--mantine-radius-sm);
+	transition: all 0.2s ease;
+
+	&:hover {
+		background-color: var(--mantine-color-gray-1);
+
+		@include mantine.dark {
+			background-color: var(--mantine-color-dark-6);
+		}
+	}
+
+	&[data-active="true"] {
+		background-color: var(--mantine-color-blue-light);
+		color: var(--mantine-color-blue-7);
+		font-weight: 500;
+
+		@include mantine.dark {
+			background-color: var(--mantine-color-blue-9);
+			color: var(--mantine-color-blue-3);
+		}
+	}
+}

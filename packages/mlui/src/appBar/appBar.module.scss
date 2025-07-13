@@ -1,0 +1,101 @@
+.appBar {
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	height: 3.75rem; // 60px
+	background-color: var(--mantine-color-white);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	box-shadow: var(--mantine-shadow-xs);
+
+	@include mantine.dark {
+		background-color: var(--mantine-color-dark-7);
+		border-bottom-color: var(--mantine-color-dark-4);
+	}
+}
+
+.container {
+	width: 100%;
+}
+
+.header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-lg);
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--mantine-spacing-md);
+	}
+
+	&.centered {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+
+		.headerContent {
+			text-align: center;
+		}
+
+		.actions {
+			justify-content: center;
+		}
+	}
+}
+
+.headerContent {
+	flex: 1;
+	min-width: 0; // Prevent flex item from overflowing
+}
+
+.title {
+	font-size: mantine.rem(18);
+	font-weight: 600;
+	color: var(--mantine-color-text);
+	line-height: 1.2;
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		font-size: mantine.rem(16);
+	}
+}
+
+.subtitle {
+	line-height: 1.4;
+	max-width: 600px;
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		font-size: mantine.rem(14);
+	}
+}
+
+.actions {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+		justify-content: flex-start;
+		flex-wrap: wrap;
+	}
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		justify-content: center;
+	}
+}
+
+.customContent {
+	width: 100%;
+}
+
+.content {
+	flex: 1;
+	overflow-y: auto;
+	background-color: var(--mantine-color-gray-0);
+
+	@include mantine.dark {
+		background-color: var(--mantine-color-dark-8);
+	}
+}

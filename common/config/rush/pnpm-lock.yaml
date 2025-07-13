@@ -506,16 +506,31 @@ importers:
 
   ../../packages/mlui:
     dependencies:
-      react:
-        specifier: ^19.1.0
-        version: 19.1.0
+      '@teawithsand/fstate':
+        specifier: workspace:*
+        version: link:../fstate
+      '@teawithsand/llog':
+        specifier: workspace:*
+        version: link:../llog
+      '@teawithsand/lngext':
+        specifier: workspace:*
+        version: link:../lngext
     devDependencies:
       '@eslint/js':
         specifier: ^9.25.0
         version: 9.31.0
+      '@mantine/core':
+        specifier: ~8.1.3
+        version: 8.1.3(@mantine/hooks@8.1.3(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/hooks':
+        specifier: ~8.1.3
+        version: 8.1.3(react@19.1.0)
       '@stryker-mutator/vitest-runner':
         specifier: ~9.0.1
         version: 9.0.1(@stryker-mutator/core@9.0.1(@types/node@22.15.21))(vitest@3.2.4)
+      '@tabler/icons-react':
+        specifier: ~3.34.0
+        version: 3.34.0(react@19.1.0)
       '@testing-library/dom':
         specifier: ~10.4.0
         version: 10.4.0
@@ -531,6 +546,9 @@ importers:
       '@types/react':
         specifier: ^19.1.0
         version: 19.1.8
+      '@types/react-dom':
+        specifier: ~19.1.6
+        version: 19.1.6(@types/react@19.1.8)
       '@typescript-eslint/parser':
         specifier: ^8.32.0
         version: 8.36.0(eslint@9.31.0)(typescript@5.8.3)
@@ -564,6 +582,15 @@ importers:
       prettier-plugin-organize-imports:
         specifier: ^4.1.0
         version: 4.1.0(prettier@3.5.3)(typescript@5.8.3)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: 19.1.0
+        version: 19.1.0(react@19.1.0)
+      react-router:
+        specifier: ~7.6.3
+        version: 7.6.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       rimraf:
         specifier: ~6.0.1
         version: 6.0.1

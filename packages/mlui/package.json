@@ -18,13 +18,11 @@
     "pre-commit-check": "npm run build:check && npm run lint:cached && npm run format:check:cached",
     "pre-push-check": "npm run build:check && npm run lint:cached && npm run format:check:cached && npm run test",
     "prepublishOnly": "npm run build && npm run lint && npm run format:check && npm run test",
-    "dev": "vite",
+    "dev": "vite -c vite.preview.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint ./src --max-warnings 0",
     "lint:cached": "eslint ./src --max-warnings 0 --cache",
-    "preview": "vite preview",
-    "deploy": "./deploy.sh",
-    "deploy:build": "npm run build && vercel --prod"
+    "preview": "vite preview"
   },
   "peerDependencies": {
     "react": "^19.1.0",
@@ -79,5 +77,5 @@
   },
   "sideEffects": [
     "**/*.css"
-	]
+  ]
 }
