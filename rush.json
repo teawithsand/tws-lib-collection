@@ -24,7 +24,7 @@
    * Specify one of: "pnpmVersion", "npmVersion", or "yarnVersion".  See the Rush documentation
    * for details about these alternatives.
    */
-  "pnpmVersion": "10.12.1",
+  "pnpmVersion": "10.13.1",
   // "npmVersion": "6.14.15",
   // "yarnVersion": "1.9.4",
   /**
@@ -317,7 +317,7 @@
     },
     {
       "packageName": "@teawithsand/mintay-backend",
-      "projectFolder": "packages/mintay-backend",
+      "projectFolder": "packages/mintay-backend"
     },
     {
       "packageName": "@teawithsand/sqlite-web",
