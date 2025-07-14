@@ -7,6 +7,9 @@ interface ReleaseEntry {
 	readonly releaser: () => Promise<void>
 }
 
+/**
+ * @deprecated To be replaced with ReleaseHelper from @teawithsand/lngext
+ */
 export class DiReleaseHelper {
 	private readonly logger
 	private readonly releaseStack: ReleaseEntry[] = []
