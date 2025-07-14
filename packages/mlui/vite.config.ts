@@ -73,6 +73,7 @@ export default defineConfig({
 				'react', 
 				'react-dom',
 				'react-router',
+				'react/jsx-runtime',
 				/@mantine\/.*/,
 				/@tabler\/icons-react/,
 				/@teawithsand\/.*/
