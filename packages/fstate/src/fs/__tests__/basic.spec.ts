@@ -1143,5 +1143,143 @@ fsTypes.forEach((fsType) => {
 				expect(oldDirStatAfterRecreate.exists).toBe(true)
 			})
 		})
+
+		describe("createMissingDirs", () => {
+			test("can create directory with createMissingDirs when intermediate dirs don't exist", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+
+				// Act
+				const deepDir = await root.openDir(
+					Path.parse("level1/level2/level3"),
+					{
+						create: true,
+						createMissingDirs: true,
+					},
+				)
+
+				// Assert
+				const stat = await deepDir.stat()
+				expect(stat.exists).toBe(true)
+				expect(deepDir.path.toString()).toBe("level1/level2/level3")
+			})
+
+			test("can create file with createMissingDirs when intermediate dirs don't exist", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+
+				// Act
+				const deepFile = await root.openFile(
+					Path.parse("deep/nested/path/test.txt"),
+					{
+						create: true,
+						createMissingDirs: true,
+					},
+				)
+
+				// Assert
+				expect(await deepFile.exists()).toBe(true)
+				expect(deepFile.path.toString()).toBe(
+					"deep/nested/path/test.txt",
+				)
+			})
+		})
+
+		describe("type validation", () => {
+			// Note: Some of these tests are redundant with existing tests in openDir and openFile sections
+			// but kept for clarity and explicit type validation testing
+
+			test("openDir throws when intermediate path segment is a file", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				await root.openFile(Path.parse("blocking-file.txt"), {
+					create: true,
+				})
+
+				// Act & Assert
+				await expect(
+					root.openDir(Path.parse("blocking-file.txt/subdir"), {
+						create: true,
+						createMissingDirs: true,
+					}),
+				).rejects.toThrow()
+			})
+
+			test("openFile throws when intermediate path segment is a file", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				await root.openFile(Path.parse("blocking-file.txt"), {
+					create: true,
+				})
+
+				// Act & Assert
+				await expect(
+					root.openFile(Path.parse("blocking-file.txt/file.txt"), {
+						create: true,
+						createMissingDirs: true,
+					}),
+				).rejects.toThrow()
+			})
+		})
+
+		describe("allowExisting", () => {
+			test("openDir with allowExisting false throws when directory already exists", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				await root.openDir(Path.parse("existing-dir"), { create: true })
+
+				// Act & Assert
+				await expect(
+					root.openDir(Path.parse("existing-dir"), {
+						create: true,
+						allowExisting: false,
+					}),
+				).rejects.toThrow()
+			})
+
+			test("openFile with allowExisting false throws when file already exists", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+				await root.openFile(Path.parse("existing-file.txt"), {
+					create: true,
+				})
+
+				// Act & Assert
+				await expect(
+					root.openFile(Path.parse("existing-file.txt"), {
+						create: true,
+						allowExisting: false,
+					}),
+				).rejects.toThrow()
+			})
+		})
+
+		describe("orNull methods", () => {
+			test("openDirOrNull returns null for non-existent directory", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+
+				// Act
+				const result = await root.openDirOrNull(
+					Path.parse("nonexistent-dir"),
+				)
+
+				// Assert
+				expect(result).toBe(null)
+			})
+
+			test("openFileOrNull returns null for non-existent file", async () => {
+				// Arrange
+				const root = await fs.getRootDir()
+
+				// Act
+				const result = await root.openFileOrNull(
+					Path.parse("nonexistent-file.txt"),
+				)
+
+				// Assert
+				expect(result).toBe(null)
+			})
+		})
 	})
 })

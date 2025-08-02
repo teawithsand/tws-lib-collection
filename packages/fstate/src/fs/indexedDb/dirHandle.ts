@@ -8,6 +8,7 @@ import {
 	FsFileOpenSettings,
 } from "../defines/dirHandle"
 import {
+	FsErrorAlreadyExists,
 	FsErrorBadPath,
 	FsErrorBadType,
 	FsErrorNotFound,
@@ -206,6 +207,11 @@ export class IndexedDbDirHandle implements FsDirHandle {
 			throw new FsErrorNotFound("File does not exist")
 		}
 
+		// Check if file exists and allowExisting is false
+		if (existingEntry && settings?.allowExisting === false) {
+			throw new FsErrorAlreadyExists("File already exists")
+		}
+
 		// Create file if it doesn't exist and create is true
 		if ((!existingEntry || settings?.create) && settings?.create) {
 			// Create missing parent directories only if createMissingDirs is true
@@ -323,6 +329,11 @@ export class IndexedDbDirHandle implements FsDirHandle {
 		// Check if directory doesn't exist and create is not set
 		if (!existingEntry && !settings?.create) {
 			throw new FsErrorNotFound("Directory does not exist")
+		}
+
+		// Check if directory exists and allowExisting is false
+		if (existingEntry && settings?.allowExisting === false) {
+			throw new FsErrorAlreadyExists("Directory already exists")
 		}
 
 		// Create directory if it doesn't exist and create is true

@@ -7,7 +7,7 @@ import {
 	FsFileOpenOrNullSettings,
 	FsFileOpenSettings,
 } from "../defines/dirHandle"
-import { FsErrorBadPath } from "../defines/error"
+import { FsErrorAlreadyExists, FsErrorBadPath } from "../defines/error"
 import { FsFileHandle, FsFileOpenMode } from "../defines/fileHandle"
 import { Path } from "../defines/path"
 import { OpfsFileHandle } from "./fileHandle"
@@ -177,8 +177,19 @@ export class OpfsDirHandle implements FsDirHandle {
 				await target.getFileHandle(basename, {
 					create: false,
 				})
+				// If we get here, the file exists and allowExisting is false
+				throw new FsErrorAlreadyExists("File already exists")
 			} catch (e) {
-				throw e
+				if (OpfsErrorUtil.isNotFoundError(e)) {
+					// File doesn't exist, this is what we want when allowExisting is false
+					// Continue to create it
+				} else {
+					// Some other error occurred
+					throw OpfsErrorUtil.convertToFsError(
+						e,
+						"Failed to open file",
+					)
+				}
 			}
 		}
 
@@ -271,15 +282,19 @@ export class OpfsDirHandle implements FsDirHandle {
 				await target.getDirectoryHandle(basename, {
 					create: false,
 				})
+				// If we get here, the directory exists and allowExisting is false
+				throw new FsErrorAlreadyExists("Directory already exists")
 			} catch (e) {
 				if (OpfsErrorUtil.isNotFoundError(e)) {
-					// noop
+					// Directory doesn't exist, this is what we want when allowExisting is false
+					// Continue to create it
+				} else {
+					// Some other error occurred
+					throw OpfsErrorUtil.convertToFsError(
+						e,
+						"Failed to open directory",
+					)
 				}
-
-				throw OpfsErrorUtil.convertToFsError(
-					e,
-					"Failed to open directory",
-				)
 			}
 		}
 
