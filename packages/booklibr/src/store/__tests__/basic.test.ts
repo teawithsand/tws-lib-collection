@@ -187,39 +187,63 @@ fsTypes.forEach((fsType) => {
 				expect(exists).toBe(false)
 			})
 
-			test("should return handle that can be used to create abook via write", async () => {
+			test("should throw error when write is called on non-existent abook", async () => {
 				// Arrange
 				const nonExistentId = "new-abook-id"
 				const headerData = createDefaultHeaderData()
 
-				// Act
+				// Act & Assert
 				const handle = await store.get(nonExistentId)
 				const existsBefore = await handle.exists()
-				await handle.write({ data: headerData })
-				const existsAfter = await handle.exists()
-				const abook = await handle.mustRead()
-
-				// Assert
 				expect(existsBefore).toBe(false)
-				expect(existsAfter).toBe(true)
-				expect(abook.data.header.metadata.title).toBe(
-					headerData.metadata.title,
-				)
+				await expect(
+					handle.write({ data: headerData }),
+				).rejects.toThrow(AbookNotFoundError)
 			})
 
-			test("should not create abook when write is called without data", async () => {
+			test("should throw error when write is called without data on non-existent abook", async () => {
 				// Arrange
 				const nonExistentId = "should-not-be-created"
 
-				// Act
+				// Act & Assert
 				const handle = await store.get(nonExistentId)
 				const existsBefore = await handle.exists()
-				await handle.write({}) // Write without data
-				const existsAfter = await handle.exists()
-
-				// Assert
 				expect(existsBefore).toBe(false)
-				expect(existsAfter).toBe(false)
+				await expect(handle.write({})).rejects.toThrow(
+					AbookNotFoundError,
+				)
+			})
+
+			test("should allow write on existing abook", async () => {
+				// Arrange
+				const createdHandle = await store.createAbook(
+					createDefaultHeaderData(),
+				)
+				const newHeaderData = createDefaultHeaderData()
+				newHeaderData.metadata.title = "Updated Title"
+
+				// Act & Assert
+				await expect(
+					createdHandle.write({ data: newHeaderData }),
+				).resolves.not.toThrow()
+				const abook = await createdHandle.mustRead()
+				expect(abook.data.header.metadata.title).toBe("Updated Title")
+			})
+
+			test("should allow write with only aggregate options on existing abook", async () => {
+				// Arrange
+				const createdHandle = await store.createAbook(
+					createDefaultHeaderData(),
+				)
+
+				// Act & Assert
+				await expect(
+					createdHandle.write({
+						aggregate: {
+							type: AbookWriteAggregateType.CLEAR,
+						},
+					}),
+				).resolves.not.toThrow()
 			})
 		})
 

@@ -110,6 +110,32 @@ class FsAbookHandleImpl {
 		options: AbookWriteHeaderOptions,
 	): Promise<void> => {
 		const existingData = await this.readAbookData()
+		if (!existingData) {
+			throw new AbookNotFoundError(`Abook with id ${this.id} not found`)
+		}
+
+		const headerData = this.resolveHeaderData(options, existingData)
+		const aggregate = await this.resolveAggregateData(
+			options,
+			existingData,
+			headerData,
+		)
+
+		const dataToSave: FsAbookStoreAbookData = {
+			header: headerData,
+			aggregate: aggregate ?? this.createDefaultAggregate(),
+		}
+
+		await this.saveAbookData(dataToSave)
+	}
+
+	/**
+	 * Internal write method used during creation that bypasses existence checks.
+	 */
+	public readonly writeForCreation = async (
+		options: AbookWriteHeaderOptions,
+	): Promise<void> => {
+		const existingData = await this.readAbookData()
 		const headerData = this.resolveHeaderData(options, existingData)
 		const aggregate = await this.resolveAggregateData(
 			options,
@@ -411,12 +437,18 @@ class FsAbookHandleImpl {
  */
 export class FsAbookHandle implements AbookHandle {
 	constructor(
-		private readonly config: FsAbookStoreConfig,
 		private readonly impl: FsAbookHandleImpl | null,
-	) {}
+		private readonly handleId: string,
+	) {
+		if (impl && impl.id !== handleId) {
+			throw new Error(
+				`Handle ID mismatch: expected "${handleId}" but impl has ID "${impl.id}"`,
+			)
+		}
+	}
 
 	public get id() {
-		return this.impl?.id ?? ""
+		return this.handleId
 	}
 
 	/**
@@ -431,13 +463,13 @@ export class FsAbookHandle implements AbookHandle {
 		config: FsAbookStoreConfig,
 		data: AbookHeaderData,
 	): Promise<FsAbookHandle> => {
-		const abookRoot = await config.root.openDir(Path.from(id), {
+		const abookRoot = await config.root.openDir(Path.fromSegment(id), {
 			create: true,
 			allowExisting: false,
 		})
 		const impl = new FsAbookHandleImpl(config, abookRoot)
-		const handle = new FsAbookHandle(config, impl)
-		await handle.write({ data })
+		const handle = new FsAbookHandle(impl, id)
+		await impl.writeForCreation({ data })
 		return handle
 	}
 
@@ -449,7 +481,7 @@ export class FsAbookHandle implements AbookHandle {
 		abookRoot: FsDirHandle,
 	): FsAbookHandle => {
 		const impl = new FsAbookHandleImpl(config, abookRoot)
-		return new FsAbookHandle(config, impl)
+		return new FsAbookHandle(impl, abookRoot.name)
 	}
 
 	/**
@@ -459,15 +491,7 @@ export class FsAbookHandle implements AbookHandle {
 		config: FsAbookStoreConfig,
 		id: string,
 	): FsAbookHandle => {
-		const handle = new FsAbookHandle(config, null)
-		// Override the id getter for non-existent handles
-		Object.defineProperty(handle, "id", {
-			value: id,
-			writable: false,
-			enumerable: true,
-			configurable: false,
-		})
-		return handle
+		return new FsAbookHandle(null, id)
 	}
 
 	/**
@@ -502,31 +526,13 @@ export class FsAbookHandle implements AbookHandle {
 	/**
 	 * Writes audiobook header data to the file system.
 	 * Handles aggregation based on provided options.
-	 * If the abook doesn't exist and data is provided, it will be created.
+	 * Throws an error if the abook doesn't exist.
 	 */
 	public readonly write = async (
 		options: AbookWriteHeaderOptions,
 	): Promise<void> => {
-		if (!this.impl && options.data) {
-			// Create the abook only if it doesn't exist AND we have data to write
-			const abookRoot = await this.config.root.openDir(
-				Path.from(this.id),
-				{
-					create: true,
-					allowExisting: false,
-				},
-			)
-			const newImpl = new FsAbookHandleImpl(this.config, abookRoot)
-			// Replace the impl in this instance
-			Object.defineProperty(this, "impl", {
-				value: newImpl,
-				writable: false,
-			})
-		}
-
-		// If impl still doesn't exist (no data provided), do nothing
 		if (!this.impl) {
-			return
+			throw new AbookNotFoundError(`Abook with id ${this.id} not found`)
 		}
 
 		return this.impl.write(options)

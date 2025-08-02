@@ -62,7 +62,9 @@ export class FsAbookStore implements AbookStore {
 	public readonly get = async (id: Id): Promise<AbookHandle> => {
 		const idStr = id.toString()
 		try {
-			const abookDir = await this.config.root.openDir(Path.from(idStr))
+			const abookDir = await this.config.root.openDir(
+				Path.fromSegment(idStr),
+			)
 			const exists = await abookDir.exists()
 			if (exists) {
 				return FsAbookHandle.fromExisting(this.config, abookDir)
