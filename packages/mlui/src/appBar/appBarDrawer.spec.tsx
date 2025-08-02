@@ -20,7 +20,7 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Home",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 		]
@@ -41,7 +41,7 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Home",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 		]
@@ -58,12 +58,12 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Home",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: mockOnClick,
 			},
 			{
 				label: "Settings",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				onClick: () => {},
 			},
 		]
@@ -84,13 +84,13 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Dashboard",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/dashboard",
 			},
 			{
 				label: "Profile",
-				icon: IconUser,
+				icon: <IconUser size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/profile",
 				onClick: () => {},
@@ -116,13 +116,13 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Documentation",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				linkType: AppBarLinkType.REMOTE_LINK as const,
 				href: "https://example.com/docs",
 			},
 			{
 				label: "Support",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				linkType: AppBarLinkType.REMOTE_LINK as const,
 				href: "https://example.com/support",
 				onClick: () => {},
@@ -159,12 +159,12 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Home",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: mockItemOnClick,
 			},
 			{
 				label: "Profile",
-				icon: IconUser,
+				icon: <IconUser size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/profile",
 			},
@@ -191,13 +191,13 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "Disabled Item",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: mockOnClick,
 				disabled: true,
 			},
 			{
 				label: "Enabled Item",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				onClick: () => {},
 				disabled: false,
 			},
@@ -236,18 +236,18 @@ describe("AppBarDrawer", () => {
 		const items = [
 			{
 				label: "No Link",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: mockOnClick,
 			},
 			{
 				label: "Local Link",
-				icon: IconUser,
+				icon: <IconUser size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/local",
 			},
 			{
 				label: "Remote Link",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				linkType: AppBarLinkType.REMOTE_LINK as const,
 				href: "https://example.com",
 			},

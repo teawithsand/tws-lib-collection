@@ -27,27 +27,33 @@ export const Router = ({
 	type = RouterType.Browser,
 	routes,
 	notFoundContent,
+	wrapperComponent: WrapperComponent,
 }: RouterConfig) => {
 	const RouterComponent =
 		type === RouterType.Hash ? HashRouter : BrowserRouter
 
+	const routesElement = (
+		<Routes>
+			{routes.map((route, index) => (
+				<Route
+					key={index}
+					path={route.path}
+					element={renderRouteContent(route.content)}
+				/>
+			))}
+			{notFoundContent && (
+				<Route path="*" element={renderRouteContent(notFoundContent)} />
+			)}
+		</Routes>
+	)
+
 	return (
 		<RouterComponent>
-			<Routes>
-				{routes.map((route, index) => (
-					<Route
-						key={index}
-						path={route.path}
-						element={renderRouteContent(route.content)}
-					/>
-				))}
-				{notFoundContent && (
-					<Route
-						path="*"
-						element={renderRouteContent(notFoundContent)}
-					/>
-				)}
-			</Routes>
+			{WrapperComponent ? (
+				<WrapperComponent>{routesElement}</WrapperComponent>
+			) : (
+				routesElement
+			)}
 		</RouterComponent>
 	)
 }

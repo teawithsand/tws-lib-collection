@@ -1,5 +1,5 @@
 import { Drawer, Group, NavLink, Stack, Text } from "@mantine/core"
-import { IconCards } from "@tabler/icons-react"
+import type { ReactNode } from "react"
 import { Link } from "react-router"
 import styles from "./appBarDrawer.module.scss"
 import { AppBarLinkType } from "./appBarLinkType"
@@ -29,7 +29,7 @@ const AppBarDrawerItemComponent = ({
 			<NavLink
 				key={index}
 				label={item.label}
-				leftSection={<item.icon size={18} />}
+				leftSection={item.icon}
 				onClick={handleClick}
 				disabled={item.disabled}
 				className={styles.navLink}
@@ -44,7 +44,7 @@ const AppBarDrawerItemComponent = ({
 			<NavLink
 				key={index}
 				label={item.label}
-				leftSection={<item.icon size={18} />}
+				leftSection={item.icon}
 				onClick={handleClick}
 				disabled={item.disabled}
 				className={styles.navLink}
@@ -60,7 +60,7 @@ const AppBarDrawerItemComponent = ({
 		<NavLink
 			key={index}
 			label={item.label}
-			leftSection={<item.icon size={18} />}
+			leftSection={item.icon}
 			onClick={handleClick}
 			disabled={item.disabled}
 			className={styles.navLink}
@@ -72,7 +72,8 @@ export interface AppBarDrawerProps {
 	readonly opened: boolean
 	readonly onClose: () => void
 	readonly items: AppBarDrawerItem[]
-	readonly drawerTitle?: string
+	readonly drawerTitle?: ReactNode
+	readonly drawerIcon?: ReactNode
 }
 
 /**
@@ -82,7 +83,8 @@ export const AppBarDrawer = ({
 	opened,
 	onClose,
 	items,
-	drawerTitle = "Navigation",
+	drawerTitle = "",
+	drawerIcon = <></>,
 }: AppBarDrawerProps) => {
 	return (
 		<Drawer
@@ -90,7 +92,7 @@ export const AppBarDrawer = ({
 			onClose={onClose}
 			title={
 				<Group gap="xs">
-					<IconCards size={20} />
+					{drawerIcon}
 					<Text fw={700}>{drawerTitle}</Text>
 				</Group>
 			}

@@ -35,10 +35,18 @@ export interface RouteDefinition {
 }
 
 /**
+ * Wrapper component that wraps Routes but can access router context
+ */
+export interface RouteWrapperComponent {
+	readonly children: ReactNode
+}
+
+/**
  * Router configuration
  */
 export interface RouterConfig {
 	readonly type?: RouterType
 	readonly routes: readonly RouteDefinition[]
 	readonly notFoundContent?: RouteContent
+	readonly wrapperComponent?: ComponentType<RouteWrapperComponent>
 }

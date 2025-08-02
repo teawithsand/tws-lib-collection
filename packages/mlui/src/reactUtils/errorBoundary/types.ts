@@ -49,6 +49,6 @@ export interface ErrorBoundaryProps {
  */
 export interface ErrorBoundaryContextValue {
 	readonly error: Error
-	readonly errorInfo: ErrorInfo
+	readonly errorInfo: ErrorInfo | null
 	readonly resetErrorBoundary: () => void
 }

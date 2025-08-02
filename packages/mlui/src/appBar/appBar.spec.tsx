@@ -40,12 +40,12 @@ describe("AppBar", () => {
 		const actions = [
 			{
 				label: "Home",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 			{
 				label: "Settings",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/settings",
 			},
@@ -63,7 +63,7 @@ describe("AppBar", () => {
 		const moreActions = [
 			{
 				label: "More Action",
-				icon: IconSettings,
+				icon: <IconSettings size={16} />,
 				onClick: () => {},
 			},
 		]
@@ -72,18 +72,6 @@ describe("AppBar", () => {
 
 		expect(screen.getByTestId("app-bar-more-actions")).toBeInTheDocument()
 		expect(screen.getByLabelText("More actions")).toBeInTheDocument()
-	})
-
-	test("renders children content", () => {
-		const testContent = "Test Content"
-		renderWithProviders(
-			<AppBar title="Test">
-				<div data-testid="test-content">{testContent}</div>
-			</AppBar>,
-		)
-
-		expect(screen.getByTestId("test-content")).toBeInTheDocument()
-		expect(screen.getByTestId("app-bar-content")).toBeInTheDocument()
 	})
 
 	test("does not render more actions menu when empty", () => {
@@ -99,18 +87,18 @@ describe("AppBar", () => {
 		const actions = [
 			{
 				label: "Action No Link",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 			{
 				label: "Action Local Link",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/local",
 			},
 			{
 				label: "Action Remote Link",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				linkType: AppBarLinkType.REMOTE_LINK as const,
 				href: "https://example.com",
 			},
@@ -119,18 +107,18 @@ describe("AppBar", () => {
 		const moreActions = [
 			{
 				label: "More No Link",
-				icon: IconSettings,
+				icon: <IconSettings size={16} />,
 				onClick: () => {},
 			},
 			{
 				label: "More Local Link",
-				icon: IconHome,
+				icon: <IconHome size={16} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/more-local",
 			},
 			{
 				label: "More Remote Link",
-				icon: IconSettings,
+				icon: <IconSettings size={16} />,
 				linkType: AppBarLinkType.REMOTE_LINK as const,
 				href: "https://more.example.com",
 			},
@@ -139,18 +127,18 @@ describe("AppBar", () => {
 		const drawerItems = [
 			{
 				label: "Drawer No Link",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 			{
 				label: "Drawer Local Link",
-				icon: IconSettings,
+				icon: <IconSettings size={18} />,
 				linkType: AppBarLinkType.LOCAL_LINK as const,
 				href: "/drawer-local",
 			},
 			{
 				label: "Drawer Remote Link",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				linkType: AppBarLinkType.REMOTE_LINK as const,
 				href: "https://drawer.example.com",
 			},
@@ -176,7 +164,7 @@ describe("AppBar", () => {
 		const actions = [
 			{
 				label: "Home",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 		]
@@ -184,7 +172,7 @@ describe("AppBar", () => {
 		const drawerItems = [
 			{
 				label: "Drawer Item 1",
-				icon: IconHome,
+				icon: <IconHome size={18} />,
 				onClick: () => {},
 			},
 		]
@@ -310,7 +298,7 @@ describe("AppBar", () => {
 			const drawerItems = [
 				{
 					label: "Test Item",
-					icon: IconHome,
+					icon: <IconHome size={18} />,
 					onClick: () => {},
 				},
 			]

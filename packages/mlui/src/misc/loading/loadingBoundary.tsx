@@ -16,6 +16,9 @@ export interface LoadingBoundaryProps {
  * A boundary component that handles loading states using React Suspense
  * with a standardized loading fallback.
  */
-export const LoadingBoundary = ({ children, text }: LoadingBoundaryProps) => (
+export const LoadingSuspenseBoundary = ({
+	children,
+	text,
+}: LoadingBoundaryProps) => (
 	<Suspense fallback={<LoadingFallback text={text} />}>{children}</Suspense>
 )

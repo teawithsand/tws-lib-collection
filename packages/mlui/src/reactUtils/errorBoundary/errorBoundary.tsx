@@ -81,7 +81,7 @@ export class ErrorBoundary extends Component<
 		const { hasError, error, errorInfo } = this.state
 		const { children, fallback } = this.props
 
-		if (hasError && error && errorInfo) {
+		if (hasError && error) {
 			const contextValue: ErrorBoundaryContextValue = {
 				error,
 				errorInfo,

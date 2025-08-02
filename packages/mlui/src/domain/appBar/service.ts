@@ -1,4 +1,5 @@
 import { atom } from "@teawithsand/fstate"
+import type { ReactNode } from "react"
 import {
 	type AppBarAction,
 	type AppBarDrawerItem,
@@ -7,11 +8,12 @@ import {
 } from "../../appBar/appBarTypes"
 
 export interface AppBarState {
-	title: string
+	title: ReactNode
 	actions: AppBarAction[]
 	moreActions: AppBarMoreAction[]
 	drawerItems: AppBarDrawerItem[]
-	drawerTitle: string
+	drawerTitle: ReactNode
+	drawerIcon: ReactNode
 	navigationConfig: AppBarNavigationConfig
 }
 

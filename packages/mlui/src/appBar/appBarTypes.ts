@@ -1,4 +1,4 @@
-import type { ComponentType } from "react"
+import type { ReactNode } from "react"
 import { AppBarLinkType } from "./appBarLinkType"
 
 interface BaseAppBarItem {
@@ -27,7 +27,7 @@ export type AppBarAction = (
 	| AppBarItemWithLocalLink
 	| AppBarItemWithRemoteLink
 ) & {
-	readonly icon?: ComponentType<{ size?: number }>
+	readonly icon?: ReactNode
 }
 
 export type AppBarMoreAction = (
@@ -35,7 +35,7 @@ export type AppBarMoreAction = (
 	| AppBarItemWithLocalLink
 	| AppBarItemWithRemoteLink
 ) & {
-	readonly icon?: ComponentType<{ size?: number }>
+	readonly icon?: ReactNode
 }
 
 export type AppBarDrawerItem = (
@@ -43,7 +43,7 @@ export type AppBarDrawerItem = (
 	| AppBarItemWithLocalLink
 	| AppBarItemWithRemoteLink
 ) & {
-	readonly icon: ComponentType<{ size?: number }>
+	readonly icon: ReactNode
 }
 
 export enum AppBarNavigationButtonType {
