@@ -186,7 +186,7 @@ export class IndexedDbDirHandle implements FsDirHandle {
 			// If creating with createMissingDirs, only validate that existing parent path segments are directories (not files)
 			const pathSegments = targetPath.getSegments()
 			for (let i = 0; i < pathSegments.length - 1; i++) {
-				const parentPath = Path.from(
+				const parentPath = Path.parse(
 					pathSegments.slice(0, i + 1).join("/"),
 				)
 				const parentHandle = this.db.getHandle(parentPath)
@@ -305,7 +305,7 @@ export class IndexedDbDirHandle implements FsDirHandle {
 			// If creating with createMissingDirs, only validate that existing parent path segments are directories (not files)
 			const pathSegments = targetPath.getSegments()
 			for (let i = 0; i < pathSegments.length - 1; i++) {
-				const parentPath = Path.from(
+				const parentPath = Path.parse(
 					pathSegments.slice(0, i + 1).join("/"),
 				)
 				const parentHandle = this.db.getHandle(parentPath)
@@ -406,7 +406,9 @@ export class IndexedDbDirHandle implements FsDirHandle {
 	): Promise<void> => {
 		const pathSegments = targetPath.getSegments()
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const parentPath = Path.from(pathSegments.slice(0, i + 1).join("/"))
+			const parentPath = Path.parse(
+				pathSegments.slice(0, i + 1).join("/"),
+			)
 			const parentHandle = this.db.getHandle(parentPath)
 			const parentEntry = await parentHandle.read()
 
@@ -431,7 +433,9 @@ export class IndexedDbDirHandle implements FsDirHandle {
 	): Promise<void> => {
 		const pathSegments = targetPath.getSegments()
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const parentPath = Path.from(pathSegments.slice(0, i + 1).join("/"))
+			const parentPath = Path.parse(
+				pathSegments.slice(0, i + 1).join("/"),
+			)
 			const parentHandle = this.db.getHandle(parentPath)
 			const parentEntry = await parentHandle.read()
 
@@ -472,7 +476,7 @@ export class IndexedDbDirHandle implements FsDirHandle {
 		const pathSegments = this.path.getSegments()
 		// Check only parent directories, not the current directory itself
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const ancestorPath = Path.from(
+			const ancestorPath = Path.parse(
 				pathSegments.slice(0, i + 1).join("/"),
 			)
 			const ancestorHandle = this.db.getHandle(ancestorPath)

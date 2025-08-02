@@ -13,7 +13,7 @@ export class IndexedDbFs implements Fs {
 
 	public constructor(config?: { dbName?: string; storeName?: string }) {
 		this.db = new IndexedDbFsDb(config)
-		this.rootPath = Path.from("")
+		this.rootPath = Path.parse("")
 	}
 
 	public readonly getRootDir = async () => {

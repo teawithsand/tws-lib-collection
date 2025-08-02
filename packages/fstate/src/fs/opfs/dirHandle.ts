@@ -96,14 +96,14 @@ export class OpfsDirHandle implements FsDirHandle {
 					return new OpfsFileHandle(
 						this.handle,
 						handle as FileSystemFileHandle,
-						this.path.concat(Path.from(handle.name)),
+						this.path.concat(Path.parse(handle.name)),
 						FsFileOpenMode.READ,
 					)
 				} else if (handle.kind === "directory") {
 					return new OpfsDirHandle(
 						this.handle,
 						handle as FileSystemDirectoryHandle,
-						this.path.concat(Path.from(handle.name)),
+						this.path.concat(Path.parse(handle.name)),
 					)
 				} else {
 					throw new Error(`Unknown handle kind: ${handle.kind}`)

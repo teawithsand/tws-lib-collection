@@ -180,7 +180,9 @@ export class InMemoryFileHandle implements FsFileHandle {
 		// Check if all parent directories exist
 		const pathSegments = this.path.getSegments()
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const parentPath = Path.from(pathSegments.slice(0, i + 1).join("/"))
+			const parentPath = Path.parse(
+				pathSegments.slice(0, i + 1).join("/"),
+			)
 			const parentHandle = this.db.getHandle(parentPath)
 			const parentEntry = parentHandle.read()
 			if (!parentEntry || parentEntry.type !== FsHandleType.DIR) {

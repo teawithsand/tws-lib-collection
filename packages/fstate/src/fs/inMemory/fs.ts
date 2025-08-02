@@ -13,7 +13,7 @@ export class InMemoryFs implements Fs {
 
 	public constructor() {
 		this.db = new InMemoryFsDb()
-		this.rootPath = Path.from("")
+		this.rootPath = Path.parse("")
 		const rootHandle = this.db.getHandle(this.rootPath)
 		if (!rootHandle.read()) {
 			rootHandle.writeForce({ type: FsHandleType.DIR, children: [] })

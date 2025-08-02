@@ -161,7 +161,9 @@ export class IndexedDbFileHandle implements FsFileHandle {
 		const pathSegments = this.path.getSegments()
 		// Check only parent directories, not the current file itself
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const parentPath = new Path(pathSegments.slice(0, i + 1).join("/"))
+			const parentPath = Path.parse(
+				pathSegments.slice(0, i + 1).join("/"),
+			)
 			const parentHandle = this.db.getHandle(parentPath)
 			const parentEntry = await parentHandle.read()
 			if (!parentEntry || parentEntry.type !== FsHandleType.DIR) {

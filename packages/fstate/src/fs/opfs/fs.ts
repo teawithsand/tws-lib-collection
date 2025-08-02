@@ -15,6 +15,6 @@ export class OpfsFs implements Fs {
 	}
 
 	public readonly getRootDir = async (): Promise<FsDirHandle> => {
-		return new OpfsDirHandle(null, this.rootDirectory, Path.from(""))
+		return new OpfsDirHandle(null, this.rootDirectory, Path.parse(""))
 	}
 }

@@ -179,7 +179,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 			// If creating with createMissingDirs, only validate that existing parent path segments are directories (not files)
 			const pathSegments = targetPath.getSegments()
 			for (let i = 0; i < pathSegments.length - 1; i++) {
-				const parentPath = Path.from(
+				const parentPath = Path.parse(
 					pathSegments.slice(0, i + 1).join("/"),
 				)
 				const parentHandle = this.db.getHandle(parentPath)
@@ -258,7 +258,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 			// If allowMissingParentDirectories is true, check if parents are missing
 			const pathSegments = targetPath.getSegments()
 			for (let i = 0; i < pathSegments.length - 1; i++) {
-				const parentPath = Path.from(
+				const parentPath = Path.parse(
 					pathSegments.slice(0, i + 1).join("/"),
 				)
 				const parentHandle = this.db.getHandle(parentPath)
@@ -311,7 +311,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 			// If creating with createMissingDirs, only validate that existing parent path segments are directories (not files)
 			const pathSegments = targetPath.getSegments()
 			for (let i = 0; i < pathSegments.length - 1; i++) {
-				const parentPath = Path.from(
+				const parentPath = Path.parse(
 					pathSegments.slice(0, i + 1).join("/"),
 				)
 				const parentHandle = this.db.getHandle(parentPath)
@@ -392,7 +392,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 			// If allowMissingParentDirectories is true, check if parents are missing
 			const pathSegments = targetPath.getSegments()
 			for (let i = 0; i < pathSegments.length - 1; i++) {
-				const parentPath = Path.from(
+				const parentPath = Path.parse(
 					pathSegments.slice(0, i + 1).join("/"),
 				)
 				const parentHandle = this.db.getHandle(parentPath)
@@ -428,7 +428,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 		const pathSegments = targetPath.getSegments()
 		// Start from root and create each directory in the path
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const dirPath = Path.from(pathSegments.slice(0, i + 1).join("/"))
+			const dirPath = Path.parse(pathSegments.slice(0, i + 1).join("/"))
 			const dirHandle = this.db.getHandle(dirPath)
 			const dirEntry = dirHandle.read()
 
@@ -441,7 +441,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 
 				// Add to parent's children list
 				if (i > 0) {
-					const parentPath = Path.from(
+					const parentPath = Path.parse(
 						pathSegments.slice(0, i).join("/"),
 					)
 					const parentHandle = this.db.getHandle(parentPath)
@@ -458,7 +458,7 @@ export class InMemoryDirHandle implements FsDirHandle {
 					}
 				} else {
 					// Adding to root
-					const rootHandle = this.db.getHandle(Path.from(""))
+					const rootHandle = this.db.getHandle(Path.parse(""))
 					const rootEntry = rootHandle.read()
 					if (rootEntry && rootEntry.type === FsHandleType.DIR) {
 						const dirName = pathSegments[0]
@@ -482,7 +482,9 @@ export class InMemoryDirHandle implements FsDirHandle {
 		// Check if all parent directories exist
 		const pathSegments = this.path.getSegments()
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const parentPath = Path.from(pathSegments.slice(0, i + 1).join("/"))
+			const parentPath = Path.parse(
+				pathSegments.slice(0, i + 1).join("/"),
+			)
 			const parentHandle = this.db.getHandle(parentPath)
 			const parentEntry = parentHandle.read()
 			if (!parentEntry || parentEntry.type !== FsHandleType.DIR) {
@@ -500,7 +502,9 @@ export class InMemoryDirHandle implements FsDirHandle {
 		const pathSegments = targetPath.getSegments()
 		// Check each parent directory in the path
 		for (let i = 0; i < pathSegments.length - 1; i++) {
-			const parentPath = Path.from(pathSegments.slice(0, i + 1).join("/"))
+			const parentPath = Path.parse(
+				pathSegments.slice(0, i + 1).join("/"),
+			)
 			const parentHandle = this.db.getHandle(parentPath)
 			const parentEntry = parentHandle.read()
 

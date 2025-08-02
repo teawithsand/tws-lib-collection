@@ -48,7 +48,7 @@ fsTypes.forEach((fsType) => {
 			test("deletes a file and it no longer exists", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const file = await root.openFile(Path.from("file.txt"), {
+				const file = await root.openFile(Path.parse("file.txt"), {
 					create: true,
 				})
 
@@ -63,7 +63,7 @@ fsTypes.forEach((fsType) => {
 			test("deletes an empty directory and it no longer exists", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dir = await root.openDir(Path.from("dir1"), {
+				const dir = await root.openDir(Path.parse("dir1"), {
 					create: true,
 				})
 
@@ -78,10 +78,10 @@ fsTypes.forEach((fsType) => {
 			test("deleting non-empty directory without recursive throws", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dir = await root.openDir(Path.from("dir2"), {
+				const dir = await root.openDir(Path.parse("dir2"), {
 					create: true,
 				})
-				await dir.openFile(Path.from("file.txt"), { create: true })
+				await dir.openFile(Path.parse("file.txt"), { create: true })
 
 				// Act & Assert
 				await expect(dir.delete(false)).rejects.toThrow()
@@ -90,10 +90,10 @@ fsTypes.forEach((fsType) => {
 			test("deleting non-empty directory with recursive removes it", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dir = await root.openDir(Path.from("dir3"), {
+				const dir = await root.openDir(Path.parse("dir3"), {
 					create: true,
 				})
-				await dir.openFile(Path.from("file.txt"), { create: true })
+				await dir.openFile(Path.parse("file.txt"), { create: true })
 
 				// Act
 				await dir.delete(true)
@@ -106,9 +106,12 @@ fsTypes.forEach((fsType) => {
 			test("deleting truly non-existent file does not throw", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const file = await root.openFile(Path.from("truly-ghost.txt"), {
-					create: true,
-				})
+				const file = await root.openFile(
+					Path.parse("truly-ghost.txt"),
+					{
+						create: true,
+					},
+				)
 				await file.delete() // Delete it first
 
 				// Act & Assert - should not throw when deleting again
@@ -123,7 +126,7 @@ fsTypes.forEach((fsType) => {
 					// Arrange
 					const root = await fs.getRootDir()
 					const dir = await root.openDir(
-						Path.from("truly-ghostdir"),
+						Path.parse("truly-ghostdir"),
 						{
 							create: true,
 						},
@@ -156,8 +159,8 @@ fsTypes.forEach((fsType) => {
 			test("deleting non-empty root with recursive false should throw", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				await root.openDir(Path.from("subdir"), { create: true })
-				await root.openFile(Path.from("data.txt"), { create: true })
+				await root.openDir(Path.parse("subdir"), { create: true })
+				await root.openFile(Path.parse("data.txt"), { create: true })
 
 				// Act & Assert
 				await expect(root.delete(false)).rejects.toThrow()
@@ -166,8 +169,8 @@ fsTypes.forEach((fsType) => {
 			test("deleting root directory only removes its contents", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				await root.openDir(Path.from("subdir"), { create: true })
-				await root.openFile(Path.from("data.txt"), { create: true })
+				await root.openDir(Path.parse("subdir"), { create: true })
+				await root.openFile(Path.parse("data.txt"), { create: true })
 
 				// Act
 				await root.delete(true)
@@ -183,7 +186,7 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const dir = await root.openDir(Path.from("."))
+				const dir = await root.openDir(Path.parse("."))
 
 				// Assert
 				expect(dir.path.equals(root.path)).toBe(true)
@@ -208,7 +211,7 @@ fsTypes.forEach((fsType) => {
 					const root = await fs.getRootDir()
 
 					await expect(
-						root.openDir(Path.from("asdf"), settings),
+						root.openDir(Path.parse("asdf"), settings),
 					).rejects.toThrow(FsErrorNotFound)
 				},
 			)
@@ -218,10 +221,10 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const subdirOne = await root.openDir(Path.from("subdir"), {
+				const subdirOne = await root.openDir(Path.parse("subdir"), {
 					create: true,
 				})
-				const subdirTwo = await subdirOne.openDir(Path.from("."), {
+				const subdirTwo = await subdirOne.openDir(Path.parse("."), {
 					create: true,
 				})
 
@@ -234,33 +237,35 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const d1 = await root.openDir(Path.from("subdir"), {
+				const d1 = await root.openDir(Path.parse("subdir"), {
 					create: true,
 				})
-				const d2 = await d1.openDir(Path.from("d2"), { create: true })
-				const d3 = await d1.openDir(Path.from("d3"), { create: true })
-				const d11 = await d2.openDir(Path.from("d11"), { create: true })
+				const d2 = await d1.openDir(Path.parse("d2"), { create: true })
+				const d3 = await d1.openDir(Path.parse("d3"), { create: true })
+				const d11 = await d2.openDir(Path.parse("d11"), {
+					create: true,
+				})
 
 				// Assert
-				expect(d1.path.equals(Path.from("subdir"))).toBe(true)
-				expect(d2.path.equals(Path.from("subdir/d2"))).toBe(true)
-				expect(d3.path.equals(Path.from("subdir/d3"))).toBe(true)
-				expect(d11.path.equals(Path.from("subdir/d2/d11"))).toBe(true)
+				expect(d1.path.equals(Path.parse("subdir"))).toBe(true)
+				expect(d2.path.equals(Path.parse("subdir/d2"))).toBe(true)
+				expect(d3.path.equals(Path.parse("subdir/d3"))).toBe(true)
+				expect(d11.path.equals(Path.parse("subdir/d2/d11"))).toBe(true)
 			})
 
 			test("can list entries in a directory", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dir = await root.openDir(Path.from("subdir"), {
+				const dir = await root.openDir(Path.parse("subdir"), {
 					create: true,
 				})
-				const subDirOne = await dir.openDir(Path.from("asdf"), {
+				const subDirOne = await dir.openDir(Path.parse("asdf"), {
 					create: true,
 				})
-				const subDirTwo = await dir.openDir(Path.from("fdsa"), {
+				const subDirTwo = await dir.openDir(Path.parse("fdsa"), {
 					create: true,
 				})
-				const fileOne = await dir.openFile(Path.from("2134"), {
+				const fileOne = await dir.openFile(Path.parse("2134"), {
 					create: true,
 				})
 
@@ -298,7 +303,7 @@ fsTypes.forEach((fsType) => {
 				async (settings: FsDirOpenSettings) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const filePath = Path.from("notadir.txt")
+					const filePath = Path.parse("notadir.txt")
 					await root.openFile(filePath, { create: true })
 
 					// Act & Assert
@@ -321,7 +326,7 @@ fsTypes.forEach((fsType) => {
 				async (settings: FsDirOpenOrNullSettings) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const filePath = Path.from("notadir2.txt")
+					const filePath = Path.parse("notadir2.txt")
 					await root.openFile(filePath, { create: true })
 
 					// Act & Assert
@@ -336,7 +341,7 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const path = Path.from("a/b/c/d")
+				const path = Path.parse("a/b/c/d")
 				await root.openDir(path, {
 					createMissingDirs: true,
 					create: true,
@@ -344,10 +349,10 @@ fsTypes.forEach((fsType) => {
 
 				// Assert
 
-				const aDir = await root.openDir(Path.from("a"))
-				const bDir = await aDir.openDir(Path.from("b"))
-				const cDir = await bDir.openDir(Path.from("c"))
-				const dDir = await cDir.openDir(Path.from("d"))
+				const aDir = await root.openDir(Path.parse("a"))
+				const bDir = await aDir.openDir(Path.parse("b"))
+				const cDir = await bDir.openDir(Path.parse("c"))
+				const dDir = await cDir.openDir(Path.parse("d"))
 				const stat = await dDir.stat()
 				expect(stat.exists).toBe(true)
 			})
@@ -365,7 +370,7 @@ fsTypes.forEach((fsType) => {
 					const root = await fs.getRootDir()
 
 					// Act & Assert
-					const targetPath = Path.from("missing/parent/dirs/target")
+					const targetPath = Path.parse("missing/parent/dirs/target")
 					await expect(
 						root.openDir(targetPath, settings),
 					).rejects.toThrow()
@@ -379,7 +384,7 @@ fsTypes.forEach((fsType) => {
 					const root = await fs.getRootDir()
 
 					// Act & Assert
-					const targetPath = Path.from("missing/parent/dirs/target")
+					const targetPath = Path.parse("missing/parent/dirs/target")
 					await expect(
 						root.openDirOrNull(targetPath, settings),
 					).rejects.toThrow()
@@ -391,7 +396,7 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const targetPath = Path.from("missing/parent/dirs/target")
+				const targetPath = Path.parse("missing/parent/dirs/target")
 				const result = await root.openDirOrNull(targetPath, {
 					allowMissingParentDirectories: true,
 				})
@@ -405,7 +410,9 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const dir = await root.openDir(Path.from(""), { create: false })
+				const dir = await root.openDir(Path.parse(""), {
+					create: false,
+				})
 
 				// Assert
 				expect(dir.path.equals(root.path)).toBe(true)
@@ -417,7 +424,7 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				await expect(
-					root.openFile(Path.from(""), { create: false }),
+					root.openFile(Path.parse(""), { create: false }),
 				).rejects.toThrow(FsErrorBadPath)
 			})
 
@@ -438,7 +445,7 @@ fsTypes.forEach((fsType) => {
 					const root = await fs.getRootDir()
 
 					await expect(
-						root.openFile(Path.from("asdf"), settings),
+						root.openFile(Path.parse("asdf"), settings),
 					).rejects.toThrow(FsErrorNotFound)
 				},
 			)
@@ -446,7 +453,9 @@ fsTypes.forEach((fsType) => {
 			test("open file without create true fails if there is no file", async () => {
 				const root = await fs.getRootDir()
 
-				await expect(root.openFile(Path.from("asdf"))).rejects.toThrow()
+				await expect(
+					root.openFile(Path.parse("asdf")),
+				).rejects.toThrow()
 			})
 
 			test("opened file has correct path", async () => {
@@ -454,28 +463,32 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const f1 = await root.openFile(Path.from("file1.txt"), {
+				const f1 = await root.openFile(Path.parse("file1.txt"), {
 					create: true,
 				})
-				const d1 = await root.openDir(Path.from("subdir"), {
+				const d1 = await root.openDir(Path.parse("subdir"), {
 					create: true,
 				})
-				const f2 = await d1.openFile(Path.from("file2.txt"), {
+				const f2 = await d1.openFile(Path.parse("file2.txt"), {
 					create: true,
 				})
-				const f3 = await d1.openFile(Path.from("file3.txt"), {
+				const f3 = await d1.openFile(Path.parse("file3.txt"), {
 					create: true,
 				})
-				const d2 = await d1.openDir(Path.from("d2"), { create: true })
-				const f4 = await d2.openFile(Path.from("file4.txt"), {
+				const d2 = await d1.openDir(Path.parse("d2"), { create: true })
+				const f4 = await d2.openFile(Path.parse("file4.txt"), {
 					create: true,
 				})
 
 				// Assert
-				expect(f1.path.equals(Path.from("file1.txt"))).toBe(true)
-				expect(f2.path.equals(Path.from("subdir/file2.txt"))).toBe(true)
-				expect(f3.path.equals(Path.from("subdir/file3.txt"))).toBe(true)
-				expect(f4.path.equals(Path.from("subdir/d2/file4.txt"))).toBe(
+				expect(f1.path.equals(Path.parse("file1.txt"))).toBe(true)
+				expect(f2.path.equals(Path.parse("subdir/file2.txt"))).toBe(
+					true,
+				)
+				expect(f3.path.equals(Path.parse("subdir/file3.txt"))).toBe(
+					true,
+				)
+				expect(f4.path.equals(Path.parse("subdir/d2/file4.txt"))).toBe(
 					true,
 				)
 			})
@@ -501,7 +514,7 @@ fsTypes.forEach((fsType) => {
 				async (settings: FsFileOpenSettings) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const dirPath = Path.from("notafile")
+					const dirPath = Path.parse("notafile")
 					await root.openDir(dirPath, { create: true })
 
 					// Act & Assert
@@ -533,13 +546,13 @@ fsTypes.forEach((fsType) => {
 					// Arrange
 					const root = await fs.getRootDir()
 
-					const dir = await root.openDir(Path.from("dir"), {
+					const dir = await root.openDir(Path.parse("dir"), {
 						create: true,
 					})
-					await dir.openFile(Path.from("file"), { create: true })
+					await dir.openFile(Path.parse("file"), { create: true })
 
 					// Act & Assert
-					const targetPath = Path.from("dir/file/asdf.txt")
+					const targetPath = Path.parse("dir/file/asdf.txt")
 					await expect(
 						root.openFile(targetPath, settings),
 					).rejects.toThrow()
@@ -555,7 +568,7 @@ fsTypes.forEach((fsType) => {
 				async (settings: FsFileOpenOrNullSettings) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const dirPath = Path.from("notafile2")
+					const dirPath = Path.parse("notafile2")
 					await root.openDir(dirPath, { create: true })
 
 					// Act & Assert
@@ -575,13 +588,13 @@ fsTypes.forEach((fsType) => {
 					// Arrange
 					const root = await fs.getRootDir()
 
-					const dir = await root.openDir(Path.from("dir"), {
+					const dir = await root.openDir(Path.parse("dir"), {
 						create: true,
 					})
-					await dir.openFile(Path.from("file"), { create: true })
+					await dir.openFile(Path.parse("file"), { create: true })
 
 					// Act & Assert
-					const targetPath = Path.from("dir/file/asdf.txt")
+					const targetPath = Path.parse("dir/file/asdf.txt")
 					await expect(
 						root.openFileOrNull(targetPath, settings),
 					).rejects.toThrow()
@@ -593,7 +606,7 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const path = Path.from("a/b/c/file.txt")
+				const path = Path.parse("a/b/c/file.txt")
 				await root.openFile(path, {
 					createMissingDirs: true,
 					create: true,
@@ -601,11 +614,11 @@ fsTypes.forEach((fsType) => {
 
 				// Assert
 
-				const aDir = await root.openDir(Path.from("a"))
-				const bDir = await aDir.openDir(Path.from("b"))
-				const cDir = await bDir.openDir(Path.from("c"))
+				const aDir = await root.openDir(Path.parse("a"))
+				const bDir = await aDir.openDir(Path.parse("b"))
+				const cDir = await bDir.openDir(Path.parse("c"))
 
-				const cDirFile = await cDir.openFile(Path.from("file.txt"))
+				const cDirFile = await cDir.openFile(Path.parse("file.txt"))
 				expect(await cDirFile.exists()).toBe(true)
 			})
 
@@ -622,7 +635,9 @@ fsTypes.forEach((fsType) => {
 					const root = await fs.getRootDir()
 
 					// Act & Assert
-					const targetPath = Path.from("missing/parent/dirs/file.txt")
+					const targetPath = Path.parse(
+						"missing/parent/dirs/file.txt",
+					)
 					await expect(
 						root.openFile(targetPath, settings),
 					).rejects.toThrow()
@@ -636,7 +651,9 @@ fsTypes.forEach((fsType) => {
 					const root = await fs.getRootDir()
 
 					// Act & Assert
-					const targetPath = Path.from("missing/parent/dirs/file.txt")
+					const targetPath = Path.parse(
+						"missing/parent/dirs/file.txt",
+					)
 					await expect(
 						root.openFileOrNull(targetPath, settings),
 					).rejects.toThrow()
@@ -648,7 +665,7 @@ fsTypes.forEach((fsType) => {
 				const root = await fs.getRootDir()
 
 				// Act
-				const targetPath = Path.from("missing/parent/dirs/file.txt")
+				const targetPath = Path.parse("missing/parent/dirs/file.txt")
 				const result = await root.openFileOrNull(targetPath, {
 					allowMissingParentDirectories: true,
 				})
@@ -662,9 +679,12 @@ fsTypes.forEach((fsType) => {
 			test("gets empty file when file was just created", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const file = await root.openFile(Path.from("nonexistent.txt"), {
-					create: true,
-				})
+				const file = await root.openFile(
+					Path.parse("nonexistent.txt"),
+					{
+						create: true,
+					},
+				)
 
 				// Act
 				const content = await file.getFile()
@@ -676,9 +696,12 @@ fsTypes.forEach((fsType) => {
 			test("throws when file does not exist", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const file = await root.openFile(Path.from("nonexistent.txt"), {
-					create: true,
-				})
+				const file = await root.openFile(
+					Path.parse("nonexistent.txt"),
+					{
+						create: true,
+					},
+				)
 				await file.delete()
 
 				// Act & Assert
@@ -690,9 +713,12 @@ fsTypes.forEach((fsType) => {
 			test("gets empty file when file was just created", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const file = await root.openFile(Path.from("nonexistent.txt"), {
-					create: true,
-				})
+				const file = await root.openFile(
+					Path.parse("nonexistent.txt"),
+					{
+						create: true,
+					},
+				)
 
 				// Act
 				const content = await file.getFileOrNull()
@@ -704,9 +730,12 @@ fsTypes.forEach((fsType) => {
 			test("returns null when file does not exist", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const file = await root.openFile(Path.from("nonexistent.txt"), {
-					create: true,
-				})
+				const file = await root.openFile(
+					Path.parse("nonexistent.txt"),
+					{
+						create: true,
+					},
+				)
 				await file.delete()
 
 				// Act
@@ -728,7 +757,7 @@ fsTypes.forEach((fsType) => {
 				async (writeMode, isWriterOneClosesFirst) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const filePath = Path.from(
+					const filePath = Path.parse(
 						`concurrent-writers-${writeMode}.txt`,
 					)
 					const file = await root.openFile(filePath, { create: true })
@@ -774,7 +803,7 @@ fsTypes.forEach((fsType) => {
 				async (settings: FsWriteSettings) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const filePath = Path.from("reappear.txt")
+					const filePath = Path.parse("reappear.txt")
 					const file = await root.openFile(filePath, { create: true })
 
 					// Act
@@ -801,7 +830,7 @@ fsTypes.forEach((fsType) => {
 			test("append mode appends to file content", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const filePath = Path.from("append-test.txt")
+				const filePath = Path.parse("append-test.txt")
 				const file = await root.openFile(filePath, { create: true })
 
 				// Act
@@ -824,7 +853,7 @@ fsTypes.forEach((fsType) => {
 			test("overwrite mode overwrites file content", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const filePath = Path.from("overwrite-test.txt")
+				const filePath = Path.parse("overwrite-test.txt")
 				const file = await root.openFile(filePath, { create: true })
 
 				// Act
@@ -851,7 +880,7 @@ fsTypes.forEach((fsType) => {
 			test("file content is flushed only after closing writer", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const filePath = Path.from("flush-on-close.txt")
+				const filePath = Path.parse("flush-on-close.txt")
 				const file = await root.openFile(filePath, { create: true })
 
 				// Act
@@ -878,7 +907,7 @@ fsTypes.forEach((fsType) => {
 			test("deleted entry is removed from directory listing", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dirOne = await root.openDir(Path.from("dir1"), {
+				const dirOne = await root.openDir(Path.parse("dir1"), {
 					create: true,
 				})
 
@@ -895,13 +924,13 @@ fsTypes.forEach((fsType) => {
 				async (recursive: boolean) => {
 					// Arrange
 					const root = await fs.getRootDir()
-					const dirOne = await root.openDir(Path.from("dir1"), {
+					const dirOne = await root.openDir(Path.parse("dir1"), {
 						create: true,
 					})
-					await root.openDir(Path.from("dir2"), {
+					await root.openDir(Path.parse("dir2"), {
 						create: true,
 					})
-					await root.openDir(Path.from("dir3"), {
+					await root.openDir(Path.parse("dir3"), {
 						create: true,
 					})
 
@@ -920,16 +949,16 @@ fsTypes.forEach((fsType) => {
 			test("deleted entry is removed from directory listing when deleted via parent", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dirOne = await root.openDir(Path.from("dir1"), {
+				const dirOne = await root.openDir(Path.parse("dir1"), {
 					create: true,
 				})
-				const dirTwo = await dirOne.openDir(Path.from("dir2"), {
+				const dirTwo = await dirOne.openDir(Path.parse("dir2"), {
 					create: true,
 				})
-				const dirThree = await dirTwo.openDir(Path.from("dir3"), {
+				const dirThree = await dirTwo.openDir(Path.parse("dir3"), {
 					create: true,
 				})
-				await dirThree.openFile(Path.from("file1.txt"), {
+				await dirThree.openFile(Path.parse("file1.txt"), {
 					create: true,
 				})
 
@@ -947,7 +976,7 @@ fsTypes.forEach((fsType) => {
 			test("delete method throws when there is at least one writer active", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const filePath = Path.from("delete-with-writer.txt")
+				const filePath = Path.parse("delete-with-writer.txt")
 				const file = await root.openFile(filePath, { create: true })
 				const writer = await file.write({})
 				await writer.write(new TextEncoder().encode("Hello, World!"))
@@ -962,7 +991,7 @@ fsTypes.forEach((fsType) => {
 			test("file.stat throws if file was deleted and recreated as a directory", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const path = Path.from("file-to-dir.txt")
+				const path = Path.parse("file-to-dir.txt")
 				const file = await root.openFile(path, { create: true })
 				await file.delete()
 				await root.openDir(path, { create: true })
@@ -974,7 +1003,7 @@ fsTypes.forEach((fsType) => {
 			test("dir.stat throws if dir was deleted and recreated as a file", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const path = Path.from("dir-to-file")
+				const path = Path.parse("dir-to-file")
 				const dir = await root.openDir(path, { create: true })
 				await dir.delete(false)
 				await root.openFile(path, { create: true })
@@ -986,7 +1015,7 @@ fsTypes.forEach((fsType) => {
 			test("file stat.exists is true after recreating at same path", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const filePath = Path.from("reappear.txt")
+				const filePath = Path.parse("reappear.txt")
 				const file = await root.openFile(filePath, { create: true })
 
 				// Act
@@ -1003,7 +1032,7 @@ fsTypes.forEach((fsType) => {
 			test("directory stat.exists is true after recreating at same path", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dirPath = Path.from("reappeardir")
+				const dirPath = Path.parse("reappeardir")
 				const dir = await root.openDir(dirPath, { create: true })
 
 				// Act
@@ -1011,10 +1040,10 @@ fsTypes.forEach((fsType) => {
 				const statAfterDelete = await dir.stat()
 				const dir2 = await root.openDir(dirPath, { create: true })
 				// Create entries in the new directory
-				const fileA = await dir2.openFile(Path.from("fileA.txt"), {
+				const fileA = await dir2.openFile(Path.parse("fileA.txt"), {
 					create: true,
 				})
-				const subDir = await dir2.openDir(Path.from("subdir"), {
+				const subDir = await dir2.openDir(Path.parse("subdir"), {
 					create: true,
 				})
 				const statAfterRecreate = await dir2.stat()
@@ -1032,14 +1061,14 @@ fsTypes.forEach((fsType) => {
 			test("directory stat.exists is true after recreating at same path (recursive parent removal)", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dirPath = Path.from("a/b/c/reappeardir")
+				const dirPath = Path.parse("a/b/c/reappeardir")
 				const dir = await root.openDir(dirPath, {
 					create: true,
 					createMissingDirs: true,
 				})
 
 				// Act
-				const aDir = await root.openDir(Path.from("a"))
+				const aDir = await root.openDir(Path.parse("a"))
 				await aDir.delete(true)
 				const statAfterDelete = await dir.stat()
 				const dir2 = await root.openDir(dirPath, {
@@ -1047,10 +1076,10 @@ fsTypes.forEach((fsType) => {
 					createMissingDirs: true,
 				})
 				// Create entries in the new directory
-				const fileA = await dir2.openFile(Path.from("fileA.txt"), {
+				const fileA = await dir2.openFile(Path.parse("fileA.txt"), {
 					create: true,
 				})
-				const subDir = await dir2.openDir(Path.from("subdir"), {
+				const subDir = await dir2.openDir(Path.parse("subdir"), {
 					create: true,
 				})
 				const statAfterRecreate = await dir2.stat()
@@ -1068,17 +1097,17 @@ fsTypes.forEach((fsType) => {
 			test("file handle is valid after parent tree removal and recreation", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const filePath = Path.from("a/b/c/file.txt")
+				const filePath = Path.parse("a/b/c/file.txt")
 				const file = await root.openFile(filePath, {
 					create: true,
 					createMissingDirs: true,
 				})
 
 				// Act
-				const aDir = await root.openDir(Path.from("a"))
+				const aDir = await root.openDir(Path.parse("a"))
 				await aDir.delete(true)
 				// Recreate dir tree and file
-				await root.openDir(Path.from("a/b/c"), {
+				await root.openDir(Path.parse("a/b/c"), {
 					create: true,
 					createMissingDirs: true,
 				})
@@ -1092,17 +1121,17 @@ fsTypes.forEach((fsType) => {
 			test("directory handle is valid after parent tree removal and recreation", async () => {
 				// Arrange
 				const root = await fs.getRootDir()
-				const dirPath = Path.from("a/b/c/dir")
+				const dirPath = Path.parse("a/b/c/dir")
 				const dir = await root.openDir(dirPath, {
 					create: true,
 					createMissingDirs: true,
 				})
 
 				// Act
-				const aDir = await root.openDir(Path.from("a"))
+				const aDir = await root.openDir(Path.parse("a"))
 				await aDir.delete(true)
 				// Recreate dir tree and directory
-				await root.openDir(Path.from("a/b/c"), {
+				await root.openDir(Path.parse("a/b/c"), {
 					create: true,
 					createMissingDirs: true,
 				})

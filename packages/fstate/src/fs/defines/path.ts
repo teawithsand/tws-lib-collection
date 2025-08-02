@@ -12,15 +12,11 @@ export class Path {
 	private readonly segments: readonly string[]
 
 	/**
-	 * Creates a new Path instance from a string path.
-	 * @param pathString - The path string to parse (Linux-style with forward slashes)
+	 * Creates a new Path instance from path segments.
+	 * @param segments - The path segments (already split and filtered)
 	 */
-	public constructor(pathString: string) {
-		const trimmed = pathString.trim()
-		const rawSegments = trimmed
-			.split("/")
-			.filter((segment) => segment !== "")
-		this.segments = this.normalizePath(rawSegments)
+	private constructor(segments: string[]) {
+		this.segments = this.normalizePath(segments)
 	}
 
 	/**
@@ -37,14 +33,12 @@ export class Path {
 			if (segment === "." || segment === "") {
 				continue
 			} else if (segment === "..") {
-				if (
-					normalized.length > 0 &&
-					normalized[normalized.length - 1] !== ".."
-				) {
+				if (normalized.length > 0) {
+					// If there are actual path segments, ".." cancels out the last one
 					normalized.pop()
-				} else {
-					normalized.push("..")
 				}
+				// If we're at root level (normalized.length === 0),
+				// we ignore ".." rather than adding it, treating it as staying at root
 			} else {
 				normalized.push(segment)
 			}
@@ -71,10 +65,10 @@ export class Path {
 	 * @returns A new Path instance representing the concatenated path
 	 */
 	public readonly concat = (other: Path | string): Path => {
-		const otherPath = other instanceof Path ? other : new Path(other)
+		const otherPath = other instanceof Path ? other : Path.parse(other)
 		const combinedSegments = [...this.segments, ...otherPath.segments]
-		const combinedString = combinedSegments.join("/")
-		return new Path(combinedString)
+		const normalizedSegments = this.normalizePath(combinedSegments)
+		return new Path([...normalizedSegments])
 	}
 
 	/**
@@ -104,11 +98,10 @@ export class Path {
 	 */
 	public readonly parent = (): Path | null => {
 		if (this.segments.length === 0) {
-			return new Path("..")
+			return null
 		}
 		const parentSegments = this.segments.slice(0, -1)
-		const parentString = parentSegments.join("/") || "."
-		return new Path(parentString)
+		return new Path(parentSegments)
 	}
 
 	/**
@@ -148,9 +141,24 @@ export class Path {
 	 * Creates a Path instance from a string.
 	 * @param pathString - The path string to parse
 	 * @returns A new Path instance
+	 *
+	 * @deprecated Instead use parse
 	 */
 	public static readonly from = (pathString: string): Path => {
-		return new Path(pathString)
+		return Path.parse(pathString)
+	}
+
+	/**
+	 * Creates a Path instance from a string.
+	 * @param pathString - The path string to parse
+	 * @returns A new Path instance
+	 */
+	public static readonly parse = (pathString: string): Path => {
+		const trimmed = pathString.trim()
+		const rawSegments = trimmed
+			.split("/")
+			.filter((segment) => segment !== "")
+		return new Path(rawSegments)
 	}
 
 	/**
@@ -160,19 +168,42 @@ export class Path {
 	 */
 	public static readonly resolve = (...segments: string[]): Path => {
 		if (segments.length === 0) {
-			return new Path(".")
+			return Path.parse(".")
 		}
-		const firstSegment = segments[0]
-		if (!firstSegment) {
-			throw new PathParseError("First path segment cannot be undefined")
+		// Join all segments with "/" and then parse as a single path
+		// This allows proper normalization of ".." segments across all segments
+		const joinedPath = segments.join("/")
+		return Path.parse(joinedPath)
+	}
+
+	/**
+	 * Creates a Path instance from a single segment.
+	 * @param segment - The single path segment (must not contain "/")
+	 * @returns A new Path instance
+	 * @throws PathParseError if segment contains "/"
+	 */
+	public static readonly fromSegment = (segment: string): Path => {
+		if (segment.includes("/")) {
+			throw new PathParseError(`Segment cannot contain "/": ${segment}`)
 		}
-		let result = new Path(firstSegment)
-		for (let i = 1; i < segments.length; i++) {
+		return new Path([segment])
+	}
+
+	/**
+	 * Creates a Path instance from an array of segments.
+	 * @param segments - Array of path segments (none should contain "/")
+	 * @returns A new Path instance
+	 * @throws PathParseError if any segment contains "/"
+	 */
+	public static readonly fromSegments = (segments: string[]): Path => {
+		for (let i = 0; i < segments.length; i++) {
 			const segment = segments[i]
-			if (segment) {
-				result = result.concat(segment)
+			if (segment && segment.includes("/")) {
+				throw new PathParseError(
+					`Segment at index ${i} cannot contain "/": ${segment}`,
+				)
 			}
 		}
-		return result
+		return new Path(segments)
 	}
 }
