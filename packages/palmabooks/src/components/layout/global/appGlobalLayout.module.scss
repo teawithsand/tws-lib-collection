@@ -1,0 +1,16 @@
+.container {
+	// Base container styles for global layout
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.footer {
+	margin-top: auto;
+}

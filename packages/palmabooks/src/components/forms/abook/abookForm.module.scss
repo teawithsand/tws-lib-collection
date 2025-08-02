@@ -1,0 +1,77 @@
+/* ABook Form Container */
+.abook-form__container {
+	width: 100%;
+	max-width: 600px;
+	margin: 0 auto;
+	background: var(--mantine-color-white);
+}
+
+/* Field Groups */
+.abook-form__field-group {
+	position: relative;
+}
+
+.abook-form__field-group + .abook-form__field-group {
+	margin-top: 1rem;
+}
+
+/* Error Alerts */
+.abook-form__global-errors,
+.abook-form__submit-error {
+	border-radius: var(--mantine-radius-md);
+}
+
+.abook-form__global-errors ul,
+.abook-form__submit-error ul {
+	margin: 0.5rem 0 0 0;
+	padding-left: 1.2rem;
+}
+
+.abook-form__global-errors li,
+.abook-form__submit-error li {
+	margin-bottom: 0.25rem;
+}
+
+/* Actions */
+.abook-form__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.75rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+.abook-form__submit-button {
+	min-width: 120px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.abook-form__container {
+		max-width: 100%;
+		margin: 0;
+		border-radius: 0;
+		border-left: none;
+		border-right: none;
+	}
+
+	.abook-form__actions {
+		justify-content: stretch;
+	}
+
+	.abook-form__submit-button {
+		flex: 1;
+		min-width: auto;
+	}
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+	.abook-form__container {
+		background: var(--mantine-color-dark-7);
+	}
+
+	.abook-form__actions {
+		border-top-color: var(--mantine-color-dark-4);
+	}
+}

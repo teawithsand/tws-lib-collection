@@ -1,0 +1,13 @@
+.container {
+	// Base container styles for local layout with margin from top
+	display: block;
+	margin-top: 1rem; // Default margin from top
+}
+
+.containerFull {
+	// Full container styles that takes 100% height minus app bar
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	height: 100%;
+}
