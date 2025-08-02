@@ -280,6 +280,8 @@ export class FormAtomsBuilder<T extends FormDataBase, E extends FormError> {
 					await promise
 				})
 
+				// This is, so that if no one catches that value of submit promise atom,
+				// there won't be any kind of window error
 				storePromise.catch(() => {})
 				set(this.submitPromiseAtom, storePromise)
 				return promise

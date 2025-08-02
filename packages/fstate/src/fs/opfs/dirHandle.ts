@@ -38,7 +38,7 @@ export class OpfsDirHandle implements FsDirHandle {
 				create: false,
 			})
 		} catch (e) {
-			if (e instanceof DOMException && e.name === "NotFoundError") {
+			if (OpfsErrorUtil.isNotFoundError(e)) {
 				return false
 			}
 			throw OpfsErrorUtil.convertToFsError(
@@ -76,7 +76,7 @@ export class OpfsDirHandle implements FsDirHandle {
 				res.push(e)
 			}
 		} catch (e) {
-			if (e instanceof DOMException && e.name === "NotFoundError") {
+			if (OpfsErrorUtil.isNotFoundError(e)) {
 				return {
 					exists: false,
 					entries: [],
@@ -143,7 +143,7 @@ export class OpfsDirHandle implements FsDirHandle {
 		} catch (e) {
 			// NotFoundError: already deleted
 			// InvalidModificationError: will be thrown if recursive is false and directory is not empty
-			if (e instanceof DOMException && e.name === "NotFoundError") {
+			if (OpfsErrorUtil.isNotFoundError(e)) {
 				return
 			}
 			throw OpfsErrorUtil.convertToFsError(
@@ -178,10 +178,6 @@ export class OpfsDirHandle implements FsDirHandle {
 					create: false,
 				})
 			} catch (e) {
-				if (e instanceof DOMException && e.name === "NotFoundError") {
-					// noop
-				}
-
 				throw e
 			}
 		}
@@ -219,8 +215,7 @@ export class OpfsDirHandle implements FsDirHandle {
 			} catch (e) {
 				if (
 					settings?.allowMissingParentDirectories &&
-					e instanceof DOMException &&
-					e.name === "NotFoundError"
+					OpfsErrorUtil.isNotFoundError(e)
 				) {
 					return null
 				}
@@ -243,7 +238,7 @@ export class OpfsDirHandle implements FsDirHandle {
 				FsFileOpenMode.READ,
 			)
 		} catch (e) {
-			if (e instanceof DOMException && e.name === "NotFoundError") {
+			if (OpfsErrorUtil.isNotFoundError(e)) {
 				return null
 			}
 			throw OpfsErrorUtil.convertToFsError(
@@ -277,7 +272,7 @@ export class OpfsDirHandle implements FsDirHandle {
 					create: false,
 				})
 			} catch (e) {
-				if (e instanceof DOMException && e.name === "NotFoundError") {
+				if (OpfsErrorUtil.isNotFoundError(e)) {
 					// noop
 				}
 
@@ -319,8 +314,7 @@ export class OpfsDirHandle implements FsDirHandle {
 			} catch (e) {
 				if (
 					settings?.allowMissingParentDirectories &&
-					e instanceof DOMException &&
-					e.name === "NotFoundError"
+					OpfsErrorUtil.isNotFoundError(e)
 				) {
 					return null
 				}
@@ -338,7 +332,7 @@ export class OpfsDirHandle implements FsDirHandle {
 
 			return new OpfsDirHandle(target, res, this.path.concat(path))
 		} catch (e) {
-			if (e instanceof DOMException && e.name === "NotFoundError") {
+			if (OpfsErrorUtil.isNotFoundError(e)) {
 				return null
 			}
 			throw OpfsErrorUtil.convertToFsError(
