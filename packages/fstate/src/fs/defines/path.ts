@@ -7,9 +7,25 @@ export const PathParseError = Errors.makeErrorType("PathParseError", PathError)
 /**
  * Represents a file system path with utilities for parsing, normalization, and manipulation.
  * Handles Linux-style paths with forward slashes as separators.
+ *
+ * Note: Paths are normalized to prevent directory traversal attacks. The path cannot
+ * navigate above the root level - any ".." segments that would go beyond the root
+ * are ignored rather than added to the path. This ensures all paths remain within
+ * a safe boundary and cannot escape the intended directory structure.
+ *
+ * This makes difference during concatenation so that Path(asdf) + Path("..") is still Path(asdf),
+ * since Path("..") was evaluated as Path("."), just like Path("../..") would be.
  */
 export class Path {
 	private readonly segments: readonly string[]
+
+	/**
+	 * Creates a new path, which points to the current directory.
+	 * @returns Path
+	 */
+	public static readonly cwd = (): Path => {
+		return Path.fromSegment("")
+	}
 
 	/**
 	 * Creates a new Path instance from path segments.
@@ -73,23 +89,27 @@ export class Path {
 
 	/**
 	 * Joins multiple path segments to this path.
-	 * @param segments - Path segments to join
+	 * @param segments - Path segments to join (none should contain "/")
 	 * @returns A new Path instance with the joined segments
+	 * @throws PathParseError if any segment contains "/"
 	 */
 	public readonly join = (...segments: string[]): Path => {
 		if (segments.length === 0) {
 			return this
 		}
+
+		// Validate that no segment contains "/"
+		for (let i = 0; i < segments.length; i++) {
+			const segment = segments[i]
+			if (segment && segment.includes("/")) {
+				throw new PathParseError(
+					`Segment at index ${i} cannot contain "/": ${segment}`,
+				)
+			}
+		}
+
 		const joinedSegments = segments.join("/")
 		return this.concat(joinedSegments)
-	}
-
-	/**
-	 * Returns whether this path is absolute (starts with /).
-	 * @returns Always false since all paths are treated uniformly
-	 */
-	public readonly isAbsolutePath = (): boolean => {
-		return false
 	}
 
 	/**

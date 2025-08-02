@@ -145,6 +145,138 @@ describe("Path", () => {
 				const path = Path.parse("foo").join("bar", "baz")
 				expect(path.toString()).toBe("foo/bar/baz")
 			})
+
+			test("should return same path when joining no segments", () => {
+				const path = Path.parse("foo/bar")
+				const result = path.join()
+				expect(result.equals(path)).toBe(true)
+				expect(result.toString()).toBe("foo/bar")
+			})
+
+			test("should join single segment", () => {
+				const path = Path.parse("foo")
+				const result = path.join("bar")
+				expect(result.toString()).toBe("foo/bar")
+			})
+
+			test("should join multiple segments", () => {
+				const path = Path.parse("foo")
+				const result = path.join("bar", "baz", "qux")
+				expect(result.toString()).toBe("foo/bar/baz/qux")
+			})
+
+			test("should join segments with empty path", () => {
+				const path = Path.parse("")
+				const result = path.join("foo", "bar")
+				expect(result.toString()).toBe("foo/bar")
+			})
+
+			test("should handle empty string segments", () => {
+				const path = Path.parse("foo")
+				const result = path.join("", "bar", "")
+				expect(result.toString()).toBe("foo/bar")
+			})
+
+			test("should throw PathParseError when segment contains slash", () => {
+				const path = Path.parse("foo")
+
+				expect(() => path.join("bar/baz")).toThrow(PathParseError)
+				expect(() => path.join("bar/baz")).toThrow(
+					'Segment at index 0 cannot contain "/": bar/baz',
+				)
+			})
+
+			test("should throw PathParseError when any segment contains slash", () => {
+				const path = Path.parse("foo")
+
+				expect(() => path.join("bar", "baz/qux", "quux")).toThrow(
+					PathParseError,
+				)
+				expect(() => path.join("bar", "baz/qux", "quux")).toThrow(
+					'Segment at index 1 cannot contain "/": baz/qux',
+				)
+			})
+
+			test("should throw PathParseError for segments with multiple slashes", () => {
+				const path = Path.parse("foo")
+
+				expect(() => path.join("bar//baz")).toThrow(PathParseError)
+				expect(() => path.join("bar//baz")).toThrow(
+					'Segment at index 0 cannot contain "/": bar//baz',
+				)
+			})
+
+			test("should throw PathParseError for segments with leading slash", () => {
+				const path = Path.parse("foo")
+
+				expect(() => path.join("/bar")).toThrow(PathParseError)
+				expect(() => path.join("/bar")).toThrow(
+					'Segment at index 0 cannot contain "/": /bar',
+				)
+			})
+
+			test("should throw PathParseError for segments with trailing slash", () => {
+				const path = Path.parse("foo")
+
+				expect(() => path.join("bar/")).toThrow(PathParseError)
+				expect(() => path.join("bar/")).toThrow(
+					'Segment at index 0 cannot contain "/": bar/',
+				)
+			})
+
+			test("should throw PathParseError for segments that are only slashes", () => {
+				const path = Path.parse("foo")
+
+				expect(() => path.join("/")).toThrow(PathParseError)
+				expect(() => path.join("/")).toThrow(
+					'Segment at index 0 cannot contain "/": /',
+				)
+
+				expect(() => path.join("//")).toThrow(PathParseError)
+				expect(() => path.join("//")).toThrow(
+					'Segment at index 0 cannot contain "/": //',
+				)
+			})
+
+			test("should identify correct index in error message for mixed valid and invalid segments", () => {
+				const path = Path.parse("foo")
+
+				expect(() =>
+					path.join("valid1", "valid2", "invalid/segment", "valid3"),
+				).toThrow(PathParseError)
+				expect(() =>
+					path.join("valid1", "valid2", "invalid/segment", "valid3"),
+				).toThrow(
+					'Segment at index 2 cannot contain "/": invalid/segment',
+				)
+			})
+
+			test("should handle complex slash patterns in validation", () => {
+				const path = Path.parse("foo")
+
+				// Test various complex patterns
+				expect(() => path.join("a/b/c")).toThrow(PathParseError)
+				expect(() => path.join("a///b")).toThrow(PathParseError)
+				expect(() => path.join("/a/b/")).toThrow(PathParseError)
+				expect(() => path.join("./..")).toThrow(PathParseError)
+			})
+
+			test("should not throw for valid segments that look like special directories", () => {
+				const path = Path.parse("foo")
+
+				// These should work fine as they don't contain slashes
+				expect(() => path.join(".", "..", "...")).not.toThrow()
+				const result = path.join(".", "..", "...")
+				expect(result.toString()).toBe("foo/...")
+			})
+
+			test("should work correctly after validation passes", () => {
+				const path = Path.parse("foo")
+				const result = path.join("bar", "baz")
+
+				expect(result.toString()).toBe("foo/bar/baz")
+				expect(result.getSegments()).toEqual(["foo", "bar", "baz"])
+			})
 		})
 
 		describe("concat", () => {
@@ -230,17 +362,6 @@ describe("Path", () => {
 			test("should return empty string for empty path", () => {
 				const path = Path.parse("")
 				expect(path.toString()).toBe("")
-			})
-		})
-
-		describe("isAbsolutePath", () => {
-			test("should always return false", () => {
-				const path1 = Path.parse("foo/bar")
-				const path2 = Path.parse("/foo/bar")
-				const path3 = Path.parse("")
-				expect(path1.isAbsolutePath()).toBe(false)
-				expect(path2.isAbsolutePath()).toBe(false)
-				expect(path3.isAbsolutePath()).toBe(false)
 			})
 		})
 	})
