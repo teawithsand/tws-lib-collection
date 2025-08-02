@@ -1,4 +1,4 @@
-import { Timestamp } from "@teawithsand/lngext"
+import { Timestamp, TypeAssert } from "@teawithsand/lngext"
 import { VersionedType } from "@teawithsand/reserd"
 import { z } from "zod"
 import { AbookEntryData, AbookEntryDisposition } from "../entryData"
@@ -72,7 +72,8 @@ const serializeAbookEntrySourceFull = (
 				url: source.url,
 			}
 		default:
-			throw new Error(`Unknown source type: ${(source as any).type}`)
+			TypeAssert.assertNever(source)
+			return TypeAssert.unreachable()
 	}
 }
 
@@ -93,9 +94,8 @@ const deserializeAbookEntrySourceFull = (
 				url: stored.url,
 			}
 		default:
-			throw new Error(
-				`Unknown stored source type: ${(stored as any).type}`,
-			)
+			TypeAssert.assertNever(stored)
+			return TypeAssert.unreachable()
 	}
 }
 

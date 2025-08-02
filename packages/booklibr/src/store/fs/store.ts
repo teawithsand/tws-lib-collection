@@ -61,16 +61,11 @@ export class FsAbookStore implements AbookStore {
 
 	public readonly get = async (id: Id): Promise<AbookHandle> => {
 		const idStr = id.toString()
-		try {
-			const abookDir = await this.config.root.openDir(
-				Path.fromSegment(idStr),
-			)
-			const exists = await abookDir.exists()
-			if (exists) {
-				return FsAbookHandle.fromExisting(this.config, abookDir)
-			}
-		} catch {
-			// Directory doesn't exist, fall through to create non-existent handle
+		const abookDir = await this.config.root.openDirOrNull(
+			Path.fromSegment(idStr),
+		)
+		if (abookDir && (await abookDir.exists())) {
+			return FsAbookHandle.fromExisting(this.config, abookDir)
 		}
 		return FsAbookHandle.createNonExistent(this.config, idStr)
 	}
