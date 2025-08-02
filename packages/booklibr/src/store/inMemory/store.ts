@@ -1,5 +1,5 @@
 import { generateUuid } from "@teawithsand/lngext"
-import { AbookHeaderData } from "../../defines"
+import { AbookHeaderData, Id } from "../../defines"
 import { AbookAggregatorImpl } from "../aggregate/abookAggregator"
 import { AbookStore } from "../defines"
 import { AbookAggregator, AbookHandle } from "../defines/abookHandle"
@@ -30,6 +30,10 @@ export class InMemoryAbookStore implements AbookStore {
 		return this.abooks.delete(id)
 	}
 
+	public setAbook(id: string, abook: InternalAbook): void {
+		this.abooks.set(id, abook)
+	}
+
 	public readonly createAbook = async (
 		data: AbookHeaderData,
 	): Promise<AbookHandle> => {
@@ -48,5 +52,12 @@ export class InMemoryAbookStore implements AbookStore {
 		return Array.from(this.abooks.keys()).map(
 			(id) => new InMemoryAbookHandle(this, id),
 		)
+	}
+
+	public readonly get = async (id: Id): Promise<AbookHandle> => {
+		const idStr = id.toString()
+		// Always return a handle, even if the abook doesn't exist
+		// The handle will return exists() = false if it doesn't exist
+		return new InMemoryAbookHandle(this, idStr)
 	}
 }

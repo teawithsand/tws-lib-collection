@@ -156,6 +156,73 @@ fsTypes.forEach((fsType) => {
 			})
 		})
 
+		describe("get", () => {
+			test("should return handle for existing abook", async () => {
+				// Arrange
+				const createdHandle = await store.createAbook(
+					createDefaultHeaderData(),
+				)
+
+				// Act
+				const handle = await store.get(createdHandle.id)
+				const exists = await handle.exists()
+
+				// Assert
+				expect(handle).toBeDefined()
+				expect(handle.id).toBe(createdHandle.id)
+				expect(exists).toBe(true)
+			})
+
+			test("should return non-existent handle for non-existent abook", async () => {
+				// Arrange
+				const nonExistentId = "non-existent-id"
+
+				// Act
+				const handle = await store.get(nonExistentId)
+				const exists = await handle.exists()
+
+				// Assert
+				expect(handle).toBeDefined()
+				expect(handle.id).toBe(nonExistentId)
+				expect(exists).toBe(false)
+			})
+
+			test("should return handle that can be used to create abook via write", async () => {
+				// Arrange
+				const nonExistentId = "new-abook-id"
+				const headerData = createDefaultHeaderData()
+
+				// Act
+				const handle = await store.get(nonExistentId)
+				const existsBefore = await handle.exists()
+				await handle.write({ data: headerData })
+				const existsAfter = await handle.exists()
+				const abook = await handle.mustRead()
+
+				// Assert
+				expect(existsBefore).toBe(false)
+				expect(existsAfter).toBe(true)
+				expect(abook.data.header.metadata.title).toBe(
+					headerData.metadata.title,
+				)
+			})
+
+			test("should not create abook when write is called without data", async () => {
+				// Arrange
+				const nonExistentId = "should-not-be-created"
+
+				// Act
+				const handle = await store.get(nonExistentId)
+				const existsBefore = await handle.exists()
+				await handle.write({}) // Write without data
+				const existsAfter = await handle.exists()
+
+				// Assert
+				expect(existsBefore).toBe(false)
+				expect(existsAfter).toBe(false)
+			})
+		})
+
 		describe("AbookHandle", () => {
 			let handle: AbookHandle
 

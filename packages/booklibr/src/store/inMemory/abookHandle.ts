@@ -67,7 +67,22 @@ export class InMemoryAbookHandle implements AbookHandle {
 	public readonly write = async (
 		options: AbookWriteHeaderOptions,
 	): Promise<void> => {
-		const abook = this.getAbookOrThrow()
+		let abook = this.getAbook()
+		// Create the abook only if it doesn't exist AND we have data to write
+		if (!abook && options.data) {
+			abook = {
+				headerData: options.data,
+				entries: new Map(),
+				aggregate: null,
+			}
+			this.store.setAbook(this.id, abook)
+		}
+
+		// If abook still doesn't exist (no data provided), do nothing
+		if (!abook) {
+			return
+		}
+
 		if (options.data) {
 			abook.headerData = options.data
 		}
@@ -88,6 +103,7 @@ export class InMemoryAbookHandle implements AbookHandle {
 					break
 			}
 		} else {
+			// Only recompute aggregate if abook exists
 			await this.computeAggregate()
 		}
 	}

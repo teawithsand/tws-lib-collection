@@ -1,4 +1,4 @@
-import { FsDirHandle, FsHandleType } from "@teawithsand/fstate"
+import { FsDirHandle, FsHandleType, Path } from "@teawithsand/fstate"
 import { generateUuid } from "@teawithsand/lngext"
 import { SerializerReverse } from "@teawithsand/reserd"
 import {
@@ -6,6 +6,7 @@ import {
 	AbookEntryAggregateData,
 	AbookEntryData,
 	AbookHeaderData,
+	Id,
 } from "../../defines"
 import { AbookHandle, AbookStore } from "../defines"
 import { AbookAggregator } from "../defines/abookHandle"
@@ -58,9 +59,23 @@ export class FsAbookStore implements AbookStore {
 			.map((entry) => this.createAbookHandle(entry as FsDirHandle))
 	}
 
+	public readonly get = async (id: Id): Promise<AbookHandle> => {
+		const idStr = id.toString()
+		try {
+			const abookDir = await this.config.root.openDir(Path.from(idStr))
+			const exists = await abookDir.exists()
+			if (exists) {
+				return FsAbookHandle.fromExisting(this.config, abookDir)
+			}
+		} catch {
+			// Directory doesn't exist, fall through to create non-existent handle
+		}
+		return FsAbookHandle.createNonExistent(this.config, idStr)
+	}
+
 	private readonly createAbookHandle = (
 		dirHandle: FsDirHandle,
 	): FsAbookHandle => {
-		return new FsAbookHandle(this.config, dirHandle)
+		return FsAbookHandle.fromExisting(this.config, dirHandle)
 	}
 }
