@@ -1,5 +1,6 @@
 # Coding Instructions
 
+- Do not create readmes or examples unless explicitly requested.
 - Use arrow functions with the `readonly` modifier for all class methods, including static methods, instead of default class methods.
 - Public class methods must always use the `public` modifier.
 - For indents use tabs.
