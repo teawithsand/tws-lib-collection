@@ -1,6 +1,6 @@
 export * from "./about"
-export * from "./categories"
 export * from "./createAbook"
 export * from "./home"
 export * from "./notFound"
 export * from "./settings"
+export * from "./storage"

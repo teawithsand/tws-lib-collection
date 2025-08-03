@@ -3,7 +3,7 @@ import { AutonomousGlobalErrorFallback } from "@/components/globalErrorFallback"
 import { Routes } from "@/router"
 import {
 	IconBook,
-	IconCategory,
+	IconDatabase,
 	IconHome,
 	IconInfoCircle,
 	IconMenu2,
@@ -65,24 +65,24 @@ export const AppGlobalLayout = ({
 						},
 						{
 							label: t.resolve(
-								(trans) => trans.layout.navigation.categories,
-							),
-							linkType: AppBarLinkType.LOCAL_LINK,
-							href: Routes.categories.navigate(),
-							icon: (
-								<IconCategory
-									size={APP_BAR_DEFAULT_ICON_SIZE}
-								/>
-							),
-						},
-						{
-							label: t.resolve(
 								(trans) => trans.layout.navigation.settings,
 							),
 							linkType: AppBarLinkType.LOCAL_LINK,
 							href: Routes.settings.navigate(),
 							icon: (
 								<IconSettings
+									size={APP_BAR_DEFAULT_ICON_SIZE}
+								/>
+							),
+						},
+						{
+							label: t.resolve(
+								(trans) => trans.layout.navigation.storage,
+							),
+							linkType: AppBarLinkType.LOCAL_LINK,
+							href: Routes.storage.navigate(),
+							icon: (
+								<IconDatabase
 									size={APP_BAR_DEFAULT_ICON_SIZE}
 								/>
 							),

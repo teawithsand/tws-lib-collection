@@ -1,6 +1,6 @@
 export * from "./abook"
 export * from "./AboutPage"
-export * from "./CategoriesPage"
 export * from "./HomePage"
 export * from "./NotFoundPage"
 export * from "./SettingsPage"
+export * from "./StoragePage"

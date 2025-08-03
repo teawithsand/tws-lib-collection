@@ -62,27 +62,19 @@ export class Routes {
 	}
 
 	/**
-	 * Categories page route
-	 */
-	public static readonly categories: RouteConfig = {
-		path: "/categories",
-		navigate: () => "/categories",
-	}
-
-	/**
-	 * Category detail page route
-	 */
-	public static readonly categoryDetail: RouteConfig = {
-		path: "/categories/:id",
-		navigate: (id: string) => `/categories/${id}`,
-	}
-
-	/**
 	 * Settings page route
 	 */
 	public static readonly settings: RouteConfig = {
 		path: "/settings",
 		navigate: () => "/settings",
+	}
+
+	/**
+	 * Storage page route
+	 */
+	public static readonly storage: RouteConfig = {
+		path: "/storage",
+		navigate: () => "/storage",
 	}
 
 	/**
@@ -96,9 +88,8 @@ export class Routes {
 			Routes.abookShow,
 			Routes.addBook,
 			Routes.editBook,
-			Routes.categories,
-			Routes.categoryDetail,
 			Routes.settings,
+			Routes.storage,
 		]
 	}
 }

@@ -16,6 +16,7 @@ describe("AppDi", () => {
 				appBarService: undefined,
 				abookStore: undefined,
 				abookStoreService: undefined,
+				storageManagerService: undefined,
 			})
 			.build()
 

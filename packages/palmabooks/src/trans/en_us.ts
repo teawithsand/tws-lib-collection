@@ -17,8 +17,8 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		navigation: {
 			home: "Home",
 			books: "Books",
-			categories: "Categories",
 			settings: "Settings",
+			storage: "Storage",
 			about: "About",
 		},
 	},
@@ -106,6 +106,50 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			title: "Audiobook Not Found",
 			description: "The requested audiobook could not be found.",
 			goBackButton: "Go Back",
+		},
+	},
+	storage: {
+		pageTitle: "Storage Management",
+		quota: {
+			title: "Storage Quota",
+			usedSpace: "Used Space:",
+			totalQuota: "Total Quota:",
+			usage: "Usage:",
+		},
+		persistence: {
+			title: "Storage Persistence",
+			isPersistent: "Storage is Persistent:",
+			isPersisted: (value: boolean) => (value ? "Yes" : "No"),
+			description:
+				"Non-persistent storage may be cleared by the browser when storage is low.",
+			requestButton: "Request Persistent Storage",
+		},
+		actions: {
+			title: "Actions",
+			refreshButton: "Refresh Storage Info",
+			refreshDescription:
+				"Refresh the storage information to get the latest quota and usage data.",
+		},
+		formatBytes: (bytes: number | undefined) => {
+			if (bytes === undefined) return "Unknown"
+			if (bytes === 0) return "0 Bytes"
+
+			const k = 1024
+			const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+			const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+			return (
+				parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+			)
+		},
+		formatPercentage: (
+			used: number | undefined,
+			total: number | undefined,
+		) => {
+			if (used === undefined || total === undefined || total === 0)
+				return "Unknown"
+			const percentage = (used / total) * 100
+			return `${percentage.toFixed(1)}%`
 		},
 	},
 }

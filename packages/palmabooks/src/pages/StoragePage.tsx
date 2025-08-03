@@ -1,12 +1,12 @@
 import { AppLocalLayout } from "@/components/layout"
-import { CategoriesPageContent } from "@/components/pageContent"
+import { StoragePageContent } from "@/components/pageContent"
 import { Container } from "@teawithsand/mlui"
 
-export const CategoriesPage = () => {
+export const StoragePage = () => {
 	return (
 		<AppLocalLayout>
 			<Container>
-				<CategoriesPageContent />
+				<StoragePageContent />
 			</Container>
 		</AppLocalLayout>
 	)

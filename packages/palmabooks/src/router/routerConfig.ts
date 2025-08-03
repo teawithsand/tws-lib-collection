@@ -3,10 +3,10 @@ import {
 	AbookListPage,
 	AbookShowPage,
 	AboutPage,
-	CategoriesPage,
 	HomePage,
 	NotFoundPage,
 	SettingsPage,
+	StoragePage,
 } from "@/pages"
 import { RouteContentType, RouteDefinition } from "@teawithsand/mlui"
 import { Routes } from "./routes"
@@ -48,17 +48,17 @@ const routes: RouteDefinition[] = [
 		},
 	},
 	{
-		path: Routes.categories.path,
-		content: {
-			type: RouteContentType.Component,
-			component: CategoriesPage,
-		},
-	},
-	{
 		path: Routes.settings.path,
 		content: {
 			type: RouteContentType.Component,
 			component: SettingsPage,
+		},
+	},
+	{
+		path: Routes.storage.path,
+		content: {
+			type: RouteContentType.Component,
+			component: StoragePage,
 		},
 	},
 ]

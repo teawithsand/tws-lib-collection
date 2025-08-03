@@ -1,4 +1,5 @@
 import { AbookStoreService } from "@/domain"
+import { StorageManagerService } from "@/domain/storage"
 import { AppTranslation, AppTransPicker } from "@/trans/appTranslation"
 import {
 	AbookAggregatorImpl,
@@ -41,6 +42,7 @@ export type AppDiContents = {
 
 	abookStore: AbookStore
 	abookStoreService: AbookStoreService
+	storageManagerService: StorageManagerService
 }
 
 export type DiConfig = {
@@ -149,5 +151,8 @@ export class AppDi {
 			.setFactory("abookStoreService", async (di) => {
 				const abookStore = di.get("abookStore")
 				return new AbookStoreService({ abookStore })
+			})
+			.setFactory("storageManagerService", async () => {
+				return new StorageManagerService()
 			})
 }

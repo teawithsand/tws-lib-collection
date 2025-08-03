@@ -14,7 +14,6 @@ export const AboutPageContent = () => {
 			</Text>
 			<Text mt="md">Features include:</Text>
 			<ul>
-				<li>Organize books by categories</li>
 				<li>Track reading progress</li>
 				<li>Add personal notes and reviews</li>
 				<li>Search and filter your collection</li>

@@ -16,8 +16,8 @@ export interface AppTranslation {
 		navigation: {
 			home: string
 			books: string
-			categories: string
 			settings: string
+			storage: string
 			about: string
 		}
 	}
@@ -80,6 +80,32 @@ export interface AppTranslation {
 			description: string
 			goBackButton: string
 		}
+	}
+	storage: {
+		pageTitle: string
+		quota: {
+			title: string
+			usedSpace: string
+			totalQuota: string
+			usage: string
+		}
+		persistence: {
+			title: string
+			isPersistent: string
+			isPersisted: (value: boolean) => string
+			description: string
+			requestButton: string
+		}
+		actions: {
+			title: string
+			refreshButton: string
+			refreshDescription: string
+		}
+		formatBytes: (bytes: number | undefined) => string
+		formatPercentage: (
+			used: number | undefined,
+			total: number | undefined,
+		) => string
 	}
 }
 
