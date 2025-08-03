@@ -9,6 +9,7 @@ import {
 	Title,
 	useMantineNotifications,
 } from "@teawithsand/mlui"
+import { useEffect } from "react"
 
 const LOG_TAG = "StoragePageContent"
 
@@ -27,6 +28,11 @@ export const StoragePageContent = () => {
 	const requestPersistence = useSetAtom(
 		storageManagerService.requestPersistence,
 	)
+
+	useEffect(() => {
+		refreshStorage()
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	const handleRefreshStorage = () => {
 		refreshStorage()
