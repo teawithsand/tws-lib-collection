@@ -3,6 +3,9 @@ import { translationEnUs } from "./en_us"
 
 export interface AppTranslation {
 	language: Language
+	common: {
+		error: string
+	}
 	globalErrorFallback: {
 		title: string
 		description: string
@@ -95,6 +98,10 @@ export interface AppTranslation {
 			isPersisted: (value: boolean) => string
 			description: string
 			requestButton: string
+			requestError: string
+			requestRejected: string
+			refreshPageButton: string
+			refreshPageDescription: string
 		}
 		actions: {
 			title: string

@@ -16,6 +16,7 @@ import {
 	AppBarLinkType,
 	AppBarPredefinedMutatorPriorities,
 	ErrorBoundary,
+	Notifications,
 	useAppBarMutator,
 } from "@teawithsand/mlui"
 import { useCallback, type CSSProperties, type ReactNode } from "react"
@@ -116,6 +117,8 @@ export const AppGlobalLayout = ({
 			<ErrorBoundary fallback={<AutonomousGlobalErrorFallback />}>
 				<div className={styles.content}>{children}</div>
 			</ErrorBoundary>
+
+			<Notifications notificationMaxHeight={300} limit={5} />
 		</div>
 	)
 }

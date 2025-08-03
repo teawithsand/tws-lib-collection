@@ -3,6 +3,9 @@ import { AppTranslation } from "./appTranslation"
 
 export const translationEnUs: Readonly<AppTranslation> = {
 	language: Language.ENGLISH_US,
+	common: {
+		error: "Error",
+	},
 	globalErrorFallback: {
 		title: "Something went wrong",
 		description:
@@ -123,6 +126,13 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			description:
 				"Non-persistent storage may be cleared by the browser when storage is low.",
 			requestButton: "Request Persistent Storage",
+			requestError:
+				"Failed to request persistent storage. Please try again later.",
+			requestRejected:
+				"Persistent storage request was denied. Try refreshing page and try again later.",
+			refreshPageButton: "Refresh Page",
+			refreshPageDescription:
+				"If you clicked 'deny' by mistake, refreshing the page will let you try allowing storage permission again. Also, sometimes it just so happens it helps, so if above button does not work, try this one and then the other one.",
 		},
 		actions: {
 			title: "Actions",

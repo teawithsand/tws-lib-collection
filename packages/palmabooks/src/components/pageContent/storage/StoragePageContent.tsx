@@ -1,14 +1,21 @@
 import { useApp, useTransResolver } from "@/app/app.hooks"
 import { useAtomValue, useSetAtom } from "@teawithsand/fstate"
-import { Button, Card, Group, Stack, Text, Title } from "@teawithsand/mlui"
+import {
+	Button,
+	Card,
+	Group,
+	Stack,
+	Text,
+	Title,
+	useMantineNotifications,
+} from "@teawithsand/mlui"
 
-/**
- * Storage page content component that displays browser storage information and management options.
- * Shows storage quota, usage, persistence status, and provides actions to refresh data.
- */
+const LOG_TAG = "StoragePageContent"
+
 export const StoragePageContent = () => {
 	const app = useApp()
 	const { resolve } = useTransResolver()
+	const notifications = useMantineNotifications()
 	const storageManagerService = app.storageManagerService
 
 	const storageEstimate = useAtomValue(storageManagerService.storageEstimate)
@@ -22,21 +29,48 @@ export const StoragePageContent = () => {
 	)
 
 	const handleRefreshStorage = () => {
-		// Trigger refresh of both storage estimate and persistence status
 		refreshStorage()
 	}
 
+	const handleRefreshPage = () => {
+		window.location.reload()
+	}
+
 	const handleRequestPersistence = async () => {
-		await requestPersistence()
-		// Refresh storage information after requesting persistence
-		refreshStorage()
+		try {
+			const result = await requestPersistence()
+
+			if (!result) {
+				notifications.show({
+					title: resolve((t) => t.common.error),
+					message: resolve(
+						(t) => t.storage.persistence.requestRejected,
+					),
+					color: "red",
+					autoClose: 10_000,
+				})
+			}
+			refreshStorage()
+		} catch (error) {
+			app.logger.warn(
+				LOG_TAG,
+				"User request for persistence filed",
+				error,
+			)
+
+			notifications.show({
+				title: resolve((t) => t.common.error),
+				message: resolve((t) => t.storage.persistence.requestError),
+				color: "red",
+				autoClose: 10_000,
+			})
+		}
 	}
 
 	return (
 		<Stack gap="lg">
 			<Title order={1}>{resolve((t) => t.storage.pageTitle)}</Title>
 
-			{/* Storage Quota Card */}
 			<Card padding="lg" shadow="sm" withBorder>
 				<Stack gap="md">
 					<Title order={2}>
@@ -127,6 +161,29 @@ export const StoragePageContent = () => {
 									(t) => t.storage.persistence.requestButton,
 								)}
 							</Button>
+						)}
+
+						{!isStoragePersisted && (
+							<Button
+								variant="outline"
+								onClick={handleRefreshPage}
+								size="sm"
+							>
+								{resolve(
+									(t) =>
+										t.storage.persistence.refreshPageButton,
+								)}
+							</Button>
+						)}
+
+						{!isStoragePersisted && (
+							<>
+								{resolve(
+									(t) =>
+										t.storage.persistence
+											.refreshPageDescription,
+								)}
+							</>
 						)}
 					</Stack>
 				</Stack>
