@@ -11,4 +11,5 @@ export * from "./reactUtils"
 // but puts reexports here nonetheless, which generates build time warnings about double reexporting of some types
 export * from "@mantine/core"
 export * from "@mantine/hooks"
+export * from "@mantine/notifications"
 export * from "@tabler/icons-react"
