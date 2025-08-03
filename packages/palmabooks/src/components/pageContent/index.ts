@@ -1,4 +1,3 @@
-export * from "./abooks"
 export * from "./about"
 export * from "./categories"
 export * from "./createAbook"

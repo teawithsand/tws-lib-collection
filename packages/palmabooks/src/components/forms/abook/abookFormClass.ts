@@ -40,7 +40,7 @@ export class AbookFormClass extends FormAtomsDelegateBase<
 						if (!title.trim()) {
 							errors.push(
 								(trans) =>
-									trans.audiobooks.form.validation
+									trans.abooks.form.validation
 										.titleMustNotBeEmpty,
 							)
 						}
@@ -48,8 +48,7 @@ export class AbookFormClass extends FormAtomsDelegateBase<
 						if (title.trim().length > 200) {
 							errors.push(
 								(trans) =>
-									trans.audiobooks.form.validation
-										.titleTooLong,
+									trans.abooks.form.validation.titleTooLong,
 							)
 						}
 
@@ -67,7 +66,7 @@ export class AbookFormClass extends FormAtomsDelegateBase<
 						if (description.length > 2000) {
 							errors.push(
 								(trans) =>
-									trans.audiobooks.form.validation
+									trans.abooks.form.validation
 										.descriptionTooLong,
 							)
 						}
@@ -86,7 +85,7 @@ export class AbookFormClass extends FormAtomsDelegateBase<
 						if (privateUserNote.length > 1000) {
 							errors.push(
 								(trans) =>
-									trans.audiobooks.form.validation
+									trans.abooks.form.validation
 										.privateUserNoteTooLong,
 							)
 						}

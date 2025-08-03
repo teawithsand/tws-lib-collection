@@ -55,7 +55,7 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 						<Alert
 							icon={<IconAlertCircle size="1rem" />}
 							title={resolve(
-								(t) => t.audiobooks.form.formValidationErrors,
+								(t) => t.abooks.form.formValidationErrors,
 							)}
 							color="red"
 							className={styles["abook-form__global-errors"]}
@@ -74,23 +74,21 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 						<Alert
 							icon={<IconAlertCircle size="1rem" />}
 							title={resolve(
-								(t) => t.audiobooks.form.submissionError,
+								(t) => t.abooks.form.submissionError,
 							)}
 							color="red"
 							className={styles["abook-form__submit-error"]}
 						>
 							{form.lastSubmitError.message ||
-								resolve(
-									(t) => t.audiobooks.form.unexpectedError,
-								)}
+								resolve((t) => t.abooks.form.unexpectedError)}
 						</Alert>
 					)}
 
 					<div className={styles["abook-form__field-group"]}>
 						<TextInput
-							label={resolve((t) => t.audiobooks.form.title)}
+							label={resolve((t) => t.abooks.form.title)}
 							placeholder={resolve(
-								(t) => t.audiobooks.form.titlePlaceholder,
+								(t) => t.abooks.form.titlePlaceholder,
 							)}
 							value={titleField.value}
 							onChange={(event) =>
@@ -110,11 +108,9 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 
 					<div className={styles["abook-form__field-group"]}>
 						<Textarea
-							label={resolve(
-								(t) => t.audiobooks.form.description,
-							)}
+							label={resolve((t) => t.abooks.form.description)}
 							placeholder={resolve(
-								(t) => t.audiobooks.form.descriptionPlaceholder,
+								(t) => t.abooks.form.descriptionPlaceholder,
 							)}
 							value={descriptionField.value}
 							onChange={(event) =>
@@ -137,12 +133,10 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 					<div className={styles["abook-form__field-group"]}>
 						<Textarea
 							label={resolve(
-								(t) => t.audiobooks.form.privateUserNote,
+								(t) => t.abooks.form.privateUserNote,
 							)}
 							placeholder={resolve(
-								(t) =>
-									t.audiobooks.form
-										.privateUserNotePlaceholder,
+								(t) => t.abooks.form.privateUserNotePlaceholder,
 							)}
 							value={privateUserNoteField.value}
 							onChange={(event) =>
@@ -171,7 +165,7 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 							loading={form.isSubmitting}
 							disabled={form.hasErrors || form.isSubmitting}
 						>
-							{resolve((t) => t.audiobooks.form.createButton)}
+							{resolve((t) => t.abooks.form.createButton)}
 						</Button>
 					</div>
 				</Stack>

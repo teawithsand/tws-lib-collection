@@ -1,22 +1,26 @@
+import { useTransResolver } from "@/app/app.hooks"
+import { Routes } from "@/router/routes"
 import { IconPlus } from "@tabler/icons-react"
 import { Button, Group, Link, Text, Title } from "@teawithsand/mlui"
 
-export interface AbooksPageHeaderProps {
-	title: string
-	subtitle: string
-	addButtonLabel: string
-	addButtonTo: string
+export interface AbookListPageHeaderProps {
+	abooksCount: number
 }
 
 /**
  * Header component for the audiobooks page with title, subtitle, and add button.
  */
-export const AbooksPageHeader = ({
-	title,
-	subtitle,
-	addButtonLabel,
-	addButtonTo,
-}: AbooksPageHeaderProps) => {
+export const AbookListPageHeader = ({
+	abooksCount,
+}: AbookListPageHeaderProps) => {
+	const { resolve } = useTransResolver()
+
+	const title = resolve((t) => t.abooks.pageTitle)
+	const addButtonLabel = resolve((t) => t.abooks.list.addButton)
+	const addButtonTo = Routes.addBook.navigate()
+
+	const subtitle = resolve((t) => t.abooks.list.countText(abooksCount))
+
 	return (
 		<Group justify="space-between">
 			<div>

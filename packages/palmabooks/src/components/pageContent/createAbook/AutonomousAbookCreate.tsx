@@ -42,7 +42,7 @@ export const AutonomousAbookCreate = () => {
 	return (
 		<div className={styles["abook-create"]}>
 			<Title order={1} mb="xl" className={styles["abook-create__title"]}>
-				{resolve((t) => t.audiobooks.form.createButton)}
+				{resolve((t) => t.abooks.form.createButton)}
 			</Title>
 			<AbookForm onSubmit={handleSubmit} />
 		</div>

@@ -1,22 +1,21 @@
+import { useTransResolver } from "@/app/app.hooks"
+import { Routes } from "@/router/routes"
 import { IconBook, IconPlus } from "@tabler/icons-react"
 import { Button, Card, Link, Stack, Text, Title } from "@teawithsand/mlui"
-
-export interface AbooksEmptyStateProps {
-	title: string
-	description: string
-	createButtonLabel: string
-	createButtonTo: string
-}
 
 /**
  * Empty state component for when no audiobooks are available.
  */
-export const AbooksEmptyState = ({
-	title,
-	description,
-	createButtonLabel,
-	createButtonTo,
-}: AbooksEmptyStateProps) => {
+export const AbookListEmptyState = () => {
+	const { resolve } = useTransResolver()
+
+	const title = resolve((t) => t.abooks.list.emptyState.title)
+	const description = resolve((t) => t.abooks.list.emptyState.description)
+	const createButtonLabel = resolve(
+		(t) => t.abooks.list.emptyState.createButton,
+	)
+	const createButtonTo = Routes.addBook.navigate()
+
 	return (
 		<Card padding="xl" radius="md" withBorder>
 			<Stack align="center" gap="lg">

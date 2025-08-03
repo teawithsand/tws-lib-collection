@@ -27,26 +27,28 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		description: "The page you're looking for doesn't exist.",
 		goBackToHome: "Go back to home page",
 	},
-	audiobooks: {
+	abooks: {
 		pageTitle: "My Audiobooks",
-		emptyState: {
-			title: "No audiobooks yet",
-			description:
-				"Start building your audiobook collection by creating your first audiobook.",
-			createButton: "Create Audiobook",
-		},
 		list: {
-			addButton: "Add Audiobook",
-			countSingular: "audiobook",
-			countPlural: "audiobooks",
-			fallbackSubtitle: "Manage your audiobook collection",
-			entryCount: {
-				singular: "entry",
-				plural: "entries",
+			emptyState: {
+				title: "No audiobooks yet",
+				description:
+					"Start building your audiobook collection by creating your first audiobook.",
+				createButton: "Create Audiobook",
 			},
-			duration: {
-				unknown: "Unknown duration",
-				minutes: "min",
+			addButton: "Add Audiobook",
+			countText: (count: number) => {
+				if (count === 0) return "Manage your audiobook collection"
+				return count === 1
+					? `${count} audiobook`
+					: `${count} audiobooks`
+			},
+			entryCountText: (count: number) =>
+				count === 1 ? `${count} entry` : `${count} entries`,
+			formatDuration: (durationMillis: number) => {
+				if (durationMillis <= 0) return "Unknown duration"
+				const minutes = Math.round(durationMillis / 1000 / 60)
+				return `${minutes} min`
 			},
 		},
 		form: {
@@ -69,6 +71,41 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				privateUserNoteTooLong:
 					"Private note must not exceed 1000 characters",
 			},
+		},
+		preview: {
+			title: "Audiobook Preview",
+			backButton: "Back",
+			editButton: "Edit",
+			metadata: "Metadata",
+			entries: "Entries",
+			duration: "Duration",
+			entryCount: "Entry Count",
+			noEntries: "No entries yet",
+			description: "Description",
+			formatDuration: (millis: number) => {
+				const totalSeconds = Math.floor(millis / 1000)
+				const hours = Math.floor(totalSeconds / 3600)
+				const minutes = Math.floor((totalSeconds % 3600) / 60)
+				const seconds = totalSeconds % 60
+
+				if (hours > 0) {
+					return `${hours}h ${minutes}m ${seconds}s`
+				}
+				if (minutes > 0) {
+					return `${minutes}m ${seconds}s`
+				}
+				return `${seconds}s`
+			},
+			createdLabel: "Created",
+			sourceLabel: "Source",
+			dispositionLabel: "Disposition",
+			durationLabel: "Duration",
+			entryTitle: (index: number) => `Entry ${index + 1}`,
+		},
+		notFound: {
+			title: "Audiobook Not Found",
+			description: "The requested audiobook could not be found.",
+			goBackButton: "Go Back",
 		},
 	},
 }

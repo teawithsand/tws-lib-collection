@@ -33,32 +33,32 @@ export class Routes {
 	 * Books page route
 	 */
 	public static readonly books: RouteConfig = {
-		path: "/books",
-		navigate: () => "/books",
+		path: "/abooks",
+		navigate: () => "/abooks",
 	}
 
 	/**
-	 * Book detail page route
+	 * Book preview page route
 	 */
-	public static readonly bookDetail: RouteConfig = {
-		path: "/books/:id",
-		navigate: (id: string) => `/books/${id}`,
+	public static readonly abookShow: RouteConfig = {
+		path: "/abooks/:id",
+		navigate: (id: string) => `/abooks/${id}`,
 	}
 
 	/**
 	 * Add book page route
 	 */
 	public static readonly addBook: RouteConfig = {
-		path: "/books/add",
-		navigate: () => "/books/add",
+		path: "/abooks/add",
+		navigate: () => "/abooks/add",
 	}
 
 	/**
 	 * Edit book page route
 	 */
 	public static readonly editBook: RouteConfig = {
-		path: "/books/:id/edit",
-		navigate: (id: string) => `/books/${id}/edit`,
+		path: "/abooks/:id/edit",
+		navigate: (id: string) => `/abooks/${id}/edit`,
 	}
 
 	/**
@@ -93,7 +93,7 @@ export class Routes {
 			Routes.home,
 			Routes.about,
 			Routes.books,
-			Routes.bookDetail,
+			Routes.abookShow,
 			Routes.addBook,
 			Routes.editBook,
 			Routes.categories,

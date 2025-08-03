@@ -1,12 +1,12 @@
+import { AutonomousAbookList } from "@/components/abook/list"
 import { AppLocalLayout } from "@/components/layout"
-import { HomePageContent } from "@/components/pageContent"
 import { Container } from "@teawithsand/mlui"
 
-export const HomePage = () => {
+export const AbookListPage = () => {
 	return (
 		<AppLocalLayout>
 			<Container>
-				<HomePageContent />
+				<AutonomousAbookList />
 			</Container>
 		</AppLocalLayout>
 	)

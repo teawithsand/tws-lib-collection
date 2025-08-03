@@ -17,7 +17,7 @@ export const AppLocalLayout = ({
 	children,
 	className,
 	style,
-	variant = AppLocalLayoutVariant.SIMPLE,
+	variant = AppLocalLayoutVariant.DEFAULT,
 }: AppLocalLayoutProps) => {
 	if (variant === AppLocalLayoutVariant.EMPTY) {
 		return <>{children}</>

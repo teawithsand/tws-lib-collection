@@ -26,26 +26,18 @@ export interface AppTranslation {
 		description: string
 		goBackToHome: string
 	}
-	audiobooks: {
+	abooks: {
 		pageTitle: string
-		emptyState: {
-			title: string
-			description: string
-			createButton: string
-		}
 		list: {
+			emptyState: {
+				title: string
+				description: string
+				createButton: string
+			}
 			addButton: string
-			countSingular: string
-			countPlural: string
-			fallbackSubtitle: string
-			entryCount: {
-				singular: string
-				plural: string
-			}
-			duration: {
-				unknown: string
-				minutes: string
-			}
+			countText: (count: number) => string
+			entryCountText: (count: number) => string
+			formatDuration: (durationMillis: number) => string
 		}
 		form: {
 			title: string
@@ -65,6 +57,28 @@ export interface AppTranslation {
 				descriptionTooLong: string
 				privateUserNoteTooLong: string
 			}
+		}
+		preview: {
+			title: string
+			backButton: string
+			editButton: string
+			metadata: string
+			entries: string
+			duration: string
+			entryCount: string
+			noEntries: string
+			description: string
+			formatDuration: (millis: number) => string
+			createdLabel: string
+			sourceLabel: string
+			dispositionLabel: string
+			durationLabel: string
+			entryTitle: (index: number) => string
+		}
+		notFound: {
+			title: string
+			description: string
+			goBackButton: string
 		}
 	}
 }

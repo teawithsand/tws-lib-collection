@@ -2,6 +2,7 @@ import {
 	Abook,
 	AbookEntry,
 	AbookHeaderData,
+	AbookNotFoundError,
 	AbookStore,
 	Id,
 	WithId,
@@ -80,21 +81,28 @@ export class AbookStoreService {
 		const abookDataLoadable = loadable(abookDataAtom)
 
 		const abookEntriesAtom = atomWithRefresh(async () => {
-			const handle = await this.abookStore.get(abookId)
-			const entryHandles = await handle.listEntries()
-			const entries: WithId<AbookEntry>[] = []
+			try {
+				const handle = await this.abookStore.get(abookId)
+				const entryHandles = await handle.listEntries()
+				const entries: WithId<AbookEntry>[] = []
 
-			for (const entryHandle of entryHandles) {
-				const entry = await entryHandle.read()
-				if (entry) {
-					entries.push({
-						data: entry,
-						id: entryHandle.id,
-					})
+				for (const entryHandle of entryHandles) {
+					const entry = await entryHandle.read()
+					if (entry) {
+						entries.push({
+							data: entry,
+							id: entryHandle.id,
+						})
+					}
 				}
-			}
 
-			return entries
+				return entries
+			} catch (e) {
+				if (e instanceof AbookNotFoundError) {
+					return []
+				}
+				throw e
+			}
 		})
 
 		const updateAbook = atom(
@@ -111,11 +119,6 @@ export class AbookStoreService {
 			const handle = await this.abookStore.get(abookId)
 			await handle.delete()
 			set(this._abooksList)
-		})
-
-		const existsAbook = atom(null, async () => {
-			const handle = await this.abookStore.get(abookId)
-			return await handle.exists()
 		})
 
 		const computeAggregate = atom(null, async (_get, set) => {
@@ -139,7 +142,6 @@ export class AbookStoreService {
 			entriesLoadable: loadable(abookEntriesAtom),
 			update: updateAbook,
 			delete: deleteAbook,
-			exists: existsAbook,
 			computeAggregate,
 			refresh: atom(null, (_get, set) => {
 				set(abookDataAtom)
@@ -147,15 +149,4 @@ export class AbookStoreService {
 			}),
 		}
 	}
-
-	/**
-	 * Checks if an audiobook exists by its ID.
-	 */
-	public readonly abookExists = atom(
-		null,
-		async (_get, _set, abookId: Id) => {
-			const handle = await this.abookStore.get(abookId)
-			return await handle.exists()
-		},
-	)
 }
