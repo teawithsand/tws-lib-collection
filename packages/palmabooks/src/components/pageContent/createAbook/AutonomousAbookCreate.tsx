@@ -1,10 +1,9 @@
 import { useApp, useTransResolver } from "@/app/app.hooks"
 import { AbookForm } from "@/components/forms/abook"
 import { Routes } from "@/router/routes"
-import { Title } from "@mantine/core"
 import { AbookData } from "@teawithsand/booklibr"
 import { useAtomCallback } from "@teawithsand/fstate"
-import { useNavigation } from "@teawithsand/mlui"
+import { Title, useNavigation } from "@teawithsand/mlui"
 import { useCallback } from "react"
 import styles from "./AutonomousAbookCreate.module.scss"
 

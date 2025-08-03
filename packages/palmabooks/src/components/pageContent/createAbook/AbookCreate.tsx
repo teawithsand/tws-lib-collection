@@ -1,7 +1,7 @@
 import { useTransResolver } from "@/app/app.hooks"
 import { AbookForm } from "@/components/forms/abook"
-import { Title } from "@mantine/core"
 import { AbookData } from "@teawithsand/booklibr"
+import { Title } from "@teawithsand/mlui"
 import styles from "./AbookCreate.module.scss"
 
 interface AbookCreateProps {

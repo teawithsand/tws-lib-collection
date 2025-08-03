@@ -1,4 +1,3 @@
-import "@mantine/core/styles.css"
 import "@teawithsand/mlui/dist/index.css"
 
 import { StrictMode } from "react"
