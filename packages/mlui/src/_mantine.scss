@@ -1,5 +1,8 @@
 @use "sass:math";
 
+@import "@mantine/core/styles.css";
+@import "@mantine/notifications/styles.css";
+
 // Define variables for your breakpoints,
 // values must be the same as in your theme
 $mantine-breakpoint-xs: "36em";

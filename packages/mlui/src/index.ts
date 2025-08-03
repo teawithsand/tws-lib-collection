@@ -1,3 +1,5 @@
+import "./_mantine.scss"
+
 export * from "./appBar"
 export * from "./domain"
 export * from "./misc"
