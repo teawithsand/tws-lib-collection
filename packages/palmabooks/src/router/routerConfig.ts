@@ -1,5 +1,6 @@
 import {
 	AbookCreatePage,
+	AbookEditPage,
 	AbookListPage,
 	AbookShowPage,
 	AboutPage,
@@ -45,6 +46,13 @@ const routes: RouteDefinition[] = [
 		content: {
 			type: RouteContentType.Component,
 			component: AbookCreatePage,
+		},
+	},
+	{
+		path: Routes.editBook.path,
+		content: {
+			type: RouteContentType.Component,
+			component: AbookEditPage,
 		},
 	},
 	{

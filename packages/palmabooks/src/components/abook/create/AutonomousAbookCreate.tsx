@@ -1,5 +1,5 @@
 import { useApp, useTransResolver } from "@/app/app.hooks"
-import { AbookForm } from "@/components/forms/abook"
+import { AbookCreateForm } from "@/components/abook/form"
 import { Routes } from "@/router/routes"
 import { AbookData } from "@teawithsand/booklibr"
 import { useAtomCallback } from "@teawithsand/fstate"
@@ -43,7 +43,7 @@ export const AutonomousAbookCreate = () => {
 			<Title order={1} mb="xl" className={styles["abook-create__title"]}>
 				{resolve((t) => t.abooks.form.createButton)}
 			</Title>
-			<AbookForm onSubmit={handleSubmit} />
+			<AbookCreateForm onSubmit={handleSubmit} />
 		</div>
 	)
 }

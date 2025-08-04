@@ -10,6 +10,13 @@ import {
 import { atom, atomWithRefresh, loadable } from "@teawithsand/fstate"
 
 /**
+ * Miscellaneous atoms used to operate on a ABook.
+ */
+export type AbookStoreServiceAbookAtoms = ReturnType<
+	AbookStoreService["getAbook"]
+>
+
+/**
  * Service for managing audiobook operations with reactive state management.
  * Wraps AbookStore from booklibr and provides atom-based reactive interfaces.
  */

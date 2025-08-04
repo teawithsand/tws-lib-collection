@@ -1,5 +1,5 @@
 import { useApp } from "@/app/app.hooks"
-import { AutonomousAbookShow } from "@/components/abook/show"
+import { AutonomousAbookEdit } from "@/components/abook"
 import { AppLocalLayout } from "@/components/layout"
 import {
 	AppBarMutators,
@@ -11,7 +11,7 @@ import {
 	useRouteParams,
 } from "@teawithsand/mlui"
 
-export const AbookShowPage = () => {
+export const AbookEditPage = () => {
 	const routeParams = useRouteParams()
 	const abookId = routeParams.resolve(RouteParamsSchemas.idParamSchema)
 	const app = useApp()
@@ -22,14 +22,14 @@ export const AbookShowPage = () => {
 		app.appBarService,
 	)
 
-	const abookService = app.abookStoreService.getAbook(abookId)
+	const abookServiceAtoms = app.abookStoreService.getAbook(abookId)
 
 	return (
 		<AppLocalLayout>
 			<Container>
 				<LoadingSuspenseBoundary>
-					<AutonomousAbookShow
-						abookServiceAtoms={abookService}
+					<AutonomousAbookEdit
+						abookServiceAtoms={abookServiceAtoms}
 						abookId={abookId}
 					/>
 				</LoadingSuspenseBoundary>

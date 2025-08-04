@@ -5,6 +5,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 	language: Language.ENGLISH_US,
 	common: {
 		error: "Error",
+		cancel: "Cancel",
 	},
 	globalErrorFallback: {
 		title: "Something went wrong",
@@ -62,6 +63,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			privateUserNote: "Private Notes",
 			privateUserNotePlaceholder: "Enter private notes about this book",
 			createButton: "Create Book",
+			updateButton: "Update Book",
 			createPageTitle: "Create New Audio Book",
 			formValidationErrors: "Please fix the following errors:",
 			submissionError: "Failed to create book",

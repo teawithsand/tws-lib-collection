@@ -5,6 +5,7 @@ export interface AppTranslation {
 	language: Language
 	common: {
 		error: string
+		cancel: string
 	}
 	globalErrorFallback: {
 		title: string
@@ -50,6 +51,7 @@ export interface AppTranslation {
 			privateUserNote: string
 			privateUserNotePlaceholder: string
 			createButton: string
+			updateButton: string
 			createPageTitle: string
 			formValidationErrors: string
 			submissionError: string

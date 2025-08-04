@@ -1,3 +1,4 @@
+import { AppTransString } from "@/trans/appTranslation"
 import { AbookData } from "@teawithsand/booklibr"
 import {
 	atom,
@@ -5,7 +6,6 @@ import {
 	FormAtomsDelegateBase,
 	FormErrorBag,
 } from "@teawithsand/fstate"
-import { AppTransString } from "../../../trans/appTranslation"
 import { AbookFormUtils } from "./abookFormUtils"
 
 export interface AbookFormData {

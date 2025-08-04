@@ -1,3 +1,8 @@
+import { useTransResolver } from "@/app/app.hooks"
+import {
+	AbookFormClass,
+	AbookFormInput,
+} from "@/components/abook/form/shared/abookFormClass"
 import { IconAlertCircle } from "@tabler/icons-react"
 import { AbookData } from "@teawithsand/booklibr"
 import { useForm, useFormField } from "@teawithsand/fstate"
@@ -10,18 +15,18 @@ import {
 	TextInput,
 } from "@teawithsand/mlui"
 import { useCallback, useState } from "react"
-import { useTransResolver } from "../../../app/app.hooks"
-import styles from "./abookForm.module.scss"
-import { AbookFormClass, AbookFormInput } from "./abookFormClass"
+import styles from "../shared/abookForm.module.scss"
 
-interface AbookFormProps {
-	initialData?: Partial<AbookFormInput>
+interface AbookEditFormProps {
+	initialData: AbookFormInput
 	onSubmit: (data: AbookData) => Promise<void>
+	onCancel?: () => void
 }
 
-export const AbookForm: React.FC<AbookFormProps> = ({
+export const AbookEditForm: React.FC<AbookEditFormProps> = ({
 	initialData,
 	onSubmit,
+	onCancel,
 }) => {
 	const [formAtoms] = useState(() => new AbookFormClass(initialData))
 
@@ -47,6 +52,12 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 		},
 		[form, formAtoms, onSubmit],
 	)
+
+	const handleCancel = useCallback(() => {
+		if (onCancel) {
+			onCancel()
+		}
+	}, [onCancel])
 
 	return (
 		<Paper
@@ -172,8 +183,17 @@ export const AbookForm: React.FC<AbookFormProps> = ({
 							loading={form.isSubmitting}
 							disabled={form.hasErrors || form.isSubmitting}
 						>
-							{resolve((t) => t.abooks.form.createButton)}
+							{resolve((t) => t.abooks.form.updateButton)}
 						</Button>
+						{onCancel && (
+							<Button
+								variant="outline"
+								onClick={handleCancel}
+								disabled={form.isSubmitting}
+							>
+								{resolve((t) => t.common.cancel)}
+							</Button>
+						)}
 					</div>
 				</Stack>
 			</form>

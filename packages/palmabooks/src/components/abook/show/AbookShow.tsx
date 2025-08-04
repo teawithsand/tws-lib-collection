@@ -1,6 +1,7 @@
 import { useTransResolver } from "@/app/app.hooks"
+import { Routes } from "@/router"
 import type { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
-import { Button, Card, Divider, Stack, Text } from "@teawithsand/mlui"
+import { Button, Card, Divider, Link, Stack, Text } from "@teawithsand/mlui"
 
 interface AbookPreviewPageContentProps {
 	readonly abook: Abook
@@ -143,7 +144,7 @@ export const AbookShow = ({
 												</Text>
 												<Text
 													variant="caption"
-													color="textSecondary"
+													c="textSecondary"
 												>
 													{resolve(
 														(t) =>
@@ -187,15 +188,11 @@ export const AbookShow = ({
 
 			{/* Action Buttons */}
 			<Stack gap="md">
-				<Button
-					variant="primary"
-					onClick={() => {
-						// TODO: Implement edit navigation
-						console.log("Edit abook:", abookId)
-					}}
-				>
-					{resolve((t) => t.abooks.preview.editButton)}
-				</Button>
+				<Link to={Routes.editBook.navigate(abookId)}>
+					<Button variant="primary">
+						{resolve((t) => t.abooks.preview.editButton)}
+					</Button>
+				</Link>
 			</Stack>
 		</Stack>
 	)

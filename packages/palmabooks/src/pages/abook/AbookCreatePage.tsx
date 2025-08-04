@@ -1,12 +1,12 @@
+import { AutonomousAbookCreate } from "@/components/abook"
 import { AppLocalLayout } from "@/components/layout"
-import { CreateAbookPageContent } from "@/components/pageContent"
 import { Container } from "@teawithsand/mlui"
 
 export const AbookCreatePage = () => {
 	return (
 		<AppLocalLayout>
 			<Container>
-				<CreateAbookPageContent />
+				<AutonomousAbookCreate />
 			</Container>
 		</AppLocalLayout>
 	)

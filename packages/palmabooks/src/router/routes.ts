@@ -90,6 +90,7 @@ export class Routes {
 			Routes.editBook,
 			Routes.settings,
 			Routes.storage,
+			Routes.editBook,
 		]
 	}
 }
