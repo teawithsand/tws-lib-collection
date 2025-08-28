@@ -83,7 +83,7 @@ export const AppBarDrawer = ({
 	opened,
 	onClose,
 	items,
-	drawerTitle = "",
+	drawerTitle,
 	drawerIcon = <></>,
 }: AppBarDrawerProps) => {
 	return (

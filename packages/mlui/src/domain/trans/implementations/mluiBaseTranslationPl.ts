@@ -53,5 +53,8 @@ export const mluiBaseTranslationPl: Readonly<MluiBaseTranslation> = {
 			next: () => "Dalej",
 			previous: () => "Poprzedni",
 		},
+		drawer: {
+			title: () => "Nawigacja",
+		},
 	},
 }

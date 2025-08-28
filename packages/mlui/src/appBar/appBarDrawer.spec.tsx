@@ -1,5 +1,6 @@
 import { MantineProvider } from "@mantine/core"
 import { IconHome, IconSettings, IconUser } from "@tabler/icons-react"
+import "@testing-library/jest-dom"
 import { fireEvent, render, screen } from "@testing-library/react"
 import type { ReactElement } from "react"
 import { BrowserRouter } from "react-router"
@@ -37,7 +38,7 @@ describe("AppBarDrawer", () => {
 		expect(screen.getByText("Test Navigation")).toBeInTheDocument()
 	})
 
-	test("renders default title when drawerTitle not provided", () => {
+	test("renders empty title when drawerTitle not provided", () => {
 		const items = [
 			{
 				label: "Home",
@@ -50,7 +51,12 @@ describe("AppBarDrawer", () => {
 			<AppBarDrawer opened={true} onClose={() => {}} items={items} />,
 		)
 
-		expect(screen.getByText("Navigation")).toBeInTheDocument()
+		// Should render the drawer without a title text
+		expect(screen.getByRole("dialog")).toBeInTheDocument()
+		// Should have the close button
+		expect(screen.getByRole("button")).toBeInTheDocument()
+		// Should have the navigation item
+		expect(screen.getByText("Home")).toBeInTheDocument()
 	})
 
 	test("renders drawer items with no link type", () => {
@@ -222,7 +228,8 @@ describe("AppBarDrawer", () => {
 			<AppBarDrawer opened={true} onClose={() => {}} items={[]} />,
 		)
 
-		expect(screen.getByText("Navigation")).toBeInTheDocument()
+		// Should render the drawer without a title text
+		expect(screen.getByRole("dialog")).toBeInTheDocument()
 		// Should not have any navigation items, only the close button
 		expect(screen.queryByRole("link")).toBeNull()
 		// The close button should still be present

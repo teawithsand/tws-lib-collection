@@ -34,5 +34,8 @@ export interface MluiBaseTranslation {
 			next: () => string
 			previous: () => string
 		}
+		drawer: {
+			title: () => string
+		}
 	}
 }
