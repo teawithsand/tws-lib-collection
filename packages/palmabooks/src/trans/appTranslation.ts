@@ -1,4 +1,5 @@
 import { Language, TransPickerImpl, TransString } from "@teawithsand/fstate"
+import { Timestamp } from "@teawithsand/lngext"
 import { translationEnUs } from "./en_us"
 
 export interface AppTranslation {
@@ -11,7 +12,7 @@ export interface AppTranslation {
 	util: {
 		time: {
 			formatDuration: (milliseconds: number) => string
-			formatDate: (timestamp: number) => string
+			formatDate: (timestamp: number | Date | Timestamp) => string
 		}
 		formatSize: (bytes: number | undefined) => string
 	}

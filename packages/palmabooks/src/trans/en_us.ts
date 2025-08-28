@@ -1,4 +1,5 @@
 import { Language } from "@teawithsand/fstate"
+import { Timestamp } from "@teawithsand/lngext"
 import { AppTranslation } from "./appTranslation"
 
 export const translationEnUs: Readonly<AppTranslation> = {
@@ -24,8 +25,18 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				}
 				return `${seconds}s`
 			},
-			formatDate: (timestamp: number) => {
-				return new Date(timestamp).toLocaleDateString(undefined, {
+			formatDate: (timestamp: number | Date | Timestamp) => {
+				let dateValue: Date
+
+				if (timestamp instanceof Date) {
+					dateValue = timestamp
+				} else if (timestamp instanceof Timestamp) {
+					dateValue = new Date(timestamp.toNumberMillis())
+				} else {
+					dateValue = new Date(timestamp)
+				}
+
+				return dateValue.toLocaleDateString(undefined, {
 					year: "numeric",
 					month: "long",
 					day: "numeric",
