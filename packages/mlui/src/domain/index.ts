@@ -1,5 +1,6 @@
 export * from "./appBar"
 export * from "./error"
+export * from "./linkButton"
 export * from "./mlui"
 export * from "./routing"
 export * from "./serviceWorker"
