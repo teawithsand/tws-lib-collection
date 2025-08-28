@@ -1,44 +1,38 @@
 import { useTransResolver } from "@/app/app.hooks"
-import {
-	AutonomousAbookDeleteModal,
-	useAbookDeleteModal,
-} from "@/components/abook/modal/delete"
-import { Routes } from "@/router"
-import { IconTrash } from "@tabler/icons-react"
 import type { Abook } from "@teawithsand/booklibr"
-import { Button, Link, Text } from "@teawithsand/mlui"
-import styles from "../AbookShow.module.scss"
+import type { Timestamp } from "@teawithsand/lngext"
+import { Text } from "@teawithsand/mlui"
+import styles from "./AbookMetadataAside.module.scss"
 
 interface AbookMetadataAsideProps {
 	readonly abook: Abook
-	readonly abookId: string
-	readonly formatDuration: (milliseconds: number) => string
-	readonly formatDate: (timestamp: number) => string
 }
 
-export const AbookMetadataAside = ({
-	abook,
-	abookId,
-	formatDuration,
-	formatDate,
-}: AbookMetadataAsideProps) => {
+export const AbookMetadataAside = ({ abook }: AbookMetadataAsideProps) => {
 	const { resolve } = useTransResolver()
-	const deleteModal = useAbookDeleteModal()
+
+	const formatDuration = (milliseconds: number): string => {
+		return resolve((t) => t.util.time.formatDuration(milliseconds))
+	}
+
+	const formatDate = (timestamp: number | Date | Timestamp): string => {
+		return resolve((t) => t.util.time.formatDate(timestamp))
+	}
 
 	return (
-		<>
-			<div className={styles.metadataAside}>
-				<div className={styles.metadataCard}>
-					<Text className={styles.metadataTitle}>
-						{resolve((t) => t.abooks.preview.metadata)}
-					</Text>
+		<div className={styles.metadataAside}>
+			<div className={styles.metadataCard}>
+				<Text className={styles.metadataTitle}>
+					{resolve((t) => t.abooks.preview.metadata)}
+				</Text>
 
+				<div className={styles.metadataItems}>
 					<div className={styles.metadataItem}>
 						<Text className={styles.metadataLabel}>
 							{resolve((t) => t.abooks.preview.createdLabel)}
 						</Text>
 						<Text className={styles.metadataValue}>
-							{formatDate(Number(abook.data.header.createdAt))}
+							{formatDate(abook.data.header.createdAt)}
 						</Text>
 					</div>
 
@@ -64,36 +58,7 @@ export const AbookMetadataAside = ({
 						</Text>
 					</div>
 				</div>
-
-				<div className={styles.actionButtons}>
-					<Link to={Routes.editBook.navigate(abookId)}>
-						<Button className={styles.editButton} size="lg">
-							{resolve((t) => t.abooks.preview.editButton)}
-						</Button>
-					</Link>
-
-					<Button
-						color="red"
-						size="lg"
-						leftSection={<IconTrash size={18} />}
-						onClick={() =>
-							deleteModal.openModal(
-								abookId,
-								abook.data.header.metadata.title,
-							)
-						}
-					>
-						{resolve((t) => t.abooks.preview.deleteButton)}
-					</Button>
-				</div>
 			</div>
-
-			<AutonomousAbookDeleteModal
-				opened={deleteModal.opened}
-				onClose={deleteModal.closeModal}
-				abookId={deleteModal.abookId}
-				abookTitle={deleteModal.abookTitle}
-			/>
-		</>
+		</div>
 	)
 }

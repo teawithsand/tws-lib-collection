@@ -25,7 +25,7 @@ export const AbookListCard = ({ abook }: AbookListCardProps) => {
 
 	const abookShowLink = Routes.abookShow.navigate(abook.id.toString())
 	const createdDate = resolve((t) =>
-		t.util.time.formatDate(Number(abook.data.data.header.createdAt)),
+		t.util.time.formatDate(abook.data.data.header.createdAt),
 	)
 	const statusText =
 		abook.data.aggregate.totalEntries > 1

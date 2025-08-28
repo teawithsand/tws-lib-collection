@@ -1,0 +1,57 @@
+@use "@teawithsand/mlui/dist/mantine" as mantine;
+
+.metadataAside {
+	width: 100%;
+	margin-top: var(--mantine-spacing-xl);
+}
+
+.metadataCard {
+	background: var(--mantine-color-body);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-lg);
+	box-shadow: var(--mantine-shadow-sm);
+	border: mantine.rem(1) solid var(--mantine-color-default-border);
+	width: 100%;
+	max-width: none;
+}
+
+.metadataTitle {
+	font-size: var(--mantine-font-size-lg);
+	font-weight: 600;
+	margin-bottom: var(--mantine-spacing-lg);
+	color: var(--mantine-color-text);
+}
+
+.metadataItems {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(mantine.rem(200), 1fr));
+	gap: var(--mantine-spacing-md);
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.metadataItem {
+	display: flex;
+	flex-direction: column;
+	gap: mantine.rem(4);
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-default);
+	border-radius: var(--mantine-radius-sm);
+	border: mantine.rem(1) solid var(--mantine-color-default-border);
+}
+
+.metadataLabel {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.metadataValue {
+	font-size: var(--mantine-font-size-md);
+	color: var(--mantine-color-text);
+	font-weight: 600;
+}

@@ -1,17 +1,15 @@
 import { useTransResolver } from "@/app/app.hooks"
 import type { AbookEntry, WithId } from "@teawithsand/booklibr"
 import { Stack, Text } from "@teawithsand/mlui"
-import styles from "../AbookShow.module.scss"
+import styles from "./AbookEntriesSection.module.scss"
 import { AbookEntryCard } from "./AbookEntryCard"
 
 interface AbookEntriesSectionProps {
 	readonly abookEntries: Array<WithId<AbookEntry>>
-	readonly formatDuration: (milliseconds: number) => string
 }
 
 export const AbookEntriesSection = ({
 	abookEntries,
-	formatDuration,
 }: AbookEntriesSectionProps) => {
 	const { resolve } = useTransResolver()
 
@@ -36,7 +34,6 @@ export const AbookEntriesSection = ({
 								key={entry.id}
 								entry={entry}
 								index={index}
-								formatDuration={formatDuration}
 							/>
 						),
 					)}

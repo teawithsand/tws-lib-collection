@@ -1,20 +1,19 @@
 import { useTransResolver } from "@/app/app.hooks"
 import type { AbookEntry, WithId } from "@teawithsand/booklibr"
 import { Text } from "@teawithsand/mlui"
-import styles from "../AbookShow.module.scss"
+import styles from "./AbookEntryCard.module.scss"
 
 interface AbookEntryCardProps {
 	readonly entry: WithId<AbookEntry>
 	readonly index: number
-	readonly formatDuration: (milliseconds: number) => string
 }
 
-export const AbookEntryCard = ({
-	entry,
-	index,
-	formatDuration,
-}: AbookEntryCardProps) => {
+export const AbookEntryCard = ({ entry, index }: AbookEntryCardProps) => {
 	const { resolve } = useTransResolver()
+
+	const formatDuration = (milliseconds: number): string => {
+		return resolve((t) => t.util.time.formatDuration(milliseconds))
+	}
 
 	const hasAudioMetadata =
 		entry.data.aggregate.metadata?.metadata.audio.type === "success"

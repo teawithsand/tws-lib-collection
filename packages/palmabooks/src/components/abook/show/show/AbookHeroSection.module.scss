@@ -1,0 +1,109 @@
+@use "@teawithsand/mlui/dist/mantine" as mantine;
+
+.heroSection {
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-blue-0) 0%,
+		var(--mantine-color-indigo-0) 100%
+	);
+	border-radius: var(--mantine-radius-lg);
+	padding: var(--mantine-spacing-xl);
+	margin-bottom: var(--mantine-spacing-xl);
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+
+	@include mantine.dark {
+		background: linear-gradient(
+			135deg,
+			var(--mantine-color-dark-6) 0%,
+			var(--mantine-color-dark-5) 100%
+		);
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: -50%;
+		right: -50%;
+		width: 200%;
+		height: 200%;
+		background: radial-gradient(
+			circle,
+			rgba(255, 255, 255, 0.1) 0%,
+			transparent 70%
+		);
+		animation: float 6s ease-in-out infinite;
+	}
+
+	@keyframes float {
+		0%,
+		100% {
+			transform: translateY(0px) rotate(0deg);
+		}
+		50% {
+			transform: translateY(mantine.rem(-10)) rotate(5deg);
+		}
+	}
+}
+
+.heroContent {
+	position: relative;
+	z-index: 1;
+}
+
+.subtitle {
+	font-size: mantine.rem(20);
+	opacity: 0.8;
+	max-width: mantine.rem(600);
+	margin: 0 auto var(--mantine-spacing-xl);
+	line-height: 1.5;
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+		font-size: mantine.rem(18);
+	}
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		font-size: mantine.rem(16);
+	}
+}
+
+.statsRow {
+	display: flex;
+	justify-content: center;
+	gap: var(--mantine-spacing-xl);
+	flex-wrap: wrap;
+	margin-top: var(--mantine-spacing-xl);
+}
+
+.statItem {
+	text-align: center;
+	min-width: mantine.rem(100);
+}
+
+.statValue {
+	font-size: mantine.rem(32);
+	font-weight: 700;
+	color: var(--mantine-color-blue-6);
+	display: block;
+
+	@include mantine.dark {
+		color: var(--mantine-color-blue-4);
+	}
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+		font-size: mantine.rem(28);
+	}
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		font-size: mantine.rem(24);
+	}
+}
+
+.statLabel {
+	font-size: var(--mantine-font-size-sm);
+	opacity: 0.7;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	margin-top: mantine.rem(4);
+}
