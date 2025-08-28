@@ -1,5 +1,9 @@
 import type { Preview } from "@storybook/react"
-import { MluiProvider } from "@teawithsand/mlui"
+import {
+	MluiProvider,
+	Router,
+	RouterType,
+} from "@teawithsand/mlui"
 import { AppBoundary } from "../src/app/app.boundary"
 import { AppDi } from "../src/app/app.di"
 import { AppProvider } from "../src/app/app.provider"
@@ -20,7 +24,10 @@ const preview: Preview = {
 			<MluiProvider>
 				<AppProvider config={AppDi.DI_TEST_CONFIG}>
 					<AppBoundary>
-						<Story />
+						<Router
+							type={RouterType.MEMORY}
+							content={<Story />}
+						/>
 					</AppBoundary>
 				</AppProvider>
 			</MluiProvider>
