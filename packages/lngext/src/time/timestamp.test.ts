@@ -200,4 +200,23 @@ describe("Timestamp", () => {
 			expect(deserialized.equals(timestamp)).toBe(true)
 		})
 	})
+
+	describe("valueOf", () => {
+		test("valueOf returns the same value as toNumberMillis", () => {
+			const testValues = [0, 1, 1000, 1234567890, Number.MAX_SAFE_INTEGER]
+
+			testValues.forEach((value) => {
+				const ts = Timestamp.fromNumber(value)
+				expect(ts.valueOf()).toBe(value)
+				expect(ts.valueOf()).toBe(ts.toNumberMillis())
+			})
+		})
+
+		test("explicit type conversion to number works", () => {
+			const ts = Timestamp.fromNumber(1000)
+
+			expect(Number(ts)).toBe(1000)
+			expect(+ts).toBe(1000)
+		})
+	})
 })

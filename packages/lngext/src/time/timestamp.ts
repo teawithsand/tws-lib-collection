@@ -97,6 +97,15 @@ export class Timestamp {
 	public readonly equals = (other: Timestamp): boolean => {
 		return this.value === other.value
 	}
+
+	/**
+	 * Returns the primitive value of the timestamp (milliseconds).
+	 * This allows the timestamp to be automatically converted to a number
+	 * when used in numeric contexts or when explicitly cast.
+	 */
+	public readonly valueOf = (): number => {
+		return this.value
+	}
 }
 
 // any cast required due to private constructor
