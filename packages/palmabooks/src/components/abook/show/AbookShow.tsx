@@ -3,8 +3,8 @@ import { IconEdit, IconTrash } from "@tabler/icons-react"
 import type { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
 import { ActionIcon, Group } from "@teawithsand/mlui"
 import styles from "./AbookShow.module.scss"
-import { AbookHeroSection } from "./show/AbookHeroSection"
-import { AbookMetadataAside } from "./show/AbookMetadataAside"
+import { AbookHeroSection } from "./parts/AbookHeroSection"
+import { AbookMetadataAside } from "./parts/AbookMetadataAside"
 
 interface AbookShowProps {
 	readonly abook: Abook
