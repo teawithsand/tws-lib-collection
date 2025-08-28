@@ -20,11 +20,6 @@ export const useAbookDeleteModal = () => {
 
 	const closeModal = useCallback(() => {
 		close()
-		// Clear state after modal closes to prevent flash of old data
-		setTimeout(() => {
-			setAbookId(null)
-			setAbookTitle(null)
-		}, 200)
 	}, [close])
 
 	return {

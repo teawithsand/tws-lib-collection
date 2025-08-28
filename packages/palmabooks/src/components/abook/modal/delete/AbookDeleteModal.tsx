@@ -44,7 +44,7 @@ export function AbookDeleteModal({
 			await onConfirmDelete()
 			onClose()
 		} catch {
-			// Let the parent handle error notifications if needed
+			// Let the parent handle error
 		} finally {
 			setIsLoading(false)
 		}
@@ -56,50 +56,34 @@ export function AbookDeleteModal({
 		}
 	}, [isLoading, onClose])
 
+	const displayTitle =
+		abookTitle && abookTitle !== ""
+			? abookTitle
+			: resolve((t) => t.abooks.deleteModal.fallbackTitle)
+
 	return (
 		<Modal
 			opened={opened}
 			onClose={handleClose}
-			title={resolve((t) =>
-				abookTitle
-					? t.abooks.deleteModal.title
-					: t.abooks.deleteModal.noAudiobookSelectedTitle,
-			)}
-			size="sm"
+			title={resolve((t) => t.abooks.deleteModal.title)}
+			size="lg"
 		>
 			<Stack>
-				{abookTitle ? (
-					<>
-						<Text>
-							{resolve((t) =>
-								t.abooks.deleteModal.confirmationMessage(
-									abookTitle,
-								),
-							)}
-						</Text>
+				<Text>
+					{resolve((t) =>
+						t.abooks.deleteModal.confirmationMessage(displayTitle),
+					)}
+				</Text>
 
-						<Alert
-							icon={<IconAlertTriangle size={16} />}
-							title={resolve(
-								(t) => t.abooks.deleteModal.warningTitle,
-							)}
-							color="yellow"
-						>
-							<Text size="sm">
-								{resolve(
-									(t) => t.abooks.deleteModal.warningMessage,
-								)}
-							</Text>
-						</Alert>
-					</>
-				) : (
-					<Text>
-						{resolve(
-							(t) =>
-								t.abooks.deleteModal.noAudiobookSelectedMessage,
-						)}
+				<Alert
+					icon={<IconAlertTriangle size={16} />}
+					title={resolve((t) => t.abooks.deleteModal.warningTitle)}
+					color="yellow"
+				>
+					<Text size="sm">
+						{resolve((t) => t.abooks.deleteModal.warningMessage)}
 					</Text>
-				)}
+				</Alert>
 
 				<Group justify="flex-end" mt="md">
 					<Button
@@ -110,26 +94,24 @@ export function AbookDeleteModal({
 						{resolve((t) => t.common.cancel)}
 					</Button>
 
-					{abookTitle && (
-						<Button
-							color="red"
-							onClick={handleDelete}
-							disabled={isLoading}
-							leftSection={
-								isLoading ? (
-									<Loader size={16} />
-								) : (
-									<IconTrash size={16} />
-								)
-							}
-						>
-							{resolve((t) =>
-								isLoading
-									? t.abooks.deleteModal.deleteButtonDeleting
-									: t.abooks.deleteModal.deleteButton,
-							)}
-						</Button>
-					)}
+					<Button
+						color="red"
+						onClick={handleDelete}
+						disabled={isLoading}
+						leftSection={
+							isLoading ? (
+								<Loader size={16} />
+							) : (
+								<IconTrash size={16} />
+							)
+						}
+					>
+						{resolve((t) =>
+							isLoading
+								? t.abooks.deleteModal.deleteButtonDeleting
+								: t.abooks.deleteModal.deleteButton,
+						)}
+					</Button>
 				</Group>
 			</Stack>
 		</Modal>

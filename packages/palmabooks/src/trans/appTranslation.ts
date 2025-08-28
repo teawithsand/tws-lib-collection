@@ -98,6 +98,7 @@ export interface AppTranslation {
 		}
 		deleteModal: {
 			title: string
+			fallbackTitle: string
 			confirmationMessage: (title: string) => string
 			warningMessage: string
 			deleteButton: string

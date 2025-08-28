@@ -138,6 +138,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		},
 		deleteModal: {
 			title: "Delete Audiobook",
+			fallbackTitle: "Untitled Audiobook",
 			confirmationMessage: (title: string) =>
 				`Are you sure you want to delete "${title}"?`,
 			warningMessage:

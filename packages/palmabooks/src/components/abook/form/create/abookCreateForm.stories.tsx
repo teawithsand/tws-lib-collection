@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import { AbookData } from "@teawithsand/booklibr"
+import { fn } from "storybook/test"
 import { AbookCreateForm } from "./abookCreateForm"
 
 const meta: Meta<typeof AbookCreateForm> = {
@@ -33,10 +33,7 @@ type Story = StoryObj<typeof AbookCreateForm>
 // Default story
 export const Default: Story = {
 	args: {
-		onSubmit: async (data: AbookData) => {
-			// Form submitted - data would be processed here
-			void data
-		},
+		onSubmit: fn(),
 	},
 }
 
@@ -48,10 +45,7 @@ export const WithInitialData: Story = {
 			description: "This is a sample description for the audiobook.",
 			privateUserNote: "Personal notes about this book",
 		},
-		onSubmit: async (data: AbookData) => {
-			// Form submitted with initial data - data would be processed here
-			void data
-		},
+		onSubmit: fn(),
 	},
 }
 
@@ -61,40 +55,33 @@ export const WithPartialData: Story = {
 		initialData: {
 			title: "The Great Gatsby",
 		},
-		onSubmit: async (data: AbookData) => {
-			// Form submitted with partial data - data would be processed here
-			void data
-		},
+		onSubmit: fn(),
 	},
 }
 
 // Story that simulates form submission
 export const WithAsyncSubmission: Story = {
 	args: {
-		onSubmit: async (data: AbookData) => {
+		onSubmit: fn(() => {
 			// Form submitted - async simulation
-			void data
-			// Simulate async operation
-			return new Promise((resolve) => {
+			return new Promise<void>((resolve) => {
 				setTimeout(resolve, 2000)
 			})
-		},
+		}),
 	},
 }
 
 // Story that simulates submission error
 export const WithSubmissionError: Story = {
 	args: {
-		onSubmit: async (data: AbookData) => {
+		onSubmit: fn(() => {
 			// Form submitted - will error
-			void data
-			// Simulate error after delay
-			return new Promise((_, reject) => {
+			return new Promise<void>((_, reject) => {
 				setTimeout(() => {
 					reject(new Error("Failed to create audiobook"))
 				}, 1000)
 			})
-		},
+		}),
 	},
 }
 
@@ -106,10 +93,7 @@ export const WithLongContent: Story = {
 			description: "B".repeat(2100), // Exceeds 2000 character limit
 			privateUserNote: "C".repeat(1100), // Exceeds 1000 character limit
 		},
-		onSubmit: async (data: AbookData) => {
-			// Form submitted with long content - data would be processed here
-			void data
-		},
+		onSubmit: fn(),
 	},
 }
 
@@ -121,9 +105,6 @@ export const WithEmptyTitle: Story = {
 			description: "This book has no title set",
 			privateUserNote: "Need to add a title",
 		},
-		onSubmit: async (data: AbookData) => {
-			// Form submitted with empty title - data would be processed here
-			void data
-		},
+		onSubmit: fn(),
 	},
 }

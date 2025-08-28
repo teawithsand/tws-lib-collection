@@ -142,9 +142,6 @@ export const AbookEditForm: React.FC<AbookEditFormProps> = ({
 							}
 							disabled={descriptionField.disabled}
 							rows={4}
-							autosize
-							minRows={2}
-							maxRows={8}
 						/>
 					</div>
 
@@ -170,9 +167,6 @@ export const AbookEditForm: React.FC<AbookEditFormProps> = ({
 							}
 							disabled={privateUserNoteField.disabled}
 							rows={3}
-							autosize
-							minRows={2}
-							maxRows={6}
 						/>
 					</div>
 
