@@ -50,6 +50,22 @@
 			var(--mantine-color-dark-8)
 		);
 	}
+
+	&.error {
+		border-color: var(--mantine-color-red-5);
+		background-color: light-dark(
+			var(--mantine-color-red-0),
+			var(--mantine-color-dark-7)
+		);
+
+		&:hover:not(.disabled) {
+			border-color: var(--mantine-color-red-6);
+			background-color: light-dark(
+				var(--mantine-color-red-1),
+				var(--mantine-color-dark-6)
+			);
+		}
+	}
 }
 
 .dropzoneButton {

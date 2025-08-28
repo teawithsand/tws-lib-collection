@@ -30,14 +30,12 @@ const meta: Meta<typeof AbookCreateForm> = {
 export default meta
 type Story = StoryObj<typeof AbookCreateForm>
 
-// Default story
 export const Default: Story = {
 	args: {
 		onSubmit: fn(),
 	},
 }
 
-// Story with initial data
 export const WithInitialData: Story = {
 	args: {
 		initialData: {
@@ -49,7 +47,6 @@ export const WithInitialData: Story = {
 	},
 }
 
-// Story with partial initial data
 export const WithPartialData: Story = {
 	args: {
 		initialData: {
@@ -59,11 +56,9 @@ export const WithPartialData: Story = {
 	},
 }
 
-// Story that simulates form submission
 export const WithAsyncSubmission: Story = {
 	args: {
 		onSubmit: fn(() => {
-			// Form submitted - async simulation
 			return new Promise<void>((resolve) => {
 				setTimeout(resolve, 2000)
 			})
@@ -71,11 +66,9 @@ export const WithAsyncSubmission: Story = {
 	},
 }
 
-// Story that simulates submission error
 export const WithSubmissionError: Story = {
 	args: {
 		onSubmit: fn(() => {
-			// Form submitted - will error
 			return new Promise<void>((_, reject) => {
 				setTimeout(() => {
 					reject(new Error("Failed to create audiobook"))
@@ -85,19 +78,17 @@ export const WithSubmissionError: Story = {
 	},
 }
 
-// Story with long content to test validation
 export const WithLongContent: Story = {
 	args: {
 		initialData: {
-			title: "A".repeat(250), // Exceeds 200 character limit
-			description: "B".repeat(2100), // Exceeds 2000 character limit
-			privateUserNote: "C".repeat(1100), // Exceeds 1000 character limit
+			title: "A".repeat(250),
+			description: "B".repeat(2100),
+			privateUserNote: "C".repeat(1100),
 		},
 		onSubmit: fn(),
 	},
 }
 
-// Story with empty title to show validation
 export const WithEmptyTitle: Story = {
 	args: {
 		initialData: {

@@ -1,4 +1,4 @@
-import { UploadedFile } from "@/components/field/fileUpload/FileUploadField"
+import { SelectedFile } from "@/components/field"
 import { AppTransString } from "@/trans/appTranslation"
 import { AbookEntryDisposition } from "@teawithsand/booklibr"
 import {
@@ -9,7 +9,7 @@ import {
 } from "@teawithsand/fstate"
 
 export interface AbookFileUploadFormData {
-	files: UploadedFile[]
+	files: SelectedFile[]
 	defaultDisposition: AbookEntryDisposition
 }
 
@@ -86,7 +86,7 @@ export class AbookFileUploadFormClass extends FormAtomsDelegateBase<
 	/**
 	 * Gets file type counts for display purposes
 	 */
-	public readonly getFileTypeCounts = (files: UploadedFile[]) => {
+	public readonly getFileTypeCounts = (files: SelectedFile[]) => {
 		const audioFiles = files.filter((f) =>
 			AUDIO_TYPES.includes(f.file.type),
 		)

@@ -4,7 +4,7 @@ import {
 	AbookFileUploadFormInput,
 	AbookFileUploadFormUtils,
 } from "@/components/abook/form/uploadFiles"
-import { FileUploadField } from "@/components/field/fileUpload/FileUploadField"
+import { AdvancedFileField } from "@/components/field"
 import { IconAlertCircle, IconUpload } from "@tabler/icons-react"
 import { Id } from "@teawithsand/booklibr"
 import {
@@ -58,7 +58,7 @@ export const AbookFileUploadForm: React.FC<AbookFileUploadFormProps> = ({
 			try {
 				const entryDataList = AbookFileUploadFormUtils.filesToEntryData(
 					files,
-					formAtoms,
+					formData.defaultDisposition,
 				)
 
 				for (let i = 0; i < files.length; i++) {
@@ -96,7 +96,6 @@ export const AbookFileUploadForm: React.FC<AbookFileUploadFormProps> = ({
 			}
 		},
 		[
-			formAtoms,
 			abookId,
 			app.abookStoreService.abookStore,
 			app.logger,
@@ -171,7 +170,7 @@ export const AbookFileUploadForm: React.FC<AbookFileUploadFormProps> = ({
 						</Alert>
 					)}
 
-					<FileUploadField
+					<AdvancedFileField
 						files={filesField.value}
 						onFilesChange={filesField.set}
 						multiple={true}

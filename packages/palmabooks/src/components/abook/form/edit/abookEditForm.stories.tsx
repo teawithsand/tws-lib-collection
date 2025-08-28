@@ -34,7 +34,6 @@ const meta: Meta<typeof AbookEditForm> = {
 export default meta
 type Story = StoryObj<typeof AbookEditForm>
 
-// Default story with sample data
 export const Default: Story = {
 	args: {
 		initialData: {
@@ -48,7 +47,6 @@ export const Default: Story = {
 	},
 }
 
-// Story with minimal data
 export const WithMinimalData: Story = {
 	args: {
 		initialData: {
@@ -61,7 +59,6 @@ export const WithMinimalData: Story = {
 	},
 }
 
-// Story with rich content
 export const WithRichContent: Story = {
 	args: {
 		initialData: {
@@ -76,7 +73,6 @@ export const WithRichContent: Story = {
 	},
 }
 
-// Story that simulates async submission
 export const WithAsyncSubmission: Story = {
 	args: {
 		initialData: {
@@ -86,7 +82,6 @@ export const WithAsyncSubmission: Story = {
 			privateUserNote: "Re-reading this classic",
 		},
 		onSubmit: fn(() => {
-			// Form submitted - async simulation
 			return new Promise<void>((resolve) => {
 				setTimeout(resolve, 2000)
 			})
@@ -95,7 +90,6 @@ export const WithAsyncSubmission: Story = {
 	},
 }
 
-// Story that simulates submission error
 export const WithSubmissionError: Story = {
 	args: {
 		initialData: {
@@ -104,7 +98,6 @@ export const WithSubmissionError: Story = {
 			privateUserNote: "Interesting comparison to 1984",
 		},
 		onSubmit: fn(() => {
-			// Form submitted - will error
 			return new Promise<void>((_, reject) => {
 				setTimeout(() => {
 					reject(new Error("Failed to update audiobook"))
@@ -115,20 +108,18 @@ export const WithSubmissionError: Story = {
 	},
 }
 
-// Story with long content to test validation
 export const WithLongContent: Story = {
 	args: {
 		initialData: {
-			title: "A".repeat(250), // Exceeds 200 character limit
-			description: "B".repeat(2100), // Exceeds 2000 character limit
-			privateUserNote: "C".repeat(1100), // Exceeds 1000 character limit
+			title: "A".repeat(250),
+			description: "B".repeat(2100),
+			privateUserNote: "C".repeat(1100),
 		},
 		onSubmit: fn(),
 		onCancel: fn(),
 	},
 }
 
-// Story with empty title to show validation
 export const WithEmptyTitle: Story = {
 	args: {
 		initialData: {
@@ -141,7 +132,6 @@ export const WithEmptyTitle: Story = {
 	},
 }
 
-// Story without cancel functionality
 export const WithoutCancel: Story = {
 	args: {
 		initialData: {
@@ -151,6 +141,5 @@ export const WithoutCancel: Story = {
 			privateUserNote: "Classic coming-of-age story",
 		},
 		onSubmit: fn(),
-		// onCancel is intentionally omitted
 	},
 }

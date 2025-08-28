@@ -43,7 +43,6 @@ const meta: Meta<typeof AbookDeleteModal> = {
 export default meta
 type Story = StoryObj<typeof AbookDeleteModal>
 
-// Default story with audiobook selected
 export const Default: Story = {
 	args: {
 		opened: true,
@@ -53,7 +52,6 @@ export const Default: Story = {
 	},
 }
 
-// Story with a long title
 export const WithLongTitle: Story = {
 	args: {
 		opened: true,
@@ -64,14 +62,12 @@ export const WithLongTitle: Story = {
 	},
 }
 
-// Story that simulates successful deletion
 export const SuccessfulDeletion: Story = {
 	args: {
 		opened: true,
 		abookTitle: "Sample Audiobook",
 		onClose: fn(),
 		onConfirmDelete: fn(async () => {
-			// Simulate successful deletion
 			return new Promise<void>((resolve) => {
 				setTimeout(resolve, 1000)
 			})
@@ -79,14 +75,12 @@ export const SuccessfulDeletion: Story = {
 	},
 }
 
-// Story that simulates deletion error
 export const DeletionError: Story = {
 	args: {
 		opened: true,
 		abookTitle: "Sample Audiobook",
 		onClose: fn(),
 		onConfirmDelete: fn(async () => {
-			// Simulate deletion error
 			return new Promise<void>((_, reject) => {
 				reject(new Error("Failed to delete audiobook"))
 			})
@@ -94,7 +88,6 @@ export const DeletionError: Story = {
 	},
 }
 
-// Story that simulates slow deletion (long loading state)
 export const SlowDeletion: Story = {
 	args: {
 		opened: true,
@@ -108,7 +101,6 @@ export const SlowDeletion: Story = {
 	},
 }
 
-// Story with modal closed (for testing props changes)
 export const Closed: Story = {
 	args: {
 		opened: false,
@@ -118,7 +110,6 @@ export const Closed: Story = {
 	},
 }
 
-// Story with special characters in title
 export const WithSpecialCharacters: Story = {
 	args: {
 		opened: true,
@@ -129,7 +120,6 @@ export const WithSpecialCharacters: Story = {
 	},
 }
 
-// Story with empty string title (edge case)
 export const WithEmptyTitle: Story = {
 	args: {
 		opened: true,
@@ -139,7 +129,6 @@ export const WithEmptyTitle: Story = {
 	},
 }
 
-// Story with whitespace-only title (edge case)
 export const WithWhitespaceTitle: Story = {
 	args: {
 		opened: true,

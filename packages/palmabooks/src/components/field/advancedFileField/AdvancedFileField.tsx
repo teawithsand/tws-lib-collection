@@ -18,16 +18,16 @@ import {
 	UnstyledButton,
 } from "@teawithsand/mlui"
 import { useCallback, useRef, useState } from "react"
-import styles from "./FileUploadField.module.scss"
+import styles from "./AdvancedFileField.module.scss"
 
-export interface UploadedFile {
+export interface SelectedFile {
 	file: File
 	id: string
 }
 
-export interface FileUploadFieldProps {
-	files: UploadedFile[]
-	onFilesChange: (files: UploadedFile[]) => void
+export interface AdvancedFileFieldProps {
+	files: SelectedFile[]
+	onFilesChange: (files: SelectedFile[]) => void
 	accept?: string
 	multiple?: boolean
 	allowDirectories?: boolean
@@ -38,7 +38,7 @@ export interface FileUploadFieldProps {
 	error?: string
 }
 
-export const FileUploadField: React.FC<FileUploadFieldProps> = ({
+export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 	files,
 	onFilesChange,
 	accept,
@@ -63,7 +63,7 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
 			if (disabled) return
 
 			setIsUploading(true)
-			const newFiles: UploadedFile[] = []
+			const newFiles: SelectedFile[] = []
 
 			for (let i = 0; i < fileList.length; i++) {
 				const file = Array.isArray(fileList)
@@ -71,12 +71,12 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
 					: fileList.item(i)
 				if (!file) continue
 
-				const uploadedFile: UploadedFile = {
+				const selectedFile: SelectedFile = {
 					file,
 					id: generateUuid(),
 				}
 
-				newFiles.push(uploadedFile)
+				newFiles.push(selectedFile)
 			}
 
 			if (multiple) {
@@ -238,7 +238,7 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
 			<Card
 				className={`${styles.dropzone} ${isDragOver ? styles.dragOver : ""} ${
 					disabled ? styles.disabled : ""
-				}`}
+				} ${error ? styles.error : ""}`}
 				onDragOver={handleDragOver}
 				onDragLeave={handleDragLeave}
 				onDrop={handleDrop}
@@ -250,7 +250,15 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
 					disabled={disabled}
 				>
 					<Stack align="center" gap="md">
-						<IconCloudUpload size={48} stroke={1.5} />
+						{error ? (
+							<IconX
+								size={48}
+								stroke={1.5}
+								color="var(--mantine-color-red-6)"
+							/>
+						) : (
+							<IconCloudUpload size={48} stroke={1.5} />
+						)}
 						<div>
 							<Text size="lg" fw={500}>
 								{files.length === 0
@@ -273,17 +281,17 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
 			</Card>
 
 			{allowDirectories && (
-				<Group mt="sm" gap="xs">
-					<Button
-						variant="light"
-						leftSection={<IconFolder size={16} />}
-						onClick={openDirectoryDialog}
-						disabled={disabled}
-						size="sm"
-					>
-						{resolve((t) => t.fileUpload.uploadFolder)}
-					</Button>
-				</Group>
+				<Button
+					variant="light"
+					leftSection={<IconFolder size={16} />}
+					onClick={openDirectoryDialog}
+					disabled={disabled}
+					size="sm"
+					fullWidth
+					mt="sm"
+				>
+					{resolve((t) => t.fileUpload.uploadFolder)}
+				</Button>
 			)}
 
 			{files.length > 0 && (

@@ -1,14 +1,11 @@
-import { UploadedFile } from "@/components/field/fileUpload/FileUploadField"
+import { SelectedFile } from "@/components/field"
 import {
 	AbookEntryData,
 	AbookEntryDisposition,
 	AbookEntrySourceType,
 } from "@teawithsand/booklibr"
 import { Timestamp } from "@teawithsand/lngext"
-import {
-	AbookFileUploadFormClass,
-	AbookFileUploadFormData,
-} from "./abookFileUploadFormClass"
+import { AbookFileUploadFormData } from "./abookFileUploadFormClass"
 
 export class AbookFileUploadFormUtils {
 	private constructor() {}
@@ -17,8 +14,8 @@ export class AbookFileUploadFormUtils {
 	 * Converts uploaded files to AbookEntryData array
 	 */
 	public static readonly filesToEntryData = (
-		files: UploadedFile[],
-		formClass: AbookFileUploadFormClass,
+		files: SelectedFile[],
+		disposition: AbookEntryDisposition,
 	): AbookEntryData[] => {
 		const now = Timestamp.fromMillis(Date.now())
 
@@ -27,7 +24,7 @@ export class AbookFileUploadFormUtils {
 
 			return {
 				createdAt: now,
-				disposition: formClass.determineDisposition(file),
+				disposition: disposition,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: Date.now(),
