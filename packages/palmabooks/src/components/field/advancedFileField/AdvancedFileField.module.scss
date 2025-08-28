@@ -85,33 +85,41 @@
 	min-width: 0;
 }
 
+.fileListContainer {
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-7)
+	);
+}
+
 .hiddenInput {
 	display: none;
 }
 
-/* Mobile-first responsive design */
 @include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
 	.dropzone {
-		padding: mantine.rem(16);
+		padding: mantine.rem(12);
 	}
 
 	.dropzoneButton {
-		padding: mantine.rem(8);
-	}
-
-	.container {
-		:global(.mantine-Stack-root) {
-			gap: mantine.rem(8);
-		}
-
-		:global(.mantine-Group-root) {
-			gap: mantine.rem(8);
-		}
+		padding: mantine.rem(4);
 	}
 }
 
 @include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
 	.dropzone {
-		padding: mantine.rem(12);
+		padding: mantine.rem(8);
+	}
+
+	.dropzoneButton {
+		padding: mantine.rem(2);
+	}
+
+	.dropzoneContent {
+		gap: mantine.rem(8);
+	}
+
+	.dropzoneIcon {
+		display: none;
 	}
 }

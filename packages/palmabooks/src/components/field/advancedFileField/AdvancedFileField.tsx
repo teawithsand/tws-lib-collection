@@ -13,6 +13,7 @@ import {
 	Card,
 	Group,
 	Progress,
+	ScrollArea,
 	Stack,
 	Text,
 	UnstyledButton,
@@ -242,22 +243,31 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 				onDragOver={handleDragOver}
 				onDragLeave={handleDragLeave}
 				onDrop={handleDrop}
-				p="xl"
+				p={{ base: "xs", sm: "md", md: "xl" }}
 			>
 				<UnstyledButton
 					onClick={openFileDialog}
 					className={styles.dropzoneButton}
 					disabled={disabled}
 				>
-					<Stack align="center" gap="md">
+					<Stack
+						align="center"
+						gap="md"
+						className={styles.dropzoneContent}
+					>
 						{error ? (
 							<IconX
 								size={48}
 								stroke={1.5}
 								color="var(--mantine-color-red-6)"
+								className={styles.dropzoneIcon}
 							/>
 						) : (
-							<IconCloudUpload size={48} stroke={1.5} />
+							<IconCloudUpload
+								size={48}
+								stroke={1.5}
+								className={styles.dropzoneIcon}
+							/>
 						)}
 						<div>
 							<Text size="lg" fw={500}>
@@ -307,41 +317,61 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 						</Text>
 					</Group>
 
-					<Stack gap="xs">
-						{files.map((uploadedFile) => (
-							<Card key={uploadedFile.id} p="sm" withBorder>
-								<Group wrap="nowrap">
-									<IconFile size={32} stroke={1.5} />
-
-									<Box className={styles.fileItem}>
-										<Text size="sm" fw={500} truncate>
-											{uploadedFile.file.name}
-										</Text>
-										<Text size="xs" c="dimmed">
-											{resolve((t) =>
-												t.util.formatSize(
-													uploadedFile.file.size,
-												),
-											)}
-											{uploadedFile.file.type &&
-												` • ${uploadedFile.file.type}`}
-										</Text>
-									</Box>
-
-									<ActionIcon
-										variant="subtle"
-										color="red"
-										onClick={() =>
-											removeFile(uploadedFile.id)
-										}
-										disabled={disabled}
+					<Card
+						withBorder
+						p="xs"
+						className={styles.fileListContainer}
+					>
+						<ScrollArea
+							h={{ base: 200, sm: 250, md: 300 }}
+							type="auto"
+							scrollbarSize={8}
+							scrollHideDelay={1000}
+						>
+							<Stack gap="xs">
+								{files.map((uploadedFile) => (
+									<Card
+										key={uploadedFile.id}
+										p="sm"
+										withBorder
 									>
-										<IconX size={16} />
-									</ActionIcon>
-								</Group>
-							</Card>
-						))}
-					</Stack>
+										<Group wrap="nowrap">
+											<IconFile size={32} stroke={1.5} />
+
+											<Box className={styles.fileItem}>
+												<Text
+													size="sm"
+													fw={500}
+													truncate
+												>
+													{uploadedFile.file.name}
+												</Text>
+												<Text size="xs" c="dimmed">
+													{resolve((t) =>
+														t.util.formatSize(
+															uploadedFile.file
+																.size,
+														),
+													)}
+												</Text>
+											</Box>
+
+											<ActionIcon
+												variant="subtle"
+												color="red"
+												onClick={() =>
+													removeFile(uploadedFile.id)
+												}
+												disabled={disabled}
+											>
+												<IconX size={16} />
+											</ActionIcon>
+										</Group>
+									</Card>
+								))}
+							</Stack>
+						</ScrollArea>
+					</Card>
 				</Stack>
 			)}
 
