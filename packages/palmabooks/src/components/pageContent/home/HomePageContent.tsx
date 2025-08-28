@@ -1,19 +1,16 @@
+import { useTransResolver } from "@/app/app.hooks"
 import { Text, Title } from "@teawithsand/mlui"
 
-/**
- * Home page content component containing the welcome content for PalmaBooks.
- */
 export const HomePageContent = () => {
+	const { resolve } = useTransResolver()
+
 	return (
 		<>
-			<Title order={1}>Welcome to PalmaBooks</Title>
+			<Title order={1}>{resolve((t) => t.pages.home.title)}</Title>
 			<Text size="lg" mt="md">
-				Your personal book management application
+				{resolve((t) => t.pages.home.subtitle)}
 			</Text>
-			<Text mt="md">
-				Organize your books, track your reading progress, and discover
-				new favorites.
-			</Text>
+			<Text mt="md">{resolve((t) => t.pages.home.description)}</Text>
 		</>
 	)
 }

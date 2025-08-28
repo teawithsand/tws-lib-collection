@@ -1,0 +1,93 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.container {
+	width: 100%;
+	max-width: mantine.rem(600);
+	margin: 0 auto;
+	padding: var(--mantine-spacing-xl) 0;
+}
+
+.card {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-2);
+
+	@include mantine.dark {
+		background: var(--mantine-color-dark-7);
+		border-color: var(--mantine-color-dark-4);
+	}
+}
+
+.iconWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: mantine.rem(120);
+	height: mantine.rem(120);
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-blue-0),
+		var(--mantine-color-blue-1)
+	);
+	border-radius: 50%;
+	margin-bottom: var(--mantine-spacing-md);
+
+	@include mantine.dark {
+		background: linear-gradient(
+			135deg,
+			var(--mantine-color-blue-9),
+			var(--mantine-color-blue-8)
+		);
+	}
+}
+
+.icon {
+	color: var(--mantine-color-blue-5);
+
+	@include mantine.dark {
+		color: var(--mantine-color-blue-4);
+	}
+}
+
+.content {
+	text-align: center;
+	max-width: mantine.rem(400);
+}
+
+.title {
+	color: var(--mantine-color-gray-8);
+	font-weight: 600;
+	margin-bottom: var(--mantine-spacing-sm);
+
+	@include mantine.dark {
+		color: var(--mantine-color-gray-2);
+	}
+}
+
+.description {
+	line-height: 1.6;
+	margin: 0;
+}
+
+@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+	.container {
+		padding: var(--mantine-spacing-lg) var(--mantine-spacing-md);
+	}
+
+	.iconWrapper {
+		width: mantine.rem(80);
+		height: mantine.rem(80);
+	}
+
+	.icon {
+		width: mantine.rem(48);
+		height: mantine.rem(48);
+	}
+
+	.title {
+		font-size: mantine.rem(20);
+	}
+
+	.description {
+		font-size: mantine.rem(16);
+	}
+}

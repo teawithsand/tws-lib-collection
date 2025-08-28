@@ -1,22 +1,18 @@
+import { useTransResolver } from "@/app/app.hooks"
 import { Text, Title } from "@teawithsand/mlui"
 
-/**
- * About page content component containing information about PalmaBooks application.
- */
 export const AboutPageContent = () => {
+	const { resolve } = useTransResolver()
+
 	return (
 		<>
-			<Title order={1}>About PalmaBooks</Title>
-			<Text mt="md">
-				PalmaBooks is a comprehensive book management application
-				designed to help you organize your personal library and track
-				your reading journey.
-			</Text>
-			<Text mt="md">Features include:</Text>
+			<Title order={1}>{resolve((t) => t.pages.about.title)}</Title>
+			<Text mt="md">{resolve((t) => t.pages.about.description)}</Text>
+			<Text mt="md">{resolve((t) => t.pages.about.featuresTitle)}</Text>
 			<ul>
-				<li>Track reading progress</li>
-				<li>Add personal notes and reviews</li>
-				<li>Search and filter your collection</li>
+				<li>{resolve((t) => t.pages.about.features.trackProgress)}</li>
+				<li>{resolve((t) => t.pages.about.features.addNotes)}</li>
+				<li>{resolve((t) => t.pages.about.features.searchFilter)}</li>
 			</ul>
 		</>
 	)

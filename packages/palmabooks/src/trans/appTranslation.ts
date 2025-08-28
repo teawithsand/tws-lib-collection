@@ -6,6 +6,14 @@ export interface AppTranslation {
 	common: {
 		error: string
 		cancel: string
+		unknown: string
+	}
+	util: {
+		time: {
+			formatDuration: (milliseconds: number) => string
+			formatDate: (timestamp: number) => string
+		}
+		formatSize: (bytes: number | undefined) => string
 	}
 	globalErrorFallback: {
 		title: string
@@ -41,7 +49,8 @@ export interface AppTranslation {
 			addButton: string
 			countText: (count: number) => string
 			entryCountText: (count: number) => string
-			formatDuration: (durationMillis: number) => string
+			statusSingle: string
+			statusMultiPart: string
 		}
 		form: {
 			title: string
@@ -67,23 +76,40 @@ export interface AppTranslation {
 			title: string
 			backButton: string
 			editButton: string
+			deleteButton: string
 			metadata: string
 			entries: string
 			duration: string
 			entryCount: string
 			noEntries: string
 			description: string
-			formatDuration: (millis: number) => string
 			createdLabel: string
 			sourceLabel: string
 			dispositionLabel: string
 			durationLabel: string
 			entryTitle: (index: number) => string
+			totalDurationLabel: string
+			entriesLabel: string
 		}
 		notFound: {
 			title: string
 			description: string
 			goBackButton: string
+		}
+		deleteModal: {
+			title: string
+			confirmationMessage: (title: string) => string
+			warningMessage: string
+			deleteButton: string
+			deleteButtonDeleting: string
+			cancelButton: string
+			successMessage: string
+			successDescription: string
+			errorMessage: string
+			noAudiobookSelectedTitle: string
+			noAudiobookSelectedMessage: string
+			warningTitle: string
+			deleteFailedTitle: string
 		}
 	}
 	storage: {
@@ -110,11 +136,53 @@ export interface AppTranslation {
 			refreshButton: string
 			refreshDescription: string
 		}
-		formatBytes: (bytes: number | undefined) => string
 		formatPercentage: (
 			used: number | undefined,
 			total: number | undefined,
 		) => string
+	}
+	fileUpload: {
+		label: string
+		description: string
+		placeholder: string
+		filesSelected: (count: number) => string
+		uploadFolder: string
+		files: string
+		total: string
+		processingFiles: string
+		clickToBrowse: string
+		uploadError: string
+		uploadFailed: string
+		uploadingFiles: (progress: number) => string
+		uploading: string
+		uploadFiles: (count: number) => string
+		cancel: string
+		uploadTitle: (bookTitle: string) => string
+		uploadDescription: string
+		formValidationErrors: string
+		dropFilesPlaceholder: string
+	}
+	pages: {
+		home: {
+			title: string
+			subtitle: string
+			description: string
+		}
+		about: {
+			title: string
+			description: string
+			featuresTitle: string
+			features: {
+				trackProgress: string
+				addNotes: string
+				searchFilter: string
+			}
+		}
+		settings: {
+			title: string
+			description: string
+			underDevelopment: string
+		}
 	}
 }
 

@@ -90,9 +90,7 @@ export const StoragePageContent = () => {
 							</Text>
 							<Text>
 								{resolve((t) =>
-									t.storage.formatBytes(
-										storageEstimate.usage,
-									),
+									t.util.formatSize(storageEstimate.usage),
 								)}
 							</Text>
 						</Group>
@@ -103,9 +101,7 @@ export const StoragePageContent = () => {
 							</Text>
 							<Text>
 								{resolve((t) =>
-									t.storage.formatBytes(
-										storageEstimate.quota,
-									),
+									t.util.formatSize(storageEstimate.quota),
 								)}
 							</Text>
 						</Group>

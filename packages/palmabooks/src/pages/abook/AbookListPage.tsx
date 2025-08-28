@@ -1,4 +1,4 @@
-import { AutonomousAbookList } from "@/components/abook/list"
+import { AutonomousAbookList } from "@/components/abook"
 import { AppLocalLayout } from "@/components/layout"
 import { Container } from "@teawithsand/mlui"
 

@@ -1,9 +1,11 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
 .container {
 	min-height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 2rem;
+	padding: mantine.rem(32);
 }
 
 .iconWrapper {
@@ -24,37 +26,31 @@
 }
 
 .description {
-	max-width: 500px;
+	max-width: mantine.rem(500);
 	line-height: 1.6;
 }
 
 .errorAlert {
 	width: 100%;
-	max-width: 600px;
+	max-width: mantine.rem(600);
 }
 
 .errorMessage {
 	font-family: var(--mantine-font-family-monospace);
 	word-break: break-word;
 	background-color: var(--mantine-color-gray-0);
-	padding: 0.5rem;
+	padding: mantine.rem(8);
 	border-radius: var(--mantine-radius-sm);
-	margin-top: 0.5rem;
+	margin-top: mantine.rem(8);
 
-	[data-mantine-color-scheme="dark"] & {
+	@include mantine.dark {
 		background-color: var(--mantine-color-dark-6);
 	}
 }
 
 .refreshButton {
-	min-width: 200px;
-	height: 48px;
+	min-width: mantine.rem(200);
+	height: mantine.rem(48);
 	font-weight: 600;
 	border-radius: var(--mantine-radius-md);
-	transition: all 0.2s ease;
-
-	&:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	}
 }

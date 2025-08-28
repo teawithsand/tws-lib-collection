@@ -1,3 +1,5 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
 .abook-edit {
 	&__title {
 		color: var(--mantine-color-text);

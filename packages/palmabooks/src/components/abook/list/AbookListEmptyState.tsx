@@ -2,10 +2,8 @@ import { useTransResolver } from "@/app/app.hooks"
 import { Routes } from "@/router/routes"
 import { IconBook, IconPlus } from "@tabler/icons-react"
 import { Button, Card, Link, Stack, Text, Title } from "@teawithsand/mlui"
+import styles from "./AbookListEmptyState.module.scss"
 
-/**
- * Empty state component for when no audiobooks are available.
- */
 export const AbookListEmptyState = () => {
 	const { resolve } = useTransResolver()
 
@@ -17,25 +15,43 @@ export const AbookListEmptyState = () => {
 	const createButtonTo = Routes.addBook.navigate()
 
 	return (
-		<Card padding="xl" radius="md" withBorder>
-			<Stack align="center" gap="lg">
-				<IconBook size={48} color="var(--mantine-color-gray-5)" />
-				<Title order={3} c="dimmed">
-					{title}
-				</Title>
-				<Text c="dimmed" ta="center">
-					{description}
-				</Text>
-				<Button
-					leftSection={<IconPlus size={16} />}
-					variant="filled"
-					size="md"
-					component={Link}
-					to={createButtonTo}
-				>
-					{createButtonLabel}
-				</Button>
-			</Stack>
-		</Card>
+		<div className={styles.container}>
+			<Card
+				padding="xl"
+				radius="lg"
+				withBorder
+				shadow="sm"
+				className={styles.card}
+			>
+				<Stack align="center" gap="xl">
+					<div className={styles.iconWrapper}>
+						<IconBook size={64} className={styles.icon} />
+					</div>
+					<div className={styles.content}>
+						<Title order={2} className={styles.title}>
+							{title}
+						</Title>
+						<Text
+							size="lg"
+							c="dimmed"
+							ta="center"
+							className={styles.description}
+						>
+							{description}
+						</Text>
+					</div>
+					<Button
+						leftSection={<IconPlus size={20} />}
+						variant="filled"
+						size="lg"
+						component={Link}
+						to={createButtonTo}
+						radius="md"
+					>
+						{createButtonLabel}
+					</Button>
+				</Stack>
+			</Card>
+		</div>
 	)
 }

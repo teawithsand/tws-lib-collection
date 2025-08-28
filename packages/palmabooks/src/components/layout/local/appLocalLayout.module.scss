@@ -1,7 +1,9 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
 .container {
 	// Base container styles for local layout with margin from top
 	display: block;
-	margin-top: 1rem; // Default margin from top
+	margin-top: mantine.rem(16); // Default margin from top
 }
 
 .containerFull {

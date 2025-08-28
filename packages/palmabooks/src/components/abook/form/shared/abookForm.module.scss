@@ -1,9 +1,15 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
 /* ABook Form Container */
 .abook-form__container {
 	width: 100%;
-	max-width: 600px;
+	max-width: mantine.rem(600);
 	margin: 0 auto;
 	background: var(--mantine-color-white);
+
+	@include mantine.dark {
+		background: var(--mantine-color-dark-7);
+	}
 }
 
 /* Field Groups */
@@ -12,7 +18,7 @@
 }
 
 .abook-form__field-group + .abook-form__field-group {
-	margin-top: 1rem;
+	margin-top: mantine.rem(16);
 }
 
 /* Error Alerts */
@@ -23,30 +29,34 @@
 
 .abook-form__global-errors ul,
 .abook-form__submit-error ul {
-	margin: 0.5rem 0 0 0;
-	padding-left: 1.2rem;
+	margin: mantine.rem(8) 0 0 0;
+	padding-left: mantine.rem(19);
 }
 
 .abook-form__global-errors li,
 .abook-form__submit-error li {
-	margin-bottom: 0.25rem;
+	margin-bottom: mantine.rem(4);
 }
 
 /* Actions */
 .abook-form__actions {
 	display: flex;
 	justify-content: flex-end;
-	gap: 0.75rem;
-	padding-top: 1rem;
+	gap: mantine.rem(12);
+	padding-top: mantine.rem(16);
 	border-top: 1px solid var(--mantine-color-gray-3);
+
+	@include mantine.dark {
+		border-top-color: var(--mantine-color-dark-4);
+	}
 }
 
 .abook-form__submit-button {
-	min-width: 120px;
+	min-width: mantine.rem(120);
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
 	.abook-form__container {
 		max-width: 100%;
 		margin: 0;
@@ -62,16 +72,5 @@
 	.abook-form__submit-button {
 		flex: 1;
 		min-width: auto;
-	}
-}
-
-/* Dark Theme Support */
-@media (prefers-color-scheme: dark) {
-	.abook-form__container {
-		background: var(--mantine-color-dark-7);
-	}
-
-	.abook-form__actions {
-		border-top-color: var(--mantine-color-dark-4);
 	}
 }

@@ -6,6 +6,44 @@ export const translationEnUs: Readonly<AppTranslation> = {
 	common: {
 		error: "Error",
 		cancel: "Cancel",
+		unknown: "Unknown",
+	},
+	util: {
+		time: {
+			formatDuration: (milliseconds: number) => {
+				const totalSeconds = Math.floor(milliseconds / 1000)
+				const hours = Math.floor(totalSeconds / 3600)
+				const minutes = Math.floor((totalSeconds % 3600) / 60)
+				const seconds = totalSeconds % 60
+
+				if (hours > 0) {
+					return `${hours}h ${minutes}m ${seconds}s`
+				}
+				if (minutes > 0) {
+					return `${minutes}m ${seconds}s`
+				}
+				return `${seconds}s`
+			},
+			formatDate: (timestamp: number) => {
+				return new Date(timestamp).toLocaleDateString(undefined, {
+					year: "numeric",
+					month: "long",
+					day: "numeric",
+				})
+			},
+		},
+		formatSize: (bytes: number | undefined) => {
+			if (bytes === undefined) return "Unknown"
+			if (bytes === 0) return "0 Bytes"
+
+			const k = 1024
+			const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+			const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+			return (
+				parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+			)
+		},
 	},
 	globalErrorFallback: {
 		title: "Something went wrong",
@@ -49,11 +87,8 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			},
 			entryCountText: (count: number) =>
 				count === 1 ? `${count} entry` : `${count} entries`,
-			formatDuration: (durationMillis: number) => {
-				if (durationMillis <= 0) return "Unknown duration"
-				const minutes = Math.round(durationMillis / 1000 / 60)
-				return `${minutes} min`
-			},
+			statusSingle: "Single",
+			statusMultiPart: "Multi-part",
 		},
 		form: {
 			title: "Book Title",
@@ -81,36 +116,43 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			title: "Audiobook Preview",
 			backButton: "Back",
 			editButton: "Edit",
+			deleteButton: "Delete",
 			metadata: "Metadata",
 			entries: "Entries",
 			duration: "Duration",
 			entryCount: "Entry Count",
 			noEntries: "No entries yet",
 			description: "Description",
-			formatDuration: (millis: number) => {
-				const totalSeconds = Math.floor(millis / 1000)
-				const hours = Math.floor(totalSeconds / 3600)
-				const minutes = Math.floor((totalSeconds % 3600) / 60)
-				const seconds = totalSeconds % 60
-
-				if (hours > 0) {
-					return `${hours}h ${minutes}m ${seconds}s`
-				}
-				if (minutes > 0) {
-					return `${minutes}m ${seconds}s`
-				}
-				return `${seconds}s`
-			},
 			createdLabel: "Created",
 			sourceLabel: "Source",
 			dispositionLabel: "Disposition",
 			durationLabel: "Duration",
 			entryTitle: (index: number) => `Entry ${index + 1}`,
+			totalDurationLabel: "Total Duration",
+			entriesLabel: "Entries",
 		},
 		notFound: {
 			title: "Audiobook Not Found",
 			description: "The requested audiobook could not be found.",
 			goBackButton: "Go Back",
+		},
+		deleteModal: {
+			title: "Delete Audiobook",
+			confirmationMessage: (title: string) =>
+				`Are you sure you want to delete "${title}"?`,
+			warningMessage:
+				"This action cannot be undone. All associated entries and data will be permanently removed.",
+			deleteButton: "Delete",
+			deleteButtonDeleting: "Deleting...",
+			cancelButton: "Cancel",
+			successMessage: "Audiobook deleted successfully!",
+			successDescription:
+				"The audiobook has been removed from your collection.",
+			errorMessage: "Failed to delete audiobook",
+			noAudiobookSelectedTitle: "No Audiobook Selected",
+			noAudiobookSelectedMessage: "No audiobook selected for deletion.",
+			warningTitle: "Warning",
+			deleteFailedTitle: "Delete Failed",
 		},
 	},
 	storage: {
@@ -142,18 +184,6 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			refreshDescription:
 				"Refresh the storage information to get the latest quota and usage data.",
 		},
-		formatBytes: (bytes: number | undefined) => {
-			if (bytes === undefined) return "Unknown"
-			if (bytes === 0) return "0 Bytes"
-
-			const k = 1024
-			const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-			const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-			return (
-				parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-			)
-		},
 		formatPercentage: (
 			used: number | undefined,
 			total: number | undefined,
@@ -162,6 +192,54 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				return "Unknown"
 			const percentage = (used / total) * 100
 			return `${percentage.toFixed(1)}%`
+		},
+	},
+	fileUpload: {
+		label: "File Upload",
+		description: "Upload files by clicking here or drag and drop",
+		placeholder: "No files selected",
+		filesSelected: (count: number) => `${count} file(s) selected`,
+		uploadFolder: "Upload Folder",
+		files: "Files",
+		total: "Total",
+		processingFiles: "Processing files...",
+		clickToBrowse: "Click to browse or drag and drop files here",
+		uploadError: "Upload Error",
+		uploadFailed: "Upload failed",
+		uploadingFiles: (progress: number) =>
+			`Uploading files... (${Math.round(progress)}%)`,
+		uploading: "Uploading...",
+		uploadFiles: (count: number) => `Upload ${count} file(s)`,
+		cancel: "Cancel",
+		uploadTitle: (bookTitle: string) => `Upload Files to "${bookTitle}"`,
+		uploadDescription:
+			"Upload any files to add to this audiobook. File types will be automatically determined.",
+		formValidationErrors: "Form Validation Errors",
+		dropFilesPlaceholder: "Drop files here or click to browse",
+	},
+	pages: {
+		home: {
+			title: "Welcome to PalmaBooks",
+			subtitle: "Your personal book management application",
+			description:
+				"Organize your books, track your reading progress, and discover new favorites.",
+		},
+		about: {
+			title: "About PalmaBooks",
+			description:
+				"PalmaBooks is a comprehensive book management application designed to help you organize your personal library and track your reading journey.",
+			featuresTitle: "Features include:",
+			features: {
+				trackProgress: "Track reading progress",
+				addNotes: "Add personal notes and reviews",
+				searchFilter: "Search and filter your collection",
+			},
+		},
+		settings: {
+			title: "Settings",
+			description: "Configure your PalmaBooks application preferences.",
+			underDevelopment:
+				"This page is under development. Settings configuration coming soon!",
 		},
 	},
 }

@@ -62,6 +62,14 @@ export class Routes {
 	}
 
 	/**
+	 * Upload files to book page route
+	 */
+	public static readonly uploadFiles: RouteConfig = {
+		path: "/abooks/:id/upload",
+		navigate: (id: string) => `/abooks/${id}/upload`,
+	}
+
+	/**
 	 * Settings page route
 	 */
 	public static readonly settings: RouteConfig = {
@@ -88,9 +96,9 @@ export class Routes {
 			Routes.abookShow,
 			Routes.addBook,
 			Routes.editBook,
+			Routes.uploadFiles,
 			Routes.settings,
 			Routes.storage,
-			Routes.editBook,
 		]
 	}
 }

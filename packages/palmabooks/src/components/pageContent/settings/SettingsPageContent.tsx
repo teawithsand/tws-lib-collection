@@ -1,18 +1,15 @@
+import { useTransResolver } from "@/app/app.hooks"
 import { Text, Title } from "@teawithsand/mlui"
 
-/**
- * Settings page content component for configuring PalmaBooks application preferences.
- */
 export const SettingsPageContent = () => {
+	const { resolve } = useTransResolver()
+
 	return (
 		<>
-			<Title order={1}>Settings</Title>
-			<Text mt="md">
-				Configure your PalmaBooks application preferences.
-			</Text>
+			<Title order={1}>{resolve((t) => t.pages.settings.title)}</Title>
+			<Text mt="md">{resolve((t) => t.pages.settings.description)}</Text>
 			<Text mt="md" c="dimmed">
-				This page is under development. Settings configuration coming
-				soon!
+				{resolve((t) => t.pages.settings.underDevelopment)}
 			</Text>
 		</>
 	)

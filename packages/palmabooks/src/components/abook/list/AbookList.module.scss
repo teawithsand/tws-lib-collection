@@ -1,0 +1,15 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.container {
+	width: 100%;
+}
+
+.grid {
+	width: 100%;
+}
+
+@include mantine.smaller-than(mantine.$mantine-breakpoint-md) {
+	.container {
+		padding: 0 var(--mantine-spacing-sm);
+	}
+}

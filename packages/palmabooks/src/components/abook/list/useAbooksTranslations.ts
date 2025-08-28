@@ -41,7 +41,7 @@ export const useAbooksTranslations = (
 		() =>
 			(durationMillis: number): string => {
 				return resolve((t) =>
-					t.abooks.list.formatDuration(durationMillis),
+					t.util.time.formatDuration(durationMillis),
 				)
 			},
 		[resolve],

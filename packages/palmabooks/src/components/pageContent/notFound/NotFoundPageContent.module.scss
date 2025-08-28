@@ -1,3 +1,5 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
 .title {
 	text-align: center;
 	font-weight: 700;
@@ -5,6 +7,6 @@
 }
 
 .description {
-	max-width: 500px;
+	max-width: mantine.rem(500);
 	line-height: 1.6;
 }
