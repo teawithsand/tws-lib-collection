@@ -1,9 +1,9 @@
 import { useTransResolver } from "@/app/app.hooks"
 import type { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
-import styles from "./AbookShow.module.scss"
-import { AbookEntriesSection } from "./show/AbookEntriesSection"
-import { AbookHeroSection } from "./show/AbookHeroSection"
-import { AbookMetadataAside } from "./show/AbookMetadataAside"
+import styles from "../AbookShow.module.scss"
+import { AbookEntriesSection } from "./AbookEntriesSection"
+import { AbookHeroSection } from "./AbookHeroSection"
+import { AbookMetadataAside } from "./AbookMetadataAside"
 
 interface AbookShowProps {
 	readonly abook: Abook
