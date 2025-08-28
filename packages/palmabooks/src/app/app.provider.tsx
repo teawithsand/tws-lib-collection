@@ -2,7 +2,7 @@ import { Provider } from "@teawithsand/fstate"
 import { ReactNode, useEffect, useState } from "react"
 import { LIB_LOGGER } from "../internal/log"
 import { App } from "./app"
-import { AppDi } from "./app.di"
+import { AppDi, DiConfig } from "./app.di"
 import { AppContext } from "./app.hooks"
 
 const LOG_TAG = "AppProvider"
@@ -10,16 +10,18 @@ const logger = LIB_LOGGER.createTaggedLogger(LOG_TAG)
 
 export interface AppProviderProps {
 	children: ReactNode
+	config?: DiConfig
 }
 
-export const AppProvider = ({ children }: AppProviderProps) => {
+export const AppProvider = ({ children, config }: AppProviderProps) => {
 	const [app, setApp] = useState<App | null>(null)
 	const [error, setError] = useState<Error | null>(null)
 
 	useEffect(() => {
 		const initializeApp = async () => {
 			try {
-				const diBuilder = AppDi.makeDiBuilder(AppDi.DI_PROD_CONFIG)
+				const appConfig = config || AppDi.DI_PROD_CONFIG
+				const diBuilder = AppDi.makeDiBuilder(appConfig)
 				const di = await diBuilder.build()
 				const appInstance = new App(di)
 
@@ -35,7 +37,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 		}
 
 		initializeApp()
-	}, [])
+	}, [config])
 
 	useEffect(() => {
 		// Cleanup effect to release app on unmount
