@@ -22,7 +22,7 @@ export const App = () => {
 						>
 							<Router
 								wrapperComponent={AppGlobalLayout}
-								type={RouterType.Browser}
+								type={RouterType.BROWSER}
 								routes={RouterConfig.routes}
 								notFoundContent={RouterConfig.notFoundContent}
 							/>

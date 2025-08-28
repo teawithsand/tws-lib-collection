@@ -4,16 +4,17 @@ import { type ComponentType, type ReactNode } from "react"
  * Router type enum for different routing strategies
  */
 export enum RouterType {
-	Browser = "browser",
-	Hash = "hash",
+	BROWSER = "browser",
+	HASH = "hash",
+	MEMORY = "memory",
 }
 
 /**
  * Route content type enum
  */
 export enum RouteContentType {
-	Component = "component",
-	Element = "element",
+	COMPONENT = "component",
+	ELEMENT = "element",
 }
 
 /**
@@ -21,10 +22,10 @@ export enum RouteContentType {
  */
 export type RouteContent =
 	| {
-			readonly type: RouteContentType.Component
+			readonly type: RouteContentType.COMPONENT
 			readonly component: ComponentType
 	  }
-	| { readonly type: RouteContentType.Element; readonly element: ReactNode }
+	| { readonly type: RouteContentType.ELEMENT; readonly element: ReactNode }
 
 /**
  * Definition for a single route
@@ -42,11 +43,28 @@ export interface RouteWrapperComponent {
 }
 
 /**
- * Router configuration
+ * Router configuration with routes and optional not found content
  */
-export interface RouterConfig {
+export interface RouterConfigWithRoutes {
 	readonly type?: RouterType
 	readonly routes: readonly RouteDefinition[]
 	readonly notFoundContent?: RouteContent
 	readonly wrapperComponent?: ComponentType<RouteWrapperComponent>
+	readonly content?: never
 }
+
+/**
+ * Router configuration with content only (no routes or not found content)
+ */
+export interface RouterConfigWithContent {
+	readonly type?: RouterType
+	readonly content: ReactNode
+	readonly wrapperComponent?: ComponentType<RouteWrapperComponent>
+	readonly routes?: never
+	readonly notFoundContent?: never
+}
+
+/**
+ * Router configuration - either with routes or with content
+ */
+export type RouterConfig = RouterConfigWithRoutes | RouterConfigWithContent

@@ -16,63 +16,63 @@ const routes: RouteDefinition[] = [
 	{
 		path: Routes.home.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: HomePage,
 		},
 	},
 	{
 		path: Routes.about.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: AboutPage,
 		},
 	},
 	{
 		path: Routes.abookShow.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: AbookShowPage,
 		},
 	},
 	{
 		path: Routes.books.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: AbookListPage,
 		},
 	},
 	{
 		path: Routes.addBook.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: AbookCreatePage,
 		},
 	},
 	{
 		path: Routes.editBook.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: AbookEditPage,
 		},
 	},
 	{
 		path: Routes.settings.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: SettingsPage,
 		},
 	},
 	{
 		path: Routes.storage.path,
 		content: {
-			type: RouteContentType.Component,
+			type: RouteContentType.COMPONENT,
 			component: StoragePage,
 		},
 	},
 ]
 
 const notFoundContent = {
-	type: RouteContentType.Component,
+	type: RouteContentType.COMPONENT,
 	component: NotFoundPage,
 } as const
 
