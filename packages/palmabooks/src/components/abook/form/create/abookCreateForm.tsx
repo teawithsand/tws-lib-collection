@@ -6,25 +6,20 @@ import {
 import { IconAlertCircle } from "@tabler/icons-react"
 import { AbookData } from "@teawithsand/booklibr"
 import { useForm, useFormField } from "@teawithsand/fstate"
-import {
-	Alert,
-	Button,
-	Paper,
-	Stack,
-	Textarea,
-	TextInput,
-} from "@teawithsand/mlui"
-import { useCallback, useState } from "react"
+import { Alert, Button, Stack, Textarea, TextInput } from "@teawithsand/mlui"
+import { ReactNode, useCallback, useState } from "react"
 import styles from "../shared/abookForm.module.scss"
 
 interface AbookCreateFormProps {
 	initialData?: Partial<AbookFormInput>
 	onSubmit: (data: AbookData) => Promise<void>
+	error?: ReactNode
 }
 
 export const AbookCreateForm: React.FC<AbookCreateFormProps> = ({
 	initialData,
 	onSubmit,
+	error,
 }) => {
 	const [formAtoms] = useState(() => new AbookFormClass(initialData))
 
@@ -52,15 +47,20 @@ export const AbookCreateForm: React.FC<AbookCreateFormProps> = ({
 	)
 
 	return (
-		<Paper
-			className={styles["abook-form__container"]}
-			shadow="sm"
-			p="xl"
-			radius="md"
-			withBorder
-		>
+		<div className={styles["abook-form__container"]}>
 			<form onSubmit={handleSubmit}>
 				<Stack gap="lg">
+					{error && (
+						<Alert
+							icon={<IconAlertCircle size="1rem" />}
+							color="red"
+							title={resolve((t) => t.common.submitFailedTitle)}
+							className={styles["abook-form__submit-error"]}
+						>
+							{error}
+						</Alert>
+					)}
+
 					{!form.globalErrors.isEmpty && (
 						<Alert
 							icon={<IconAlertCircle size="1rem" />}
@@ -83,9 +83,7 @@ export const AbookCreateForm: React.FC<AbookCreateFormProps> = ({
 					{form.lastSubmitError && (
 						<Alert
 							icon={<IconAlertCircle size="1rem" />}
-							title={resolve(
-								(t) => t.abooks.form.submissionError,
-							)}
+							title={resolve((t) => t.common.submitFailedTitle)}
 							color="red"
 							className={styles["abook-form__submit-error"]}
 						>
@@ -174,6 +172,6 @@ export const AbookCreateForm: React.FC<AbookCreateFormProps> = ({
 					</div>
 				</Stack>
 			</form>
-		</Paper>
+		</div>
 	)
 }

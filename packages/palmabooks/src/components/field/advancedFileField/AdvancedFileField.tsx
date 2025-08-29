@@ -1,6 +1,7 @@
 import { useTransResolver } from "@/app/app.hooks"
 import {
 	IconCloudUpload,
+	IconEye,
 	IconFile,
 	IconFolder,
 	IconX,
@@ -17,18 +18,21 @@ import {
 	Stack,
 	Text,
 	UnstyledButton,
+	useDisclosure,
 } from "@teawithsand/mlui"
 import { useCallback, useRef, useState } from "react"
 import styles from "./AdvancedFileField.module.scss"
+import { FileListModal } from "./FileListModal"
+import { AdvancedFileFieldPreviewMode } from "./types"
 
-export interface SelectedFile {
+export interface AdvancedFileFieldEntry {
 	file: File
 	id: string
 }
 
 export interface AdvancedFileFieldProps {
-	files: SelectedFile[]
-	onFilesChange: (files: SelectedFile[]) => void
+	files: AdvancedFileFieldEntry[]
+	onFilesChange: (files: AdvancedFileFieldEntry[]) => void
 	accept?: string
 	multiple?: boolean
 	allowDirectories?: boolean
@@ -37,6 +41,7 @@ export interface AdvancedFileFieldProps {
 	description?: string
 	placeholder?: string
 	error?: string
+	previewMode?: AdvancedFileFieldPreviewMode
 }
 
 export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
@@ -50,9 +55,14 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 	description,
 	placeholder,
 	error,
+	previewMode = AdvancedFileFieldPreviewMode.ENABLED,
 }) => {
 	const [isDragOver, setIsDragOver] = useState(false)
-	const [isUploading, setIsUploading] = useState(false)
+	const [isProcessingFiles, setIsProcessingFiles] = useState(false)
+	const [
+		isFileListModalOpen,
+		{ open: openFileListModal, close: closeFileListModal },
+	] = useDisclosure(false)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 	const directoryInputRef = useRef<HTMLInputElement>(null)
 	const { resolve } = useTransResolver()
@@ -63,8 +73,8 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 		async (fileList: FileList | File[]) => {
 			if (disabled) return
 
-			setIsUploading(true)
-			const newFiles: SelectedFile[] = []
+			setIsProcessingFiles(true)
+			const newFiles: AdvancedFileFieldEntry[] = []
 
 			for (let i = 0; i < fileList.length; i++) {
 				const file = Array.isArray(fileList)
@@ -72,7 +82,7 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 					: fileList.item(i)
 				if (!file) continue
 
-				const selectedFile: SelectedFile = {
+				const selectedFile: AdvancedFileFieldEntry = {
 					file,
 					id: generateUuid(),
 				}
@@ -86,7 +96,7 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 				onFilesChange(newFiles.slice(0, 1))
 			}
 
-			setIsUploading(false)
+			setIsProcessingFiles(false)
 		},
 		[files, onFilesChange, multiple, disabled],
 	)
@@ -97,7 +107,6 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 			if (fileList) {
 				processFiles(fileList)
 			}
-			// Reset input value to allow selecting the same file again
 			e.target.value = ""
 		},
 		[processFiles],
@@ -120,15 +129,6 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 			e.preventDefault()
 			e.stopPropagation()
 			setIsDragOver(false)
-
-			const droppedFiles: File[] = []
-
-			if (e.dataTransfer.files) {
-				for (let i = 0; i < e.dataTransfer.files.length; i++) {
-					const file = e.dataTransfer.files.item(i)
-					if (file) droppedFiles.push(file)
-				}
-			}
 
 			if (allowDirectories && e.dataTransfer.items) {
 				const processEntry = async (
@@ -174,11 +174,16 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 						}
 					}
 
-					processFiles([...droppedFiles, ...allFiles])
+					processFiles(allFiles)
 				}
 
 				processAllEntries()
-			} else {
+			} else if (e.dataTransfer.files) {
+				const droppedFiles: File[] = []
+				for (let i = 0; i < e.dataTransfer.files.length; i++) {
+					const file = e.dataTransfer.files.item(i)
+					if (file) droppedFiles.push(file)
+				}
 				processFiles(droppedFiles)
 			}
 		},
@@ -304,78 +309,114 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 				</Button>
 			)}
 
-			{files.length > 0 && (
-				<Stack mt="md" gap="xs">
-					<Group justify="space-between">
-						<Text size="sm" fw={500}>
-							{resolve((t) => t.fileUpload.files)} ({files.length}
-							)
-						</Text>
-						<Text size="sm" c="dimmed">
-							{resolve((t) => t.fileUpload.total)}:{" "}
-							{resolve((t) => t.util.formatSize(totalSize))}
-						</Text>
-					</Group>
+			{files.length > 0 &&
+				previewMode === AdvancedFileFieldPreviewMode.ENABLED && (
+					<Stack mt="md" gap="xs">
+						<Group justify="space-between">
+							<Text size="sm" fw={500}>
+								{resolve((t) => t.fileUpload.files)} (
+								{files.length})
+							</Text>
+							<Text size="sm" c="dimmed">
+								{resolve((t) => t.fileUpload.total)}:{" "}
+								{resolve((t) => t.util.formatSize(totalSize))}
+							</Text>
+						</Group>
 
-					<Card
-						withBorder
-						p="xs"
-						className={styles.fileListContainer}
-					>
-						<ScrollArea
-							h={{ base: 200, sm: 250, md: 300 }}
-							type="auto"
-							scrollbarSize={8}
-							scrollHideDelay={1000}
+						<Card
+							withBorder
+							p="xs"
+							className={styles.fileListContainer}
 						>
-							<Stack gap="xs">
-								{files.map((uploadedFile) => (
-									<Card
-										key={uploadedFile.id}
-										p="sm"
-										withBorder
-									>
-										<Group wrap="nowrap">
-											<IconFile size={32} stroke={1.5} />
+							<ScrollArea
+								h={{ base: 200, sm: 250, md: 300 }}
+								type="auto"
+								scrollbarSize={8}
+								scrollHideDelay={1000}
+							>
+								<Stack gap="xs">
+									{files.map((uploadedFile) => (
+										<Card
+											key={uploadedFile.id}
+											p="sm"
+											withBorder
+										>
+											<Group wrap="nowrap">
+												<IconFile
+													size={32}
+													stroke={1.5}
+												/>
 
-											<Box className={styles.fileItem}>
-												<Text
-													size="sm"
-													fw={500}
-													truncate
+												<Box
+													className={styles.fileItem}
 												>
-													{uploadedFile.file.name}
-												</Text>
-												<Text size="xs" c="dimmed">
-													{resolve((t) =>
-														t.util.formatSize(
-															uploadedFile.file
-																.size,
-														),
-													)}
-												</Text>
-											</Box>
+													<Text
+														size="sm"
+														fw={500}
+														truncate
+													>
+														{uploadedFile.file.name}
+													</Text>
+													<Text size="xs" c="dimmed">
+														{resolve((t) =>
+															t.util.formatSize(
+																uploadedFile
+																	.file.size,
+															),
+														)}
+													</Text>
+												</Box>
 
-											<ActionIcon
-												variant="subtle"
-												color="red"
-												onClick={() =>
-													removeFile(uploadedFile.id)
-												}
-												disabled={disabled}
-											>
-												<IconX size={16} />
-											</ActionIcon>
-										</Group>
-									</Card>
-								))}
-							</Stack>
-						</ScrollArea>
-					</Card>
-				</Stack>
-			)}
+												<ActionIcon
+													variant="subtle"
+													color="red"
+													onClick={() =>
+														removeFile(
+															uploadedFile.id,
+														)
+													}
+													disabled={disabled}
+												>
+													<IconX size={16} />
+												</ActionIcon>
+											</Group>
+										</Card>
+									))}
+								</Stack>
+							</ScrollArea>
+						</Card>
+					</Stack>
+				)}
 
-			{isUploading && (
+			{files.length > 0 &&
+				previewMode === AdvancedFileFieldPreviewMode.MODAL && (
+					<Stack mt="md" gap="xs">
+						<Group justify="space-between">
+							<Text size="sm" fw={500}>
+								{resolve((t) =>
+									t.fileUpload.filesSelected(files.length),
+								)}
+							</Text>
+							<Text size="sm" c="dimmed">
+								{resolve((t) => t.fileUpload.total)}:{" "}
+								{resolve((t) => t.util.formatSize(totalSize))}
+							</Text>
+						</Group>
+
+						<Button
+							variant="light"
+							leftSection={<IconEye size={16} />}
+							onClick={openFileListModal}
+							disabled={disabled}
+							size="sm"
+							fullWidth
+						>
+							{resolve((t) => t.fileUpload.files)}
+						</Button>
+					</Stack>
+				)}
+
+			{isProcessingFiles && (
 				<Box mt="md">
 					<Text size="sm" mb="xs">
 						{resolve((t) => t.fileUpload.processingFiles)}
@@ -389,6 +430,14 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 					{error}
 				</Text>
 			)}
+
+			<FileListModal
+				opened={isFileListModalOpen}
+				onClose={closeFileListModal}
+				files={files}
+				onRemoveFile={removeFile}
+				disabled={disabled}
+			/>
 		</div>
 	)
 }

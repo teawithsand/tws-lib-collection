@@ -3,9 +3,10 @@ import { useState } from "react"
 import { fn } from "storybook/test"
 import {
 	AdvancedFileField,
+	AdvancedFileFieldEntry,
 	AdvancedFileFieldProps,
-	SelectedFile,
 } from "./AdvancedFileField"
+import { AdvancedFileFieldPreviewMode } from "./types"
 
 const createMockFile = (name: string, type: string, size: number): File => {
 	const file = new File(["mock content"], name, { type })
@@ -15,10 +16,12 @@ const createMockFile = (name: string, type: string, size: number): File => {
 
 const AdvancedFileFieldWrapper = (
 	props: Omit<AdvancedFileFieldProps, "files" | "onFilesChange"> & {
-		files?: SelectedFile[]
+		files?: AdvancedFileFieldEntry[]
 	},
 ) => {
-	const [files, setFiles] = useState<SelectedFile[]>(props.files || [])
+	const [files, setFiles] = useState<AdvancedFileFieldEntry[]>(
+		props.files || [],
+	)
 
 	return (
 		<AdvancedFileField {...props} files={files} onFilesChange={setFiles} />
@@ -29,7 +32,7 @@ const meta: Meta<typeof AdvancedFileField> = {
 	title: "Components/Field/AdvancedFileField",
 	component: AdvancedFileFieldWrapper,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		docs: {
 			description: {
 				component:
@@ -84,6 +87,15 @@ const meta: Meta<typeof AdvancedFileField> = {
 		error: {
 			control: "text",
 			description: "Error message to display",
+		},
+		previewMode: {
+			control: "select",
+			options: [
+				AdvancedFileFieldPreviewMode.DISABLED,
+				AdvancedFileFieldPreviewMode.ENABLED,
+				AdvancedFileFieldPreviewMode.MODAL,
+			],
+			description: "How to display the selected files preview",
 		},
 	},
 }
@@ -398,5 +410,124 @@ export const WithFilesAndError: Story = {
 		allowDirectories: true,
 		disabled: false,
 		error: "Some files failed to upload. Please check your network connection and try again.",
+	},
+}
+
+export const PreviewDisabled: Story = {
+	args: {
+		files: [
+			{
+				id: "1",
+				file: createMockFile(
+					"document.pdf",
+					"application/pdf",
+					1024 * 1024 * 2.5,
+				),
+			},
+			{
+				id: "2",
+				file: createMockFile("image.jpg", "image/jpeg", 1024 * 512),
+			},
+			{
+				id: "3",
+				file: createMockFile(
+					"spreadsheet.xlsx",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					1024 * 1024 * 1.2,
+				),
+			},
+		],
+		onFilesChange: fn(),
+		multiple: true,
+		allowDirectories: true,
+		disabled: false,
+		previewMode: AdvancedFileFieldPreviewMode.DISABLED,
+		label: "File Upload - No Preview",
+		description: "Files are uploaded but preview is disabled",
+	},
+}
+
+export const PreviewEnabled: Story = {
+	args: {
+		files: [
+			{
+				id: "1",
+				file: createMockFile(
+					"document.pdf",
+					"application/pdf",
+					1024 * 1024 * 2.5,
+				),
+			},
+			{
+				id: "2",
+				file: createMockFile("image.jpg", "image/jpeg", 1024 * 512),
+			},
+			{
+				id: "3",
+				file: createMockFile(
+					"spreadsheet.xlsx",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					1024 * 1024 * 1.2,
+				),
+			},
+		],
+		onFilesChange: fn(),
+		multiple: true,
+		allowDirectories: true,
+		disabled: false,
+		previewMode: AdvancedFileFieldPreviewMode.ENABLED,
+		label: "File Upload - Inline Preview",
+		description: "Files are displayed inline below the upload area",
+	},
+}
+
+export const PreviewModal: Story = {
+	args: {
+		files: [
+			{
+				id: "1",
+				file: createMockFile(
+					"document.pdf",
+					"application/pdf",
+					1024 * 1024 * 2.5,
+				),
+			},
+			{
+				id: "2",
+				file: createMockFile("image.jpg", "image/jpeg", 1024 * 512),
+			},
+			{
+				id: "3",
+				file: createMockFile(
+					"spreadsheet.xlsx",
+					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					1024 * 1024 * 1.2,
+				),
+			},
+			{
+				id: "4",
+				file: createMockFile(
+					"presentation.pptx",
+					"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+					1024 * 1024 * 5.8,
+				),
+			},
+			{
+				id: "5",
+				file: createMockFile(
+					"archive.zip",
+					"application/zip",
+					1024 * 1024 * 15.2,
+				),
+			},
+		],
+		onFilesChange: fn(),
+		multiple: true,
+		allowDirectories: true,
+		disabled: false,
+		previewMode: AdvancedFileFieldPreviewMode.MODAL,
+		label: "File Upload - Modal Preview",
+		description:
+			"Files can be viewed and managed via modal dialog. Click 'Files' button to view.",
 	},
 }

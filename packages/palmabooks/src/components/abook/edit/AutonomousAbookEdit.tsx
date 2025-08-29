@@ -5,7 +5,7 @@ import { Routes } from "@/router/routes"
 import { AbookData } from "@teawithsand/booklibr"
 import { useAtomCallback, useAtomValue } from "@teawithsand/fstate"
 import { Title, useNavigation } from "@teawithsand/mlui"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { AbookEditNotFound } from "./AbookEditNotFound"
 import styles from "./AutonomousAbookEdit.module.scss"
 
@@ -28,11 +28,13 @@ export const AutonomousAbookEdit = ({
 	const { resolve } = useTransResolver()
 	const { navigate } = useNavigation()
 	const abook = useAtomValue(abookServiceAtoms.data)
+	const [submitError, setSubmitError] = useState<string | null>(null)
 
 	const handleSubmit = useAtomCallback(
 		useCallback(
 			async (_get, set, abookData: AbookData) => {
 				try {
+					setSubmitError(null)
 					await set(abookServiceAtoms.update, {
 						data: abookData.header,
 					})
@@ -44,10 +46,11 @@ export const AutonomousAbookEdit = ({
 						"Abook edit form submission failed",
 						e,
 					)
+					setSubmitError(resolve((t) => t.common.explainError(e)))
 					throw e
 				}
 			},
-			[abookServiceAtoms.update, app.logger, navigate, abookId],
+			[abookServiceAtoms.update, app.logger, navigate, abookId, resolve],
 		),
 	)
 
@@ -66,7 +69,11 @@ export const AutonomousAbookEdit = ({
 			<Title order={1} mb="xl" className={styles["abook-edit__title"]}>
 				{resolve((t) => t.abooks.preview.editButton)}
 			</Title>
-			<AbookEditForm onSubmit={handleSubmit} initialData={initialData} />
+			<AbookEditForm
+				onSubmit={handleSubmit}
+				initialData={initialData}
+				error={submitError || undefined}
+			/>
 		</div>
 	)
 }

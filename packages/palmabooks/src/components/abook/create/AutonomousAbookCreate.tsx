@@ -4,7 +4,7 @@ import { Routes } from "@/router/routes"
 import { AbookData } from "@teawithsand/booklibr"
 import { useAtomCallback } from "@teawithsand/fstate"
 import { Title, useNavigation } from "@teawithsand/mlui"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import styles from "./AutonomousAbookCreate.module.scss"
 
 const LOG_TAG = "AutonomousAbookCreate"
@@ -17,10 +17,13 @@ export const AutonomousAbookCreate = () => {
 	const app = useApp()
 	const { resolve } = useTransResolver()
 	const { navigate } = useNavigation()
+	const [submitError, setSubmitError] = useState<string | null>(null)
+
 	const handleSubmit = useAtomCallback(
 		useCallback(
 			async (_get, set, abookData: AbookData) => {
 				try {
+					setSubmitError(null)
 					// Use the header data from the abook data to create the audiobook
 					await set(
 						app.abookStoreService.createAbook,
@@ -31,10 +34,11 @@ export const AutonomousAbookCreate = () => {
 					navigate(Routes.books.navigate())
 				} catch (e) {
 					app.logger.warn(LOG_TAG, "Form submission filed", e)
+					setSubmitError(resolve((t) => t.common.explainError(e)))
 					throw e
 				}
 			},
-			[app.abookStoreService.createAbook, app.logger, navigate],
+			[app.abookStoreService.createAbook, app.logger, navigate, resolve],
 		),
 	)
 
@@ -43,7 +47,10 @@ export const AutonomousAbookCreate = () => {
 			<Title order={1} mb="xl" className={styles["abook-create__title"]}>
 				{resolve((t) => t.abooks.form.createButton)}
 			</Title>
-			<AbookCreateForm onSubmit={handleSubmit} />
+			<AbookCreateForm
+				onSubmit={handleSubmit}
+				error={submitError || undefined}
+			/>
 		</div>
 	)
 }

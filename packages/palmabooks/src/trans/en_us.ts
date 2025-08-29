@@ -8,6 +8,13 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		error: "Error",
 		cancel: "Cancel",
 		unknown: "Unknown",
+		submitFailedTitle: "Operation failed",
+		explainError: (error: unknown): string => {
+			if (error instanceof Error) {
+				return error.message
+			}
+			return "An unexpected error occurred"
+		},
 	},
 	util: {
 		time: {
@@ -112,7 +119,6 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			updateButton: "Update Book",
 			createPageTitle: "Create New Audio Book",
 			formValidationErrors: "Please fix the following errors:",
-			submissionError: "Failed to create book",
 			unexpectedError: "An unexpected error occurred",
 			validation: {
 				titleMustNotBeEmpty: "Title must not be empty",

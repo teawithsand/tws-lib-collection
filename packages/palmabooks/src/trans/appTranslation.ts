@@ -8,6 +8,8 @@ export interface AppTranslation {
 		error: string
 		cancel: string
 		unknown: string
+		submitFailedTitle: string
+		explainError: (error: unknown) => string
 	}
 	util: {
 		time: {
@@ -64,7 +66,6 @@ export interface AppTranslation {
 			updateButton: string
 			createPageTitle: string
 			formValidationErrors: string
-			submissionError: string
 			unexpectedError: string
 			validation: {
 				titleMustNotBeEmpty: string

@@ -6,7 +6,7 @@ const meta: Meta<typeof AbookCreateForm> = {
 	title: "Components/Abook/Form/AbookCreateForm",
 	component: AbookCreateForm,
 	parameters: {
-		layout: "padded",
+		layout: "fullscreen",
 		docs: {
 			description: {
 				component:
@@ -14,6 +14,13 @@ const meta: Meta<typeof AbookCreateForm> = {
 			},
 		},
 	},
+	decorators: [
+		(Story) => (
+			<div style={{ padding: "1rem" }}>
+				<Story />
+			</div>
+		),
+	],
 	tags: ["autodocs"],
 	argTypes: {
 		initialData: {
@@ -23,6 +30,11 @@ const meta: Meta<typeof AbookCreateForm> = {
 		onSubmit: {
 			description:
 				"Callback function called when form is submitted successfully",
+		},
+		error: {
+			control: "text",
+			description:
+				"External error message to display at the top of the form",
 		},
 	},
 }
@@ -97,5 +109,58 @@ export const WithEmptyTitle: Story = {
 			privateUserNote: "Need to add a title",
 		},
 		onSubmit: fn(),
+	},
+}
+
+export const LongSubmit: Story = {
+	args: {
+		initialData: {
+			title: "Test Audiobook",
+			description: "This is a test submission that takes 3 seconds",
+			privateUserNote: "Testing long submit",
+		},
+		onSubmit: () => new Promise((resolve) => setTimeout(resolve, 3000)),
+	},
+}
+
+export const WithError: Story = {
+	args: {
+		initialData: {
+			title: "Sample Book Title",
+			description: "This is a sample description for the audiobook.",
+			privateUserNote: "Personal notes about this book",
+		},
+		onSubmit: fn(),
+		error: "An external error occurred while processing your request.",
+	},
+}
+
+export const WithErrorJSX: Story = {
+	args: {
+		initialData: {
+			title: "Sample Book Title",
+			description: "This is a sample description for the audiobook.",
+			privateUserNote: "Personal notes about this book",
+		},
+		onSubmit: fn(),
+		error: (
+			<div>
+				<strong>Server Error:</strong> Unable to connect to the server.{" "}
+				<br />
+				Please check your internet connection and try again.
+			</div>
+		),
+	},
+}
+
+export const WithLongError: Story = {
+	args: {
+		initialData: {
+			title: "Sample Book Title",
+			description: "This is a sample description for the audiobook.",
+			privateUserNote: "Personal notes about this book",
+		},
+		onSubmit: fn(),
+		error: "This is a very long error message that demonstrates how the error alert handles extensive text content. It includes multiple sentences to show how the error display behaves with longer content that might wrap to multiple lines in the user interface.",
 	},
 }
