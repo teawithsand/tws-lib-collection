@@ -1,13 +1,12 @@
 import { useApp, useTransResolver } from "@/app/app.hooks"
-import { AbookEditForm, AbookFormInput } from "@/components/abook/form"
 import { AbookStoreServiceAbookAtoms } from "@/domain"
 import { Routes } from "@/router/routes"
 import { AbookData } from "@teawithsand/booklibr"
 import { useAtomCallback, useAtomValue } from "@teawithsand/fstate"
-import { Title, useNavigation } from "@teawithsand/mlui"
+import { useNavigation } from "@teawithsand/mlui"
 import { useCallback, useState } from "react"
+import { AbookEdit } from "./AbookEdit"
 import { AbookEditNotFound } from "./AbookEditNotFound"
-import styles from "./AutonomousAbookEdit.module.scss"
 
 const LOG_TAG = "AutonomousAbookEdit"
 
@@ -58,22 +57,7 @@ export const AutonomousAbookEdit = ({
 		return <AbookEditNotFound />
 	}
 
-	const initialData: AbookFormInput = {
-		title: abook.data.header.metadata.title,
-		description: abook.data.header.metadata.description,
-		privateUserNote: abook.data.header.metadata.privateUserNote,
-	}
-
 	return (
-		<div className={styles["abook-edit"]}>
-			<Title order={1} mb="xl" className={styles["abook-edit__title"]}>
-				{resolve((t) => t.abooks.preview.editButton)}
-			</Title>
-			<AbookEditForm
-				onSubmit={handleSubmit}
-				initialData={initialData}
-				error={submitError || undefined}
-			/>
-		</div>
+		<AbookEdit abook={abook} onSubmit={handleSubmit} error={submitError} />
 	)
 }
