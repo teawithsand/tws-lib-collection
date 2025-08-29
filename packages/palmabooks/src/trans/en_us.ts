@@ -229,6 +229,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		uploading: "Uploading...",
 		uploadFiles: (count: number) => `Upload ${count} file(s)`,
 		cancel: "Cancel",
+		clearAll: "Clear All",
 		uploadTitle: (bookTitle: string) => `Upload Files to "${bookTitle}"`,
 		uploadDescription:
 			"Upload any files to add to this audiobook. File types will be automatically determined.",

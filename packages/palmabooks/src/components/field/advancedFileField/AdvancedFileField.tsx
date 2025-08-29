@@ -4,6 +4,7 @@ import {
 	IconEye,
 	IconFile,
 	IconFolder,
+	IconTrash,
 	IconX,
 } from "@tabler/icons-react"
 import { generateUuid } from "@teawithsand/lngext"
@@ -197,6 +198,10 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 		[files, onFilesChange],
 	)
 
+	const clearAllFiles = useCallback(() => {
+		onFilesChange([])
+	}, [onFilesChange])
+
 	const openFileDialog = useCallback(() => {
 		fileInputRef.current?.click()
 	}, [])
@@ -306,6 +311,21 @@ export const AdvancedFileField: React.FC<AdvancedFileFieldProps> = ({
 					mt="sm"
 				>
 					{resolve((t) => t.fileUpload.uploadFolder)}
+				</Button>
+			)}
+
+			{files.length > 0 && (
+				<Button
+					variant="outline"
+					color="red"
+					leftSection={<IconTrash size={16} />}
+					onClick={clearAllFiles}
+					disabled={disabled}
+					size="sm"
+					fullWidth
+					mt="sm"
+				>
+					{resolve((t) => t.fileUpload.clearAll)}
 				</Button>
 			)}
 

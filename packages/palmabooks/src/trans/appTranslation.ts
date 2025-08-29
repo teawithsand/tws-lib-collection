@@ -160,6 +160,7 @@ export interface AppTranslation {
 		uploading: string
 		uploadFiles: (count: number) => string
 		cancel: string
+		clearAll: string
 		uploadTitle: (bookTitle: string) => string
 		uploadDescription: string
 		formValidationErrors: string
