@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
+import { Container } from "@teawithsand/mlui"
 import { useState } from "react"
 import { fn } from "storybook/test"
 import {
@@ -42,9 +43,9 @@ const meta: Meta<typeof AdvancedFileField> = {
 	},
 	decorators: [
 		(Story) => (
-			<div style={{ maxWidth: "600px", margin: "0 auto" }}>
+			<Container py="sm">
 				<Story />
-			</div>
+			</Container>
 		),
 	],
 	tags: ["autodocs"],
