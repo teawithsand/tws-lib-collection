@@ -1,4 +1,4 @@
-import { Lock } from "@teawithsand/lngext"
+import { RwLock, RwLockAdapterMap } from "@teawithsand/lngext"
 import { SerializerReverse } from "@teawithsand/reserd"
 import { Atom } from "jotai"
 import { Loadable } from "../jotai"
@@ -28,8 +28,14 @@ export interface ConfigFieldSpec<T> {
 /**
  * Configuration specification mapping field names to their specs
  */
-export type Config<T extends Record<string, unknown>> = {
+export type ConfigSpec<T extends Record<string, unknown>> = {
 	readonly [K in keyof T]: ConfigFieldSpec<T[K]>
+}
+
+export enum ConfigStorageCacheMode {
+	DISABLED = "disabled",
+	AFTER_WRITE = "after-write",
+	READ_AFTER_WRITE = "read-after-write",
 }
 
 /**
@@ -64,21 +70,21 @@ export type ConfigMutator<T extends Record<string, unknown>> = (
 /**
  * Base interface for config management
  */
-export interface BaseConfig<T extends Record<string, unknown>> {
+export interface Config<T extends Record<string, unknown>> {
 	/**
 	 * Consistent config atoms that resolve to Promise<T>
 	 */
-	readonly consistentConfig: ConsistentConfigAtoms<T>
+	readonly consistentAtoms: ConsistentConfigAtoms<T>
 
 	/**
 	 * Loadable versions of consistent config atoms
 	 */
-	readonly consistentConfigLoadable: ConsistentConfigLoadableAtoms<T>
+	readonly consistentLoadableAtoms: ConsistentConfigLoadableAtoms<T>
 
 	/**
 	 * Eventually consistent config atoms with fallback to defaults
 	 */
-	readonly eventuallyConsistentConfig: EventuallyConsistentConfigAtoms<T>
+	readonly eventuallyConsistentAtoms: EventuallyConsistentConfigAtoms<T>
 
 	/**
 	 * Atomically update multiple config fields
@@ -100,21 +106,7 @@ export interface BaseConfig<T extends Record<string, unknown>> {
 	 * @param key Field key
 	 * @returns Current value or default
 	 */
-	readonly getField: <K extends keyof T>(key: K) => T[K]
-
-	/**
-	 * Load a field from storage
-	 * @param key Field key
-	 * @returns Promise resolving to the loaded value
-	 */
-	readonly loadField: <K extends keyof T>(key: K) => Promise<T[K]>
-
-	/**
-	 * Check if a field has been loaded from storage
-	 * @param key Field key
-	 * @returns True if field has been loaded
-	 */
-	readonly isFieldLoaded: <K extends keyof T>(key: K) => boolean
+	readonly getField: <K extends keyof T>(key: K) => Promise<T[K]>
 
 	/**
 	 * Load all fields from storage
@@ -141,7 +133,7 @@ export interface ConfigOptions<T extends Record<string, unknown>> {
 	/**
 	 * Configuration specification
 	 */
-	readonly spec: Config<T>
+	readonly spec: ConfigSpec<T>
 
 	/**
 	 * Storage backend
@@ -154,12 +146,21 @@ export interface ConfigOptions<T extends Record<string, unknown>> {
 	readonly store: JotaiStore
 
 	/**
-	 * Lock for protecting concurrent updates
+	 * RW Lock adapter map for protecting concurrent updates
 	 */
-	readonly lock: Lock
+	readonly rwLockAdapterMap: RwLockAdapterMap
+
+	readonly globalRwLock: RwLock
 
 	/**
-	 * Key prefix for storage keys (optional)
+	 * Key transform function for storage keys (optional)
+	 * Defaults to identity function if not provided
 	 */
-	readonly keyPrefix?: string
+	readonly storageKeyTransform?: (key: keyof T) => string
+
+	/**
+	 * Key transform function for lock keys (optional)
+	 * Defaults to identity function if not provided
+	 */
+	readonly lockKeyTransform?: (key: keyof T) => string
 }
