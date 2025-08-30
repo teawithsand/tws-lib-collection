@@ -21,12 +21,12 @@ export class MapLockAdapterMap implements LockAdapterMap {
 	 * @returns A new MapLockAdapterMap instance with lock adapters for all specified keys
 	 */
 	public static readonly create = (
-		lockAdapterFactory: () => LockAdapter,
+		lockAdapterFactory: (key: string) => LockAdapter,
 		keys: readonly string[],
 	): MapLockAdapterMap => {
 		const lockMap = new Map<string, LockAdapter>()
 		for (const key of keys) {
-			lockMap.set(key, lockAdapterFactory())
+			lockMap.set(key, lockAdapterFactory(key))
 		}
 		return new MapLockAdapterMap(lockMap)
 	}
@@ -62,12 +62,12 @@ export class MapRwLockAdapterMap implements RwLockAdapterMap {
 	 * @returns A new MapRwLockAdapterMap instance with read-write lock adapters for all specified keys
 	 */
 	public static readonly create = (
-		rwLockAdapterFactory: () => RwLockAdapter,
+		rwLockAdapterFactory: (key: string) => RwLockAdapter,
 		keys: readonly string[],
 	): MapRwLockAdapterMap => {
 		const lockMap = new Map<string, RwLockAdapter>()
 		for (const key of keys) {
-			lockMap.set(key, rwLockAdapterFactory())
+			lockMap.set(key, rwLockAdapterFactory(key))
 		}
 		return new MapRwLockAdapterMap(lockMap)
 	}

@@ -1,6 +1,7 @@
 export * from "./hashLockAdapterMap"
 export * from "./lockAdapterMap"
 export * from "./mapLockAdapterMap"
+export * from "./noOpLockAdapterMap"
 export * from "./prefixLockAdapterMap"
 export * from "./singleLockAdapterMap"
 export * from "./transformLockAdapterMap"

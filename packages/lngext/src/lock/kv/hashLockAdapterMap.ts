@@ -33,6 +33,18 @@ export class HashLockAdapterMap implements LockAdapterMap {
 		this.prefix = prefix
 	}
 
+	public static readonly create = (
+		lockAdapterFactory: (i: number) => LockAdapter,
+		size: number,
+		prefix?: string,
+	): HashLockAdapterMap => {
+		const locks: LockAdapter[] = []
+		for (let i = 0; i < size; i++) {
+			locks.push(lockAdapterFactory(i))
+		}
+		return new HashLockAdapterMap(locks, prefix)
+	}
+
 	/**
 	 * Gets a lock adapter based on the hash of the prefixed key.
 	 * @param key String identifier for the lock
@@ -61,6 +73,18 @@ export class HashRwLockAdapterMap implements RwLockAdapterMap {
 			throw new Error("Lock adapters array cannot be empty")
 		}
 		this.prefix = prefix
+	}
+
+	public static readonly create = (
+		rwLockAdapterFactory: (i: number) => RwLockAdapter,
+		size: number,
+		prefix?: string,
+	): HashRwLockAdapterMap => {
+		const locks: RwLockAdapter[] = []
+		for (let i = 0; i < size; i++) {
+			locks.push(rwLockAdapterFactory(i))
+		}
+		return new HashRwLockAdapterMap(locks, prefix)
 	}
 
 	/**
