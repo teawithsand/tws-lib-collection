@@ -186,6 +186,17 @@ export interface AppTranslation {
 			title: string
 			description: string
 			underDevelopment: string
+			sections: {
+				theme: {
+					title: string
+					description: string
+					options: {
+						light: string
+						dark: string
+						auto: string
+					}
+				}
+			}
 		}
 	}
 }

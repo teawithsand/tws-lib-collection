@@ -256,9 +256,20 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		},
 		settings: {
 			title: "Settings",
-			description: "Configure your PalmaBooks application preferences.",
+			description: "Configure your application preferences.",
 			underDevelopment:
 				"This page is under development. Settings configuration coming soon!",
+			sections: {
+				theme: {
+					title: "Theme",
+					description: "Choose your preferred color scheme.",
+					options: {
+						light: "Light",
+						dark: "Dark",
+						auto: "Follow system",
+					},
+				},
+			},
 		},
 	},
 }

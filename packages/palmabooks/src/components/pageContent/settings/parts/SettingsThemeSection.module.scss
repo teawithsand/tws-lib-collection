@@ -1,0 +1,49 @@
+@use "@teawithsand/mlui/dist/_mantine.scss" as mantine;
+
+.section {
+	padding: mantine.rem(16);
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+		padding: mantine.rem(24);
+	}
+}
+
+.header {
+	margin-bottom: mantine.rem(16);
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+		margin-bottom: mantine.rem(20);
+	}
+}
+
+.title {
+	margin-bottom: mantine.rem(8);
+}
+
+.description {
+	line-height: 1.4;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: mantine.rem(16);
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: mantine.rem(24);
+	}
+}
+
+.select {
+	width: 100%;
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-md) {
+		min-width: mantine.rem(120);
+		max-width: mantine.rem(200);
+		width: auto;
+		flex-shrink: 0;
+	}
+}

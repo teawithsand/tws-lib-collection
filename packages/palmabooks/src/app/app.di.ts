@@ -1,4 +1,4 @@
-import { AbookStoreService } from "@/domain"
+import { AbookStoreService, AppConfig, createAppConfig } from "@/domain"
 import { StorageManagerService } from "@/domain/storage"
 import { AppTranslation, AppTransPicker } from "@/trans/appTranslation"
 import {
@@ -10,9 +10,24 @@ import {
 	FsAbookStoreAbookEntryDataSerializer,
 	InMemoryAbookStore,
 } from "@teawithsand/booklibr"
-import { createStore, JotaiStore, OpfsFs, Path } from "@teawithsand/fstate"
+import {
+	ConfigImpl,
+	createStore,
+	InMemoryConfigStorage,
+	JotaiStore,
+	LocalStorageConfigStorage,
+	OpfsFs,
+	Path,
+	WebRwLockAdapter,
+} from "@teawithsand/fstate"
 import { Logger } from "@teawithsand/llog"
-import { DIBuilder, ReleaseHelper } from "@teawithsand/lngext"
+import {
+	DIBuilder,
+	HashRwLockAdapterMap,
+	inPlace,
+	QueueRwLockAdapter,
+	ReleaseHelper,
+} from "@teawithsand/lngext"
 import {
 	AppBarNavigationButtonType,
 	AppBarService,
@@ -30,6 +45,11 @@ export enum DiConfigDbType {
 	IN_MEMORY = "inMemory",
 }
 
+export enum DiConfigLockType {
+	WEB = "web",
+	LOCAL = "local",
+}
+
 export type AppDiContents = {
 	logger: Logger
 	atomStore: JotaiStore
@@ -39,6 +59,7 @@ export type AppDiContents = {
 
 	translationService: TransService<AppTranslation>
 	appBarService: AppBarService
+	appConfig: ConfigImpl<AppConfig>
 
 	abookStore: AbookStore
 	abookStoreService: AbookStoreService
@@ -47,6 +68,7 @@ export type AppDiContents = {
 
 export type DiConfig = {
 	dbType: DiConfigDbType
+	lockType: DiConfigLockType
 	throwFromRelease?: boolean
 	backendBaseUrl?: string
 }
@@ -60,11 +82,13 @@ export class AppDi {
 		dbType: DiConfigDbType.IN_MEMORY,
 		throwFromRelease: true,
 		backendBaseUrl: addr,
+		lockType: DiConfigLockType.LOCAL,
 	}
 
 	public static readonly DI_PROD_CONFIG: DiConfig = {
 		dbType: DiConfigDbType.OPFS,
 		backendBaseUrl: addr,
+		lockType: DiConfigLockType.WEB,
 	}
 
 	public static readonly makeDiBuilder = (config: DiConfig) =>
@@ -92,6 +116,49 @@ export class AppDi {
 					},
 				}),
 			)
+			.setFactory("appConfig", async (di) => {
+				const store = di.get("atomStore")
+				const [globalLock, keyLockMap] = inPlace(() => {
+					if (config.lockType === DiConfigLockType.LOCAL) {
+						return [
+							new QueueRwLockAdapter(),
+							HashRwLockAdapterMap.create(
+								() => new QueueRwLockAdapter(),
+								10,
+							),
+						]
+					} else {
+						return [
+							new WebRwLockAdapter(
+								`palmabooks/config/global-lock`,
+							),
+							HashRwLockAdapterMap.create(
+								(i) =>
+									new WebRwLockAdapter(
+										`palmabooks/config/key-lock/${i}`,
+									),
+								10,
+							),
+						]
+					}
+				})
+
+				const storage =
+					config.dbType === DiConfigDbType.IN_MEMORY
+						? new InMemoryConfigStorage()
+						: new LocalStorageConfigStorage()
+
+				const configImpl = createAppConfig({
+					store,
+					globalLock,
+					keyLockMap,
+					storage,
+				})
+
+				await configImpl.loadAllFields()
+
+				return configImpl
+			})
 			.setFactory("releaseHelper", async () => new ReleaseHelper())
 			.setFactory("abookStore", async () => {
 				const abookAggregator = AbookAggregatorImpl.create()

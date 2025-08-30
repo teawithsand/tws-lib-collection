@@ -8,6 +8,7 @@ export class App {
 	public readonly appBarService
 	public readonly abookStoreService
 	public readonly storageManagerService
+	public readonly appConfig
 	private readonly releaseHelper
 
 	constructor(di: DI<AppDiContents>) {
@@ -18,6 +19,7 @@ export class App {
 		this.appBarService = di.get("appBarService")
 		this.abookStoreService = di.get("abookStoreService")
 		this.storageManagerService = di.get("storageManagerService")
+		this.appConfig = di.get("appConfig")
 	}
 
 	public readonly release = async () => {
