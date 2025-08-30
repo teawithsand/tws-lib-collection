@@ -1,16 +1,17 @@
 import * as fc from "fast-check"
 import { describe, expect, test } from "vitest"
-import { QueueRwLockAdapter } from "./queueRwLockAdapter.js"
+import { ReadLockNotHeldError, WriteLockNotHeldError } from "./errors"
+import { QueueRwLockAdapter } from "./queueRwLockAdapter"
 
 describe("QueueRwLockAdapter", () => {
 	test("error handling", async () => {
 		const adapter = new QueueRwLockAdapter()
 
-		await expect(adapter.readLock.unlock()).rejects.toThrow(
-			"Cannot unlock read lock when no readers are active",
+		await expect(adapter.readLock.unlock()).rejects.toBeInstanceOf(
+			ReadLockNotHeldError,
 		)
-		await expect(adapter.writeLock.unlock()).rejects.toThrow(
-			"Cannot unlock write lock when no writer is active",
+		await expect(adapter.writeLock.unlock()).rejects.toBeInstanceOf(
+			WriteLockNotHeldError,
 		)
 	})
 

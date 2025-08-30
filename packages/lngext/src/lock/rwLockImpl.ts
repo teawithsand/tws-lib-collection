@@ -1,4 +1,4 @@
-import type { LockAdapter, RwLock, RwLockAdapter } from "./lock.js"
+import type { LockAdapter, RwLock, RwLockAdapter } from "./lock"
 
 /**
  * Implementation of RwLock that wraps an RwLockAdapter and provides

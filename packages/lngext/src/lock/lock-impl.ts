@@ -1,4 +1,4 @@
-import type { Lock, LockAdapter } from "./lock.js"
+import type { Lock, LockAdapter } from "./lock"
 
 /**
  * Implementation of Lock that wraps a LockAdapter and provides

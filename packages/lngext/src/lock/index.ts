@@ -1,3 +1,4 @@
+export * from "./errors"
 export * from "./kv"
 export * from "./lock"
 export * from "./lock-impl"

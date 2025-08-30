@@ -1,4 +1,5 @@
-import type { LockAdapter, RwLockAdapter } from "./lock.js"
+import { ReadLockNotHeldError, WriteLockNotHeldError } from "./errors"
+import type { LockAdapter, RwLockAdapter } from "./lock"
 
 /**
  * A concrete implementation of RwLockAdapter that uses queue-based mechanisms
@@ -13,13 +14,11 @@ export class QueueRwLockAdapter implements RwLockAdapter {
 
 	public readonly readLock: LockAdapter = {
 		lock: async (): Promise<void> => {
-			// If no writer is active and no writers are waiting, grant read access immediately
 			if (!this.hasWriter && this.writeWaitQueue.length === 0) {
 				this.activeReaders++
 				return
 			}
 
-			// Otherwise, wait in the read queue
 			return new Promise<void>((resolve) => {
 				this.readWaitQueue.push(resolve)
 			})
@@ -27,14 +26,13 @@ export class QueueRwLockAdapter implements RwLockAdapter {
 
 		unlock: async (): Promise<void> => {
 			if (this.activeReaders <= 0) {
-				throw new Error(
+				throw new ReadLockNotHeldError(
 					"Cannot unlock read lock when no readers are active",
 				)
 			}
 
 			this.activeReaders--
 
-			// If this was the last reader, check if there are waiting writers
 			if (this.activeReaders === 0) {
 				this.processNextWriter()
 			}
@@ -55,7 +53,7 @@ export class QueueRwLockAdapter implements RwLockAdapter {
 
 		unlock: async (): Promise<void> => {
 			if (!this.hasWriter) {
-				throw new Error(
+				throw new WriteLockNotHeldError(
 					"Cannot unlock write lock when no writer is active",
 				)
 			}
@@ -79,7 +77,6 @@ export class QueueRwLockAdapter implements RwLockAdapter {
 	}
 
 	private readonly processWaitingReaders = (): void => {
-		// Grant access to all waiting readers
 		while (this.readWaitQueue.length > 0) {
 			const nextReader = this.readWaitQueue.shift()
 			if (nextReader) {

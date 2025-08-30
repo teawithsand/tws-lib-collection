@@ -1,4 +1,5 @@
-import type { LockAdapter } from "./lock.js"
+import { LockNotHeldError } from "./errors"
+import type { LockAdapter } from "./lock"
 
 /**
  * Implementation of LockAdapter that uses a queue-based mechanism
@@ -21,7 +22,9 @@ export class QueueLockAdapter implements LockAdapter {
 
 	public readonly unlock = async (): Promise<void> => {
 		if (!this.isLocked) {
-			throw new Error("Cannot unlock a lock that is not currently held")
+			throw new LockNotHeldError(
+				"Cannot unlock a lock that is not currently held",
+			)
 		}
 
 		const nextWaiter = this.waitQueue.shift()

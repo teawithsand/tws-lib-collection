@@ -1,6 +1,7 @@
 import * as fc from "fast-check"
 import { describe, expect, test } from "vitest"
-import { QueueLockAdapter } from "./queueLockAdapter.js"
+import { LockNotHeldError } from "./errors"
+import { QueueLockAdapter } from "./queueLockAdapter"
 
 describe("QueueLockAdapter", () => {
 	test("should acquire lock immediately when not held", async () => {
@@ -50,9 +51,7 @@ describe("QueueLockAdapter", () => {
 	test("should throw error when unlocking non-held lock", async () => {
 		const adapter = new QueueLockAdapter()
 
-		await expect(adapter.unlock()).rejects.toThrow(
-			"Cannot unlock a lock that is not currently held",
-		)
+		await expect(adapter.unlock()).rejects.toBeInstanceOf(LockNotHeldError)
 		expect(adapter.isHeld()).toBe(false)
 	})
 
