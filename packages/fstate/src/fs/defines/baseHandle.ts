@@ -1,5 +1,5 @@
 import { FsDirHandle } from "./dirHandle"
-import { FsFileHandle } from "./fileHandle.js"
+import { FsFileHandle } from "./fileHandle"
 import { Path } from "./path"
 
 /**
