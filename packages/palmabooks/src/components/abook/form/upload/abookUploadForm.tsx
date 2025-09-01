@@ -116,7 +116,11 @@ export const AbookUploadForm: React.FC<AbookUploadFormProps> = ({
 							className={styles["upload-form__submit-button"]}
 						>
 							{submitButtonText ??
-								resolve((t) => t.fileUpload.clickToBrowse)}
+								resolve((t) =>
+									t.fileUpload.uploadFiles(
+										filesField.value.length,
+									),
+								)}
 						</Button>
 					</div>
 				</Stack>

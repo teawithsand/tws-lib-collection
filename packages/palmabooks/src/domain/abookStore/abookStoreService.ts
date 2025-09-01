@@ -1,6 +1,7 @@
 import {
 	Abook,
 	AbookEntry,
+	AbookEntryData,
 	AbookHeaderData,
 	AbookNotFoundError,
 	AbookStore,
@@ -135,6 +136,27 @@ export class AbookStoreService {
 			set(this._abooksList)
 		})
 
+		const createEntry = atom(
+			null,
+			async (
+				_get,
+				set,
+				params: { entryData: AbookEntryData; blob: Blob },
+			) => {
+				const handle = await this.abookStore.get(abookId)
+				const entryHandle = await handle.createEntry(params.entryData)
+
+				const blobWriter = await entryHandle.getBlobWriter()
+				await blobWriter.write(params.blob)
+				await blobWriter.close()
+
+				await entryHandle.computeAggregate()
+				set(abookEntriesAtom)
+				set(abookDataAtom)
+				set(this._abooksList)
+			},
+		)
+
 		return {
 			data: atom((get) => get(abookDataAtom)),
 			dataWithId: atom(
@@ -150,6 +172,7 @@ export class AbookStoreService {
 			update: updateAbook,
 			delete: deleteAbook,
 			computeAggregate,
+			createEntry,
 			refresh: atom(null, (_get, set) => {
 				set(abookDataAtom)
 				set(abookEntriesAtom)

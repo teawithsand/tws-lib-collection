@@ -42,7 +42,9 @@
     "@uiw/react-md-editor": "~4.0.7",
     "@uiw/react-markdown-preview": "~5.1.4",
     "vite-plugin-pwa": "~1.0.0",
-    "@teawithsand/mlui": "workspace:*"
+    "@teawithsand/mlui": "workspace:*",
+    "@react-spring/web": "~10.0.1",
+    "@use-gesture/react": "~10.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

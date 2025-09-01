@@ -58,6 +58,11 @@ export const AutonomousAbookEdit = ({
 	}
 
 	return (
-		<AbookEdit abook={abook} onSubmit={handleSubmit} error={submitError} />
+		<AbookEdit
+			abook={abook}
+			abookId={abookId}
+			onSubmit={handleSubmit}
+			error={submitError}
+		/>
 	)
 }

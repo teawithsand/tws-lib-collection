@@ -50,7 +50,7 @@ export const AbookEntryCard = ({ entry, index }: AbookEntryCardProps) => {
 						</strong>
 						<span>
 							{audioDuration > 0
-								? formatDuration(audioDuration * 1000)
+								? formatDuration(audioDuration)
 								: resolve((t) => t.common.unknown)}
 						</span>
 					</div>

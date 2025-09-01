@@ -3,6 +3,7 @@ import {
 	AbookEditPage,
 	AbookListPage,
 	AbookShowPage,
+	AbookUploadPage,
 	AboutPage,
 	HomePage,
 	NotFoundPage,
@@ -28,13 +29,6 @@ const routes: RouteDefinition[] = [
 		},
 	},
 	{
-		path: Routes.abookShow.path,
-		content: {
-			type: RouteContentType.COMPONENT,
-			component: AbookShowPage,
-		},
-	},
-	{
 		path: Routes.books.path,
 		content: {
 			type: RouteContentType.COMPONENT,
@@ -53,6 +47,20 @@ const routes: RouteDefinition[] = [
 		content: {
 			type: RouteContentType.COMPONENT,
 			component: AbookEditPage,
+		},
+	},
+	{
+		path: Routes.uploadFiles.path,
+		content: {
+			type: RouteContentType.COMPONENT,
+			component: AbookUploadPage,
+		},
+	},
+	{
+		path: Routes.abookShow.path,
+		content: {
+			type: RouteContentType.COMPONENT,
+			component: AbookShowPage,
 		},
 	},
 	{
