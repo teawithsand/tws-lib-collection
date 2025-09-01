@@ -165,9 +165,11 @@ export class BlobMetadataExtractorImpl implements BlobMetadataExtractor {
 				}
 			}
 
+			const durationMillis = duration * 1000
+
 			return {
 				type: BlobMetadataResultType.SUCCESS,
-				metadata: { duration },
+				metadata: { duration: durationMillis },
 			}
 		} catch (error) {
 			return {

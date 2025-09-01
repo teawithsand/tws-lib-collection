@@ -52,16 +52,14 @@ describe("BlobMetadataExtractorImpl", () => {
 		test("should extract metadata from a valid audio URL", async () => {
 			const metadata = await extractor.extractFromUrl(AUDIO_1S_URL)
 
-			// Image should fail for audio URL
 			expect(metadata.image.type).toBe(BlobMetadataResultType.ERROR)
 
-			// Audio extraction should succeed with the WebM file
 			expect(metadata.audio.type).toBe(BlobMetadataResultType.SUCCESS)
 			if (metadata.audio.type === BlobMetadataResultType.SUCCESS) {
 				const audioMetadata = metadata.audio.metadata
 				expect(typeof audioMetadata.duration).toBe("number")
 				expect(audioMetadata.duration).toBeGreaterThan(0)
-				expect(audioMetadata.duration).toBeLessThan(2) // Should be around 1 second
+				expect(audioMetadata.duration).toBeLessThan(2000)
 				expect(isFinite(audioMetadata.duration)).toBe(true)
 			}
 		})
@@ -69,16 +67,14 @@ describe("BlobMetadataExtractorImpl", () => {
 		test("should extract metadata from a longer audio file", async () => {
 			const metadata = await extractor.extractFromUrl(AUDIO_10S_URL)
 
-			// Image should fail for audio URL
 			expect(metadata.image.type).toBe(BlobMetadataResultType.ERROR)
 
-			// Audio extraction should succeed with the WebM file
 			expect(metadata.audio.type).toBe(BlobMetadataResultType.SUCCESS)
 			if (metadata.audio.type === BlobMetadataResultType.SUCCESS) {
 				const audioMetadata = metadata.audio.metadata
 				expect(typeof audioMetadata.duration).toBe("number")
-				expect(audioMetadata.duration).toBeGreaterThan(8)
-				expect(audioMetadata.duration).toBeLessThan(12) // Should be around 10 seconds
+				expect(audioMetadata.duration).toBeGreaterThan(8000)
+				expect(audioMetadata.duration).toBeLessThan(12000)
 				expect(isFinite(audioMetadata.duration)).toBe(true)
 			}
 		})
@@ -172,16 +168,14 @@ describe("BlobMetadataExtractorImpl", () => {
 
 			const metadata = await extractor.extractFromBlob(audioBlob)
 
-			// Image should fail for audio blob
 			expect(metadata.image.type).toBe(BlobMetadataResultType.ERROR)
 
-			// Audio should succeed
 			expect(metadata.audio.type).toBe(BlobMetadataResultType.SUCCESS)
 			if (metadata.audio.type === BlobMetadataResultType.SUCCESS) {
 				const audioMetadata = metadata.audio.metadata
 				expect(typeof audioMetadata.duration).toBe("number")
-				expect(audioMetadata.duration).toBeGreaterThan(0.75)
-				expect(audioMetadata.duration).toBeLessThan(1.25)
+				expect(audioMetadata.duration).toBeGreaterThan(750)
+				expect(audioMetadata.duration).toBeLessThan(1250)
 				expect(isFinite(audioMetadata.duration)).toBe(true)
 			}
 		})

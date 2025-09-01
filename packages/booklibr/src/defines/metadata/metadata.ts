@@ -31,6 +31,9 @@ export type BlobImageMetadata = {
 }
 
 export type BlobAudioMetadata = {
+	/**
+	 * Duration of the audio in milliseconds.
+	 */
 	duration: number
 }
 
