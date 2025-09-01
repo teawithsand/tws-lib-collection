@@ -1,6 +1,30 @@
 import { PlayerEntry, PlayerEntryType } from "../player"
 
+/**
+ * Interface for loading audio duration metadata from various player entry sources.
+ */
 export interface AudioDurationLoader {
+	/**
+	 * Loads the duration of an audio file.
+	 *
+	 * @param src - The player entry (URL or Blob) to extract duration from
+	 * @returns Promise that resolves to the duration in seconds (floating point)
+	 *
+	 * @remarks
+	 * - The returned duration is in seconds, matching the HTML Audio element's duration property
+	 * - For invalid or non-audio sources, may return NaN or throw an error
+	 * - Duration is a floating-point number allowing for fractional seconds
+	 *
+	 * @example
+	 * ```typescript
+	 * const loader = new AudioDurationLoaderImpl();
+	 * const duration = await loader.loadDuration({
+	 *   type: PlayerEntryType.URL,
+	 *   url: "audio.mp3"
+	 * });
+	 * console.log(`Duration: ${duration} seconds`);
+	 * ```
+	 */
 	loadDuration: (src: PlayerEntry) => Promise<number>
 }
 
