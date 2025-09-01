@@ -15,7 +15,6 @@ export const createAppConfig = ({
 	store: JotaiStore
 }) => {
 	return ConfigBuilder.create<AppConfig>()
-		.addField("theme", "auto", AppConfigSerializers.theme)
 		.addField("language", "en", AppConfigSerializers.language)
 		.setStorageKeyTransform((k) => `pcfg-1/${k}`)
 		.setLockKeyTransform((k) => `palmabooks/config/value/${k}`)

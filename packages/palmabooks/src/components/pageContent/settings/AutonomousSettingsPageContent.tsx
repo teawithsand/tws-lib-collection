@@ -1,17 +1,15 @@
-import { useApp } from "@/app/app.hooks"
-import { useAtomValue } from "@teawithsand/fstate"
+import { useTheme } from "@/utils/theme"
 import { SettingsPageContent } from "./SettingsPageContent"
 
 /**
  * Autonomous settings page content component.
- * Handles its own state management and integrates with app services.
+ * Handles its own state management and integrates with theme context.
  */
 export const AutonomousSettingsPageContent = () => {
-	const app = useApp()
-	const theme = useAtomValue(app.appConfig.consistentAtoms.theme)
+	const { theme, setTheme } = useTheme()
 
 	const handleThemeChange = async (newTheme: "light" | "dark" | "auto") => {
-		await app.appConfig.setField("theme", newTheme)
+		setTheme(newTheme)
 	}
 
 	return (

@@ -1,1 +1,1 @@
-export * from "./themeColorSchemeScript"
+export * from "./appMluiProvider"

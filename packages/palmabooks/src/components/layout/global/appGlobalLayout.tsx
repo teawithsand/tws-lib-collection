@@ -1,6 +1,5 @@
 import { useApp, useTransResolver } from "@/app/app.hooks"
 import { AutonomousGlobalErrorFallback } from "@/components/globalErrorFallback"
-import { ThemeColorSchemeScript } from "@/components/util"
 import { Routes } from "@/router"
 import {
 	IconBook,
@@ -114,7 +113,6 @@ export const AppGlobalLayout = ({
 			className={`${styles.container}${className ? ` ${className}` : ""}`}
 			style={style}
 		>
-			<ThemeColorSchemeScript />
 			<AppBarAutonomous appBarService={app.appBarService} />
 			<ErrorBoundary fallback={<AutonomousGlobalErrorFallback />}>
 				<div className={styles.content}>{children}</div>
