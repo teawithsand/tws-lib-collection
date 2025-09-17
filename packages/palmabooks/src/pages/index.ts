@@ -1,5 +1,6 @@
 export * from "./abook"
 export * from "./AboutPage"
+export * from "./fileList"
 export * from "./HomePage"
 export * from "./NotFoundPage"
 export * from "./SettingsPage"

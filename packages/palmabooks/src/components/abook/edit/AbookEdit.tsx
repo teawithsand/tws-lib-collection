@@ -1,10 +1,7 @@
 import { useTransResolver } from "@/app/app.hooks"
 import { AbookEditForm, AbookFormInput } from "@/components/abook/form"
-import { Routes } from "@/router/routes"
-import { IconCloudUpload } from "@tabler/icons-react"
 import { AbookData } from "@teawithsand/booklibr"
-import { Button, Group, Stack, Title, useNavigation } from "@teawithsand/mlui"
-import { useCallback } from "react"
+import { Stack, Title } from "@teawithsand/mlui"
 import { AbookEditNotFound } from "./AbookEditNotFound"
 import styles from "./AutonomousAbookEdit.module.scss"
 
@@ -20,7 +17,6 @@ interface AbookEditProps {
 			}
 		}
 	} | null
-	readonly abookId: string
 	readonly onSubmit: (data: AbookData) => Promise<void>
 	readonly error?: string | null
 }
@@ -29,18 +25,8 @@ interface AbookEditProps {
  * Non-autonomous audiobook edit component.
  * Receives data and callbacks as props, making it suitable for Storybook and testing.
  */
-export const AbookEdit = ({
-	abook,
-	abookId,
-	onSubmit,
-	error,
-}: AbookEditProps) => {
+export const AbookEdit = ({ abook, onSubmit, error }: AbookEditProps) => {
 	const { resolve } = useTransResolver()
-	const { navigate } = useNavigation()
-
-	const handleUploadClick = useCallback(() => {
-		navigate(Routes.uploadFiles.navigate(abookId))
-	}, [navigate, abookId])
 
 	if (!abook) {
 		return <AbookEditNotFound />
@@ -59,15 +45,6 @@ export const AbookEdit = ({
 					<Title order={1} className={styles["abook-edit__title"]}>
 						{resolve((t) => t.abooks.preview.editButton)}
 					</Title>
-					<Group justify="flex-end" mt="md">
-						<Button
-							leftSection={<IconCloudUpload size="1rem" />}
-							onClick={handleUploadClick}
-							variant="outline"
-						>
-							{resolve((t) => t.fileUpload.label)}
-						</Button>
-					</Group>
 				</div>
 
 				<AbookEditForm

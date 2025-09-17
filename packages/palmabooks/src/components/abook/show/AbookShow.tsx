@@ -1,7 +1,12 @@
 import { useTransResolver } from "@/app/app.hooks"
-import { IconEdit, IconTrash } from "@tabler/icons-react"
+import {
+	IconCloudUpload,
+	IconEdit,
+	IconFiles,
+	IconTrash,
+} from "@tabler/icons-react"
 import type { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
-import { ActionIcon, Group } from "@teawithsand/mlui"
+import { ActionIcon, Button, Group } from "@teawithsand/mlui"
 import styles from "./AbookShow.module.scss"
 import { AbookHeroSection } from "./parts/AbookHeroSection"
 import { AbookMetadataAside } from "./parts/AbookMetadataAside"
@@ -12,12 +17,16 @@ interface AbookShowProps {
 	readonly abookId: string
 	readonly onEditClick?: () => void
 	readonly onDeleteClick?: () => void
+	readonly onUploadClick?: () => void
+	readonly onFileListClick?: () => void
 }
 
 export const AbookShow = ({
 	abook,
 	onEditClick,
 	onDeleteClick,
+	onUploadClick,
+	onFileListClick,
 }: AbookShowProps) => {
 	const { resolve } = useTransResolver()
 
@@ -29,6 +38,22 @@ export const AbookShow = ({
 						{abook.data.header.metadata.title}
 					</h1>
 					<Group gap="sm" className={styles.actionButtonsGroup}>
+						<Button
+							leftSection={<IconCloudUpload size="1rem" />}
+							onClick={onUploadClick || (() => {})}
+							disabled={!onUploadClick}
+							variant="outline"
+						>
+							{resolve((t) => t.fileUpload.label)}
+						</Button>
+						<Button
+							leftSection={<IconFiles size="1rem" />}
+							onClick={onFileListClick || (() => {})}
+							disabled={!onFileListClick}
+							variant="outline"
+						>
+							{resolve((t) => t.fileList.viewFiles)}
+						</Button>
 						<ActionIcon
 							variant="filled"
 							color="blue"

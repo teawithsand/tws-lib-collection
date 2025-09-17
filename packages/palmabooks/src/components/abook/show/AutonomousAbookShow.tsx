@@ -36,6 +36,14 @@ export const AutonomousAbookShow = ({
 		}
 	}, [deleteModal, abookId, abookData])
 
+	const handleUploadClick = useCallback(() => {
+		navigate(Routes.uploadFiles.navigate(abookId))
+	}, [navigate, abookId])
+
+	const handleFileListClick = useCallback(() => {
+		navigate(Routes.fileList.navigate(abookId))
+	}, [navigate, abookId])
+
 	if (!abookData) {
 		return <AbookShowNotFound />
 	}
@@ -48,6 +56,8 @@ export const AutonomousAbookShow = ({
 				abookId={abookId}
 				onEditClick={handleEditClick}
 				onDeleteClick={handleDeleteClick}
+				onUploadClick={handleUploadClick}
+				onFileListClick={handleFileListClick}
 			/>
 
 			<AutonomousAbookDeleteModal

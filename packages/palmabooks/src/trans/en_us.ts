@@ -236,6 +236,58 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		formValidationErrors: "Form Validation Errors",
 		dropFilesPlaceholder: "Drop files here or click to browse",
 	},
+	fileList: {
+		title: (count: number) => `File List (${count} files)`,
+		empty: "No files to display",
+		path: "Path",
+		metadata: "Metadata",
+		size: "Size",
+		type: "Type",
+		modified: "Modified",
+		disposition: "Disposition",
+		changeDisposition: "Change disposition",
+		viewFiles: "View Files",
+	},
+	entryList: {
+		filter: {
+			searchPlaceholder: "Search files...",
+			advancedFilter: "Advanced Filter",
+			clearFilter: "Clear Filter",
+			advancedFilterTitle: "Advanced Filter Options",
+			searchLabel: "Search",
+			dispositionLabel: "Disposition",
+			dispositionPlaceholder: "Select disposition...",
+			clearButton: "Clear",
+			applyButton: "Apply",
+		},
+		selection: {
+			totalSelected: (count: number) => `${count} selected`,
+			totalSize: (size: string) => `Total size: ${size}`,
+			unselectAll: "Unselect All",
+			invertSelection: "Invert Selection",
+		},
+		operations: {
+			title: (count: number) => `Operations (${count} files)`,
+			selectAll: "Select All",
+			deleteSelected: "Delete Selected",
+			changeDisposition: "Change Disposition",
+			confirmDelete: "Confirm Delete",
+			deleteConfirmation: (count: number) =>
+				`Are you sure you want to delete ${count} file${count === 1 ? "" : "s"}?`,
+		},
+		disposition: {
+			title: (count: number) => `Disposition (${count} files)`,
+			saveChanges: "Save Changes",
+			discardChanges: "Discard Changes",
+			hasChanges: (count: number) =>
+				`${count} file${count === 1 ? "" : "s"} with changes`,
+			noChanges: "No changes to save",
+			labels: {
+				playableAudio: "Audio",
+				coverImage: "Image",
+			},
+		},
+	},
 	pages: {
 		home: {
 			title: "Welcome to PalmaBooks",

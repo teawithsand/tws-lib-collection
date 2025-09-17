@@ -1,0 +1,24 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.selectionBar {
+	border: mantine.rem(1) solid var(--mantine-color-blue-4);
+	background-color: var(--mantine-color-blue-0);
+
+	@include mantine.dark {
+		background-color: var(--mantine-color-dark-6);
+		border-color: var(--mantine-color-blue-6);
+	}
+}
+
+.statusText {
+	font-weight: 500;
+	color: var(--mantine-color-blue-7);
+
+	@include mantine.dark {
+		color: var(--mantine-color-blue-4);
+	}
+}
+
+.buttonGroup {
+	gap: mantine.rem(8);
+}

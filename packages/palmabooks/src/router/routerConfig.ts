@@ -5,6 +5,7 @@ import {
 	AbookShowPage,
 	AbookUploadPage,
 	AboutPage,
+	FileListPage,
 	HomePage,
 	NotFoundPage,
 	SettingsPage,
@@ -54,6 +55,13 @@ const routes: RouteDefinition[] = [
 		content: {
 			type: RouteContentType.COMPONENT,
 			component: AbookUploadPage,
+		},
+	},
+	{
+		path: Routes.fileList.path,
+		content: {
+			type: RouteContentType.COMPONENT,
+			component: FileListPage,
 		},
 	},
 	{

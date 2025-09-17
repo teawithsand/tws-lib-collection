@@ -211,6 +211,14 @@ const meta: Meta<typeof AbookShow> = {
 			description:
 				"Callback function called when delete button is clicked",
 		},
+		onUploadClick: {
+			description:
+				"Callback function called when upload button is clicked",
+		},
+		onFileListClick: {
+			description:
+				"Callback function called when file list button is clicked",
+		},
 	},
 }
 
@@ -224,6 +232,8 @@ export const Default: Story = {
 		abookId: "sample-abook-id",
 		onEditClick: fn(),
 		onDeleteClick: fn(),
+		onUploadClick: fn(),
+		onFileListClick: fn(),
 	},
 }
 
@@ -238,6 +248,8 @@ export const WithLongContent: Story = {
 		abookId: "long-content-abook",
 		onEditClick: fn(),
 		onDeleteClick: fn(),
+		onUploadClick: fn(),
+		onFileListClick: fn(),
 	},
 }
 
@@ -252,6 +264,8 @@ export const EmptyAudiobook: Story = {
 		abookId: "empty-abook",
 		onEditClick: fn(),
 		onDeleteClick: fn(),
+		onUploadClick: fn(),
+		onFileListClick: fn(),
 	},
 }
 
@@ -262,6 +276,7 @@ export const EditOnlyActions: Story = {
 		abookId: "edit-only-abook",
 		onEditClick: fn(),
 		onDeleteClick: undefined,
+		onUploadClick: undefined,
 	},
 }
 
@@ -272,6 +287,8 @@ export const DeleteOnlyActions: Story = {
 		abookId: "delete-only-abook",
 		onEditClick: undefined,
 		onDeleteClick: fn(),
+		onUploadClick: undefined,
+		onFileListClick: undefined,
 	},
 }
 
@@ -282,5 +299,19 @@ export const ReadOnlyMode: Story = {
 		abookId: "readonly-abook",
 		onEditClick: undefined,
 		onDeleteClick: undefined,
+		onUploadClick: undefined,
+		onFileListClick: undefined,
+	},
+}
+
+export const UploadOnlyActions: Story = {
+	args: {
+		abook: sampleAbook,
+		abookEntries: sampleEntries,
+		abookId: "upload-only-abook",
+		onEditClick: undefined,
+		onDeleteClick: undefined,
+		onUploadClick: fn(),
+		onFileListClick: undefined,
 	},
 }

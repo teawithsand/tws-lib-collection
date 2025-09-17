@@ -70,6 +70,14 @@ export class Routes {
 	}
 
 	/**
+	 * File list for book page route
+	 */
+	public static readonly fileList: RouteConfig = {
+		path: "/abooks/:id/files",
+		navigate: (id: string) => `/abooks/${id}/files`,
+	}
+
+	/**
 	 * Settings page route
 	 */
 	public static readonly settings: RouteConfig = {
@@ -97,6 +105,7 @@ export class Routes {
 			Routes.addBook,
 			Routes.editBook,
 			Routes.uploadFiles,
+			Routes.fileList,
 			Routes.settings,
 			Routes.storage,
 		]

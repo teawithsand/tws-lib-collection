@@ -166,6 +166,56 @@ export interface AppTranslation {
 		formValidationErrors: string
 		dropFilesPlaceholder: string
 	}
+	fileList: {
+		title: (count: number) => string
+		empty: string
+		path: string
+		metadata: string
+		size: string
+		type: string
+		modified: string
+		disposition: string
+		changeDisposition: string
+		viewFiles: string
+	}
+	entryList: {
+		filter: {
+			searchPlaceholder: string
+			advancedFilter: string
+			clearFilter: string
+			advancedFilterTitle: string
+			searchLabel: string
+			dispositionLabel: string
+			dispositionPlaceholder: string
+			clearButton: string
+			applyButton: string
+		}
+		selection: {
+			totalSelected: (count: number) => string
+			totalSize: (size: string) => string
+			unselectAll: string
+			invertSelection: string
+		}
+		operations: {
+			title: (count: number) => string
+			selectAll: string
+			deleteSelected: string
+			changeDisposition: string
+			confirmDelete: string
+			deleteConfirmation: (count: number) => string
+		}
+		disposition: {
+			title: (count: number) => string
+			saveChanges: string
+			discardChanges: string
+			hasChanges: (count: number) => string
+			noChanges: string
+			labels: {
+				playableAudio: string
+				coverImage: string
+			}
+		}
+	}
 	pages: {
 		home: {
 			title: string
