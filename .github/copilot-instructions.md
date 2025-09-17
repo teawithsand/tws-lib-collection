@@ -83,3 +83,11 @@
 # UI
 
 When using react-router prefer Link component to using navigate method from useNavigate hook wherever possible.
+
+# Layout
+
+When designing layout, keep them mobile friendly, though they should work on PCs and tables too.
+
+# Imports
+
+Do not use .js extension when writing imports.
