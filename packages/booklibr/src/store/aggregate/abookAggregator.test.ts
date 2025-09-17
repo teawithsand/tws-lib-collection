@@ -42,6 +42,7 @@ describe("AbookAggregatorImpl", () => {
 			data: {
 				createdAt: Timestamp.fromNumber(Date.now()),
 				disposition,
+				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: Date.now(),
@@ -276,6 +277,7 @@ describe("AbookAggregatorImpl", () => {
 			data: {
 				createdAt: Timestamp.fromNumber(Date.now()),
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: Date.now(),

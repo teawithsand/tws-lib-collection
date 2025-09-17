@@ -35,6 +35,7 @@ const createMockAbookEntry = (
 				Date.now() - Math.random() * 86400000,
 			),
 			disposition,
+			ordinalNumber: 0,
 			source: {
 				type: AbookEntrySourceType.UPLOAD,
 				uploadedAt: Date.now() - Math.random() * 86400000,

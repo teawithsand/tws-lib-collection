@@ -519,6 +519,7 @@ fsTypes.forEach((fsType) => {
 						type: AbookEntrySourceType.URL,
 						url: "file:///test.mp3",
 					},
+					ordinalNumber: 1,
 				}
 				return await handle.createEntry(entryData)
 			}
@@ -874,10 +875,8 @@ fsTypes.forEach((fsType) => {
 					})
 					const writer = await entryHandle.getBlobWriter()
 					const data = new TextEncoder().encode("test data")
-					await writer.write(data)
-					await writer.close()
-
-					// Act
+					await writer.write(data.buffer)
+					await writer.close() // Act
 					await entryHandle.write({
 						aggregate: {
 							type: AbookWriteAggregateType.RECOMPUTE,

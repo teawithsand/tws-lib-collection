@@ -50,6 +50,7 @@ const createMockEntry = (
 			data: {
 				createdAt: Timestamp.fromNumber(1672531200000),
 				disposition,
+				ordinalNumber: 0,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: 1672531200000,

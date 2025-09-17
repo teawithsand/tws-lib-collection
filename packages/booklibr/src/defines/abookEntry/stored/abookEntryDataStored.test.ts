@@ -18,11 +18,20 @@ describe("AbookEntryData versioned serialization", () => {
 			expect(AbookEntryDispositionStoredV1.COVER_IMAGE).toBe(
 				"cover-image",
 			)
+			expect(AbookEntryDispositionStoredV1.DESCRIPTION).toBe(
+				"description",
+			)
+			expect(AbookEntryDispositionStoredV1.UNKNOWN).toBe("unknown")
 		})
 
 		test("AbookEntryDispositionStoredV1 should have exactly the expected keys", () => {
 			const keys = Object.keys(AbookEntryDispositionStoredV1).sort()
-			expect(keys).toEqual(["COVER_IMAGE", "PLAYABLE_AUDIO"])
+			expect(keys).toEqual([
+				"COVER_IMAGE",
+				"DESCRIPTION",
+				"PLAYABLE_AUDIO",
+				"UNKNOWN",
+			])
 		})
 	})
 
@@ -36,6 +45,7 @@ describe("AbookEntryData versioned serialization", () => {
 				uploadFileName: "test-audio.mp3",
 				uploadFileMime: "audio/mpeg",
 			},
+			ordinalNumber: 1,
 		}
 
 		const serializedExamples = [
@@ -50,6 +60,7 @@ describe("AbookEntryData versioned serialization", () => {
 						uploadFileName: "test-audio.mp3",
 						uploadFileMime: "audio/mpeg",
 					},
+					ordinalNumber: 1,
 				},
 			},
 			{
@@ -61,6 +72,7 @@ describe("AbookEntryData versioned serialization", () => {
 						type: "url",
 						url: "https://example.com/cover.jpg",
 					},
+					ordinalNumber: 2,
 				},
 			},
 			{
@@ -74,6 +86,33 @@ describe("AbookEntryData versioned serialization", () => {
 						uploadFileName: "book-chapter-1.m4a",
 						uploadFileMime: "audio/mp4",
 					},
+					ordinalNumber: 3,
+				},
+			},
+			{
+				version: 1 as const,
+				data: {
+					createdAt: 1672531200000, // 2023-01-01T00:00:00.000Z
+					disposition: "description",
+					source: {
+						type: "upload",
+						uploadedAt: 1672531200000,
+						uploadFileName: "book-description.txt",
+						uploadFileMime: "text/plain",
+					},
+					ordinalNumber: 4,
+				},
+			},
+			{
+				version: 1 as const,
+				data: {
+					createdAt: 1672531200000, // 2023-01-01T00:00:00.000Z
+					disposition: "unknown",
+					source: {
+						type: "url",
+						url: "https://example.com/unknown-file.dat",
+					},
+					ordinalNumber: 5,
 				},
 			},
 		]
@@ -88,5 +127,57 @@ describe("AbookEntryData versioned serialization", () => {
 		})
 
 		tester.runAllTests()
+	})
+
+	test("should serialize and deserialize DESCRIPTION disposition correctly", () => {
+		const testData: AbookEntryData = {
+			createdAt: Timestamp.fromNumber(1672531200000), // 2023-01-01T00:00:00.000Z
+			disposition: AbookEntryDisposition.DESCRIPTION,
+			source: {
+				type: AbookEntrySourceType.UPLOAD,
+				uploadedAt: 1672531200000,
+				uploadFileName: "book-description.txt",
+				uploadFileMime: "text/plain",
+			},
+			ordinalNumber: 4,
+		}
+
+		const serialized = AbookEntryDataVersionedType.serialize(testData)
+		const deserialized =
+			AbookEntryDataVersionedType.getUnknownSerializer().deserialize(
+				serialized,
+			)
+
+		expect(serialized.data.disposition).toBe("description")
+		expect(deserialized.disposition).toBe(AbookEntryDisposition.DESCRIPTION)
+		expect(deserialized.createdAt.toNumberMillis()).toBe(
+			testData.createdAt.toNumberMillis(),
+		)
+		expect(deserialized.source).toEqual(testData.source)
+	})
+
+	test("should serialize and deserialize UNKNOWN disposition correctly", () => {
+		const testData: AbookEntryData = {
+			createdAt: Timestamp.fromNumber(1672531200000), // 2023-01-01T00:00:00.000Z
+			disposition: AbookEntryDisposition.UNKNOWN,
+			source: {
+				type: AbookEntrySourceType.URL,
+				url: "https://example.com/unknown-file.dat",
+			},
+			ordinalNumber: 5,
+		}
+
+		const serialized = AbookEntryDataVersionedType.serialize(testData)
+		const deserialized =
+			AbookEntryDataVersionedType.getUnknownSerializer().deserialize(
+				serialized,
+			)
+
+		expect(serialized.data.disposition).toBe("unknown")
+		expect(deserialized.disposition).toBe(AbookEntryDisposition.UNKNOWN)
+		expect(deserialized.createdAt.toNumberMillis()).toBe(
+			testData.createdAt.toNumberMillis(),
+		)
+		expect(deserialized.source).toEqual(testData.source)
 	})
 })

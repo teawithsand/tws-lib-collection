@@ -12,6 +12,7 @@ describe("AbookEntryVersionedType", () => {
 			data: {
 				createdAt: Timestamp.fromNumber(1641024000000),
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: 1641024000000,
@@ -33,6 +34,7 @@ describe("AbookEntryVersionedType", () => {
 					data: {
 						createdAt: 1641024000000,
 						disposition: "playable-audio",
+						ordinalNumber: 1,
 						source: {
 							type: "upload",
 							uploadedAt: 1641024000000,

@@ -5,6 +5,8 @@ import { AbookEntrySourceFull, AbookEntrySourceLite } from "./entrySource"
 export enum AbookEntryDisposition {
 	PLAYABLE_AUDIO = "playable-audio",
 	COVER_IMAGE = "cover-image",
+	DESCRIPTION = "description",
+	UNKNOWN = "unknown",
 }
 
 export type AbookEntryMetadata = {
@@ -30,4 +32,5 @@ export type AbookEntryData = {
 
 	disposition: AbookEntryDisposition
 	source: AbookEntrySourceFull
+	ordinalNumber: number
 }

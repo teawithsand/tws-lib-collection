@@ -19,6 +19,7 @@ const createMockAbookEntry = (id: string): WithId<AbookEntry> => {
 	const data: AbookEntryData = {
 		createdAt: Timestamp.fromDate(new Date()),
 		disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+		ordinalNumber: 0,
 		source: {
 			type: AbookEntrySourceType.UPLOAD,
 			uploadedAt: Date.now(),

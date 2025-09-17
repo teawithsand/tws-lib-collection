@@ -48,6 +48,7 @@ export const AutonomousAbookUpload = ({
 					const entryData: AbookEntryData = {
 						createdAt: Timestamp.fromDate(new Date()),
 						disposition,
+						ordinalNumber: 0,
 						source: {
 							type: AbookEntrySourceType.UPLOAD,
 							uploadedAt: Date.now(),

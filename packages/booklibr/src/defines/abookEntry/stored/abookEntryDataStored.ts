@@ -13,12 +13,15 @@ import {
 export enum AbookEntryDispositionStoredV1 {
 	PLAYABLE_AUDIO = "playable-audio",
 	COVER_IMAGE = "cover-image",
+	DESCRIPTION = "description",
+	UNKNOWN = "unknown",
 }
 
 export type AbookEntryDataStoredV1 = {
 	createdAt: number
 	disposition: AbookEntryDispositionStoredV1
 	source: AbookEntrySourceFullStoredV1
+	ordinalNumber: number
 }
 
 // Zod schemas for V1
@@ -26,6 +29,7 @@ const abookEntryDataStoredV1Schema = z.object({
 	createdAt: z.number(),
 	disposition: z.nativeEnum(AbookEntryDispositionStoredV1),
 	source: abookEntrySourceFullStoredV1Schema,
+	ordinalNumber: z.number(),
 })
 
 // Helper functions for conversion
@@ -37,6 +41,10 @@ const serializeAbookEntryDisposition = (
 			return AbookEntryDispositionStoredV1.PLAYABLE_AUDIO
 		case AbookEntryDisposition.COVER_IMAGE:
 			return AbookEntryDispositionStoredV1.COVER_IMAGE
+		case AbookEntryDisposition.DESCRIPTION:
+			return AbookEntryDispositionStoredV1.DESCRIPTION
+		case AbookEntryDisposition.UNKNOWN:
+			return AbookEntryDispositionStoredV1.UNKNOWN
 		default:
 			throw new Error(`Unknown disposition: ${disposition}`)
 	}
@@ -50,6 +58,10 @@ const deserializeAbookEntryDisposition = (
 			return AbookEntryDisposition.PLAYABLE_AUDIO
 		case AbookEntryDispositionStoredV1.COVER_IMAGE:
 			return AbookEntryDisposition.COVER_IMAGE
+		case AbookEntryDispositionStoredV1.DESCRIPTION:
+			return AbookEntryDisposition.DESCRIPTION
+		case AbookEntryDispositionStoredV1.UNKNOWN:
+			return AbookEntryDisposition.UNKNOWN
 		default:
 			throw new Error(`Unknown stored disposition: ${stored}`)
 	}
@@ -105,6 +117,7 @@ const serializeAbookEntryData = (
 	createdAt: Timestamp.serializer.serialize(entry.createdAt),
 	disposition: serializeAbookEntryDisposition(entry.disposition),
 	source: serializeAbookEntrySourceFull(entry.source),
+	ordinalNumber: entry.ordinalNumber,
 })
 
 const deserializeAbookEntryData = (
@@ -113,6 +126,7 @@ const deserializeAbookEntryData = (
 	createdAt: Timestamp.serializer.deserialize(stored.createdAt),
 	disposition: deserializeAbookEntryDisposition(stored.disposition),
 	source: deserializeAbookEntrySourceFull(stored.source),
+	ordinalNumber: stored.ordinalNumber,
 })
 
 export const AbookEntryDataVersionedType = new VersionedType<

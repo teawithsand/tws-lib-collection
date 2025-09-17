@@ -35,6 +35,7 @@ describe("AbookEntryAggregatorImpl", () => {
 		const baseData = {
 			createdAt: Timestamp.fromNumber(Date.now()),
 			disposition,
+			ordinalNumber: 1,
 		}
 
 		if (sourceType === AbookEntrySourceType.UPLOAD) {

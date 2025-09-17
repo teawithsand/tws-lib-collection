@@ -19,6 +19,7 @@ describe("AbookDataVersionedType", () => {
 			data: {
 				createdAt: Timestamp.fromNumber(1641024000000),
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: 1641024000000,
@@ -83,6 +84,7 @@ describe("AbookDataVersionedType", () => {
 									createdAt: 1641024000000,
 									disposition:
 										AbookEntryDispositionStoredV1.PLAYABLE_AUDIO,
+									ordinalNumber: 1,
 									source: {
 										type: AbookEntrySourceTypeStoredV1.UPLOAD,
 										uploadedAt: 1641024000000,
@@ -109,6 +111,7 @@ describe("AbookDataVersionedType", () => {
 									createdAt: 1641024000000,
 									disposition:
 										AbookEntryDispositionStoredV1.PLAYABLE_AUDIO,
+									ordinalNumber: 1,
 									source: {
 										type: AbookEntrySourceTypeStoredV1.UPLOAD,
 										uploadedAt: 1641024000000,

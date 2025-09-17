@@ -44,6 +44,7 @@ export class AbookUploadFormClass extends FormAtomsDelegateBase<
 			const entryData: AbookEntryData = {
 				createdAt: now,
 				disposition: disposition,
+				ordinalNumber: 0,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: now.toNumberMillis(),

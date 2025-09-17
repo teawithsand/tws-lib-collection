@@ -18,6 +18,7 @@ const mockEntries: WithId<AbookEntry>[] = [
 			data: {
 				createdAt: Timestamp.fromDate(new Date()),
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+				ordinalNumber: 0,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: Date.now(),
@@ -37,6 +38,7 @@ const mockEntries: WithId<AbookEntry>[] = [
 			data: {
 				createdAt: Timestamp.fromDate(new Date()),
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+				ordinalNumber: 0,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: Date.now(),
@@ -56,6 +58,7 @@ const mockEntries: WithId<AbookEntry>[] = [
 			data: {
 				createdAt: Timestamp.fromDate(new Date()),
 				disposition: AbookEntryDisposition.COVER_IMAGE,
+				ordinalNumber: 0,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
 					uploadedAt: Date.now(),
