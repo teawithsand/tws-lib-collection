@@ -514,6 +514,7 @@ fsTypes.forEach((fsType) => {
 			const createEntry = async () => {
 				const entryData: AbookEntryData = {
 					createdAt: Timestamp.fromDate(new Date()),
+					name: "Test Entry",
 					disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 					source: {
 						type: AbookEntrySourceType.URL,

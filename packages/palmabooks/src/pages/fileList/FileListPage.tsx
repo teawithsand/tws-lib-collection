@@ -1,5 +1,5 @@
 import { useApp } from "@/app/app.hooks"
-import { AutonomousSimpleAbookEntryList } from "@/components/abook/newEntryList/simple/AutonomousSimpleAbookEntryList"
+import { AutonomousAbookEntryList } from "@/components/abook/newEntryList/AutonomousAbookEntryList"
 import { AppLocalLayout } from "@/components/layout"
 import {
 	AppBarMutators,
@@ -28,7 +28,7 @@ export const FileListPage = () => {
 		<AppLocalLayout>
 			<Container>
 				<LoadingSuspenseBoundary>
-					<AutonomousSimpleAbookEntryList
+					<AutonomousAbookEntryList
 						abookServiceAtoms={abookServiceAtoms}
 					/>
 				</LoadingSuspenseBoundary>

@@ -11,6 +11,7 @@ describe("AbookEntryVersionedType", () => {
 		const testData = new AbookEntry({
 			data: {
 				createdAt: Timestamp.fromNumber(1641024000000),
+				name: "Test Entry",
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 				ordinalNumber: 1,
 				source: {
@@ -33,14 +34,15 @@ describe("AbookEntryVersionedType", () => {
 					version: 1 as const,
 					data: {
 						createdAt: 1641024000000,
+						name: "Test Entry",
 						disposition: "playable-audio",
-						ordinalNumber: 1,
 						source: {
 							type: "upload",
 							uploadedAt: 1641024000000,
 							uploadFileName: "test-audio.mp3",
 							uploadFileMime: "audio/mpeg",
 						},
+						ordinalNumber: 1,
 					},
 				},
 				aggregate: {

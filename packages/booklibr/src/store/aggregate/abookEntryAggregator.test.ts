@@ -34,6 +34,7 @@ describe("AbookEntryAggregatorImpl", () => {
 	): AbookEntryData => {
 		const baseData = {
 			createdAt: Timestamp.fromNumber(Date.now()),
+			name: "Test Entry",
 			disposition,
 			ordinalNumber: 1,
 		}

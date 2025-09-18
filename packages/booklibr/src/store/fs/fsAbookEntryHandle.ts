@@ -273,6 +273,7 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 
 	private readonly createDefaultEntryData = (): AbookEntryData => ({
 		createdAt: Timestamp.fromDate(new Date()),
+		name: "Untitled Entry",
 		disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 		ordinalNumber: 1,
 		source: {

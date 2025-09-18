@@ -18,6 +18,26 @@ describe("AbookDataVersionedType", () => {
 		const testEntry = new AbookEntry({
 			data: {
 				createdAt: Timestamp.fromNumber(1641024000000),
+				name: "Test Entry",
+				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+				ordinalNumber: 1,
+				source: {
+					type: AbookEntrySourceType.UPLOAD,
+					uploadedAt: 1641024000000,
+					uploadFileName: "test-audio.mp3",
+					uploadFileMime: "audio/mpeg",
+				},
+			},
+			aggregate: {
+				metadata: null,
+				blobSize: 1024000,
+			},
+		})
+
+		const testEntry2 = new AbookEntry({
+			data: {
+				createdAt: Timestamp.fromNumber(1641024000000),
+				name: "Test Entry 2",
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 				ordinalNumber: 1,
 				source: {
@@ -49,7 +69,7 @@ describe("AbookDataVersionedType", () => {
 			},
 			entries: new Map([
 				["entry1", testEntry],
-				["entry2", testEntry],
+				["entry2", testEntry2],
 			]),
 		}
 
@@ -82,15 +102,16 @@ describe("AbookDataVersionedType", () => {
 								version: 1 as const,
 								data: {
 									createdAt: 1641024000000,
+									name: "Test Entry",
 									disposition:
 										AbookEntryDispositionStoredV1.PLAYABLE_AUDIO,
-									ordinalNumber: 1,
 									source: {
 										type: AbookEntrySourceTypeStoredV1.UPLOAD,
 										uploadedAt: 1641024000000,
 										uploadFileName: "test-audio.mp3",
 										uploadFileMime: "audio/mpeg",
 									},
+									ordinalNumber: 1,
 								},
 							},
 							aggregate: {
@@ -109,15 +130,16 @@ describe("AbookDataVersionedType", () => {
 								version: 1 as const,
 								data: {
 									createdAt: 1641024000000,
+									name: "Test Entry 2",
 									disposition:
 										AbookEntryDispositionStoredV1.PLAYABLE_AUDIO,
-									ordinalNumber: 1,
 									source: {
 										type: AbookEntrySourceTypeStoredV1.UPLOAD,
 										uploadedAt: 1641024000000,
 										uploadFileName: "test-audio.mp3",
 										uploadFileMime: "audio/mpeg",
 									},
+									ordinalNumber: 1,
 								},
 							},
 							aggregate: {

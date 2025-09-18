@@ -38,6 +38,7 @@ describe("AbookEntryData versioned serialization", () => {
 	test("should serialize and deserialize correctly", () => {
 		const testData: AbookEntryData = {
 			createdAt: Timestamp.fromNumber(1641024000000), // 2022-01-01T12:00:00.000Z
+			name: "Test Audio Entry",
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 			source: {
 				type: AbookEntrySourceType.UPLOAD,
@@ -53,6 +54,7 @@ describe("AbookEntryData versioned serialization", () => {
 				version: 1 as const,
 				data: {
 					createdAt: 1641024000000,
+					name: "Test Audio Entry",
 					disposition: "playable-audio",
 					source: {
 						type: "upload",
@@ -67,6 +69,7 @@ describe("AbookEntryData versioned serialization", () => {
 				version: 1 as const,
 				data: {
 					createdAt: 1609459200000, // 2021-01-01T00:00:00.000Z
+					name: "Cover Image",
 					disposition: "cover-image",
 					source: {
 						type: "url",
@@ -79,6 +82,7 @@ describe("AbookEntryData versioned serialization", () => {
 				version: 1 as const,
 				data: {
 					createdAt: 1672531200000, // 2023-01-01T00:00:00.000Z
+					name: "Chapter 1",
 					disposition: "playable-audio",
 					source: {
 						type: "upload",
@@ -93,6 +97,7 @@ describe("AbookEntryData versioned serialization", () => {
 				version: 1 as const,
 				data: {
 					createdAt: 1672531200000, // 2023-01-01T00:00:00.000Z
+					name: "Book Description",
 					disposition: "description",
 					source: {
 						type: "upload",
@@ -107,6 +112,7 @@ describe("AbookEntryData versioned serialization", () => {
 				version: 1 as const,
 				data: {
 					createdAt: 1672531200000, // 2023-01-01T00:00:00.000Z
+					name: "Unknown File",
 					disposition: "unknown",
 					source: {
 						type: "url",
@@ -132,6 +138,7 @@ describe("AbookEntryData versioned serialization", () => {
 	test("should serialize and deserialize DESCRIPTION disposition correctly", () => {
 		const testData: AbookEntryData = {
 			createdAt: Timestamp.fromNumber(1672531200000), // 2023-01-01T00:00:00.000Z
+			name: "Book Description",
 			disposition: AbookEntryDisposition.DESCRIPTION,
 			source: {
 				type: AbookEntrySourceType.UPLOAD,
@@ -159,6 +166,7 @@ describe("AbookEntryData versioned serialization", () => {
 	test("should serialize and deserialize UNKNOWN disposition correctly", () => {
 		const testData: AbookEntryData = {
 			createdAt: Timestamp.fromNumber(1672531200000), // 2023-01-01T00:00:00.000Z
+			name: "Unknown File",
 			disposition: AbookEntryDisposition.UNKNOWN,
 			source: {
 				type: AbookEntrySourceType.URL,

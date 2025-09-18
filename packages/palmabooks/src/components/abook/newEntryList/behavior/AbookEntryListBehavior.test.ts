@@ -18,6 +18,7 @@ import {
 const createMockAbookEntry = (id: string): WithId<AbookEntry> => {
 	const data: AbookEntryData = {
 		createdAt: Timestamp.fromDate(new Date()),
+		name: `Entry ${id}`,
 		disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 		ordinalNumber: 0,
 		source: {

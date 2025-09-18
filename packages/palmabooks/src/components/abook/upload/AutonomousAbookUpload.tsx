@@ -47,6 +47,7 @@ export const AutonomousAbookUpload = ({
 
 					const entryData: AbookEntryData = {
 						createdAt: Timestamp.fromDate(new Date()),
+						name: fileEntry.file.name || "Untitled Entry", // TODO: Allow user to edit entry names
 						disposition,
 						ordinalNumber: 0,
 						source: {

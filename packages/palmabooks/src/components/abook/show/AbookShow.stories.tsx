@@ -49,6 +49,7 @@ const createMockEntry = (
 		data: new AbookEntry({
 			data: {
 				createdAt: Timestamp.fromNumber(1672531200000),
+				name: fileName || "Sample Entry",
 				disposition,
 				ordinalNumber: 0,
 				source: {

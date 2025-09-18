@@ -41,6 +41,7 @@ describe("AbookAggregatorImpl", () => {
 		return new AbookEntry({
 			data: {
 				createdAt: Timestamp.fromNumber(Date.now()),
+				name: "test-file.mp3",
 				disposition,
 				ordinalNumber: 1,
 				source: {
@@ -276,6 +277,7 @@ describe("AbookAggregatorImpl", () => {
 		const entry = new AbookEntry({
 			data: {
 				createdAt: Timestamp.fromNumber(Date.now()),
+				name: "test-file.mp3",
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 				ordinalNumber: 1,
 				source: {

@@ -19,6 +19,7 @@ export enum AbookEntryDispositionStoredV1 {
 
 export type AbookEntryDataStoredV1 = {
 	createdAt: number
+	name: string
 	disposition: AbookEntryDispositionStoredV1
 	source: AbookEntrySourceFullStoredV1
 	ordinalNumber: number
@@ -27,6 +28,7 @@ export type AbookEntryDataStoredV1 = {
 // Zod schemas for V1
 const abookEntryDataStoredV1Schema = z.object({
 	createdAt: z.number(),
+	name: z.string(),
 	disposition: z.nativeEnum(AbookEntryDispositionStoredV1),
 	source: abookEntrySourceFullStoredV1Schema,
 	ordinalNumber: z.number(),
@@ -115,6 +117,7 @@ const serializeAbookEntryData = (
 	entry: AbookEntryData,
 ): AbookEntryDataStoredV1 => ({
 	createdAt: Timestamp.serializer.serialize(entry.createdAt),
+	name: entry.name,
 	disposition: serializeAbookEntryDisposition(entry.disposition),
 	source: serializeAbookEntrySourceFull(entry.source),
 	ordinalNumber: entry.ordinalNumber,
@@ -124,6 +127,7 @@ const deserializeAbookEntryData = (
 	stored: AbookEntryDataStoredV1,
 ): AbookEntryData => ({
 	createdAt: Timestamp.serializer.deserialize(stored.createdAt),
+	name: stored.name,
 	disposition: deserializeAbookEntryDisposition(stored.disposition),
 	source: deserializeAbookEntrySourceFull(stored.source),
 	ordinalNumber: stored.ordinalNumber,

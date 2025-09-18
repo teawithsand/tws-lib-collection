@@ -35,6 +35,7 @@ const createMockAbookEntry = (
 			createdAt: Timestamp.fromNumber(
 				Date.now() - Math.random() * 86400000,
 			),
+			name: "Sample Entry",
 			disposition,
 			ordinalNumber: 0,
 			source: {

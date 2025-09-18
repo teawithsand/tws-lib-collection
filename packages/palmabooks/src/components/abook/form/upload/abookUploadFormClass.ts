@@ -43,6 +43,7 @@ export class AbookUploadFormClass extends FormAtomsDelegateBase<
 			const entryId = generateUuid()
 			const entryData: AbookEntryData = {
 				createdAt: now,
+				name: selectedFile.file.name || "Untitled Entry",
 				disposition: disposition,
 				ordinalNumber: 0,
 				source: {

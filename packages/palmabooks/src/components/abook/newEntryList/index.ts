@@ -1,2 +1,4 @@
-export { AbookEntryListBehavior } from "./AbookEntryListBehavior"
-export * from "./simple"
+export { AbookEntryList } from "./AbookEntryList"
+export { AutonomousAbookEntryList } from "./AutonomousAbookEntryList"
+export * from "./components"
+export type { AbookEntryListProps } from "./types"

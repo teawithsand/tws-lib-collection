@@ -1,25 +1,25 @@
 import { useApp } from "@/app/app.hooks"
 import type { AbookStoreServiceAbookAtoms } from "@/domain/abookStore"
-import { LoadingSuspenseBoundary } from "@teawithsand/mlui"
-import { useCallback, useMemo } from "react"
-import { AbookEntryListBehavior } from "../AbookEntryListBehavior"
-import { SimpleAbookEntryList } from "./SimpleAbookEntryList"
+import { LoadingSuspenseBoundary, useStableMemo } from "@teawithsand/mlui"
+import { useCallback } from "react"
+import { AbookEntryList } from "./AbookEntryList"
+import { AbookEntryListBehavior } from "./behavior/AbookEntryListBehavior"
 
-interface AutonomousSimpleAbookEntryListProps {
+interface AutonomousAbookEntryListProps {
 	readonly abookServiceAtoms: AbookStoreServiceAbookAtoms
 }
 
 /**
- * Autonomous simple abook entry list component.
+ * Autonomous abook entry list component.
  * Creates and manages AbookEntryListBehavior instance and handles data persistence.
  */
-export const AutonomousSimpleAbookEntryList = ({
+export const AutonomousAbookEntryList = ({
 	abookServiceAtoms,
-}: AutonomousSimpleAbookEntryListProps) => {
+}: AutonomousAbookEntryListProps) => {
 	const app = useApp()
 
 	// Create behavior instance with memoization to prevent recreation on re-renders
-	const behavior = useMemo(() => {
+	const behavior = useStableMemo(() => {
 		return new AbookEntryListBehavior(abookServiceAtoms.entries)
 	}, [abookServiceAtoms.entries])
 
@@ -32,12 +32,12 @@ export const AutonomousSimpleAbookEntryList = ({
 			// 3. Clear modifications after successful save
 
 			app.logger.info(
-				"AutonomousSimpleAbookEntryList",
+				"AutonomousAbookEntryList",
 				"Save changes called (scaffold - not implemented)",
 			)
 		} catch (error) {
 			app.logger.error(
-				"AutonomousSimpleAbookEntryList",
+				"AutonomousAbookEntryList",
 				"Failed to save changes:",
 				error,
 			)
@@ -47,7 +47,7 @@ export const AutonomousSimpleAbookEntryList = ({
 
 	return (
 		<LoadingSuspenseBoundary>
-			<SimpleAbookEntryList
+			<AbookEntryList
 				behavior={behavior}
 				onSaveChanges={handleSaveChanges}
 			/>
