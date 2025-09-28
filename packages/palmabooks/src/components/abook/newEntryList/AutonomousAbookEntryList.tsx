@@ -7,6 +7,7 @@ import { AbookEntryListBehavior } from "./behavior/AbookEntryListBehavior"
 
 interface AutonomousAbookEntryListProps {
 	readonly abookServiceAtoms: AbookStoreServiceAbookAtoms
+	readonly abookId: string
 }
 
 /**
@@ -15,6 +16,7 @@ interface AutonomousAbookEntryListProps {
  */
 export const AutonomousAbookEntryList = ({
 	abookServiceAtoms,
+	abookId,
 }: AutonomousAbookEntryListProps) => {
 	const app = useApp()
 
@@ -25,12 +27,6 @@ export const AutonomousAbookEntryList = ({
 
 	const handleSaveChanges = useCallback(async () => {
 		try {
-			// TODO: Implement actual save logic for modifications
-			// This is a scaffold version - actual implementation would:
-			// 1. Get the modified entries from behavior.modifiedEntries
-			// 2. Save them via the appropriate service
-			// 3. Clear modifications after successful save
-
 			app.logger.info(
 				"AutonomousAbookEntryList",
 				"Save changes called (scaffold - not implemented)",
@@ -50,6 +46,7 @@ export const AutonomousAbookEntryList = ({
 			<AbookEntryList
 				behavior={behavior}
 				onSaveChanges={handleSaveChanges}
+				abookId={abookId}
 			/>
 		</LoadingSuspenseBoundary>
 	)

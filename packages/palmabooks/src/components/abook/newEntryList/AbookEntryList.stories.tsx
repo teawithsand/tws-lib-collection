@@ -10,7 +10,6 @@ import { Timestamp } from "@teawithsand/lngext"
 import { AbookEntryList } from "./AbookEntryList"
 import { AbookEntryListBehavior } from "./behavior/AbookEntryListBehavior"
 
-// Mock entries for the story
 const mockEntries: WithId<AbookEntry>[] = [
 	{
 		id: "1",
@@ -95,15 +94,18 @@ const meta: Meta<typeof AbookEntryList> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-// Create a behavior instance for the stories
 const createBehavior = (entries: WithId<AbookEntry>[]) => {
 	const entriesAtom = atom(Promise.resolve(entries))
 	return new AbookEntryListBehavior(entriesAtom)
 }
 
+const mockSaveChanges = async () => {}
+
 export const Default: Story = {
 	args: {
 		behavior: createBehavior(mockEntries),
+		abookId: "example-abook-id",
+		onSaveChanges: mockSaveChanges,
 	},
 	parameters: {
 		docs: {
@@ -117,6 +119,8 @@ export const Default: Story = {
 export const Empty: Story = {
 	args: {
 		behavior: createBehavior([]),
+		abookId: "example-abook-id",
+		onSaveChanges: mockSaveChanges,
 	},
 	parameters: {
 		docs: {
@@ -130,6 +134,8 @@ export const Empty: Story = {
 export const SingleEntry: Story = {
 	args: {
 		behavior: createBehavior([mockEntries[0]]),
+		abookId: "example-abook-id",
+		onSaveChanges: mockSaveChanges,
 	},
 	parameters: {
 		docs: {

@@ -118,12 +118,10 @@ const createMockAbook = (
 			entry.data.aggregate.metadata?.metadata.audio.type ===
 				BlobMetadataResultType.SUCCESS
 		) {
-			const audioMetadata = entry.data.aggregate.metadata.metadata
-				.audio as {
-				type: BlobMetadataResultType.SUCCESS
-				metadata: { duration: number }
+			const audioResult = entry.data.aggregate.metadata.metadata.audio
+			if (audioResult.type === BlobMetadataResultType.SUCCESS) {
+				return total + audioResult.metadata.duration * 1000
 			}
-			return total + audioMetadata.metadata.duration * 1000
 		}
 		return total
 	}, 0)

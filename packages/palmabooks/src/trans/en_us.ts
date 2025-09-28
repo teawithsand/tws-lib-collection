@@ -172,6 +172,20 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			warningTitle: "Warning",
 			deleteFailedTitle: "Delete Failed",
 		},
+		entry: {
+			notFound: {
+				title: "Entry Not Found",
+				description:
+					"The requested audiobook entry could not be found.",
+			},
+			metadata: {
+				fileName: "File Name",
+				uploaded: "Uploaded",
+				ordinalLabel: "Ordinal Number",
+				ordinalPlaceholder: "Enter the entry order number",
+				extractedLabel: "Extracted",
+			},
+		},
 	},
 	storage: {
 		pageTitle: "Storage Management",
@@ -283,8 +297,10 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				`${count} file${count === 1 ? "" : "s"} with changes`,
 			noChanges: "No changes to save",
 			labels: {
-				playableAudio: "Audio",
-				coverImage: "Image",
+				playableAudio: "Playable Audio",
+				coverImage: "Cover Image",
+				description: "Description",
+				unknown: "Unknown",
 			},
 		},
 	},

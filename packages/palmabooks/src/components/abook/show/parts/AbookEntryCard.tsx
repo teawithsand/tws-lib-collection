@@ -1,5 +1,9 @@
 import { useTransResolver } from "@/app/app.hooks"
-import type { AbookEntry, WithId } from "@teawithsand/booklibr"
+import {
+	BlobMetadataResultType,
+	type AbookEntry,
+	type WithId,
+} from "@teawithsand/booklibr"
 import { Text } from "@teawithsand/mlui"
 import styles from "./AbookEntryCard.module.scss"
 
@@ -16,18 +20,21 @@ export const AbookEntryCard = ({ entry, index }: AbookEntryCardProps) => {
 	}
 
 	const hasAudioMetadata =
-		entry.data.aggregate.metadata?.metadata.audio.type === "success"
-	const audioDuration =
-		hasAudioMetadata &&
-		entry.data.aggregate.metadata?.metadata.audio.type === "success"
-			? (
-					entry.data.aggregate.metadata.metadata.audio as {
-						metadata: {
-							duration: number
-						}
-					}
-				).metadata.duration
-			: 0
+		entry.data.aggregate.metadata?.metadata.audio.type ===
+		BlobMetadataResultType.SUCCESS
+
+	const audioDuration = (() => {
+		if (!hasAudioMetadata || !entry.data.aggregate.metadata) {
+			return 0
+		}
+
+		const audioResult = entry.data.aggregate.metadata.metadata.audio
+		if (audioResult.type === BlobMetadataResultType.SUCCESS) {
+			return audioResult.metadata.duration
+		}
+
+		return 0
+	})()
 
 	return (
 		<div className={styles.entryCard}>

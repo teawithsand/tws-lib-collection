@@ -78,6 +78,15 @@ export class Routes {
 	}
 
 	/**
+	 * Entry show page route
+	 */
+	public static readonly entryShow: RouteConfig = {
+		path: "/abooks/:abookId/entries/:entryId",
+		navigate: (abookId: string, entryId: string) =>
+			`/abooks/${abookId}/entries/${entryId}`,
+	}
+
+	/**
 	 * Settings page route
 	 */
 	public static readonly settings: RouteConfig = {
@@ -106,6 +115,7 @@ export class Routes {
 			Routes.editBook,
 			Routes.uploadFiles,
 			Routes.fileList,
+			Routes.entryShow,
 			Routes.settings,
 			Routes.storage,
 		]

@@ -114,6 +114,19 @@ export interface AppTranslation {
 			warningTitle: string
 			deleteFailedTitle: string
 		}
+		entry: {
+			notFound: {
+				title: string
+				description: string
+			}
+			metadata: {
+				fileName: string
+				uploaded: string
+				ordinalLabel: string
+				ordinalPlaceholder: string
+				extractedLabel: string
+			}
+		}
 	}
 	storage: {
 		pageTitle: string
@@ -213,6 +226,8 @@ export interface AppTranslation {
 			labels: {
 				playableAudio: string
 				coverImage: string
+				description: string
+				unknown: string
 			}
 		}
 	}

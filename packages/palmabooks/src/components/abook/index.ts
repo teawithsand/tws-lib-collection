@@ -1,6 +1,6 @@
 export * from "./create"
 export * from "./edit"
-export * from "./entryList"
 export * from "./list"
 export * from "./modal"
+export * from "./newEntryList"
 export * from "./show"

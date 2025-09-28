@@ -30,6 +30,7 @@ export const FileListPage = () => {
 				<LoadingSuspenseBoundary>
 					<AutonomousAbookEntryList
 						abookServiceAtoms={abookServiceAtoms}
+						abookId={abookId}
 					/>
 				</LoadingSuspenseBoundary>
 			</Container>

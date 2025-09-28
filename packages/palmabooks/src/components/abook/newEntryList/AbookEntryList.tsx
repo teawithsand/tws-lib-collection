@@ -1,5 +1,6 @@
+import { useTransResolver } from "@/app/app.hooks"
 import { useAtomValue } from "@teawithsand/fstate"
-import { Box, Flex, LoadingOverlay } from "@teawithsand/mlui"
+import { Box, Flex } from "@teawithsand/mlui"
 import type { AbookEntryListBehavior } from "./behavior/AbookEntryListBehavior"
 import {
 	AbookEntryCard,
@@ -10,6 +11,7 @@ import {
 interface AbookEntryListProps {
 	readonly behavior: AbookEntryListBehavior
 	readonly onSaveChanges: () => Promise<void>
+	readonly abookId: string
 }
 
 /**
@@ -18,21 +20,18 @@ interface AbookEntryListProps {
 export const AbookEntryList = ({
 	behavior,
 	onSaveChanges,
+	abookId,
 }: AbookEntryListProps) => {
 	const entries = useAtomValue(behavior.entriesList)
 	const isPristine = useAtomValue(behavior.isPristine)
 	const hasModifications = !isPristine
-	const isLoading = false // Loading state not implemented in behavior
+	const { resolve } = useTransResolver()
 
 	return (
 		<Box pos="relative">
-			<LoadingOverlay visible={isLoading} />
-
 			<Flex direction="column" gap="md">
-				{/* Filter Section */}
 				<AbookEntryFilter behavior={behavior} />
 
-				{/* Save Bar - only shown when there are modifications */}
 				{hasModifications && (
 					<AbookEntrySaveBar
 						behavior={behavior}
@@ -40,11 +39,10 @@ export const AbookEntryList = ({
 					/>
 				)}
 
-				{/* Entry List */}
 				<Flex direction="column" gap="sm">
 					{entries.length === 0 ? (
 						<Box ta="center" py="xl" c="dimmed">
-							No entries found
+							{resolve((t) => t.abooks.preview.noEntries)}
 						</Box>
 					) : (
 						entries.map((entry) => (
@@ -52,6 +50,7 @@ export const AbookEntryList = ({
 								key={entry.id}
 								entry={entry}
 								behavior={behavior}
+								abookId={abookId}
 							/>
 						))
 					)}

@@ -1,0 +1,52 @@
+@use "@teawithsand/mlui/dist/mantine" as mantine;
+
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: mantine.rem(400);
+	padding: var(--mantine-spacing-xl);
+}
+
+.content {
+	text-align: center;
+	max-width: mantine.rem(500);
+}
+
+.title {
+	font-size: mantine.rem(32);
+	font-weight: 700;
+	color: var(--mantine-color-text);
+	margin: 0 0 var(--mantine-spacing-md) 0;
+
+	@include mantine.smaller-than(mantine.$mantine-breakpoint-sm) {
+		font-size: mantine.rem(24);
+	}
+}
+
+.description {
+	font-size: mantine.rem(16);
+	color: var(--mantine-color-dimmed);
+	margin-bottom: var(--mantine-spacing-lg);
+	line-height: 1.5;
+}
+
+.backButton {
+	background: var(--mantine-color-blue-filled);
+	color: var(--mantine-color-white);
+	border: none;
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-lg);
+	font-size: mantine.rem(14);
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+
+	&:hover {
+		background: var(--mantine-color-blue-filled-hover);
+	}
+
+	&:active {
+		background: var(--mantine-color-blue-light);
+	}
+}
