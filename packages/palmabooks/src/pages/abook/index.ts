@@ -1,6 +1,0 @@
-export * from "./AbookCreatePage"
-export * from "./AbookEditPage"
-export * from "./AbookEntryShowPage"
-export * from "./AbookListPage"
-export * from "./AbookShowPage"
-export * from "./AbookUploadPage"

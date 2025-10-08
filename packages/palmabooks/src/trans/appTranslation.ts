@@ -1,21 +1,12 @@
 import { Language, TransPickerImpl, TransString } from "@teawithsand/fstate"
-import { Timestamp } from "@teawithsand/lngext"
 import { translationEnUs } from "./en_us"
 
 export interface AppTranslation {
 	language: Language
 	common: {
 		error: string
-		cancel: string
-		unknown: string
-		submitFailedTitle: string
-		explainError: (error: unknown) => string
 	}
 	util: {
-		time: {
-			formatDuration: (milliseconds: number) => string
-			formatDate: (timestamp: number | Date | Timestamp) => string
-		}
 		formatSize: (bytes: number | undefined) => string
 	}
 	globalErrorFallback: {
@@ -40,93 +31,6 @@ export interface AppTranslation {
 		title: string
 		description: string
 		goBackToHome: string
-	}
-	abooks: {
-		pageTitle: string
-		list: {
-			emptyState: {
-				title: string
-				description: string
-				createButton: string
-			}
-			addButton: string
-			countText: (count: number) => string
-			entryCountText: (count: number) => string
-			statusSingle: string
-			statusMultiPart: string
-		}
-		form: {
-			title: string
-			titlePlaceholder: string
-			description: string
-			descriptionPlaceholder: string
-			privateUserNote: string
-			privateUserNotePlaceholder: string
-			createButton: string
-			updateButton: string
-			createPageTitle: string
-			formValidationErrors: string
-			unexpectedError: string
-			validation: {
-				titleMustNotBeEmpty: string
-				titleTooLong: string
-				descriptionTooLong: string
-				privateUserNoteTooLong: string
-			}
-		}
-		preview: {
-			title: string
-			backButton: string
-			editButton: string
-			deleteButton: string
-			metadata: string
-			entries: string
-			duration: string
-			entryCount: string
-			noEntries: string
-			description: string
-			createdLabel: string
-			sourceLabel: string
-			dispositionLabel: string
-			durationLabel: string
-			entryTitle: (index: number) => string
-			totalDurationLabel: string
-			entriesLabel: string
-		}
-		notFound: {
-			title: string
-			description: string
-			goBackButton: string
-		}
-		deleteModal: {
-			title: string
-			fallbackTitle: string
-			confirmationMessage: (title: string) => string
-			warningMessage: string
-			deleteButton: string
-			deleteButtonDeleting: string
-			cancelButton: string
-			successMessage: string
-			successDescription: string
-			errorMessage: string
-			noAudiobookSelectedTitle: string
-			noAudiobookSelectedMessage: string
-			warningTitle: string
-			deleteFailedTitle: string
-		}
-		entry: {
-			notFound: {
-				title: string
-				description: string
-			}
-			metadata: {
-				fileName: string
-				uploaded: string
-				ordinalLabel: string
-				ordinalPlaceholder: string
-				extractedLabel: string
-			}
-		}
 	}
 	storage: {
 		pageTitle: string
@@ -157,80 +61,6 @@ export interface AppTranslation {
 			total: number | undefined,
 		) => string
 	}
-	fileUpload: {
-		label: string
-		description: string
-		placeholder: string
-		filesSelected: (count: number) => string
-		uploadFolder: string
-		files: string
-		total: string
-		processingFiles: string
-		clickToBrowse: string
-		uploadError: string
-		uploadFailed: string
-		uploadingFiles: (progress: number) => string
-		uploading: string
-		uploadFiles: (count: number) => string
-		cancel: string
-		clearAll: string
-		uploadTitle: (bookTitle: string) => string
-		uploadDescription: string
-		formValidationErrors: string
-		dropFilesPlaceholder: string
-	}
-	fileList: {
-		title: (count: number) => string
-		empty: string
-		path: string
-		metadata: string
-		size: string
-		type: string
-		modified: string
-		disposition: string
-		changeDisposition: string
-		viewFiles: string
-	}
-	entryList: {
-		filter: {
-			searchPlaceholder: string
-			advancedFilter: string
-			clearFilter: string
-			advancedFilterTitle: string
-			searchLabel: string
-			dispositionLabel: string
-			dispositionPlaceholder: string
-			clearButton: string
-			applyButton: string
-		}
-		selection: {
-			totalSelected: (count: number) => string
-			totalSize: (size: string) => string
-			unselectAll: string
-			invertSelection: string
-		}
-		operations: {
-			title: (count: number) => string
-			selectAll: string
-			deleteSelected: string
-			changeDisposition: string
-			confirmDelete: string
-			deleteConfirmation: (count: number) => string
-		}
-		disposition: {
-			title: (count: number) => string
-			saveChanges: string
-			discardChanges: string
-			hasChanges: (count: number) => string
-			noChanges: string
-			labels: {
-				playableAudio: string
-				coverImage: string
-				description: string
-				unknown: string
-			}
-		}
-	}
 	pages: {
 		home: {
 			title: string
@@ -250,7 +80,6 @@ export interface AppTranslation {
 		settings: {
 			title: string
 			description: string
-			underDevelopment: string
 			sections: {
 				theme: {
 					title: string
