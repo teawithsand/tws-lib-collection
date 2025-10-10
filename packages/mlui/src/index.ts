@@ -12,6 +12,7 @@ export * from "./reactUtils"
 // otherwise if they are defined in some other file, it generates only definitions there
 // but puts reexports here nonetheless, which generates build time warnings about double reexporting of some types
 export * from "@mantine/core"
+export * from "@mantine/dropzone"
 export * from "@mantine/hooks"
 export * from "@mantine/notifications"
 export * from "@tabler/icons-react"

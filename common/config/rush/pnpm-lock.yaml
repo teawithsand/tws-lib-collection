@@ -506,6 +506,9 @@ importers:
       '@mantine/core':
         specifier: ~8.2.7
         version: 8.2.7(@mantine/hooks@8.2.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/dropzone':
+        specifier: ~8.3.4
+        version: 8.3.4(@mantine/core@8.2.7(@mantine/hooks@8.2.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.7(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@mantine/hooks':
         specifier: ~8.2.7
         version: 8.2.7(react@19.1.0)
@@ -2295,6 +2298,14 @@ packages:
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
 
+  '@mantine/dropzone@8.3.4':
+    resolution: {integrity: sha512-EOPuduzPD4KyYmMGhJAdPAbGUHkveB/Ae+WE5efwJFF2vNfR94IbIaNn9Dd1dzIAfMJjN6gH2j7yRxilObONTg==}
+    peerDependencies:
+      '@mantine/core': 8.3.4
+      '@mantine/hooks': 8.3.4
+      react: ^18.x || ^19.x
+      react-dom: ^18.x || ^19.x
+
   '@mantine/hooks@8.1.3':
     resolution: {integrity: sha512-yL4SbyYjrkmtIhscswajNz9RL0iO2+V8CMtOi0KISch2rPNvTAJNumFuZaXgj4UHeDc0JQYSmcZ+EW8NGm7xcQ==}
     peerDependencies:
@@ -3233,6 +3244,10 @@ packages:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
 
+  attr-accept@2.2.5:
+    resolution: {integrity: sha512-0bDNnY/u6pPwHDMoF0FieU354oBi0a8rD9FcsLwzcGWbc8KS8KPIi7y+s13OlVY+gMWc/9xEMUgNE6Qm8ZllYQ==}
+    engines: {node: '>=4'}
+
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
@@ -4028,6 +4043,10 @@ packages:
   file-entry-cache@8.0.0:
     resolution: {integrity: sha512-XXTUwCvisa5oacNGRP9SfNtYBNAMi+RPwBFmblZEF7N7swHYQS6/Zfk7SRwx4D5j3CH211YNRco1DEMNVfZCnQ==}
     engines: {node: '>=16.0.0'}
+
+  file-selector@2.1.2:
+    resolution: {integrity: sha512-QgXo+mXTe8ljeqUFaX3QVHc5osSItJ/Km+xpocx0aSqWGMSCf6qYs/VnzZgS864Pjn5iceMRFigeAV7AfTlaig==}
+    engines: {node: '>= 12'}
 
   file-uri-to-path@1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
@@ -5373,6 +5392,12 @@ packages:
     resolution: {integrity: sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==}
     peerDependencies:
       react: ^19.1.0
+
+  react-dropzone@14.3.8:
+    resolution: {integrity: sha512-sBgODnq+lcA4P296DY4wacOZz3JFpD99fp+hb//iBO2HHnyeZU3FwWyXJ6salNpqQdsZrgMrotuko/BdJMV8Ug==}
+    engines: {node: '>= 10.13'}
+    peerDependencies:
+      react: '>= 16.8 || 18.0.0'
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -8000,6 +8025,14 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
+  '@mantine/dropzone@8.3.4(@mantine/core@8.2.7(@mantine/hooks@8.2.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@mantine/hooks@8.2.7(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@mantine/core': 8.2.7(@mantine/hooks@8.2.7(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@mantine/hooks': 8.2.7(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-dropzone: 14.3.8(react@19.1.0)
+
   '@mantine/hooks@8.1.3(react@19.1.0)':
     dependencies:
       react: 19.1.0
@@ -9240,6 +9273,8 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
+  attr-accept@2.2.5: {}
+
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.1.0
@@ -10187,6 +10222,10 @@ snapshots:
   file-entry-cache@8.0.0:
     dependencies:
       flat-cache: 4.0.1
+
+  file-selector@2.1.2:
+    dependencies:
+      tslib: 2.8.1
 
   file-uri-to-path@1.0.0: {}
 
@@ -11851,6 +11890,13 @@ snapshots:
     dependencies:
       react: 19.1.0
       scheduler: 0.26.0
+
+  react-dropzone@14.3.8(react@19.1.0):
+    dependencies:
+      attr-accept: 2.2.5
+      file-selector: 2.1.2
+      prop-types: 15.8.1
+      react: 19.1.0
 
   react-is@16.13.1: {}
 

@@ -72,7 +72,8 @@
     "@teawithsand/llog": "workspace:*",
     "@mantine/core": "~8.2.7",
     "@mantine/hooks": "~8.2.7",
-    "@mantine/notifications": "~8.2.7"
+    "@mantine/notifications": "~8.2.7",
+    "@mantine/dropzone": "~8.3.4"
   },
   "sideEffects": [
     "**/*.css"
