@@ -1,15 +1,11 @@
 @use "@teawithsand/mlui/dist/_mantine" as mantine;
 
-.container {
-	// Base container styles for local layout with margin from top
-	display: block;
-	margin-top: mantine.rem(16); // Default margin from top
+@mixin container-spacing($offset: mantine.rem(16)) {
+	margin-top: $offset;
 }
 
-.containerFull {
-	// Full container styles that takes 100% height minus app bar
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	height: 100%;
+.container {
+	display: block;
+	@include container-spacing();
+	overflow: auto; // This type of container should allow scrolling as needed
 }

@@ -1,17 +1,23 @@
 @use "@teawithsand/mlui/dist/_mantine" as mantine;
 
-.container {
-	min-height: 100vh;
+%centered-flex {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: mantine.rem(32);
+}
+
+@mixin padded-block($padding) {
+	padding: $padding;
+}
+
+.container {
+	@extend %centered-flex;
+	min-height: 100vh;
+	@include padded-block(mantine.rem(32));
 }
 
 .iconWrapper {
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	@extend %centered-flex;
 }
 
 .errorIcon {
@@ -39,7 +45,7 @@
 	font-family: var(--mantine-font-family-monospace);
 	word-break: break-word;
 	background-color: var(--mantine-color-gray-0);
-	padding: mantine.rem(8);
+	@include padded-block(mantine.rem(8));
 	border-radius: var(--mantine-radius-sm);
 	margin-top: mantine.rem(8);
 

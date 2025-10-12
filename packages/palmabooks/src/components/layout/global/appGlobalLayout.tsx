@@ -109,16 +109,21 @@ export const AppGlobalLayout = ({
 	)
 
 	return (
-		<div
-			className={`${styles.container}${className ? ` ${className}` : ""}`}
-			style={style}
-		>
-			<AppBarAutonomous appBarService={app.appBarService} />
-			<ErrorBoundary fallback={<AutonomousGlobalErrorFallback />}>
-				<div className={styles.content}>{children}</div>
-			</ErrorBoundary>
-
+		<>
+			<div
+				className={`${styles.container}${className ? ` ${className}` : ""}`}
+				style={style}
+			>
+				<div className={styles.header}>
+					<AppBarAutonomous appBarService={app.appBarService} />
+				</div>
+				<div className={styles.content}>
+					<ErrorBoundary fallback={<AutonomousGlobalErrorFallback />}>
+						{children}
+					</ErrorBoundary>
+				</div>
+			</div>
 			<Notifications notificationMaxHeight={300} limit={5} />
-		</div>
+		</>
 	)
 }

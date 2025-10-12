@@ -1,0 +1,48 @@
+.file {
+	display: grid;
+	grid-auto-flow: column;
+
+	grid-template-columns: auto 1fr auto;
+	column-gap: var(--mantine-spacing-sm);
+
+	align-items: center;
+
+	min-height: 25px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-white);
+
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: var(--mantine-color-gray-4);
+		background-color: var(--mantine-color-gray-0);
+	}
+
+	&--error {
+		border-color: var(--mantine-color-red-5);
+		background-color: var(--mantine-color-red-0);
+
+		&:hover {
+			border-color: var(--mantine-color-red-6);
+			background-color: var(--mantine-color-red-1);
+		}
+	}
+
+	&__content {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	&__name {
+		word-break: break-all;
+	}
+
+	&__error {
+		color: var(--mantine-color-red-7);
+		font-size: var(--mantine-font-size-xs);
+		margin-top: var(--mantine-spacing-xs);
+	}
+}

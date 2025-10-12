@@ -31,6 +31,7 @@ export class Routes {
 
 	/**
 	 * Books page route
+	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
 	public static readonly books: RouteConfig = {
 		path: "/abooks",
@@ -39,22 +40,21 @@ export class Routes {
 
 	/**
 	 * Book preview page route
+	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
 	public static readonly abookShow: RouteConfig = {
 		path: "/abooks/:id",
 		navigate: (id: string) => `/abooks/${id}`,
 	}
 
-	/**
-	 * Add book page route
-	 */
-	public static readonly addBook: RouteConfig = {
-		path: "/abooks/add",
-		navigate: () => "/abooks/add",
+	public static readonly createAbook: RouteConfig = {
+		path: "/abooks/create",
+		navigate: () => "/abooks/create",
 	}
 
 	/**
 	 * Edit book page route
+	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
 	public static readonly editBook: RouteConfig = {
 		path: "/abooks/:id/edit",
@@ -63,6 +63,7 @@ export class Routes {
 
 	/**
 	 * Upload files to book page route
+	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
 	public static readonly uploadFiles: RouteConfig = {
 		path: "/abooks/:id/upload",
@@ -71,6 +72,7 @@ export class Routes {
 
 	/**
 	 * File list for book page route
+	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
 	public static readonly fileList: RouteConfig = {
 		path: "/abooks/:id/files",
@@ -79,6 +81,7 @@ export class Routes {
 
 	/**
 	 * Entry show page route
+	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
 	public static readonly entryShow: RouteConfig = {
 		path: "/abooks/:abookId/entries/:entryId",
@@ -111,7 +114,7 @@ export class Routes {
 			Routes.about,
 			Routes.books,
 			Routes.abookShow,
-			Routes.addBook,
+			Routes.createAbook,
 			Routes.editBook,
 			Routes.uploadFiles,
 			Routes.fileList,

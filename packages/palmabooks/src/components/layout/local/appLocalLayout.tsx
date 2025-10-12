@@ -28,14 +28,7 @@ export const AppLocalLayout = ({
 			</div>
 		)
 	} else if (variant === AppLocalLayoutVariant.FULL) {
-		return (
-			<div
-				className={`${styles.containerFull}${className ? ` ${className}` : ""}`}
-				style={style}
-			>
-				{children}
-			</div>
-		)
+		return <>{children}</>
 	} else if (variant === AppLocalLayoutVariant.DEFAULT) {
 		return (
 			<div

@@ -93,6 +93,27 @@ export interface AppTranslation {
 			}
 		}
 	}
+	abook: {
+		addFilesWizard: {
+			tabs: {
+				picking: string
+				checking: string
+				uploading: string
+			}
+			notifications: {
+				filesRejected: {
+					title: string
+					message: (count: number) => string
+				}
+			}
+			uploadTab: {
+				prompt: string
+				newFilesSize: (bytes: number | undefined) => string
+				uploadButton: string
+				emptyState: string
+			}
+		}
+	}
 }
 
 export type AppTransString = TransString<AppTranslation>

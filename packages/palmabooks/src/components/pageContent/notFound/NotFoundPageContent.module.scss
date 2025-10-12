@@ -1,8 +1,16 @@
 @use "@teawithsand/mlui/dist/_mantine" as mantine;
 
-.title {
+%centered-heading {
 	text-align: center;
 	font-weight: 700;
+}
+
+.title {
+	@extend %centered-heading;
+}
+
+.title,
+.description {
 	margin-bottom: 0;
 }
 

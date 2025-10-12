@@ -1,24 +1,24 @@
 import { Language } from "@teawithsand/fstate"
 import { AppTranslation } from "./appTranslation"
 
+const formatSize = (bytes: number | undefined) => {
+	if (bytes === undefined) return "Unknown"
+	if (bytes === 0) return "0 Bytes"
+
+	const k = 1024
+	const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
+}
+
 export const translationEnUs: Readonly<AppTranslation> = {
 	language: Language.ENGLISH_US,
 	common: {
 		error: "Error",
 	},
 	util: {
-		formatSize: (bytes: number | undefined) => {
-			if (bytes === undefined) return "Unknown"
-			if (bytes === 0) return "0 Bytes"
-
-			const k = 1024
-			const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-			const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-			return (
-				parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
-			)
-		},
+		formatSize,
 	},
 	globalErrorFallback: {
 		title: "Something went wrong",
@@ -114,6 +114,29 @@ export const translationEnUs: Readonly<AppTranslation> = {
 						auto: "Follow system",
 					},
 				},
+			},
+		},
+	},
+	abook: {
+		addFilesWizard: {
+			tabs: {
+				picking: "Pick files",
+				checking: "Adjust them",
+				uploading: "Upload",
+			},
+			notifications: {
+				filesRejected: {
+					title: "Files Rejected",
+					message: (count: number) =>
+						`${count} file${count === 1 ? "" : "s"} ${count === 1 ? "was" : "were"} rejected`,
+				},
+			},
+			uploadTab: {
+				prompt: "Do you want to add files to the ABook?",
+				newFilesSize: (bytes: number | undefined) =>
+					`New files size: ${formatSize(bytes)}`,
+				uploadButton: "Upload",
+				emptyState: "There are no files!",
 			},
 		},
 	},
