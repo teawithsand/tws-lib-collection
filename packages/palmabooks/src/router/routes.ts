@@ -53,6 +53,14 @@ export class Routes {
 	}
 
 	/**
+	 * Audiobook list page route
+	 */
+	public static readonly listAbooks: RouteConfig = {
+		path: "/abooks",
+		navigate: () => "/abooks",
+	}
+
+	/**
 	 * Edit book page route
 	 * NOTE: Currently unused (no page component implemented and not wired in router)
 	 */
@@ -115,6 +123,7 @@ export class Routes {
 			Routes.books,
 			Routes.abookShow,
 			Routes.createAbook,
+			Routes.listAbooks,
 			Routes.editBook,
 			Routes.uploadFiles,
 			Routes.fileList,

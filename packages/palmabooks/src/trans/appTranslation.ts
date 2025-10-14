@@ -113,6 +113,19 @@ export interface AppTranslation {
 				emptyState: string
 			}
 		}
+		view: {
+			unknown: string
+			inProgress: string
+			entryCount: (count: number) => string
+			notePrefix: string
+			formatDuration: (milliseconds: number) => string
+		}
+		list: {
+			emptyState: {
+				noAudiobooks: string
+				createFirst: string
+			}
+		}
 	}
 }
 

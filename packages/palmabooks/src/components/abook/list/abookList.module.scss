@@ -1,0 +1,19 @@
+.container {
+	width: 100%;
+}
+
+.emptyState {
+	text-align: center;
+	padding: var(--mantine-spacing-xl);
+}
+
+.grid {
+	width: 100%;
+}
+
+// Responsive adjustments for smaller screens
+@media (max-width: 768px) {
+	.container {
+		padding: var(--mantine-spacing-sm);
+	}
+}

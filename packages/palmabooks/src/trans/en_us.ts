@@ -139,5 +139,30 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				emptyState: "There are no files!",
 			},
 		},
+		view: {
+			unknown: "Unknown",
+			inProgress: "In Progress",
+			entryCount: (count: number) =>
+				`${count} ${count === 1 ? "entry" : "entries"}`,
+			notePrefix: "Note:",
+			formatDuration: (milliseconds: number) => {
+				if (milliseconds <= 0) return "Unknown"
+
+				const totalSeconds = Math.floor(milliseconds / 1000)
+				const hours = Math.floor(totalSeconds / 3600)
+				const minutes = Math.floor((totalSeconds % 3600) / 60)
+
+				if (hours > 0) {
+					return `${hours}h ${minutes}m`
+				}
+				return `${minutes}m`
+			},
+		},
+		list: {
+			emptyState: {
+				noAudiobooks: "No audiobooks found",
+				createFirst: "Create your first audiobook to get started",
+			},
+		},
 	},
 }
