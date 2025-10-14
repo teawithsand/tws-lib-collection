@@ -1,13 +1,7 @@
-import { useTransResolver } from "@/app/app.hooks"
 import { Abook, WithId } from "@teawithsand/booklibr"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
-import {
-	LoadingFallback,
-	SimpleGrid,
-	Stack,
-	Text,
-	useStableMemo,
-} from "@teawithsand/mlui"
+import { LoadingFallback, SimpleGrid, useStableMemo } from "@teawithsand/mlui"
+import { AbookListEmptyState } from "./AbookListEmptyState"
 import { AbookView } from "./AbookView"
 import styles from "./abookList.module.scss"
 import { AbookListBehavior } from "./behavior/AbookListBehavior"
@@ -17,7 +11,6 @@ export const AbookList = ({
 }: {
 	abooksAtom: Atom<Promise<WithId<Abook>[]>>
 }) => {
-	const { resolve } = useTransResolver()
 	const behavior = useStableMemo(
 		() => new AbookListBehavior(abooksAtom),
 		[abooksAtom],
@@ -38,23 +31,7 @@ export const AbookList = ({
 	}
 
 	if (loadable.data.length === 0) {
-		return (
-			<div className={styles.container}>
-				<Stack
-					align="center"
-					gap="md"
-					py="xl"
-					className={styles.emptyState}
-				>
-					<Text size="lg" c="dimmed">
-						{resolve((t) => t.abook.list.emptyState.noAudiobooks)}
-					</Text>
-					<Text size="sm" c="dimmed">
-						{resolve((t) => t.abook.list.emptyState.createFirst)}
-					</Text>
-				</Stack>
-			</div>
-		)
+		return <AbookListEmptyState />
 	}
 
 	return (
