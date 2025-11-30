@@ -5,7 +5,7 @@ import globals from "globals"
 import tseslint from "typescript-eslint"
 
 export default defineConfig([
-	globalIgnores(["*.js", "**/*.test.ts"]),
+	globalIgnores(["*.js", "**/*.test.ts", "examples/**/*"]),
 	{
 		files: ["src/**/*.{js,mjs,cjs,ts}"],
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
