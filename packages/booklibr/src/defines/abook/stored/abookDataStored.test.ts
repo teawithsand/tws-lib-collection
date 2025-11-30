@@ -23,7 +23,7 @@ describe("AbookDataVersionedType", () => {
 				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: 1641024000000,
+					uploadedAt: Timestamp.fromNumber(1641024000000),
 					uploadFileName: "test-audio.mp3",
 					uploadFileMime: "audio/mpeg",
 				},
@@ -42,7 +42,7 @@ describe("AbookDataVersionedType", () => {
 				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: 1641024000000,
+					uploadedAt: Timestamp.fromNumber(1641024000000),
 					uploadFileName: "test-audio.mp3",
 					uploadFileMime: "audio/mpeg",
 				},

@@ -76,7 +76,7 @@ const serializeAbookEntrySourceFull = (
 		case AbookEntrySourceType.UPLOAD:
 			return {
 				type: AbookEntrySourceTypeStoredV1.UPLOAD,
-				uploadedAt: source.uploadedAt,
+				uploadedAt: Timestamp.serializer.serialize(source.uploadedAt),
 				uploadFileName: source.uploadFileName,
 				uploadFileMime: source.uploadFileMime,
 			}
@@ -98,7 +98,7 @@ const deserializeAbookEntrySourceFull = (
 		case AbookEntrySourceTypeStoredV1.UPLOAD:
 			return {
 				type: AbookEntrySourceType.UPLOAD,
-				uploadedAt: stored.uploadedAt,
+				uploadedAt: Timestamp.serializer.deserialize(stored.uploadedAt),
 				uploadFileName: stored.uploadFileName,
 				uploadFileMime: stored.uploadFileMime,
 			}

@@ -44,7 +44,7 @@ describe("AbookEntryAggregatorImpl", () => {
 				...baseData,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: Date.now(),
+					uploadedAt: Timestamp.fromNumber(Date.now()),
 					uploadFileName: "test-file.mp3",
 					uploadFileMime: "audio/mpeg",
 				},

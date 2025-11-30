@@ -46,7 +46,7 @@ describe("AbookAggregatorImpl", () => {
 				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: Date.now(),
+					uploadedAt: Timestamp.fromNumber(Date.now()),
 					uploadFileName: "test-file.mp3",
 					uploadFileMime: "audio/mpeg",
 				},
@@ -282,7 +282,7 @@ describe("AbookAggregatorImpl", () => {
 				ordinalNumber: 1,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: Date.now(),
+					uploadedAt: Timestamp.fromNumber(Date.now()),
 					uploadFileName: "test-file.mp3",
 					uploadFileMime: "audio/mpeg",
 				},

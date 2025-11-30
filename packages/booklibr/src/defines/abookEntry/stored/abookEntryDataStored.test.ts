@@ -42,7 +42,7 @@ describe("AbookEntryData versioned serialization", () => {
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 			source: {
 				type: AbookEntrySourceType.UPLOAD,
-				uploadedAt: 1641024000000,
+				uploadedAt: Timestamp.fromNumber(1641024000000),
 				uploadFileName: "test-audio.mp3",
 				uploadFileMime: "audio/mpeg",
 			},
@@ -142,7 +142,7 @@ describe("AbookEntryData versioned serialization", () => {
 			disposition: AbookEntryDisposition.DESCRIPTION,
 			source: {
 				type: AbookEntrySourceType.UPLOAD,
-				uploadedAt: 1672531200000,
+				uploadedAt: Timestamp.fromNumber(1672531200000),
 				uploadFileName: "book-description.txt",
 				uploadFileMime: "text/plain",
 			},
@@ -160,7 +160,21 @@ describe("AbookEntryData versioned serialization", () => {
 		expect(deserialized.createdAt.toNumberMillis()).toBe(
 			testData.createdAt.toNumberMillis(),
 		)
-		expect(deserialized.source).toEqual(testData.source)
+		expect(deserialized.source.type).toBe(testData.source.type)
+		if (
+			deserialized.source.type === AbookEntrySourceType.UPLOAD &&
+			testData.source.type === AbookEntrySourceType.UPLOAD
+		) {
+			expect(deserialized.source.uploadedAt.toNumberMillis()).toBe(
+				testData.source.uploadedAt.toNumberMillis(),
+			)
+			expect(deserialized.source.uploadFileName).toBe(
+				testData.source.uploadFileName,
+			)
+			expect(deserialized.source.uploadFileMime).toBe(
+				testData.source.uploadFileMime,
+			)
+		}
 	})
 
 	test("should serialize and deserialize UNKNOWN disposition correctly", () => {

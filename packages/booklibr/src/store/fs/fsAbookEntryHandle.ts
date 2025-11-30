@@ -272,13 +272,14 @@ export class FsAbookEntryHandle implements AbookEntryHandle {
 	}
 
 	private readonly createDefaultEntryData = (): AbookEntryData => ({
+		// TODO(teawithsand): make this method pure and deterministic
 		createdAt: Timestamp.fromDate(new Date()),
 		name: "Untitled Entry",
 		disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 		ordinalNumber: 1,
 		source: {
 			type: AbookEntrySourceType.UPLOAD,
-			uploadedAt: Date.now(),
+			uploadedAt: Timestamp.fromDate(new Date()),
 			uploadFileName: "unknown",
 			uploadFileMime: "application/octet-stream",
 		},

@@ -1,4 +1,4 @@
-import { TypeAssert } from "@teawithsand/lngext"
+import { Timestamp, TypeAssert } from "@teawithsand/lngext"
 
 export enum AbookEntrySourceType {
 	UPLOAD = "upload",
@@ -17,7 +17,7 @@ export type AbookEntrySourceLite =
 export type AbookEntrySourceFull =
 	| {
 			type: AbookEntrySourceType.UPLOAD
-			uploadedAt: number // TODO(teawithsand): replace this with Timestamp; Fix serialization as well
+			uploadedAt: Timestamp
 			uploadFileName: string
 			uploadFileMime: string
 	  }
