@@ -39,12 +39,11 @@ export class Routes {
 	}
 
 	/**
-	 * Book preview page route
-	 * NOTE: Currently unused (no page component implemented and not wired in router)
+	 * Audiobook show page route
 	 */
 	public static readonly abookShow: RouteConfig = {
-		path: "/abooks/:id",
-		navigate: (id: string) => `/abooks/${id}`,
+		path: "/abooks/:id/show",
+		navigate: (id: string) => `/abooks/${id}/show`,
 	}
 
 	public static readonly createAbook: RouteConfig = {

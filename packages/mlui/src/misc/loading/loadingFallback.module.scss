@@ -1,4 +1,4 @@
-.loadingContainer {
+.loadingContainerFullscreen {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -13,4 +13,12 @@
 	@include mantine.dark {
 		background-color: rgba(37, 38, 43, 0.9);
 	}
+}
+
+.loadingContainerInline {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 200px;
+	width: 100%;
 }

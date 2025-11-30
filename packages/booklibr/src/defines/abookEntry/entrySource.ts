@@ -17,7 +17,7 @@ export type AbookEntrySourceLite =
 export type AbookEntrySourceFull =
 	| {
 			type: AbookEntrySourceType.UPLOAD
-			uploadedAt: number
+			uploadedAt: number // TODO(teawithsand): replace this with Timestamp; Fix serialization as well
 			uploadFileName: string
 			uploadFileMime: string
 	  }

@@ -120,6 +120,27 @@ export interface AppTranslation {
 			notePrefix: string
 			formatDuration: (milliseconds: number) => string
 		}
+		preview: {
+			title: string
+			metadata: {
+				title: string
+				description: string
+				createdAt: string
+				lastPlayedAt: string
+				never: string
+			}
+			stats: {
+				title: string
+				duration: string
+				entries: string
+				progress: string
+				notStarted: string
+			}
+			notes: {
+				title: string
+				placeholder: string
+			}
+		}
 		list: {
 			emptyState: {
 				noAudiobooks: string

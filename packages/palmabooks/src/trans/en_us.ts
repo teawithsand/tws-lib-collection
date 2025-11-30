@@ -158,6 +158,27 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				return `${minutes}m`
 			},
 		},
+		preview: {
+			title: "Audiobook Details",
+			metadata: {
+				title: "Title",
+				description: "Description",
+				createdAt: "Created",
+				lastPlayedAt: "Last Played",
+				never: "Never",
+			},
+			stats: {
+				title: "Statistics",
+				duration: "Duration",
+				entries: "Entries",
+				progress: "Progress",
+				notStarted: "Not Started",
+			},
+			notes: {
+				title: "Personal Notes",
+				placeholder: "No personal notes",
+			},
+		},
 		list: {
 			emptyState: {
 				noAudiobooks: "No audiobooks found",

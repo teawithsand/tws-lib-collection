@@ -68,6 +68,8 @@
     - Act: Execute the code under test.
     - Assert: Verify that the expected outcomes occur.
 - Prefer more smaller unit tests, to fewer larger tests. Each test should ideally focus on a single aspect of the functionality being tested.
+- Do not assert for error message, but for type only instead.
+- Run tests using `npm test` command.
 
 # Monorepo Structure
 
