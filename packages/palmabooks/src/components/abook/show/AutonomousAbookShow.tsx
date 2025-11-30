@@ -26,7 +26,9 @@ const createMockAbook = (id: string): WithId<Abook> => {
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: Date.UTC(2024, 0, 15, 10, 30),
+					uploadedAt: Timestamp.fromMillis(
+						Date.UTC(2024, 0, 15, 10, 30),
+					),
 					uploadFileName: "chapter-1.mp3",
 					uploadFileMime: "audio/mpeg",
 				},
@@ -48,7 +50,9 @@ const createMockAbook = (id: string): WithId<Abook> => {
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: Date.UTC(2024, 0, 15, 11, 0),
+					uploadedAt: Timestamp.fromMillis(
+						Date.UTC(2024, 0, 15, 11, 0),
+					),
 					uploadFileName: "chapter-2.mp3",
 					uploadFileMime: "audio/mpeg",
 				},
@@ -70,7 +74,9 @@ const createMockAbook = (id: string): WithId<Abook> => {
 				disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 				source: {
 					type: AbookEntrySourceType.UPLOAD,
-					uploadedAt: Date.UTC(2024, 0, 15, 11, 30),
+					uploadedAt: Timestamp.fromMillis(
+						Date.UTC(2024, 0, 15, 11, 30),
+					),
 					uploadFileName: "chapter-3.mp3",
 					uploadFileMime: "audio/mpeg",
 				},

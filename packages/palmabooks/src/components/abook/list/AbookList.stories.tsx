@@ -35,7 +35,9 @@ const createMockAbook = (
 					disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
 					source: {
 						type: AbookEntrySourceType.UPLOAD,
-						uploadedAt: Date.UTC(2024, 0, 11, 9, 45),
+						uploadedAt: Timestamp.fromMillis(
+							Date.UTC(2024, 0, 11, 9, 45),
+						),
 						uploadFileName: "chapter-1.mp3",
 						uploadFileMime: "audio/mpeg",
 					},

@@ -67,12 +67,12 @@ export class AbookAddFilesWizardUpload {
 								ordinalNumber: 0,
 								source: {
 									type: AbookEntrySourceType.UPLOAD,
-									uploadedAt: uploadStartedAt.getTime(),
+									uploadedAt:
+										Timestamp.fromDate(uploadStartedAt),
 									uploadFileMime: file.file.type,
 									uploadFileName: file.originalFileName,
 								},
 							})
-
 							const writer = await entry.getBlobWriter()
 							try {
 								await writer.write(file.file)
