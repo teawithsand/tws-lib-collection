@@ -74,6 +74,7 @@
 # Monorepo Structure
 
 - This is a rush monorepo. All projects and packages are located in the `packages/` directory at the root of the repository.
+- For running rush command, just use "rush" rather than some kind of install script. Rush is installed globally.
 
 # CSS
 - Do not use inline styles in React components and HTML files.

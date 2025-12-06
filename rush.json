@@ -359,9 +359,17 @@
       "packageName": "@teawithsand/reserd",
       "projectFolder": "packages/reserd"
     },
-        {
+    {
       "packageName": "@teawithsand/peer-client",
       "projectFolder": "packages/peer-client"
+    },
+    {
+      "packageName": "@teawithsand/file-manager",
+      "projectFolder": "packages/file-manager"
+    },
+    {
+      "packageName": "@teawithsand/file-manager-app",
+      "projectFolder": "packages/file-manager-app"
     }
 
     // {
