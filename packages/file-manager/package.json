@@ -12,7 +12,7 @@
 		"lint:fix": "eslint ./src --fix",
 		"lint": "eslint ./src --max-warnings 0",
 		"lint:cached": "eslint ./src --max-warnings 0 --cache",
-		"test": "vitest",
+		"test": "vitest --run",
 		"test:ss": "vitest -u",
 		"build:check": "tsc --noEmit --project tsconfig.lib.json",
 		"fix": "npm run format:fix && npm run lint:fix",
