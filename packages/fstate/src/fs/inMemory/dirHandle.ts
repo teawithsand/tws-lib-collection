@@ -521,13 +521,15 @@ export class InMemoryDirHandle implements FsDirHandle {
 
 			// If parent doesn't exist, throw error
 			if (!parentEntry) {
-				throw new Error("Cannot open: parent directory does not exist")
+				throw new FsErrorNotFound(
+					`Cannot open: parent directory does not exist: ${parentPath.toString()}`,
+				)
 			}
 
 			// If parent exists and is a file (not a directory), throw error
 			if (parentEntry.type === FsHandleType.FILE) {
-				throw new Error(
-					"Cannot open: parent path contains a file instead of directory",
+				throw new FsErrorBadType(
+					`Cannot open: parent path contains a file instead of directory: ${parentPath.toString()}`,
 				)
 			}
 		}
