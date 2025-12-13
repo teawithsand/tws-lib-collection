@@ -1,15 +1,44 @@
+import { useApp } from "@/app/app.hooks"
 import { AutonomousAbookList } from "@/components"
-import { Container, Stack } from "@teawithsand/mlui"
-import styles from "./AbookListPage.module.scss"
+import { Abook, WithId } from "@teawithsand/booklibr"
+import { Atom, useSetAtom } from "@teawithsand/fstate"
+import { Container, LoadingSuspenseBoundary, Stack } from "@teawithsand/mlui"
+import { useCallback } from "react"
 
-/**
- * Audiobook list page with Suspense-based loading.
- */
-export const AbookListPage = () => {
+interface AbookListPageContentProps {
+	readonly abooksListAtom: Atom<Promise<WithId<Abook>[]>>
+	onRefresh: () => void
+}
+
+const AbookListPageContent = ({
+	abooksListAtom,
+	onRefresh,
+}: AbookListPageContentProps) => {
 	return (
-		<Container size="xl" py="xl" className={styles.container}>
+		<AutonomousAbookList
+			abooksListAtom={abooksListAtom}
+			onRefresh={onRefresh}
+		/>
+	)
+}
+
+export const AbookListPage = () => {
+	const app = useApp()
+	const setRefresh = useSetAtom(app.abookStoreService.refreshAbooksList)
+
+	const handleRefresh = useCallback(() => {
+		setRefresh()
+	}, [setRefresh])
+
+	return (
+		<Container size="xl" py="xl" fullWidth>
 			<Stack gap="lg">
-				<AutonomousAbookList />
+				<LoadingSuspenseBoundary>
+					<AbookListPageContent
+						abooksListAtom={app.abookStoreService.abooksList}
+						onRefresh={handleRefresh}
+					/>
+				</LoadingSuspenseBoundary>
 			</Stack>
 		</Container>
 	)

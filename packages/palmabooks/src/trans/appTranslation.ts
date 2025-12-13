@@ -9,6 +9,8 @@ export interface AppTranslation {
 	}
 	util: {
 		formatSize: (bytes: number | undefined) => string
+		formatDuration: (milliseconds: number) => string
+		formatDate: (timestamp: number) => string
 	}
 	globalErrorFallback: {
 		title: string
@@ -143,6 +145,21 @@ export interface AppTranslation {
 				title: string
 				placeholder: string
 			}
+		}
+		show: {
+			backToList: string
+			noTitle: string
+			noDescription: string
+			entries: string
+			duration: string
+			created: string
+			lastPlayed: string
+			never: string
+			privateNote: string
+			noPrivateNote: string
+			loading: string
+			notFound: string
+			error: string
 		}
 		list: {
 			emptyState: {

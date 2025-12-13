@@ -20,6 +20,31 @@ export const translationEnUs: Readonly<AppTranslation> = {
 	},
 	util: {
 		formatSize,
+		formatDuration: (milliseconds: number) => {
+			if (Number.isNaN(milliseconds)) return "NaN"
+			if (milliseconds === Infinity) return "+Infinity"
+			if (milliseconds === -Infinity) return "-Infinity"
+			if (milliseconds === 0) return "0m"
+
+			const isNegative = milliseconds < 0
+			const absMilliseconds = Math.abs(milliseconds)
+
+			const totalSeconds = Math.floor(absMilliseconds / 1000)
+			const hours = Math.floor(totalSeconds / 3600)
+			const minutes = Math.floor((totalSeconds % 3600) / 60)
+
+			let result = ""
+			if (hours > 0) {
+				result = `${hours}h ${minutes}m`
+			} else {
+				result = `${minutes}m`
+			}
+
+			return isNegative ? `-${result}` : result
+		},
+		formatDate: (timestamp: number) => {
+			return new Date(timestamp).toLocaleDateString()
+		},
 	},
 	globalErrorFallback: {
 		title: "Something went wrong",
@@ -181,6 +206,21 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				title: "Personal Notes",
 				placeholder: "No personal notes",
 			},
+		},
+		show: {
+			backToList: "Back to List",
+			noTitle: "Untitled Audiobook",
+			noDescription: "No description available",
+			entries: "Entries",
+			duration: "Duration",
+			created: "Created",
+			lastPlayed: "Last Played",
+			never: "Never",
+			privateNote: "Private Note",
+			noPrivateNote: "No private notes",
+			loading: "Loading audiobook...",
+			notFound: "Audiobook not found",
+			error: "Failed to load audiobook",
 		},
 		list: {
 			emptyState: {

@@ -49,8 +49,8 @@ export class Routes {
 	 * Audiobook details page route
 	 */
 	public static readonly abookShow: RouteConfig = {
-		path: "/abooks/:id/show",
-		navigate: (id: string) => `/abooks/${id}/show`,
+		path: "/abook/:id/show",
+		navigate: (id: string) => `/abook/${id}/show`,
 	}
 
 	// ===== NOT IMPLEMENTED IN MVP =====
