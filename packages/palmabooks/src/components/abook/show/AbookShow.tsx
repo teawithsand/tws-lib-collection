@@ -3,6 +3,7 @@ import {
 	IconBook,
 	IconClock,
 	IconEdit,
+	IconList,
 	IconNotes,
 	IconTrash,
 } from "@tabler/icons-react"
@@ -26,6 +27,7 @@ export interface AbookShowProps {
 	readonly abook: Abook
 	readonly onEdit?: () => void
 	readonly onDelete?: () => void
+	readonly onViewEntries?: () => void
 }
 
 const ResponsiveIconButton = ({
@@ -61,7 +63,12 @@ const ResponsiveIconButton = ({
  * Mobile-first audiobook detail component.
  * Displays complete audiobook information in a clean, readable format.
  */
-export const AbookShow = ({ abook, onEdit, onDelete }: AbookShowProps) => {
+export const AbookShow = ({
+	abook,
+	onEdit,
+	onDelete,
+	onViewEntries,
+}: AbookShowProps) => {
 	const { resolve } = useTransResolver()
 
 	const { data, aggregate } = abook
@@ -120,14 +127,26 @@ export const AbookShow = ({ abook, onEdit, onDelete }: AbookShowProps) => {
 
 				<Card padding="lg" shadow="sm" withBorder>
 					<Stack gap="md">
-						<Group gap="xs" align="center">
-							<IconBook size={20} />
-							<Text size="sm" fw={500}>
-								{resolve((t) => t.abook.show.entries)}:
-							</Text>
-							<Text size="sm" c="dimmed">
-								{aggregate.totalEntries ?? 0}
-							</Text>
+						<Group gap="xs" align="center" justify="space-between">
+							<Group gap="xs" align="center">
+								<IconBook size={20} />
+								<Text size="sm" fw={500}>
+									{resolve((t) => t.abook.show.entries)}:
+								</Text>
+								<Text size="sm" c="dimmed">
+									{aggregate.totalEntries ?? 0}
+								</Text>
+							</Group>
+							{onViewEntries && (
+								<Button
+									variant="light"
+									size="xs"
+									onClick={onViewEntries}
+									leftSection={<IconList size={14} />}
+								>
+									{resolve((t) => t.abook.show.viewEntries)}
+								</Button>
+							)}
 						</Group>
 
 						{hasValidDuration && (

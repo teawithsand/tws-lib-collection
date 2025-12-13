@@ -83,9 +83,14 @@ const meta: Meta<typeof AbookShow> = {
 export default meta
 type Story = StoryObj<typeof AbookShow>
 
+const noop = () => {}
+
 export const Default: Story = {
 	args: {
 		abook: createMockAbook({}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -94,6 +99,9 @@ export const WithoutDescription: Story = {
 		abook: createMockAbook({
 			description: "",
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -103,6 +111,9 @@ export const WithPrivateNote: Story = {
 			privateUserNote:
 				"This is a personal favorite! The humor is timeless and Douglas Adams was a genius. Remember to listen to the restaurant scene again.",
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -112,6 +123,9 @@ export const LongDescription: Story = {
 			description:
 				"A humorous science fiction series following the misadventures of Arthur Dent, who is saved from Earth's destruction by his friend Ford Prefect, a researcher for the electronic travel guide 'The Hitchhiker's Guide to the Galaxy'. Together they travel through space encountering various alien species and bizarre situations. The series is known for its satirical take on modern life, its unique blend of philosophy and comedy, and memorable quotes like 'Don't Panic' and the answer to life, the universe, and everything being '42'. This sprawling adventure spans multiple books and explores themes of existence, bureaucracy, and the absurdity of the universe.",
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -123,6 +137,9 @@ export const ShortDuration: Story = {
 			entryCount: 3,
 			durationMillis: 45 * 60 * 1000, // 45 minutes
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -134,6 +151,9 @@ export const LongDuration: Story = {
 			entryCount: 87,
 			durationMillis: 50 * 60 * 60 * 1000, // 50 hours
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -142,6 +162,9 @@ export const InvalidDuration: Story = {
 		abook: createMockAbook({
 			durationMillis: -1,
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -154,6 +177,9 @@ export const MinimalData: Story = {
 			entryCount: 0,
 			durationMillis: 0,
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -162,6 +188,9 @@ export const WithPosition: Story = {
 		abook: createMockAbook({
 			hasPosition: true,
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -171,12 +200,18 @@ export const LongTitle: Story = {
 			title: "The Extremely Long and Unnecessarily Verbose Title of This Audiobook That Just Keeps Going On and On Without Any Real Purpose Except to Test How the Component Handles Really Long Titles",
 			description: "Testing title wrapping behavior.",
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
 export const WithoutBackButton: Story = {
 	args: {
 		abook: createMockAbook({}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }
 
@@ -192,5 +227,8 @@ export const FullyPopulated: Story = {
 			durationMillis: 15 * 60 * 60 * 1000, // 15 hours
 			hasPosition: true,
 		}),
+		onEdit: noop,
+		onDelete: noop,
+		onViewEntries: noop,
 	},
 }

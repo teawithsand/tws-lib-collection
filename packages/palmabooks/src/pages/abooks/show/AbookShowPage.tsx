@@ -1,5 +1,5 @@
 import { useApp } from "@/app/app.hooks"
-import { AutonomousAbookShow } from "@/components"
+import { AppLocalLayout, AutonomousAbookShow } from "@/components"
 import { Abook, WithId } from "@teawithsand/booklibr"
 import { Atom } from "@teawithsand/fstate"
 import {
@@ -34,12 +34,14 @@ export const AbookShowPage = () => {
 	}, [app, id])
 
 	return (
-		<LoadingSuspenseBoundary>
-			<Container fullWidth>
-				<AbookShowPageContent
-					abookDataWithIdAtom={abookDataWithIdAtom}
-				/>
-			</Container>
-		</LoadingSuspenseBoundary>
+		<AppLocalLayout>
+			<LoadingSuspenseBoundary>
+				<Container fullWidth>
+					<AbookShowPageContent
+						abookDataWithIdAtom={abookDataWithIdAtom}
+					/>
+				</Container>
+			</LoadingSuspenseBoundary>
+		</AppLocalLayout>
 	)
 }

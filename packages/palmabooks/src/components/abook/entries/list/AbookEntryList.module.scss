@@ -1,0 +1,22 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.list {
+	padding: mantine.rem(16);
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+		padding: mantine.rem(24);
+	}
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: mantine.rem(48) mantine.rem(16);
+	min-height: mantine.rem(300);
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+		padding: mantine.rem(64) mantine.rem(24);
+	}
+}

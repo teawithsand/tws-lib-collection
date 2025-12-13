@@ -1,5 +1,6 @@
 export * from "./create"
 export * from "./delete"
 export * from "./edit"
+export * from "./entries"
 export * from "./list"
 export * from "./show"

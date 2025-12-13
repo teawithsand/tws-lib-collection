@@ -213,6 +213,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			noTitle: "Untitled Audiobook",
 			noDescription: "No description available",
 			entries: "Entries",
+			viewEntries: "View Entries",
 			duration: "Duration",
 			created: "Created",
 			lastPlayed: "Last Played",
@@ -233,6 +234,44 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			lastPlayed: "Last played",
 			searchPlaceholder: "Search audiobooks...",
 			refreshButton: "Refresh list",
+		},
+		entries: {
+			emptyState: {
+				noEntries: "No entries found",
+				noEntriesSubtext: "No entries in this audiobook yet.",
+				noMatchingEntries: "No entries match your search.",
+			},
+			searchPlaceholder: "Search entries...",
+			sortLabel: "Sort by",
+			filterModal: {
+				title: "Sort & Filter Entries",
+				openButton: "Sort and filter options",
+				sortSection: "Sort By",
+				filterSection: "Filter by Type",
+				confirmButton: "Apply",
+				cancelButton: "Cancel",
+				dispositions: {
+					playableAudio: "Audio Files",
+					coverImage: "Cover Images",
+					description: "Descriptions",
+					unknown: "Unknown",
+				},
+			},
+			getSortOptionLabel: (option: string) => {
+				if (option === "ordinal-number-asc") {
+					return "Ordinal Number (1-9)"
+				}
+				if (option === "ordinal-number-desc") {
+					return "Ordinal Number (9-1)"
+				}
+				if (option === "name-asc") {
+					return "Name (A-Z)"
+				}
+				if (option === "name-desc") {
+					return "Name (Z-A)"
+				}
+				return "Unknown"
+			},
 		},
 		create: {
 			pageTitle: "Create New Audiobook",
@@ -269,7 +308,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				"Are you sure you want to delete this audiobook?",
 			warningMessage:
 				"This action cannot be undone. All audiobook data, including entries and personal notes, will be permanently deleted.",
-			deleteButton: "Delete Audiobook",
+			deleteButton: "Delete",
 			deleting: "Deleting...",
 			cancelButton: "Cancel",
 			successTitle: "Audiobook Deleted!",

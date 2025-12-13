@@ -1,7 +1,7 @@
 import { useTransResolver } from "@/app/app.hooks"
 import { Abook, WithId } from "@teawithsand/booklibr"
 import { Box, Button, Stack, Text } from "@teawithsand/mlui"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { AbookCard } from "./AbookCard"
 import styles from "./AbookList.module.scss"
 import { AbookListTopBar } from "./AbookListTopBar"
@@ -24,13 +24,17 @@ export const AbookList = ({
 	const { resolve } = useTransResolver()
 	const [searchQuery, setSearchQuery] = useState("")
 
-	const filteredAbooks = searchQuery
-		? abooks.filter((abook) =>
-				abook.data.data.header.metadata.title
-					?.toLowerCase()
-					.includes(searchQuery.toLowerCase()),
-			)
-		: abooks
+	const filteredAbooks = useMemo(
+		() =>
+			searchQuery
+				? abooks.filter((abook) =>
+						abook.data.data.header.metadata.title
+							?.toLowerCase()
+							.includes(searchQuery.toLowerCase()),
+					)
+				: abooks,
+		[abooks, searchQuery],
+	)
 
 	if (filteredAbooks.length === 0 && !searchQuery) {
 		return (

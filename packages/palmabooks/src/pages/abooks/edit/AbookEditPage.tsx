@@ -1,5 +1,5 @@
 import { useApp, useTransResolver } from "@/app/app.hooks"
-import { AutonomousAbookEdit } from "@/components"
+import { AppLocalLayout, AutonomousAbookEdit } from "@/components"
 import { Abook, WithId } from "@teawithsand/booklibr"
 import { Atom } from "@teawithsand/fstate"
 import {
@@ -46,12 +46,19 @@ export const AbookEditPage = () => {
 	}, [app, id])
 
 	return (
-		<LoadingSuspenseBoundary>
-			<Container fullWidth size="md" className={styles.container} pt="md">
-				<AbookEditPageContent
-					abookDataWithIdAtom={abookDataWithIdAtom}
-				/>
-			</Container>
-		</LoadingSuspenseBoundary>
+		<AppLocalLayout>
+			<LoadingSuspenseBoundary>
+				<Container
+					fullWidth
+					size="md"
+					className={styles.container}
+					pt="md"
+				>
+					<AbookEditPageContent
+						abookDataWithIdAtom={abookDataWithIdAtom}
+					/>
+				</Container>
+			</LoadingSuspenseBoundary>
+		</AppLocalLayout>
 	)
 }

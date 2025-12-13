@@ -1,5 +1,5 @@
 import { useApp } from "@/app/app.hooks"
-import { AutonomousAbookList } from "@/components"
+import { AppLocalLayout, AutonomousAbookList } from "@/components"
 import { Abook, WithId } from "@teawithsand/booklibr"
 import { Atom, useSetAtom } from "@teawithsand/fstate"
 import { Container, LoadingSuspenseBoundary, Stack } from "@teawithsand/mlui"
@@ -31,15 +31,17 @@ export const AbookListPage = () => {
 	}, [setRefresh])
 
 	return (
-		<Container size="xl" py="xl" fullWidth>
-			<Stack gap="lg">
-				<LoadingSuspenseBoundary>
-					<AbookListPageContent
-						abooksListAtom={app.abookStoreService.abooksList}
-						onRefresh={handleRefresh}
-					/>
-				</LoadingSuspenseBoundary>
-			</Stack>
-		</Container>
+		<AppLocalLayout>
+			<Container size="xl" py="xl" fullWidth>
+				<Stack gap="lg">
+					<LoadingSuspenseBoundary>
+						<AbookListPageContent
+							abooksListAtom={app.abookStoreService.abooksList}
+							onRefresh={handleRefresh}
+						/>
+					</LoadingSuspenseBoundary>
+				</Stack>
+			</Container>
+		</AppLocalLayout>
 	)
 }

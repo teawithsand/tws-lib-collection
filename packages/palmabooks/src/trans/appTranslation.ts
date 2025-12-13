@@ -152,6 +152,7 @@ export interface AppTranslation {
 			noTitle: string
 			noDescription: string
 			entries: string
+			viewEntries: string
 			duration: string
 			created: string
 			lastPlayed: string
@@ -172,6 +173,30 @@ export interface AppTranslation {
 			lastPlayed: string
 			searchPlaceholder: string
 			refreshButton: string
+		}
+		entries: {
+			emptyState: {
+				noEntries: string
+				noEntriesSubtext: string
+				noMatchingEntries: string
+			}
+			searchPlaceholder: string
+			sortLabel: string
+			getSortOptionLabel: (option: string) => string
+			filterModal: {
+				title: string
+				openButton: string
+				sortSection: string
+				filterSection: string
+				confirmButton: string
+				cancelButton: string
+				dispositions: {
+					playableAudio: string
+					coverImage: string
+					description: string
+					unknown: string
+				}
+			}
 		}
 		create: {
 			pageTitle: string

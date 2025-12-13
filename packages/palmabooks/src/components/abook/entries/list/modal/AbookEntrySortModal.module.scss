@@ -1,0 +1,7 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.modal {
+	:global(.mantine-Modal-body) {
+		padding: mantine.rem(20);
+	}
+}

@@ -36,6 +36,14 @@ export const AutonomousAbookShow = ({
 		}
 	}, [abookWithId?.id, deleteModal])
 
+	const handleViewEntries = useCallback(() => {
+		if (abookWithId?.id) {
+			navigation.navigate(
+				Routes.abookEntries.navigate(String(abookWithId.id)),
+			)
+		}
+	}, [abookWithId?.id, navigation])
+
 	if (!abookWithId || !abookWithId.data) {
 		return <AbookNotFound />
 	}
@@ -46,6 +54,7 @@ export const AutonomousAbookShow = ({
 				abook={abookWithId.data}
 				onEdit={handleEdit}
 				onDelete={handleDelete}
+				onViewEntries={handleViewEntries}
 			/>
 			<AutonomousAbookDeleteModal
 				opened={deleteModal.opened}

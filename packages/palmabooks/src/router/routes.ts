@@ -61,6 +61,14 @@ export class Routes {
 		navigate: (id: string) => `/abook/${id}/edit`,
 	}
 
+	/**
+	 * Entries list for audiobook page route
+	 */
+	public static readonly abookEntries: RouteConfig = {
+		path: "/abook/:id/entries",
+		navigate: (id: string) => `/abook/${id}/entries`,
+	}
+
 	// ===== NOT IMPLEMENTED IN MVP =====
 	// Uncomment these when implementing the features
 
@@ -70,14 +78,6 @@ export class Routes {
 	// public static readonly uploadFiles: RouteConfig = {
 	// 	path: "/abooks/:id/upload",
 	// 	navigate: (id: string) => `/abooks/${id}/upload`,
-	// }
-
-	// /**
-	//  * File list for audiobook page route
-	//  */
-	// public static readonly fileList: RouteConfig = {
-	// 	path: "/abooks/:id/files",
-	// 	navigate: (id: string) => `/abooks/${id}/files`,
 	// }
 
 	// /**
@@ -115,6 +115,8 @@ export class Routes {
 			Routes.listAbooks,
 			Routes.createAbook,
 			Routes.abookShow,
+			Routes.abookEdit,
+			Routes.abookEntries,
 			Routes.settings,
 			Routes.storage,
 		]
