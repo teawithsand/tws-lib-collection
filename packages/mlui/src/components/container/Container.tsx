@@ -4,15 +4,20 @@ import {
 } from "@mantine/core"
 import { forwardRef } from "react"
 
-export type ContainerProps = MantineContainerProps
+export interface ContainerProps extends MantineContainerProps {
+	readonly fullWidth?: boolean
+}
 
 /**
  * This container fixes Container from mantine, which fails to set data-strategy, which is required for styles to work there.
  */
 export const Container = forwardRef<HTMLDivElement, ContainerProps>(
 	(props, ref) => {
+		const { fullWidth, style, ...rest } = props
+
 		const propsCopy = {
-			...props,
+			...rest,
+			style: fullWidth ? { width: "100%", ...style } : style,
 		}
 
 		if ("strategy" in propsCopy) {
