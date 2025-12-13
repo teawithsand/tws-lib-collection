@@ -1,0 +1,9 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.modalBody {
+	padding: mantine.rem(16);
+
+	@include mantine.larger-than(mantine.$mantine-breakpoint-sm) {
+		padding: mantine.rem(24);
+	}
+}

@@ -195,6 +195,40 @@ export interface AppTranslation {
 					coverImage: string
 					description: string
 					unknown: string
+					getLabel: (
+						disposition: import("@teawithsand/booklibr").AbookEntryDisposition,
+					) => string
+				}
+			}
+			preview: {
+				title: string
+				noEntry: string
+				untitled: string
+				ordinal: string
+				disposition: string
+				fileInfo: string
+				fileSize: string
+				duration: string
+				sourceInfo: string
+				sourceType: string
+				uploadFileName: string
+				mimeType: string
+				url: string
+				openLink: string
+				timestamps: string
+				createdAt: string
+				uploadedAt: string
+				closeButton: string
+				unknown: string
+
+				dispositions: {
+					playableAudio: string
+					coverImage: string
+					description: string
+					unknown: string
+					getLabel: (
+						disposition: import("@teawithsand/booklibr").AbookEntryDisposition,
+					) => string
 				}
 			}
 		}

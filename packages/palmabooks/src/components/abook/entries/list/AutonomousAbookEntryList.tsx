@@ -1,5 +1,7 @@
 import { AbookEntry, WithId } from "@teawithsand/booklibr"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
+import { useAbookEntryPreviewModal } from "../show"
+import { AbookEntryPreviewModal } from "../show/AbookEntryPreviewModal"
 import { AbookEntryList } from "./AbookEntryList"
 
 export interface AutonomousAbookEntryListProps {
@@ -17,6 +19,20 @@ export const AutonomousAbookEntryList = ({
 	onRefresh,
 }: AutonomousAbookEntryListProps) => {
 	const entries = useAtomValue(entriesAtom)
+	const { opened, entry, openModal, closeModal } = useAbookEntryPreviewModal()
 
-	return <AbookEntryList entries={entries} onRefresh={onRefresh} />
+	return (
+		<>
+			<AbookEntryList
+				entries={entries}
+				onRefresh={onRefresh}
+				onEntryClick={openModal}
+			/>
+			<AbookEntryPreviewModal
+				opened={opened}
+				onClose={closeModal}
+				entry={entry}
+			/>
+		</>
+	)
 }

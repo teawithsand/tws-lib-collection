@@ -14,13 +14,18 @@ import { AbookEntryListTopBar } from "./topBar"
 export interface AbookEntryListProps {
 	readonly entries: WithId<AbookEntry>[]
 	onRefresh: () => void
+	onEntryClick: (entry: WithId<AbookEntry>) => void
 }
 
 /**
  * Mobile-first audiobook entry list component.
  * Displays entries in a simple vertical list sorted by ordinal number with integrated search functionality.
  */
-export const AbookEntryList = ({ entries, onRefresh }: AbookEntryListProps) => {
+export const AbookEntryList = ({
+	entries,
+	onRefresh,
+	onEntryClick,
+}: AbookEntryListProps) => {
 	const { resolve } = useTransResolver()
 	const [searchQuery, setSearchQuery] = useState("")
 	const [sortOption, setSortOption] = useState<AbookEntrySortOption>(
@@ -131,7 +136,11 @@ export const AbookEntryList = ({ entries, onRefresh }: AbookEntryListProps) => {
 			) : (
 				<Stack gap="md" className={styles.list}>
 					{sortedEntries.map((entry) => (
-						<AbookEntryCard key={entry.id} entry={entry} />
+						<AbookEntryCard
+							key={entry.id}
+							entry={entry}
+							onClick={() => onEntryClick(entry)}
+						/>
 					))}
 				</Stack>
 			)}

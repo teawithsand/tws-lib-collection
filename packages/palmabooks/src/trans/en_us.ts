@@ -1,3 +1,4 @@
+import { AbookEntryDisposition } from "@teawithsand/booklibr"
 import { Language } from "@teawithsand/fstate"
 import { AppTranslation } from "./appTranslation"
 
@@ -255,6 +256,19 @@ export const translationEnUs: Readonly<AppTranslation> = {
 					coverImage: "Cover Images",
 					description: "Descriptions",
 					unknown: "Unknown",
+					getLabel: (disposition: AbookEntryDisposition) => {
+						switch (disposition) {
+							case AbookEntryDisposition.PLAYABLE_AUDIO:
+								return "Audio Files"
+							case AbookEntryDisposition.COVER_IMAGE:
+								return "Cover Images"
+							case AbookEntryDisposition.DESCRIPTION:
+								return "Descriptions"
+							case AbookEntryDisposition.UNKNOWN:
+							default:
+								return "Unknown"
+						}
+					},
 				},
 			},
 			getSortOptionLabel: (option: string) => {
@@ -271,6 +285,47 @@ export const translationEnUs: Readonly<AppTranslation> = {
 					return "Name (Z-A)"
 				}
 				return "Unknown"
+			},
+			preview: {
+				title: "Entry Preview",
+				noEntry: "No entry selected",
+				untitled: "Untitled Entry",
+				ordinal: "Ordinal #",
+				disposition: "Type",
+				fileInfo: "File Information",
+				fileSize: "File Size",
+				duration: "Duration",
+				sourceInfo: "Source Information",
+				sourceType: "Source Type",
+				uploadFileName: "File Name",
+				mimeType: "MIME Type",
+				url: "URL",
+				openLink: "Open Link",
+				timestamps: "Timestamps",
+				createdAt: "Created At",
+				uploadedAt: "Uploaded At",
+				closeButton: "Close",
+				unknown: "Unknown",
+
+				dispositions: {
+					playableAudio: "Audio File",
+					coverImage: "Cover Image",
+					description: "Description",
+					unknown: "Unknown",
+					getLabel: (disposition: AbookEntryDisposition) => {
+						switch (disposition) {
+							case AbookEntryDisposition.PLAYABLE_AUDIO:
+								return "Audio File"
+							case AbookEntryDisposition.COVER_IMAGE:
+								return "Cover Image"
+							case AbookEntryDisposition.DESCRIPTION:
+								return "Description"
+							case AbookEntryDisposition.UNKNOWN:
+							default:
+								return "Unknown"
+						}
+					},
+				},
 			},
 		},
 		create: {

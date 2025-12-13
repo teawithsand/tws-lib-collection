@@ -18,6 +18,7 @@ import styles from "./AbookEntryCard.module.scss"
 
 export interface AbookEntryCardProps {
 	readonly entry: WithId<AbookEntry>
+	readonly onClick?: () => void
 }
 
 const getDispositionIcon = (disposition: AbookEntryDisposition): ReactNode => {
@@ -81,7 +82,7 @@ const formatDuration = (milliseconds: number | null | undefined): string => {
  * Individual audiobook entry card component for list display.
  * Mobile-first design with disposition icon and metadata.
  */
-export const AbookEntryCard = ({ entry }: AbookEntryCardProps) => {
+export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 	const { resolve } = useTransResolver()
 	const { data, aggregate } = entry.data
 
@@ -93,7 +94,14 @@ export const AbookEntryCard = ({ entry }: AbookEntryCardProps) => {
 			: null
 
 	return (
-		<Card padding="md" shadow="sm" withBorder className={styles.card}>
+		<Card
+			padding="md"
+			shadow="sm"
+			withBorder
+			className={styles.card}
+			onClick={onClick}
+			style={onClick ? { cursor: "pointer" } : {}}
+		>
 			<Group gap="md" align="flex-start" wrap="nowrap">
 				<ThemeIcon
 					size="lg"
