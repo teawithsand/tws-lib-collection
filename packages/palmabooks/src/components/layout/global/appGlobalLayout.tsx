@@ -4,7 +4,6 @@ import { Routes } from "@/router"
 import {
 	IconBook,
 	IconDatabase,
-	IconHome,
 	IconInfoCircle,
 	IconMenu2,
 	IconSettings,
@@ -50,18 +49,10 @@ export const AppGlobalLayout = ({
 					draft.drawerItems = [
 						{
 							label: t.resolve(
-								(trans) => trans.layout.navigation.home,
-							),
-							linkType: AppBarLinkType.LOCAL_LINK,
-							href: Routes.home.navigate(),
-							icon: <IconHome size={APP_BAR_DEFAULT_ICON_SIZE} />,
-						},
-						{
-							label: t.resolve(
 								(trans) => trans.layout.navigation.books,
 							),
 							linkType: AppBarLinkType.LOCAL_LINK,
-							href: Routes.books.navigate(),
+							href: Routes.listAbooks.navigate(),
 							icon: <IconBook size={APP_BAR_DEFAULT_ICON_SIZE} />,
 						},
 						{

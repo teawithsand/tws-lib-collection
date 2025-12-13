@@ -30,29 +30,7 @@ export class Routes {
 	}
 
 	/**
-	 * Books page route
-	 * NOTE: Currently unused (no page component implemented and not wired in router)
-	 */
-	public static readonly books: RouteConfig = {
-		path: "/abooks",
-		navigate: () => "/abooks",
-	}
-
-	/**
-	 * Audiobook show page route
-	 */
-	public static readonly abookShow: RouteConfig = {
-		path: "/abooks/:id/show",
-		navigate: (id: string) => `/abooks/${id}/show`,
-	}
-
-	public static readonly createAbook: RouteConfig = {
-		path: "/abooks/create",
-		navigate: () => "/abooks/create",
-	}
-
-	/**
-	 * Audiobook list page route
+	 * Audiobook list page route (main feature)
 	 */
 	public static readonly listAbooks: RouteConfig = {
 		path: "/abooks",
@@ -60,41 +38,56 @@ export class Routes {
 	}
 
 	/**
-	 * Edit book page route
-	 * NOTE: Currently unused (no page component implemented and not wired in router)
+	 * Create new audiobook page route
 	 */
-	public static readonly editBook: RouteConfig = {
-		path: "/abooks/:id/edit",
-		navigate: (id: string) => `/abooks/${id}/edit`,
+	public static readonly createAbook: RouteConfig = {
+		path: "/abooks/create",
+		navigate: () => "/abooks/create",
 	}
 
 	/**
-	 * Upload files to book page route
-	 * NOTE: Currently unused (no page component implemented and not wired in router)
+	 * Audiobook details page route
 	 */
-	public static readonly uploadFiles: RouteConfig = {
-		path: "/abooks/:id/upload",
-		navigate: (id: string) => `/abooks/${id}/upload`,
+	public static readonly abookShow: RouteConfig = {
+		path: "/abooks/:id/show",
+		navigate: (id: string) => `/abooks/${id}/show`,
 	}
 
-	/**
-	 * File list for book page route
-	 * NOTE: Currently unused (no page component implemented and not wired in router)
-	 */
-	public static readonly fileList: RouteConfig = {
-		path: "/abooks/:id/files",
-		navigate: (id: string) => `/abooks/${id}/files`,
-	}
+	// ===== NOT IMPLEMENTED IN MVP =====
+	// Uncomment these when implementing the features
 
-	/**
-	 * Entry show page route
-	 * NOTE: Currently unused (no page component implemented and not wired in router)
-	 */
-	public static readonly entryShow: RouteConfig = {
-		path: "/abooks/:abookId/entries/:entryId",
-		navigate: (abookId: string, entryId: string) =>
-			`/abooks/${abookId}/entries/${entryId}`,
-	}
+	// /**
+	//  * Edit audiobook page route
+	//  */
+	// public static readonly editBook: RouteConfig = {
+	// 	path: "/abooks/:id/edit",
+	// 	navigate: (id: string) => `/abooks/${id}/edit`,
+	// }
+
+	// /**
+	//  * Upload files to existing audiobook page route
+	//  */
+	// public static readonly uploadFiles: RouteConfig = {
+	// 	path: "/abooks/:id/upload",
+	// 	navigate: (id: string) => `/abooks/${id}/upload`,
+	// }
+
+	// /**
+	//  * File list for audiobook page route
+	//  */
+	// public static readonly fileList: RouteConfig = {
+	// 	path: "/abooks/:id/files",
+	// 	navigate: (id: string) => `/abooks/${id}/files`,
+	// }
+
+	// /**
+	//  * Entry/chapter show page route
+	//  */
+	// public static readonly entryShow: RouteConfig = {
+	// 	path: "/abooks/:abookId/entries/:entryId",
+	// 	navigate: (abookId: string, entryId: string) =>
+	// 		`/abooks/${abookId}/entries/${entryId}`,
+	// }
 
 	/**
 	 * Settings page route
@@ -113,20 +106,15 @@ export class Routes {
 	}
 
 	/**
-	 * Get all available routes
+	 * Get all available routes for MVP
 	 */
 	public static readonly getAllRoutes = (): RouteConfig[] => {
 		return [
 			Routes.home,
 			Routes.about,
-			Routes.books,
-			Routes.abookShow,
-			Routes.createAbook,
 			Routes.listAbooks,
-			Routes.editBook,
-			Routes.uploadFiles,
-			Routes.fileList,
-			Routes.entryShow,
+			Routes.createAbook,
+			Routes.abookShow,
 			Routes.settings,
 			Routes.storage,
 		]

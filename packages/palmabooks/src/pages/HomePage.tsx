@@ -1,12 +1,19 @@
 import { AppLocalLayout } from "@/components/layout"
-import { HomePageContent } from "@/components/pageContent"
-import { Container } from "@teawithsand/mlui"
+import { Container, Stack, Text, Title } from "@teawithsand/mlui"
 
 export const HomePage = () => {
 	return (
 		<AppLocalLayout>
 			<Container>
-				<HomePageContent />
+				<Stack gap="md">
+					<Title order={1}>Welcome to PalmaBooks</Title>
+					<Text size="lg">Your audiobook library manager</Text>
+					<Text>
+						Organize and manage your audiobook collection with ease.
+						Create audiobooks, upload files, and keep track of your
+						listening progress.
+					</Text>
+				</Stack>
 			</Container>
 		</AppLocalLayout>
 	)
