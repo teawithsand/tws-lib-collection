@@ -1,7 +1,4 @@
 import {
-	AbookCreatePage,
-	AbookListPage,
-	AbookShowPage,
 	AboutPage,
 	HomePage,
 	NotFoundPage,
@@ -24,27 +21,6 @@ const routes: RouteDefinition[] = [
 		content: {
 			type: RouteContentType.COMPONENT,
 			component: AboutPage,
-		},
-	},
-	{
-		path: Routes.createAbook.path,
-		content: {
-			type: RouteContentType.COMPONENT,
-			component: AbookCreatePage,
-		},
-	},
-	{
-		path: Routes.listAbooks.path,
-		content: {
-			type: RouteContentType.COMPONENT,
-			component: AbookListPage,
-		},
-	},
-	{
-		path: Routes.abookShow.path,
-		content: {
-			type: RouteContentType.COMPONENT,
-			component: AbookShowPage,
 		},
 	},
 	{
