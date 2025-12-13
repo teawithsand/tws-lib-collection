@@ -18,6 +18,9 @@ const AbookCreateInternal = () => {
 			app.atomStore.set(app.abookStoreService.refreshAbooksList)
 			navigation.navigate(
 				Routes.abookShow.navigate(result.abookId.toString()),
+				{
+					replace: true,
+				},
 			)
 		},
 		[behavior, app, navigation],

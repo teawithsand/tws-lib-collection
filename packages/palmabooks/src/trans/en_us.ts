@@ -17,6 +17,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 	common: {
 		error: "Error",
 		cancel: "Cancel",
+		edit: "Edit",
 	},
 	util: {
 		formatSize,
@@ -254,6 +255,12 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				submitButton: "Create Audiobook",
 				create: "Create",
 				creating: "Creating...",
+			},
+		},
+		edit: {
+			pageTitle: "Edit Audiobook",
+			form: {
+				submitButton: "Save Changes",
 			},
 		},
 	},

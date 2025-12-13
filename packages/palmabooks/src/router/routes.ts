@@ -53,16 +53,16 @@ export class Routes {
 		navigate: (id: string) => `/abook/${id}/show`,
 	}
 
+	/**
+	 * Edit audiobook page route
+	 */
+	public static readonly abookEdit: RouteConfig = {
+		path: "/abook/:id/edit",
+		navigate: (id: string) => `/abook/${id}/edit`,
+	}
+
 	// ===== NOT IMPLEMENTED IN MVP =====
 	// Uncomment these when implementing the features
-
-	// /**
-	//  * Edit audiobook page route
-	//  */
-	// public static readonly editBook: RouteConfig = {
-	// 	path: "/abooks/:id/edit",
-	// 	navigate: (id: string) => `/abooks/${id}/edit`,
-	// }
 
 	// /**
 	//  * Upload files to existing audiobook page route

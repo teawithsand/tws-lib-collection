@@ -6,6 +6,7 @@ export interface AppTranslation {
 	common: {
 		error: string
 		cancel: string
+		edit: string
 	}
 	util: {
 		formatSize: (bytes: number | undefined) => string
@@ -191,6 +192,12 @@ export interface AppTranslation {
 				submitButton: string
 				create: string
 				creating: string
+			}
+		}
+		edit: {
+			pageTitle: string
+			form: {
+				submitButton: string
 			}
 		}
 	}

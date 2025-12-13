@@ -1,0 +1,78 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.abook-edit-form {
+	&__container {
+		width: 100%;
+	}
+
+	&__field-group {
+		display: flex;
+		flex-direction: column;
+		gap: mantine.rem(8);
+		margin-bottom: mantine.rem(24);
+	}
+
+	&__description-field {
+		textarea {
+			min-height: mantine.rem(100);
+			resize: vertical;
+		}
+	}
+
+	&__note-field {
+		textarea {
+			min-height: mantine.rem(80);
+			resize: vertical;
+		}
+	}
+
+	&__more-properties-toggle {
+		margin-bottom: mantine.rem(16);
+	}
+
+	&__global-errors,
+	&__submit-error {
+		ul {
+			margin: mantine.rem(8) 0 0 mantine.rem(20);
+			padding: 0;
+
+			li {
+				margin-bottom: mantine.rem(4);
+			}
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: mantine.rem(16);
+		justify-content: center;
+		margin-top: mantine.rem(32);
+		padding-top: mantine.rem(24);
+		border-top: 1px solid var(--mantine-color-gray-3);
+
+		@include mantine.dark {
+			border-top-color: var(--mantine-color-dark-4);
+		}
+	}
+
+	&__submit-button {
+		min-width: mantine.rem(120);
+	}
+}
+
+@include mantine.smaller-than(sm) {
+	.abook-edit-form {
+		&__field-group {
+			margin-bottom: mantine.rem(20);
+		}
+
+		&__actions {
+			margin-top: mantine.rem(20);
+			padding-top: mantine.rem(20);
+		}
+
+		&__submit-button {
+			width: 100%;
+		}
+	}
+}

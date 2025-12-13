@@ -1,26 +1,57 @@
 import { useTransResolver } from "@/app/app.hooks"
-import { IconBook, IconClock, IconNotes } from "@tabler/icons-react"
+import { IconBook, IconClock, IconEdit, IconNotes } from "@tabler/icons-react"
 import { Abook } from "@teawithsand/booklibr"
 import {
 	Box,
+	Button,
 	Card,
 	Divider,
 	Group,
+	MluiBreakpoint,
 	Stack,
 	Text,
 	Title,
+	useBreakpoint,
 } from "@teawithsand/mlui"
+import { ReactNode } from "react"
 import styles from "./AbookShow.module.scss"
 
 export interface AbookShowProps {
 	readonly abook: Abook
+	readonly onEdit?: () => void
+}
+
+const ResponsiveIconButton = ({
+	onClick,
+	icon,
+	label,
+}: {
+	onClick: () => void
+	icon: ReactNode
+	label: string
+}) => {
+	const breakpoint = useBreakpoint()
+	const isIconOnly = breakpoint.is(MluiBreakpoint.XS)
+
+	return (
+		<Button
+			variant="light"
+			size="sm"
+			onClick={onClick}
+			leftSection={isIconOnly ? undefined : icon}
+			className={styles.editButton}
+			px={isIconOnly ? "sm" : undefined}
+		>
+			{isIconOnly ? icon : label}
+		</Button>
+	)
 }
 
 /**
  * Mobile-first audiobook detail component.
  * Displays complete audiobook information in a clean, readable format.
  */
-export const AbookShow = ({ abook }: AbookShowProps) => {
+export const AbookShow = ({ abook, onEdit }: AbookShowProps) => {
 	const { resolve } = useTransResolver()
 
 	const { data, aggregate } = abook
@@ -36,10 +67,23 @@ export const AbookShow = ({ abook }: AbookShowProps) => {
 				{/* Title Section */}
 				<Card padding="lg" shadow="sm" withBorder>
 					<Stack gap="md">
-						<Title order={2} className={styles.title}>
-							{metadata.title ||
-								resolve((t) => t.abook.show.noTitle)}
-						</Title>
+						<Group
+							justify="space-between"
+							align="flex-start"
+							wrap="nowrap"
+						>
+							<Title order={2} className={styles.title}>
+								{metadata.title ||
+									resolve((t) => t.abook.show.noTitle)}
+							</Title>
+							{onEdit && (
+								<ResponsiveIconButton
+									onClick={onEdit}
+									icon={<IconEdit size={16} />}
+									label={resolve((t) => t.common.edit)}
+								/>
+							)}
+						</Group>
 
 						<Text
 							size="sm"
@@ -52,7 +96,6 @@ export const AbookShow = ({ abook }: AbookShowProps) => {
 					</Stack>
 				</Card>
 
-				{/* Stats Section */}
 				<Card padding="lg" shadow="sm" withBorder>
 					<Stack gap="md">
 						<Group gap="xs" align="center">
@@ -107,7 +150,6 @@ export const AbookShow = ({ abook }: AbookShowProps) => {
 					</Stack>
 				</Card>
 
-				{/* Private Notes Section */}
 				{metadata.privateUserNote && (
 					<Card padding="lg" shadow="sm" withBorder>
 						<Stack gap="sm">

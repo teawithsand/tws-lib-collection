@@ -1,9 +1,11 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
 .container {
 	max-width: 48rem;
 	margin: 0 auto;
 	padding: 1rem;
 
-	@media (min-width: 768px) {
+	@include mantine.larger-than(mantine.$mantine-breakpoint-md) {
 		padding: 2rem;
 	}
 }
@@ -15,6 +17,12 @@
 .title {
 	line-height: 1.3;
 	word-wrap: break-word;
+	flex: 1;
+	min-width: 0;
+}
+
+.editButton {
+	flex-shrink: 0;
 }
 
 .description {
