@@ -1,4 +1,4 @@
-export * from "./AbookListPage"
+export * from "./abooks"
 export * from "./AboutPage"
 export * from "./HomePage"
 export * from "./NotFoundPage"

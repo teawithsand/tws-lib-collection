@@ -1,0 +1,12 @@
+@use "@teawithsand/mlui/dist/_mantine" as mantine;
+
+.container {
+	width: 100%;
+	padding: mantine.rem(24) 0;
+}
+
+.title {
+	text-align: center;
+	font-weight: 700;
+	color: var(--mantine-color-text);
+}

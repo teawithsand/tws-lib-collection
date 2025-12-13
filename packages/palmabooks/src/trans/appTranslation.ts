@@ -5,6 +5,7 @@ export interface AppTranslation {
 	language: Language
 	common: {
 		error: string
+		cancel: string
 	}
 	util: {
 		formatSize: (bytes: number | undefined) => string
@@ -153,6 +154,27 @@ export interface AppTranslation {
 			lastPlayed: string
 			searchPlaceholder: string
 			refreshButton: string
+		}
+		create: {
+			pageTitle: string
+			form: {
+				validationErrors: string
+				submissionError: string
+				unexpectedError: string
+				titleLabel: string
+				titlePlaceholder: string
+				filesLabel: string
+				filesPlaceholder: string
+				filesSelected: (count: number) => string
+				descriptionLabel: string
+				descriptionPlaceholder: string
+				privateNoteLabel: string
+				privateNotePlaceholder: string
+				moreProperties: string
+				submitButton: string
+				create: string
+				creating: string
+			}
 		}
 	}
 }

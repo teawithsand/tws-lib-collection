@@ -16,6 +16,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 	language: Language.ENGLISH_US,
 	common: {
 		error: "Error",
+		cancel: "Cancel",
 	},
 	util: {
 		formatSize,
@@ -191,6 +192,29 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			lastPlayed: "Last played",
 			searchPlaceholder: "Search audiobooks...",
 			refreshButton: "Refresh list",
+		},
+		create: {
+			pageTitle: "Create New Audiobook",
+			form: {
+				validationErrors: "Form Validation Errors",
+				submissionError: "Submission Error",
+				unexpectedError: "An unexpected error occurred",
+				titleLabel: "Audiobook Title",
+				titlePlaceholder: "Enter audiobook title",
+				filesLabel: "Files",
+				filesPlaceholder: "Select audio files, cover images, etc.",
+				filesSelected: (count: number) =>
+					`${count} file${count === 1 ? "" : "s"} selected:`,
+				descriptionLabel: "Description",
+				descriptionPlaceholder:
+					"Enter audiobook description (optional)",
+				privateNoteLabel: "Private Note",
+				privateNotePlaceholder: "Enter private notes (optional)",
+				moreProperties: "More Properties",
+				submitButton: "Create Audiobook",
+				create: "Create",
+				creating: "Creating...",
+			},
 		},
 	},
 }
