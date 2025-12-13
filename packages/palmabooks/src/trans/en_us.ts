@@ -142,6 +142,8 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		view: {
 			unknown: "Unknown",
 			inProgress: "In Progress",
+			noDescription: "No description",
+			audiobookCoverAlt: "Audiobook cover",
 			entryCount: (count: number) =>
 				`${count} ${count === 1 ? "entry" : "entries"}`,
 			notePrefix: "Note:",
@@ -184,6 +186,11 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				noAudiobooks: "No audiobooks found",
 				createFirst: "Create your first audiobook to get started",
 			},
+			createButton: "Create Audiobook",
+			progress: "Progress",
+			lastPlayed: "Last played",
+			searchPlaceholder: "Search audiobooks...",
+			refreshButton: "Refresh list",
 		},
 	},
 }

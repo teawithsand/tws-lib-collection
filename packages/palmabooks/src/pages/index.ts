@@ -1,3 +1,4 @@
+export * from "./AbookListPage"
 export * from "./AboutPage"
 export * from "./HomePage"
 export * from "./NotFoundPage"

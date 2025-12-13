@@ -116,6 +116,8 @@ export interface AppTranslation {
 		view: {
 			unknown: string
 			inProgress: string
+			noDescription: string
+			audiobookCoverAlt: string
 			entryCount: (count: number) => string
 			notePrefix: string
 			formatDuration: (milliseconds: number) => string
@@ -146,6 +148,11 @@ export interface AppTranslation {
 				noAudiobooks: string
 				createFirst: string
 			}
+			createButton: string
+			progress: string
+			lastPlayed: string
+			searchPlaceholder: string
+			refreshButton: string
 		}
 	}
 }

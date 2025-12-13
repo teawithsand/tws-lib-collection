@@ -1,4 +1,5 @@
 import {
+	AbookListPage,
 	AboutPage,
 	HomePage,
 	NotFoundPage,
@@ -14,6 +15,13 @@ const routes: RouteDefinition[] = [
 		content: {
 			type: RouteContentType.COMPONENT,
 			component: HomePage,
+		},
+	},
+	{
+		path: Routes.listAbooks.path,
+		content: {
+			type: RouteContentType.COMPONENT,
+			component: AbookListPage,
 		},
 	},
 	{
