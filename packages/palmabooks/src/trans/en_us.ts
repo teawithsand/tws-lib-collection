@@ -263,5 +263,22 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				submitButton: "Save Changes",
 			},
 		},
+		delete: {
+			modalTitle: "Delete Audiobook",
+			confirmationMessage:
+				"Are you sure you want to delete this audiobook?",
+			warningMessage:
+				"This action cannot be undone. All audiobook data, including entries and personal notes, will be permanently deleted.",
+			deleteButton: "Delete Audiobook",
+			deleting: "Deleting...",
+			cancelButton: "Cancel",
+			successTitle: "Audiobook Deleted!",
+			successMessage: "The audiobook has been successfully deleted.",
+			closeButton: "Close",
+			errorTitle: "Deletion Failed",
+			errorMessage:
+				"An unexpected error occurred while deleting the audiobook.",
+			noAbookSelected: "No audiobook selected for deletion.",
+		},
 	},
 }

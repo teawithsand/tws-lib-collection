@@ -1,5 +1,11 @@
 import { useTransResolver } from "@/app/app.hooks"
-import { IconBook, IconClock, IconEdit, IconNotes } from "@tabler/icons-react"
+import {
+	IconBook,
+	IconClock,
+	IconEdit,
+	IconNotes,
+	IconTrash,
+} from "@tabler/icons-react"
 import { Abook } from "@teawithsand/booklibr"
 import {
 	Box,
@@ -19,24 +25,28 @@ import styles from "./AbookShow.module.scss"
 export interface AbookShowProps {
 	readonly abook: Abook
 	readonly onEdit?: () => void
+	readonly onDelete?: () => void
 }
 
 const ResponsiveIconButton = ({
 	onClick,
 	icon,
 	label,
+	color,
 }: {
 	onClick: () => void
 	icon: ReactNode
 	label: string
+	color?: string
 }) => {
 	const breakpoint = useBreakpoint()
-	const isIconOnly = breakpoint.is(MluiBreakpoint.XS)
+	const isIconOnly = breakpoint.isAtMost(MluiBreakpoint.SM)
 
 	return (
 		<Button
 			variant="light"
 			size="sm"
+			color={color}
 			onClick={onClick}
 			leftSection={isIconOnly ? undefined : icon}
 			className={styles.editButton}
@@ -51,7 +61,7 @@ const ResponsiveIconButton = ({
  * Mobile-first audiobook detail component.
  * Displays complete audiobook information in a clean, readable format.
  */
-export const AbookShow = ({ abook, onEdit }: AbookShowProps) => {
+export const AbookShow = ({ abook, onEdit, onDelete }: AbookShowProps) => {
 	const { resolve } = useTransResolver()
 
 	const { data, aggregate } = abook
@@ -76,13 +86,25 @@ export const AbookShow = ({ abook, onEdit }: AbookShowProps) => {
 								{metadata.title ||
 									resolve((t) => t.abook.show.noTitle)}
 							</Title>
-							{onEdit && (
-								<ResponsiveIconButton
-									onClick={onEdit}
-									icon={<IconEdit size={16} />}
-									label={resolve((t) => t.common.edit)}
-								/>
-							)}
+							<Group gap="xs">
+								{onEdit && (
+									<ResponsiveIconButton
+										onClick={onEdit}
+										icon={<IconEdit size={16} />}
+										label={resolve((t) => t.common.edit)}
+									/>
+								)}
+								{onDelete && (
+									<ResponsiveIconButton
+										onClick={onDelete}
+										icon={<IconTrash size={16} />}
+										label={resolve(
+											(t) => t.abook.delete.deleteButton,
+										)}
+										color="red"
+									/>
+								)}
+							</Group>
 						</Group>
 
 						<Text

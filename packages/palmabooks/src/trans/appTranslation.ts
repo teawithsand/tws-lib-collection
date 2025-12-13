@@ -200,6 +200,20 @@ export interface AppTranslation {
 				submitButton: string
 			}
 		}
+		delete: {
+			modalTitle: string
+			confirmationMessage: string
+			warningMessage: string
+			deleteButton: string
+			deleting: string
+			cancelButton: string
+			successTitle: string
+			successMessage: string
+			closeButton: string
+			errorTitle: string
+			errorMessage: string
+			noAbookSelected: string
+		}
 	}
 }
 
