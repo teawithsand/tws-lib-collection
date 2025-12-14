@@ -327,6 +327,25 @@ export const translationEnUs: Readonly<AppTranslation> = {
 					},
 				},
 			},
+			delete: {
+				modalTitle: "Delete Entry",
+				confirmationMessage:
+					"Are you sure you want to delete this entry?",
+				warningMessage:
+					"This action cannot be undone. The entry will be permanently deleted from the audiobook.",
+				fromAbook: "from audiobook:",
+				deleteButton: "Delete",
+				deleting: "Deleting...",
+				cancelButton: "Cancel",
+				successTitle: "Entry Deleted!",
+				successMessage: "The entry has been successfully deleted.",
+				closeButton: "Close",
+				errorTitle: "Deletion Failed",
+				noEntrySelected: "No entry selected for deletion.",
+			},
+			show: {
+				noName: "Untitled Entry",
+			},
 		},
 		create: {
 			pageTitle: "Create New Audiobook",

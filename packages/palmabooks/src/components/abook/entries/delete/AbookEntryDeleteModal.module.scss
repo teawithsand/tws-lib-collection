@@ -1,0 +1,59 @@
+// Mobile-first design for abook entry delete modal
+.abook-entry-delete-modal {
+	.entry-info {
+		padding: 1rem;
+		background-color: var(--mantine-color-gray-0);
+		border-radius: var(--mantine-radius-md);
+		border: 1px solid var(--mantine-color-gray-2);
+
+		// Mobile-first: stack content vertically
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.warning-alert {
+		border-left: 4px solid var(--mantine-color-red-6);
+	}
+
+	.button-group {
+		margin-top: 1rem;
+
+		// Mobile-first: stack buttons vertically on small screens
+		flex-direction: column-reverse;
+		width: 100%;
+
+		button {
+			width: 100%;
+		}
+
+		// Desktop: horizontal layout
+		@media (min-width: 48em) {
+			flex-direction: row;
+
+			button {
+				width: auto;
+			}
+		}
+	}
+
+	.delete-button {
+		&:hover {
+			background-color: var(--mantine-color-red-7);
+		}
+
+		&:active {
+			background-color: var(--mantine-color-red-8);
+		}
+	}
+}
+
+// Dark theme support
+[data-mantine-color-scheme="dark"] {
+	.abook-entry-delete-modal {
+		.entry-info {
+			background-color: var(--mantine-color-dark-7);
+			border-color: var(--mantine-color-dark-5);
+		}
+	}
+}

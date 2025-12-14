@@ -1,11 +1,15 @@
-import { AbookEntry, WithId } from "@teawithsand/booklibr"
-import { Atom, useAtomValue } from "@teawithsand/fstate"
-import { useAbookEntryPreviewModal } from "../show"
-import { AbookEntryPreviewModal } from "../show/AbookEntryPreviewModal"
+import { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
+import { atom, Atom, useAtomValue } from "@teawithsand/fstate"
+import { useMemo } from "react"
+import {
+	AutonomousAbookEntryShowModal,
+	useAbookEntryPreviewModal,
+} from "../show"
 import { AbookEntryList } from "./AbookEntryList"
 
 export interface AutonomousAbookEntryListProps {
 	readonly entriesAtom: Atom<Promise<WithId<AbookEntry>[]>>
+	readonly abookAtom: Atom<Promise<WithId<Abook | null>>>
 	onRefresh: () => void
 }
 
@@ -16,10 +20,22 @@ export interface AutonomousAbookEntryListProps {
  */
 export const AutonomousAbookEntryList = ({
 	entriesAtom,
+	abookAtom,
 	onRefresh,
 }: AutonomousAbookEntryListProps) => {
 	const entries = useAtomValue(entriesAtom)
-	const { opened, entry, openModal, closeModal } = useAbookEntryPreviewModal()
+	const {
+		opened,
+		entry: modalEntry,
+		openModal,
+		closeModal,
+	} = useAbookEntryPreviewModal()
+
+	// TODO(teaiwthsand): figure out if this will really work, as this is quite finicky
+	const entryDataWithIdAtom = useMemo(() => {
+		if (!modalEntry) return atom(Promise.resolve({ id: "", data: null }))
+		return atom(Promise.resolve(modalEntry))
+	}, [modalEntry])
 
 	return (
 		<>
@@ -28,11 +44,17 @@ export const AutonomousAbookEntryList = ({
 				onRefresh={onRefresh}
 				onEntryClick={openModal}
 			/>
-			<AbookEntryPreviewModal
-				opened={opened}
-				onClose={closeModal}
-				entry={entry}
-			/>
+			{modalEntry && (
+				<AutonomousAbookEntryShowModal
+					opened={opened}
+					onClose={closeModal}
+					abookDataWithIdAtom={abookAtom}
+					entryDataWithIdAtom={entryDataWithIdAtom}
+					onEntryModified={() => {
+						onRefresh()
+					}}
+				/>
+			)}
 		</>
 	)
 }

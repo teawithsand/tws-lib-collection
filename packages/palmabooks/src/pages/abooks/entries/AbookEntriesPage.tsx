@@ -1,7 +1,7 @@
 import { useApp } from "@/app/app.hooks"
 import { AppLocalLayout } from "@/components"
 import { AutonomousAbookEntryList } from "@/components/abook/entries"
-import { AbookEntry, WithId } from "@teawithsand/booklibr"
+import { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
 import { Atom } from "@teawithsand/fstate"
 import {
 	Container,
@@ -13,16 +13,19 @@ import { useMemo } from "react"
 
 interface AbookEntriesPageContentProps {
 	readonly entriesAtom: Atom<Promise<WithId<AbookEntry>[]>>
+	readonly abookAtom: Atom<Promise<WithId<Abook | null>>>
 	readonly onRefresh: () => void
 }
 
 const AbookEntriesPageContent = ({
 	entriesAtom,
+	abookAtom,
 	onRefresh,
 }: AbookEntriesPageContentProps) => {
 	return (
 		<AutonomousAbookEntryList
 			entriesAtom={entriesAtom}
+			abookAtom={abookAtom}
 			onRefresh={onRefresh}
 		/>
 	)
@@ -33,11 +36,12 @@ export const AbookEntriesPage = () => {
 	const params = useRouteParams()
 	const id = params.resolve(RouteParamsSchemas.idParamSchema)
 
-	const { entriesAtom, refreshEntries } = useMemo(() => {
+	const { entriesAtom, abookAtom, refreshEntries } = useMemo(() => {
 		if (!id) {
-			const emptyAtom = app.abookStoreService.getAbook("").entries
+			const abookOps = app.abookStoreService.getAbook("")
 			return {
-				entriesAtom: emptyAtom,
+				entriesAtom: abookOps.entries,
+				abookAtom: abookOps.dataWithId,
 				refreshEntries: () => {},
 			}
 		}
@@ -45,6 +49,7 @@ export const AbookEntriesPage = () => {
 		const abookOperations = app.abookStoreService.getAbook(id)
 		return {
 			entriesAtom: abookOperations.entries,
+			abookAtom: abookOperations.dataWithId,
 			refreshEntries: () => {
 				app.atomStore.set(abookOperations.refresh)
 			},
@@ -57,6 +62,7 @@ export const AbookEntriesPage = () => {
 				<Container fullWidth>
 					<AbookEntriesPageContent
 						entriesAtom={entriesAtom}
+						abookAtom={abookAtom}
 						onRefresh={refreshEntries}
 					/>
 				</Container>

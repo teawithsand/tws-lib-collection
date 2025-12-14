@@ -231,6 +231,23 @@ export interface AppTranslation {
 					) => string
 				}
 			}
+			delete: {
+				modalTitle: string
+				confirmationMessage: string
+				warningMessage: string
+				fromAbook: string
+				deleteButton: string
+				deleting: string
+				cancelButton: string
+				successTitle: string
+				successMessage: string
+				closeButton: string
+				errorTitle: string
+				noEntrySelected: string
+			}
+			show: {
+				noName: string
+			}
 		}
 		create: {
 			pageTitle: string

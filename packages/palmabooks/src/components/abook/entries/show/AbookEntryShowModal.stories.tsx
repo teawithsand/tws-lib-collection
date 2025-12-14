@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react"
 import {
+	Abook,
 	AbookEntry,
 	AbookEntryDisposition,
 	AbookEntrySourceType,
@@ -8,7 +9,7 @@ import {
 } from "@teawithsand/booklibr"
 import { Timestamp } from "@teawithsand/lngext"
 import { SimpleSerializedError } from "@teawithsand/reserd"
-import { AbookEntryPreviewModal } from "./AbookEntryPreviewModal"
+import { AbookEntryShowModal } from "./AbookEntryShowModal"
 
 /**
  * Create a mock audiobook entry for testing
@@ -20,7 +21,7 @@ const createMockEntry = (options: {
 	duration?: number
 	fileSize?: number
 	sourceType?: "upload" | "url"
-}): WithId<AbookEntry> => {
+}): WithId<AbookEntry | null> => {
 	const {
 		name = "Chapter 1 - Introduction",
 		disposition = AbookEntryDisposition.PLAYABLE_AUDIO,
@@ -82,15 +83,47 @@ const createMockEntry = (options: {
 	}
 }
 
-const meta: Meta<typeof AbookEntryPreviewModal> = {
-	title: "Components/Abook/Entries/AbookEntryPreviewModal",
-	component: AbookEntryPreviewModal,
+/**
+ * Create a mock audiobook for testing
+ */
+const createMockAbook = (): WithId<Abook | null> => {
+	const now = Timestamp.fromNumber(Date.now())
+	return {
+		id: "abook_1",
+		data: new Abook({
+			data: {
+				header: {
+					createdAt: now,
+					metadata: {
+						title: "My Audiobook",
+						description: "A sample audiobook",
+						privateUserNote: "",
+					},
+					position: null,
+				},
+				entries: new Map(),
+			},
+			aggregate: {
+				totalEntries: 5,
+				totalDurationMillis: 18000000,
+			},
+		}),
+	}
+}
+
+const handleDeleteClick = () => {
+	alert(`Delete clicked`)
+}
+
+const meta: Meta<typeof AbookEntryShowModal> = {
+	title: "Components/Abook/Entries/AbookEntryShowModal",
+	component: AbookEntryShowModal,
 	parameters: {
 		layout: "fullscreen",
 		docs: {
 			description: {
 				component:
-					"A preview modal for displaying detailed information about an audiobook entry. Shows disposition, file information, source details, and timestamps in a mobile-first design.",
+					"A modal for displaying detailed information about an audiobook entry. Shows disposition, file information, source details, and timestamps in a mobile-first design. Includes delete functionality.",
 			},
 		},
 	},
@@ -103,20 +136,28 @@ const meta: Meta<typeof AbookEntryPreviewModal> = {
 		onClose: {
 			description: "Callback when modal is closed",
 		},
+		abook: {
+			control: "object",
+			description: "The audiobook containing this entry",
+		},
 		entry: {
 			control: "object",
-			description: "The audiobook entry to preview",
+			description: "The audiobook entry to show",
+		},
+		onDeleteClick: {
+			description: "Callback when delete button is clicked",
 		},
 	},
 }
 
 export default meta
-type Story = StoryObj<typeof AbookEntryPreviewModal>
+type Story = StoryObj<typeof AbookEntryShowModal>
 
 export const PlayableAudio: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Chapter 1 - The Beginning",
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
@@ -124,6 +165,7 @@ export const PlayableAudio: Story = {
 			duration: 3600000, // 1 hour
 			fileSize: 15728640, // 15 MB
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -131,6 +173,7 @@ export const CoverImage: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Book Cover",
 			disposition: AbookEntryDisposition.COVER_IMAGE,
@@ -138,6 +181,7 @@ export const CoverImage: Story = {
 			duration: undefined,
 			fileSize: 524288, // 512 KB
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -145,6 +189,7 @@ export const Description: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Book Description",
 			disposition: AbookEntryDisposition.DESCRIPTION,
@@ -152,6 +197,7 @@ export const Description: Story = {
 			duration: undefined,
 			fileSize: 4096, // 4 KB
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -159,6 +205,7 @@ export const UnknownDisposition: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Unknown File",
 			disposition: AbookEntryDisposition.UNKNOWN,
@@ -166,6 +213,7 @@ export const UnknownDisposition: Story = {
 			duration: undefined,
 			fileSize: 1024000,
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -173,6 +221,7 @@ export const LongFileName: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Chapter 25 - A Very Long Chapter Title That Goes On And On With Lots of Detail About What Happens In This Chapter",
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
@@ -180,6 +229,7 @@ export const LongFileName: Story = {
 			duration: 5400000, // 1.5 hours
 			fileSize: 52428800, // 50 MB
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -187,6 +237,7 @@ export const ShortDuration: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Short Intro",
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
@@ -194,6 +245,7 @@ export const ShortDuration: Story = {
 			duration: 45000, // 45 seconds
 			fileSize: 720896, // 704 KB
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -201,6 +253,7 @@ export const UrlSource: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Chapter from URL",
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
@@ -209,6 +262,7 @@ export const UrlSource: Story = {
 			fileSize: 10485760, // 10 MB
 			sourceType: "url",
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -216,6 +270,7 @@ export const LargeFile: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({
 			name: "Full Audiobook",
 			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
@@ -223,6 +278,7 @@ export const LargeFile: Story = {
 			duration: 36000000, // 10 hours
 			fileSize: 1073741824, // 1 GB
 		}),
+		onDeleteClick: handleDeleteClick,
 	},
 }
 
@@ -230,7 +286,8 @@ export const NoEntry: Story = {
 	args: {
 		opened: true,
 		onClose: () => {},
-		entry: null,
+		abook: createMockAbook(),
+		entry: { id: "entry_null", data: null },
 	},
 }
 
@@ -238,6 +295,21 @@ export const Closed: Story = {
 	args: {
 		opened: false,
 		onClose: () => {},
+		abook: createMockAbook(),
 		entry: createMockEntry({}),
+		onDeleteClick: handleDeleteClick,
+	},
+}
+
+export const NoDeleteCallback: Story = {
+	args: {
+		opened: true,
+		onClose: () => {},
+		abook: createMockAbook(),
+		entry: createMockEntry({
+			name: "Chapter Without Delete",
+			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+		}),
+		// No onDeleteClick - delete button should be disabled
 	},
 }

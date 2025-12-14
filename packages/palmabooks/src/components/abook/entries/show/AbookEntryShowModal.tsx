@@ -1,37 +1,44 @@
 import { useTransResolver } from "@/app/app.hooks"
+import { IconTrash } from "@tabler/icons-react"
 import {
+	Abook,
 	AbookEntry,
 	AbookEntryDisposition,
 	BlobMetadataResultType,
 	WithId,
 } from "@teawithsand/booklibr"
 import { Button, Group, Modal, Stack, Text } from "@teawithsand/mlui"
-import styles from "./AbookEntryPreviewModal.module.scss"
+import styles from "./AbookEntryShowModal.module.scss"
 import { DispositionBadge } from "./preview/DispositionBadge"
 import { FileInfoSection } from "./preview/FileInfoSection"
 import { PreviewHeader } from "./preview/PreviewHeader"
 import { SourceInfoSection } from "./preview/SourceInfoSection"
 import { TimestampsSection } from "./preview/TimestampsSection"
 
-export interface AbookEntryPreviewModalProps {
+export interface AbookEntryShowModalProps {
 	readonly opened: boolean
 	readonly onClose: () => void
-	readonly entry: WithId<AbookEntry> | null
+	readonly abook: WithId<Abook | null>
+	readonly entry: WithId<AbookEntry | null>
+	readonly onDeleteClick?: () => void
 }
 
 /**
- * Modal component for previewing audiobook entry details.
+ * Modal component for showing audiobook entry details.
  * Shows entry information including disposition, metadata, and file details.
+ * Includes delete functionality with confirmation modal.
  * Uses mobile-first design principles.
  */
-export const AbookEntryPreviewModal = ({
+export const AbookEntryShowModal = ({
 	opened,
 	onClose,
+	abook,
 	entry,
-}: AbookEntryPreviewModalProps) => {
+	onDeleteClick,
+}: AbookEntryShowModalProps) => {
 	const { resolve } = useTransResolver()
 
-	if (!entry) {
+	if (!entry.data) {
 		return (
 			<Modal
 				opened={opened}
@@ -71,17 +78,33 @@ export const AbookEntryPreviewModal = ({
 			classNames={{ body: styles.modalBody }}
 		>
 			<Stack gap="lg">
-				<PreviewHeader entry={entry} />
+				<PreviewHeader entry={entry as WithId<AbookEntry>} />
 
 				<DispositionBadge disposition={data.disposition} />
 
-				<FileInfoSection entry={entry} duration={duration} />
+				<FileInfoSection
+					entry={entry as WithId<AbookEntry>}
+					duration={duration}
+				/>
 
-				<SourceInfoSection entry={entry} />
+				<SourceInfoSection entry={entry as WithId<AbookEntry>} />
 
-				<TimestampsSection entry={entry} />
+				<TimestampsSection entry={entry as WithId<AbookEntry>} />
 
-				<Group justify="flex-end" gap="md" mt="md">
+				<Group justify="space-between" gap="md" mt="md">
+					<Button
+						color="red"
+						variant="light"
+						leftSection={<IconTrash size={16} />}
+						onClick={() => {
+							if (abook.data && entry.data && onDeleteClick) {
+								onDeleteClick()
+							}
+						}}
+						disabled={!abook.data || !entry.data || !onDeleteClick}
+					>
+						Delete
+					</Button>
 					<Button onClick={onClose} variant="filled">
 						{resolve((t) => t.abook.entries.preview.closeButton)}
 					</Button>
