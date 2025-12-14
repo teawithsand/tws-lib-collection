@@ -204,6 +204,7 @@ export interface AppTranslation {
 				title: string
 				noEntry: string
 				untitled: string
+				openEntry: string
 				ordinal: string
 				disposition: string
 				fileInfo: string

@@ -1,36 +1,24 @@
 import { useTransResolver } from "@/app/app.hooks"
 import { IconAdjustments, IconRefresh, IconSearch } from "@tabler/icons-react"
-import { AbookEntryDisposition } from "@teawithsand/booklibr"
+import { useAtomValue, useSetAtom } from "@teawithsand/fstate"
 import { ActionIcon, Group, TextInput } from "@teawithsand/mlui"
-import {
-	AbookEntrySortModal,
-	AbookEntrySortOption,
-	useAbookEntrySortModal,
-} from "../modal"
+import { useAbookEntryListBehavior } from "../AbookEntryListBehavior"
+import { AbookEntrySortModal, useAbookEntrySortModal } from "../modal"
 import styles from "./AbookEntryListTopBar.module.scss"
-
-export interface AbookEntryListTopBarProps {
-	searchQuery: string
-	onSearchChange: (query: string) => void
-	sortOption: AbookEntrySortOption
-	onSortChange: (option: AbookEntrySortOption) => void
-	selectedDispositions: Set<AbookEntryDisposition>
-	onDispositionsChange: (dispositions: Set<AbookEntryDisposition>) => void
-	onRefresh: () => void
-}
 
 /**
  * Top bar component for audiobook entry list with search, sort, and refresh functionality.
+ *
+ * Uses `AbookEntryListBehavior` context so it accepts no props.
  */
-export const AbookEntryListTopBar = ({
-	searchQuery,
-	onSearchChange,
-	sortOption,
-	onSortChange,
-	selectedDispositions,
-	onDispositionsChange,
-	onRefresh,
-}: AbookEntryListTopBarProps) => {
+export const AbookEntryListTopBar = () => {
+	const behavior = useAbookEntryListBehavior()
+	const searchQuery = useAtomValue(behavior.filterText)
+	const sortOption = useAtomValue(behavior.sortMode)
+	const selectedDispositions = useAtomValue(behavior.selectedDispositions)
+	const setFilterText = useSetAtom(behavior.filterText)
+	const setSortMode = useSetAtom(behavior.sortMode)
+	const setSelectedDispositions = useSetAtom(behavior.selectedDispositions)
 	const { resolve } = useTransResolver()
 	const sortModal = useAbookEntrySortModal()
 
@@ -42,7 +30,7 @@ export const AbookEntryListTopBar = ({
 						(t) => t.abook.entries.searchPlaceholder,
 					)}
 					value={searchQuery}
-					onChange={(e) => onSearchChange(e.currentTarget.value)}
+					onChange={(e) => setFilterText(e.currentTarget.value)}
 					leftSection={<IconSearch size={16} />}
 					style={{ flex: 1, minWidth: 0 }}
 				/>
@@ -58,7 +46,7 @@ export const AbookEntryListTopBar = ({
 					<IconAdjustments size={18} />
 				</ActionIcon>
 				<ActionIcon
-					onClick={onRefresh}
+					onClick={behavior.refresh}
 					variant="light"
 					size="lg"
 					aria-label={resolve((t) => t.abook.list.refreshButton)}
@@ -72,9 +60,9 @@ export const AbookEntryListTopBar = ({
 				opened={sortModal.opened}
 				onClose={sortModal.closeModal}
 				currentOption={sortOption}
-				onOptionChange={onSortChange}
+				onOptionChange={(opt) => setSortMode(opt)}
 				selectedDispositions={selectedDispositions}
-				onDispositionsChange={onDispositionsChange}
+				onDispositionsChange={(d) => setSelectedDispositions(d)}
 			/>
 		</>
 	)

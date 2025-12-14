@@ -5,14 +5,16 @@ import {
 	Checkbox,
 	Divider,
 	Group,
+	LoadingFallbackVariant,
+	LoadingSuspenseBoundary,
 	Modal,
 	Radio,
 	Stack,
 	Text,
 } from "@teawithsand/mlui"
 import { useEffect, useState } from "react"
+import { AbookEntrySortOption } from "../common/abookEntrySortOption"
 import styles from "./AbookEntrySortModal.module.scss"
-import { AbookEntrySortOption } from "./abookEntrySortOption"
 
 export interface AbookEntrySortModalProps {
 	opened: boolean
@@ -23,10 +25,37 @@ export interface AbookEntrySortModalProps {
 	onDispositionsChange: (dispositions: Set<AbookEntryDisposition>) => void
 }
 
-/**
- * Modal for selecting sort options and disposition filters.
- */
-export const AbookEntrySortModal = ({
+const AbookEntrySortModalTitle = () => {
+	const { resolve } = useTransResolver()
+	return <>{resolve((t) => t.abook.entries.filterModal.title)}</>
+}
+
+export const AbookEntrySortModal = (props: AbookEntrySortModalProps) => {
+	const { opened, onClose } = props
+
+	return (
+		<Modal
+			opened={opened}
+			onClose={onClose}
+			title={
+				<LoadingSuspenseBoundary
+					variant={LoadingFallbackVariant.Inline}
+				>
+					<AbookEntrySortModalTitle />
+				</LoadingSuspenseBoundary>
+			}
+			centered
+			size="sm"
+			className={styles.modal}
+		>
+			<LoadingSuspenseBoundary variant={LoadingFallbackVariant.Inline}>
+				<AbookEntrySortModalContent {...props} />
+			</LoadingSuspenseBoundary>
+		</Modal>
+	)
+}
+
+const AbookEntrySortModalContent = ({
 	opened,
 	onClose,
 	currentOption,

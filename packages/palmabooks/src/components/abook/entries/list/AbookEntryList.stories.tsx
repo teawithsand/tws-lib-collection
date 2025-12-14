@@ -6,6 +6,7 @@ import {
 	BlobMetadataResultType,
 	WithId,
 } from "@teawithsand/booklibr"
+import { atom } from "@teawithsand/fstate"
 import { Timestamp } from "@teawithsand/lngext"
 import { Container } from "@teawithsand/mlui"
 import { SimpleSerializedError } from "@teawithsand/reserd"
@@ -106,9 +107,10 @@ const meta: Meta<typeof AbookEntryList> = {
 	],
 	tags: ["autodocs"],
 	argTypes: {
-		entries: {
+		entriesAtom: {
 			control: "object",
-			description: "Array of audiobook entries to display",
+			description:
+				"Atom resolving to an array of audiobook entries to display",
 		},
 		onRefresh: {
 			action: "refreshClicked",
@@ -122,211 +124,227 @@ type Story = StoryObj<typeof AbookEntryList>
 
 export const Empty: Story = {
 	args: {
-		entries: [],
+		entriesAtom: atom(Promise.resolve([])),
 	},
 }
 
 export const SingleAudioEntry: Story = {
 	args: {
-		entries: [
-			createMockEntry(
-				"entry-1",
-				1,
-				"Chapter 1: The Beginning",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 45 * 60 * 1000, // 45 minutes
-					blobSize: 15 * 1024 * 1024, // 15 MB
-				},
-			),
-		],
+		entriesAtom: atom(
+			Promise.resolve([
+				createMockEntry(
+					"entry-1",
+					1,
+					"Chapter 1: The Beginning",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 45 * 60 * 1000, // 45 minutes
+						blobSize: 15 * 1024 * 1024, // 15 MB
+					},
+				),
+			]),
+		),
 	},
 }
 
 export const MultipleAudioEntries: Story = {
 	args: {
-		entries: [
-			createMockEntry(
-				"entry-1",
-				1,
-				"Chapter 1: The Beginning",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 45 * 60 * 1000, // 45 minutes
-					blobSize: 15 * 1024 * 1024, // 15 MB
-				},
-			),
-			createMockEntry(
-				"entry-2",
-				2,
-				"Chapter 2: The Journey Continues",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 52 * 60 * 1000, // 52 minutes
-					blobSize: 18 * 1024 * 1024, // 18 MB
-				},
-			),
-			createMockEntry(
-				"entry-3",
-				3,
-				"Chapter 3: The Plot Thickens",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 38 * 60 * 1000, // 38 minutes
-					blobSize: 12 * 1024 * 1024, // 12 MB
-				},
-			),
-		],
+		entriesAtom: atom(
+			Promise.resolve([
+				createMockEntry(
+					"entry-1",
+					1,
+					"Chapter 1: The Beginning",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 45 * 60 * 1000, // 45 minutes
+						blobSize: 15 * 1024 * 1024, // 15 MB
+					},
+				),
+				createMockEntry(
+					"entry-2",
+					2,
+					"Chapter 2: The Journey Continues",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 52 * 60 * 1000, // 52 minutes
+						blobSize: 18 * 1024 * 1024, // 18 MB
+					},
+				),
+				createMockEntry(
+					"entry-3",
+					3,
+					"Chapter 3: The Plot Thickens",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 38 * 60 * 1000, // 38 minutes
+						blobSize: 12 * 1024 * 1024, // 12 MB
+					},
+				),
+			]),
+		),
 	},
 }
 
 export const MixedEntryTypes: Story = {
 	args: {
-		entries: [
-			createMockEntry(
-				"entry-cover",
-				1,
-				"Book Cover",
-				AbookEntryDisposition.COVER_IMAGE,
-				{
-					blobSize: 500 * 1024, // 500 KB
-				},
-			),
-			createMockEntry(
-				"entry-desc",
-				2,
-				"Book Description",
-				AbookEntryDisposition.DESCRIPTION,
-				{
-					blobSize: 10 * 1024, // 10 KB
-				},
-			),
-			createMockEntry(
-				"entry-1",
-				3,
-				"Chapter 1: Introduction",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 30 * 60 * 1000, // 30 minutes
-					blobSize: 10 * 1024 * 1024, // 10 MB
-				},
-			),
-			createMockEntry(
-				"entry-2",
-				4,
-				"Chapter 2: Development",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 45 * 60 * 1000, // 45 minutes
-					blobSize: 15 * 1024 * 1024, // 15 MB
-				},
-			),
-			createMockEntry(
-				"entry-unknown",
-				5,
-				"Unknown File",
-				AbookEntryDisposition.UNKNOWN,
-				{
-					blobSize: 1 * 1024 * 1024, // 1 MB
-				},
-			),
-		],
+		entriesAtom: atom(
+			Promise.resolve([
+				createMockEntry(
+					"entry-cover",
+					1,
+					"Book Cover",
+					AbookEntryDisposition.COVER_IMAGE,
+					{
+						blobSize: 500 * 1024, // 500 KB
+					},
+				),
+				createMockEntry(
+					"entry-desc",
+					2,
+					"Book Description",
+					AbookEntryDisposition.DESCRIPTION,
+					{
+						blobSize: 10 * 1024, // 10 KB
+					},
+				),
+				createMockEntry(
+					"entry-1",
+					3,
+					"Chapter 1: Introduction",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 30 * 60 * 1000, // 30 minutes
+						blobSize: 10 * 1024 * 1024, // 10 MB
+					},
+				),
+				createMockEntry(
+					"entry-2",
+					4,
+					"Chapter 2: Development",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 45 * 60 * 1000, // 45 minutes
+						blobSize: 15 * 1024 * 1024, // 15 MB
+					},
+				),
+				createMockEntry(
+					"entry-unknown",
+					5,
+					"Unknown File",
+					AbookEntryDisposition.UNKNOWN,
+					{
+						blobSize: 1 * 1024 * 1024, // 1 MB
+					},
+				),
+			]),
+		),
 	},
 }
 
 export const LongDuration: Story = {
 	args: {
-		entries: [
-			createMockEntry(
-				"entry-1",
-				1,
-				"Full Book Recording",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 12 * 60 * 60 * 1000, // 12 hours
-					blobSize: 150 * 1024 * 1024, // 150 MB
-				},
-			),
-			createMockEntry(
-				"entry-2",
-				2,
-				"Epilogue",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 2 * 60 * 60 * 1000, // 2 hours
-					blobSize: 25 * 1024 * 1024, // 25 MB
-				},
-			),
-		],
+		entriesAtom: atom(
+			Promise.resolve([
+				createMockEntry(
+					"entry-1",
+					1,
+					"Full Book Recording",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 12 * 60 * 60 * 1000, // 12 hours
+						blobSize: 150 * 1024 * 1024, // 150 MB
+					},
+				),
+				createMockEntry(
+					"entry-2",
+					2,
+					"Epilogue",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 2 * 60 * 60 * 1000, // 2 hours
+						blobSize: 25 * 1024 * 1024, // 25 MB
+					},
+				),
+			]),
+		),
 	},
 }
 
 export const ShortDuration: Story = {
 	args: {
-		entries: [
-			createMockEntry(
-				"entry-1",
-				1,
-				"Quick Introduction",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 2 * 60 * 1000, // 2 minutes
-					blobSize: 800 * 1024, // 800 KB
-				},
-			),
-			createMockEntry(
-				"entry-2",
-				2,
-				"Brief Summary",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: 5 * 60 * 1000, // 5 minutes
-					blobSize: 2 * 1024 * 1024, // 2 MB
-				},
-			),
-		],
+		entriesAtom: atom(
+			Promise.resolve([
+				createMockEntry(
+					"entry-1",
+					1,
+					"Quick Introduction",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 2 * 60 * 1000, // 2 minutes
+						blobSize: 800 * 1024, // 800 KB
+					},
+				),
+				createMockEntry(
+					"entry-2",
+					2,
+					"Brief Summary",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						durationMillis: 5 * 60 * 1000, // 5 minutes
+						blobSize: 2 * 1024 * 1024, // 2 MB
+					},
+				),
+			]),
+		),
 	},
 }
 
 export const WithoutMetadata: Story = {
 	args: {
-		entries: [
-			createMockEntry(
-				"entry-1",
-				1,
-				"Chapter 1: Still Processing",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					hasError: true,
-					blobSize: 15 * 1024 * 1024,
-				},
-			),
-			createMockEntry(
-				"entry-2",
-				2,
-				"Chapter 2: Also Processing",
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					hasError: true,
-					blobSize: 18 * 1024 * 1024,
-				},
-			),
-		],
+		entriesAtom: atom(
+			Promise.resolve([
+				createMockEntry(
+					"entry-1",
+					1,
+					"Chapter 1: Still Processing",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						hasError: true,
+						blobSize: 15 * 1024 * 1024,
+					},
+				),
+				createMockEntry(
+					"entry-2",
+					2,
+					"Chapter 2: Also Processing",
+					AbookEntryDisposition.PLAYABLE_AUDIO,
+					{
+						hasError: true,
+						blobSize: 18 * 1024 * 1024,
+					},
+				),
+			]),
+		),
 	},
 }
 
 export const LargeList: Story = {
 	args: {
-		entries: Array.from({ length: 25 }, (_, i) =>
-			createMockEntry(
-				`entry-${i + 1}`,
-				i + 1,
-				`Chapter ${i + 1}: Part ${i + 1}`,
-				AbookEntryDisposition.PLAYABLE_AUDIO,
-				{
-					durationMillis: (30 + (i % 20)) * 60 * 1000,
-					blobSize: (10 + (i % 10)) * 1024 * 1024,
-				},
+		entriesAtom: atom(
+			Promise.resolve(
+				Array.from({ length: 25 }, (_, i) =>
+					createMockEntry(
+						`entry-${i + 1}`,
+						i + 1,
+						`Chapter ${i + 1}: Part ${i + 1}`,
+						AbookEntryDisposition.PLAYABLE_AUDIO,
+						{
+							durationMillis: (30 + (i % 20)) * 60 * 1000,
+							blobSize: (10 + (i % 10)) * 1024 * 1024,
+						},
+					),
+				),
 			),
 		),
 	},

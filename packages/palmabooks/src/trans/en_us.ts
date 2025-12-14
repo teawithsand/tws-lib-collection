@@ -301,6 +301,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				mimeType: "MIME Type",
 				url: "URL",
 				openLink: "Open Link",
+				openEntry: "Open Entry",
 				timestamps: "Timestamps",
 				createdAt: "Created At",
 				uploadedAt: "Uploaded At",

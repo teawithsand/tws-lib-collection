@@ -12,8 +12,18 @@ import {
 	BlobMetadataResultType,
 	WithId,
 } from "@teawithsand/booklibr"
-import { Card, Group, Stack, Text, ThemeIcon } from "@teawithsand/mlui"
+import { useAtomValue, useSetAtom } from "@teawithsand/fstate"
+import {
+	Button,
+	Card,
+	Checkbox,
+	Group,
+	Stack,
+	Text,
+	ThemeIcon,
+} from "@teawithsand/mlui"
 import { ReactNode } from "react"
+import { useAbookEntryListBehavior } from "../AbookEntryListBehavior"
 import styles from "./AbookEntryCard.module.scss"
 
 export interface AbookEntryCardProps {
@@ -85,6 +95,25 @@ const formatDuration = (milliseconds: number | null | undefined): string => {
 export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 	const { resolve } = useTransResolver()
 	const { data, aggregate } = entry.data
+	const behavior = useAbookEntryListBehavior()
+	const isSelectedFn = useAtomValue(behavior.isEntrySelected)
+	const selected = isSelectedFn(entry)
+	const setEntrySelection = useSetAtom(behavior.setEntrySelection)
+
+	const handleCheckboxChange = (eOrChecked?: unknown) => {
+		// stop propagation so card onClick doesn't fire
+		if (
+			eOrChecked &&
+			typeof (eOrChecked as Event).stopPropagation === "function"
+		) {
+			;(eOrChecked as Event).stopPropagation()
+		}
+
+		const newChecked =
+			typeof eOrChecked === "boolean" ? eOrChecked : !selected
+		// write atom: entry, selected
+		setEntrySelection(entry, newChecked)
+	}
 
 	const audioMetadata = aggregate.metadata?.metadata.audio
 	const duration =
@@ -94,15 +123,18 @@ export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 			: null
 
 	return (
-		<Card
-			padding="md"
-			shadow="sm"
-			withBorder
-			className={styles.card}
-			onClick={onClick}
-			style={onClick ? { cursor: "pointer" } : {}}
-		>
-			<Group gap="md" align="flex-start" wrap="nowrap">
+		<Card padding="md" shadow="sm" withBorder className={styles.card}>
+			<Group gap="md" align="center" wrap="nowrap">
+				<div
+					className={styles.checkbox}
+					onClick={(e) => e.stopPropagation()}
+				>
+					<Checkbox
+						size="lg"
+						checked={selected}
+						onChange={handleCheckboxChange}
+					/>
+				</div>
 				<ThemeIcon
 					size="lg"
 					radius="md"
@@ -113,13 +145,23 @@ export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 				</ThemeIcon>
 
 				<Stack gap="xs" style={{ flex: 1, minWidth: 0 }}>
-					<Group justify="space-between" wrap="nowrap">
+					<Group justify="space-between" align="center" wrap="nowrap">
 						<Text fw={600} lineClamp={1} className={styles.name}>
 							{data.name || resolve((t) => t.abook.view.unknown)}
 						</Text>
-						<Text size="xs" c="dimmed" className={styles.ordinal}>
-							#{data.ordinalNumber}
-						</Text>
+						<div className={styles.actions}>
+							<Button
+								size="xs"
+								onClick={(e) => {
+									e.stopPropagation()
+									onClick?.()
+								}}
+							>
+								{resolve(
+									(t) => t.abook.entries.preview.openEntry,
+								)}
+							</Button>
+						</div>
 					</Group>
 
 					<Group gap="md" wrap="wrap">

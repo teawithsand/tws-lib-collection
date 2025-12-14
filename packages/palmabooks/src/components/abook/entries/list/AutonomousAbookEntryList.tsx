@@ -1,5 +1,5 @@
 import { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
-import { atom, Atom, useAtomValue } from "@teawithsand/fstate"
+import { atom, Atom } from "@teawithsand/fstate"
 import { useMemo } from "react"
 import {
 	AutonomousAbookEntryShowModal,
@@ -23,7 +23,6 @@ export const AutonomousAbookEntryList = ({
 	abookAtom,
 	onRefresh,
 }: AutonomousAbookEntryListProps) => {
-	const entries = useAtomValue(entriesAtom)
 	const {
 		opened,
 		entry: modalEntry,
@@ -40,7 +39,7 @@ export const AutonomousAbookEntryList = ({
 	return (
 		<>
 			<AbookEntryList
-				entries={entries}
+				entriesAtom={entriesAtom}
 				onRefresh={onRefresh}
 				onEntryClick={openModal}
 			/>

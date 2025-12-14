@@ -4,6 +4,26 @@
 	flex-shrink: 0;
 }
 
+.card {
+	/* ensure left checkbox has enough room and content aligns nicely */
+	padding-left: 0;
+}
+
+.checkbox {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+}
+
+.actions {
+	margin-left: 0.5rem;
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
 .name {
 	font-size: mantine.rem(14);
 	line-height: 1.3;
