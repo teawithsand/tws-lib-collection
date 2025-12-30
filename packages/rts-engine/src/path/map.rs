@@ -1,6 +1,6 @@
 use super::cell::MapCell;
-use super::pathing_map::{PathingMap, PathingMapCell};
 use super::traits::{Map, MapCoordinate, MapMut};
+use crate::algo::pathing::{PathingMap, PathingMapCell};
 use nalgebra::Point2;
 
 pub struct RtsMap {

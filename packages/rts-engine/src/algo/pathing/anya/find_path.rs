@@ -1,6 +1,6 @@
+use super::super::PathingMap;
 use super::anya::Anya;
 use super::AnyaError;
-use crate::path::pathing_map::PathingMap;
 use crate::path::MapCoordinate;
 use nalgebra::Point2;
 

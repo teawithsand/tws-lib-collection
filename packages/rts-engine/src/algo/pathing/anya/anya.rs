@@ -1,6 +1,6 @@
+use super::super::{PathingMap, PathingMapCell};
 use super::fraction::Fraction;
 use super::state::{AnyaState, StateWithCost};
-use crate::path::pathing_map::{PathingMap, PathingMapCell};
 use crate::path::MapCoordinate;
 use nalgebra::Point2;
 use std::collections::{BinaryHeap, HashMap};
