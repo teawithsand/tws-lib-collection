@@ -1,3 +1,4 @@
+pub mod algo;
 pub mod path;
 mod utils;
 
