@@ -42,18 +42,12 @@ export const AbookEntryList = ({
 	)
 }
 
-/**
- * Mobile-first audiobook entry list component.
- * Displays entries in a simple vertical list sorted by ordinal number with integrated search functionality.
- */
-const AbookEntryListContent = () => {
+const InnerList = () => {
 	const behavior = useAbookEntryListBehavior()
+	const entries = useAtomValue(behavior.shownEntries)
+	const searchQuery = useAtomValue(behavior.filterText)
 
 	const { resolve } = useTransResolver()
-
-	const searchQuery = useAtomValue(behavior.filterText)
-	const entries = useAtomValue(behavior.shownEntries)
-
 	if (entries.length === 0 && !searchQuery) {
 		return (
 			<Box className={styles.emptyState}>
@@ -73,7 +67,6 @@ const AbookEntryListContent = () => {
 
 	return (
 		<>
-			<AbookEntryListTopBar />
 			{entries.length === 0 ? (
 				<Box className={styles.emptyState}>
 					<Stack align="center" gap="md">
@@ -102,6 +95,19 @@ const AbookEntryListContent = () => {
 					))}
 				</Stack>
 			)}
+		</>
+	)
+}
+
+const AbookEntryListContent = () => {
+	// const behavior = useAbookEntryListBehavior()
+
+	return (
+		<>
+			<AbookEntryListTopBar />
+			<LoadingSuspenseBoundary variant={LoadingFallbackVariant.Inline}>
+				<InnerList />
+			</LoadingSuspenseBoundary>
 		</>
 	)
 }
