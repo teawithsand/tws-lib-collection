@@ -1,6 +1,7 @@
 import { useTransResolver } from "@/app/app.hooks"
 import {
 	IconClock,
+	IconEye,
 	IconFileMusic,
 	IconFileText,
 	IconPhoto,
@@ -14,21 +15,25 @@ import {
 } from "@teawithsand/booklibr"
 import { useAtomValue, useSetAtom } from "@teawithsand/fstate"
 import {
-	Button,
+	ActionIcon,
 	Card,
 	Checkbox,
 	Group,
+	MluiBreakpoint,
 	Stack,
 	Text,
 	ThemeIcon,
+	useBreakpoint,
 } from "@teawithsand/mlui"
-import { ReactNode } from "react"
+import { ReactNode, useRef } from "react"
 import { useAbookEntryListBehavior } from "../AbookEntryListBehavior"
 import styles from "./AbookEntryCard.module.scss"
+import { useLongPressSelection } from "./useLongPressSelection"
 
 export interface AbookEntryCardProps {
 	readonly entry: WithId<AbookEntry>
-	readonly onClick?: () => void
+	readonly onCardClick?: () => void
+	readonly onActionClick?: () => void
 }
 
 const getDispositionIcon = (disposition: AbookEntryDisposition): ReactNode => {
@@ -92,13 +97,29 @@ const formatDuration = (milliseconds: number | null | undefined): string => {
  * Individual audiobook entry card component for list display.
  * Mobile-first design with disposition icon and metadata.
  */
-export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
+export const AbookEntryCard = ({
+	entry,
+	onCardClick,
+	onActionClick,
+}: AbookEntryCardProps) => {
 	const { resolve } = useTransResolver()
 	const { data, aggregate } = entry.data
+	const breakpoint = useBreakpoint()
+	const isNarrow = breakpoint.isAtMost(MluiBreakpoint.MD)
 	const behavior = useAbookEntryListBehavior()
 	const isSelectedFn = useAtomValue(behavior.isEntrySelected)
 	const selected = isSelectedFn(entry)
 	const setEntrySelection = useSetAtom(behavior.setEntrySelection)
+	const showCheckboxesLoadable = useAtomValue(
+		behavior.isAtLeastOneEntrySelectedLoadable,
+	)
+	const shouldShowCheckboxes =
+		!isNarrow ||
+		(showCheckboxesLoadable.state === "hasData" &&
+			showCheckboxesLoadable.data)
+
+	const checkboxRef = useRef<HTMLDivElement>(null)
+	const actionsRef = useRef<HTMLDivElement>(null)
 
 	const handleCheckboxChange = (eOrChecked?: unknown) => {
 		// stop propagation so card onClick doesn't fire
@@ -115,6 +136,20 @@ export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 		setEntrySelection(entry, newChecked)
 	}
 
+	const longPressHandlers = useLongPressSelection({
+		onLongPress: () => setEntrySelection(entry, true),
+		ignoreElements: [checkboxRef, actionsRef],
+	})
+
+	const handleCardClick = () => {
+		onCardClick?.()
+	}
+
+	const handleActionClick = (event: React.MouseEvent) => {
+		event.stopPropagation()
+		onActionClick?.()
+	}
+
 	const audioMetadata = aggregate.metadata?.metadata.audio
 	const duration =
 		data.disposition === AbookEntryDisposition.PLAYABLE_AUDIO &&
@@ -123,18 +158,32 @@ export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 			: null
 
 	return (
-		<Card padding="md" shadow="sm" withBorder className={styles.card}>
+		<Card
+			padding="md"
+			shadow="sm"
+			withBorder
+			className={styles.card}
+			onClick={handleCardClick}
+			onPointerDown={longPressHandlers.onPointerDown}
+			onPointerUp={longPressHandlers.onPointerUp}
+			onPointerLeave={longPressHandlers.onPointerLeave}
+			onPointerCancel={longPressHandlers.onPointerCancel}
+			onPointerMove={longPressHandlers.onPointerMove}
+		>
 			<Group gap="md" align="center" wrap="nowrap">
-				<div
-					className={styles.checkbox}
-					onClick={(e) => e.stopPropagation()}
-				>
-					<Checkbox
-						size="lg"
-						checked={selected}
-						onChange={handleCheckboxChange}
-					/>
-				</div>
+				{shouldShowCheckboxes && (
+					<div
+						ref={checkboxRef}
+						className={styles.checkbox}
+						onClick={(event) => event.stopPropagation()}
+					>
+						<Checkbox
+							size="lg"
+							checked={selected}
+							onChange={handleCheckboxChange}
+						/>
+					</div>
+				)}
 				<ThemeIcon
 					size="lg"
 					radius="md"
@@ -144,25 +193,10 @@ export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 					{getDispositionIcon(data.disposition)}
 				</ThemeIcon>
 
-				<Stack gap="xs" style={{ flex: 1, minWidth: 0 }}>
-					<Group justify="space-between" align="center" wrap="nowrap">
-						<Text fw={600} lineClamp={1} className={styles.name}>
-							{data.name || resolve((t) => t.abook.view.unknown)}
-						</Text>
-						<div className={styles.actions}>
-							<Button
-								size="xs"
-								onClick={(e) => {
-									e.stopPropagation()
-									onClick?.()
-								}}
-							>
-								{resolve(
-									(t) => t.abook.entries.preview.openEntry,
-								)}
-							</Button>
-						</div>
-					</Group>
+				<Stack gap="xs" className={styles.content}>
+					<Text fw={600} lineClamp={1} className={styles.name}>
+						{data.name || resolve((t) => t.abook.view.unknown)}
+					</Text>
 
 					<Group gap="md" wrap="wrap">
 						{aggregate.blobSize !== null && (
@@ -183,6 +217,18 @@ export const AbookEntryCard = ({ entry, onClick }: AbookEntryCardProps) => {
 						)}
 					</Group>
 				</Stack>
+				<div ref={actionsRef} className={styles.actions}>
+					<ActionIcon
+						variant="light"
+						size="lg"
+						aria-label={resolve(
+							(t) => t.abook.entries.preview.openEntry,
+						)}
+						onClick={handleActionClick}
+					>
+						<IconEye size={18} />
+					</ActionIcon>
+				</div>
 			</Group>
 		</Card>
 	)

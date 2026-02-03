@@ -5,8 +5,6 @@
 }
 
 .card {
-	/* ensure left checkbox has enough room and content aligns nicely */
-	padding-left: 0;
 }
 
 .checkbox {
@@ -22,6 +20,11 @@
 	display: flex;
 	align-items: center;
 	height: 100%;
+}
+
+.content {
+	flex: 1;
+	min-width: 0;
 }
 
 .name {

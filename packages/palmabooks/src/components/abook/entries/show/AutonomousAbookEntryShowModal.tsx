@@ -8,7 +8,7 @@ export interface AutonomousAbookEntryShowModalProps {
 	readonly opened: boolean
 	readonly onClose: () => void
 	readonly abookDataWithIdAtom: Atom<Promise<WithId<Abook | null>>>
-	readonly entryDataWithIdAtom: Atom<Promise<WithId<AbookEntry | null>>>
+	readonly entry: WithId<AbookEntry> | null
 
 	/**
 	 * Called when entry is modified in some way. Also when it's deleted.
@@ -28,15 +28,16 @@ export const AutonomousAbookEntryShowModal = ({
 	opened,
 	onClose,
 	abookDataWithIdAtom,
-	entryDataWithIdAtom,
+	entry,
 	onEntryModified,
 }: AutonomousAbookEntryShowModalProps) => {
 	const abookWithId = useAtomValue(abookDataWithIdAtom)
-	const entryWithId = useAtomValue(entryDataWithIdAtom)
 	const deleteModal = useAbookEntryDeleteModal()
 
 	const handleDeleteClick = () => {
-		deleteModal.openModal(abookWithId.id, entryWithId.id)
+		if (entry) {
+			deleteModal.openModal(abookWithId.id, entry.id)
+		}
 	}
 
 	const handleDeleted = () => {
@@ -53,14 +54,14 @@ export const AutonomousAbookEntryShowModal = ({
 				opened={opened}
 				onClose={onClose}
 				abook={abookWithId}
-				entry={entryWithId}
+				entry={entry}
 				onDeleteClick={handleDeleteClick}
 			/>
 			<AutonomousAbookEntryDeleteModal
 				opened={deleteModal.opened}
 				onClose={deleteModal.closeModal}
 				abookDataWithIdAtom={abookDataWithIdAtom}
-				entryDataWithIdAtom={entryDataWithIdAtom}
+				entry={entry}
 				onDeleted={handleDeleted}
 			/>
 		</>

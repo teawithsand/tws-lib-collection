@@ -3,12 +3,12 @@ import { AbookEntry, WithId } from "@teawithsand/booklibr"
 import { Atom, useAtomValue } from "@teawithsand/fstate"
 import {
 	Box,
+	LoadingFallback,
 	LoadingFallbackVariant,
-	LoadingSuspenseBoundary,
 	Stack,
 	Text,
 } from "@teawithsand/mlui"
-import { useMemo } from "react"
+import { ReactNode, useMemo } from "react"
 import styles from "./AbookEntryList.module.scss"
 import {
 	AbookEntryListBehavior,
@@ -16,38 +16,67 @@ import {
 	useAbookEntryListBehavior,
 } from "./AbookEntryListBehavior"
 import { AbookEntryCard } from "./card"
+import { AbookEntrySelectionBar } from "./selectionBar"
 import { AbookEntryListTopBar } from "./topBar"
 
 export interface AbookEntryListProps {
 	readonly entriesAtom: Atom<Promise<WithId<AbookEntry>[]>>
 	onRefresh: () => void
 	onEntryClick: (entry: WithId<AbookEntry>) => void
+	readonly children?: ReactNode
+	readonly onDeleteSelectedEntries?: (
+		entries: WithId<AbookEntry>[],
+	) => void | Promise<void>
 }
 
 export const AbookEntryList = ({
 	entriesAtom,
 	onEntryClick,
 	onRefresh,
+	children,
+	onDeleteSelectedEntries,
 }: AbookEntryListProps) => {
 	const behavior = useMemo(
-		() => new AbookEntryListBehavior(entriesAtom, onRefresh, onEntryClick),
-		[entriesAtom, onRefresh, onEntryClick],
+		() =>
+			new AbookEntryListBehavior(
+				entriesAtom,
+				onRefresh,
+				onEntryClick,
+				onDeleteSelectedEntries,
+			),
+		[entriesAtom, onEntryClick, onDeleteSelectedEntries, onRefresh],
 	)
 	return (
 		<AbookEntryListBehaviorContext.Provider value={behavior}>
-			<LoadingSuspenseBoundary variant={LoadingFallbackVariant.Inline}>
-				<AbookEntryListContent />
-			</LoadingSuspenseBoundary>
+			{children}
+			<AbookEntryListContent />
 		</AbookEntryListBehaviorContext.Provider>
 	)
 }
 
 const InnerList = () => {
 	const behavior = useAbookEntryListBehavior()
-	const entries = useAtomValue(behavior.shownEntries)
+	const entriesLoadable = useAtomValue(behavior.shownEntriesLoadable)
 	const searchQuery = useAtomValue(behavior.filterText)
 
 	const { resolve } = useTransResolver()
+	if (entriesLoadable.state === "loading") {
+		return <LoadingFallback variant={LoadingFallbackVariant.Inline} />
+	}
+
+	if (entriesLoadable.state === "hasError") {
+		return (
+			<Box className={styles.emptyState}>
+				<Stack align="center" gap="md">
+					<Text size="sm" c="dimmed" ta="center">
+						{resolve((t) => t.common.error)}
+					</Text>
+				</Stack>
+			</Box>
+		)
+	}
+
+	const entries = entriesLoadable.data
 	if (entries.length === 0 && !searchQuery) {
 		return (
 			<Box className={styles.emptyState}>
@@ -90,7 +119,8 @@ const InnerList = () => {
 						<AbookEntryCard
 							key={entry.id}
 							entry={entry}
-							onClick={() => behavior.onEntryClick(entry)}
+							onCardClick={() => behavior.onEntryClick(entry)}
+							onActionClick={() => behavior.onEntryClick(entry)}
 						/>
 					))}
 				</Stack>
@@ -104,10 +134,11 @@ const AbookEntryListContent = () => {
 
 	return (
 		<>
-			<AbookEntryListTopBar />
-			<LoadingSuspenseBoundary variant={LoadingFallbackVariant.Inline}>
-				<InnerList />
-			</LoadingSuspenseBoundary>
+			<div className={styles.stickyBars}>
+				<AbookEntryListTopBar />
+				<AbookEntrySelectionBar />
+			</div>
+			<InnerList />
 		</>
 	)
 }

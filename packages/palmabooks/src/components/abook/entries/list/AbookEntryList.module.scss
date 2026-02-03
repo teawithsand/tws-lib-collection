@@ -8,6 +8,12 @@
 	}
 }
 
+.stickyBars {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
 .emptyState {
 	display: flex;
 	flex-direction: column;

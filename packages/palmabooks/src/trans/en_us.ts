@@ -242,6 +242,21 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				noEntriesSubtext: "No entries in this audiobook yet.",
 				noMatchingEntries: "No entries match your search.",
 			},
+			selectionBar: {
+				noSelection: "No entries selected",
+				selectedCount: (count: number) =>
+					`${count} ${count === 1 ? "entry" : "entries"} selected`,
+				selectAll: "Select all",
+				clearSelection: "Clear selection",
+				deleteAction: "Delete",
+			},
+			selectionDeleteModal: {
+				title: "Delete selected entries",
+				message: (count: number) =>
+					`You are about to delete ${count} ${count === 1 ? "entry" : "entries"}. This action cannot be undone.`,
+				deleteButton: "Delete",
+				cancelButton: "Cancel",
+			},
 			searchPlaceholder: "Search entries...",
 			sortLabel: "Sort by",
 			filterModal: {

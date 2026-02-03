@@ -8,7 +8,7 @@ export interface AutonomousAbookEntryDeleteModalProps {
 	readonly opened: boolean
 	readonly onClose: () => void
 	readonly abookDataWithIdAtom: Atom<Promise<WithId<Abook | null>>>
-	readonly entryDataWithIdAtom: Atom<Promise<WithId<AbookEntry | null>>>
+	readonly entry: WithId<AbookEntry> | null
 	readonly onDeleted?: () => void
 }
 
@@ -22,12 +22,11 @@ export const AutonomousAbookEntryDeleteModal = ({
 	opened,
 	onClose,
 	abookDataWithIdAtom,
-	entryDataWithIdAtom,
+	entry,
 	onDeleted,
 }: AutonomousAbookEntryDeleteModalProps) => {
 	const app = useApp()
 	const abookWithId = useAtomValue(abookDataWithIdAtom)
-	const entryWithId = useAtomValue(entryDataWithIdAtom)
 	const refreshAbooksList = useSetAtom(
 		app.abookStoreService.refreshAbooksList,
 	)
@@ -46,7 +45,7 @@ export const AutonomousAbookEntryDeleteModal = ({
 
 	const handleDelete = useCallback(async () => {
 		const abookId = abookWithId?.id
-		const entryId = entryWithId?.id
+		const entryId = entry?.id
 		if (!abookId || !entryId) {
 			return
 		}
@@ -89,7 +88,7 @@ export const AutonomousAbookEntryDeleteModal = ({
 		}
 	}, [
 		abookWithId?.id,
-		entryWithId?.id,
+		entry?.id,
 		app.abookStoreService.abookStore,
 		onDeleted,
 		refreshAbooksList,
@@ -98,8 +97,7 @@ export const AutonomousAbookEntryDeleteModal = ({
 
 	const resolvedAbook =
 		abookWithId?.data === null ? null : (abookWithId?.data ?? null)
-	const resolvedEntry =
-		entryWithId?.data === null ? null : (entryWithId?.data ?? null)
+	const resolvedEntry = entry?.data === null ? null : (entry?.data ?? null)
 
 	return (
 		<AbookEntryDeleteModal

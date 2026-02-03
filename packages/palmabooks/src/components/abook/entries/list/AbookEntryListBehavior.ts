@@ -4,7 +4,7 @@ import {
 	Id,
 	WithId,
 } from "@teawithsand/booklibr"
-import { atom, Atom, produce } from "@teawithsand/fstate"
+import { atom, Atom, loadable, produce } from "@teawithsand/fstate"
 import { ReactContextUtil } from "@teawithsand/mlui"
 import { AbookEntrySortOption } from "./common"
 
@@ -14,18 +14,27 @@ export class AbookEntryListBehavior {
 	public readonly selectedDispositions
 
 	public readonly shownEntries
+	public readonly shownEntriesLoadable
 
 	public readonly selectedEntries
+	public readonly selectedEntriesLoadable
 	public readonly shownSelectedEntries
 	public readonly setEntrySelection
 	public readonly toggleEntrySelection
 	public readonly clearSelection
+	public readonly selectAllShownEntries
 	public readonly isEntrySelected
+	public readonly deleteSelectedEntries
+	public readonly isAtLeastOneEntrySelected
+	public readonly isAtLeastOneEntrySelectedLoadable
 
 	public constructor(
 		public readonly allEntries: Atom<Promise<WithId<AbookEntry>[]>>,
 		public readonly refresh: () => void,
 		public readonly onEntryClick: (entry: WithId<AbookEntry>) => void,
+		public readonly onDeleteSelectedEntries?: (
+			entries: WithId<AbookEntry>[],
+		) => void | Promise<void>,
 	) {
 		this.sortMode = atom<AbookEntrySortOption>(
 			AbookEntrySortOption.ORDINAL_NUMBER_ASC,
@@ -95,6 +104,7 @@ export class AbookEntryListBehavior {
 		})
 
 		this.shownEntries = filteredEntries
+		this.shownEntriesLoadable = loadable(this.shownEntries)
 
 		const selectedEntriesIds = atom(new Set<Id>())
 		this.selectedEntries = atom(async (get) => {
@@ -102,6 +112,7 @@ export class AbookEntryListBehavior {
 			const entries = await get(allEntries)
 			return entries.filter((e) => ids.has(e.id))
 		})
+		this.selectedEntriesLoadable = loadable(this.selectedEntries)
 		this.shownSelectedEntries = atom(async (get) => {
 			const ids = get(selectedEntriesIds)
 			const entries = await get(this.shownEntries)
@@ -140,6 +151,31 @@ export class AbookEntryListBehavior {
 		this.clearSelection = atom(null, (_get, set) => {
 			set(selectedEntriesIds, new Set())
 		})
+
+		this.selectAllShownEntries = atom(null, async (get, set) => {
+			const entries = await get(this.shownEntries)
+			const newIds = new Set(entries.map((entry) => entry.id))
+			set(selectedEntriesIds, newIds)
+		})
+
+		this.deleteSelectedEntries = atom(null, async (get, set) => {
+			const entries = await get(this.selectedEntries)
+			if (entries.length === 0) return
+			if (this.onDeleteSelectedEntries) {
+				await this.onDeleteSelectedEntries(entries)
+			}
+			set(selectedEntriesIds, new Set())
+			this.refresh()
+		})
+
+		this.isAtLeastOneEntrySelected = atom(async (get) => {
+			const entries = await get(this.selectedEntries)
+			return entries.length > 0
+		})
+
+		this.isAtLeastOneEntrySelectedLoadable = loadable(
+			this.isAtLeastOneEntrySelected,
+		)
 
 		this.isEntrySelected = atom((get) => {
 			const ids = get(selectedEntriesIds)

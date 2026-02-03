@@ -65,6 +65,7 @@ describe("AbookEntryListBehavior", () => {
 			entriesAtom,
 			() => {},
 			() => {},
+			undefined,
 		)
 
 		// default sort is ordinal asc -> e2 then e1
@@ -133,6 +134,7 @@ describe("AbookEntryListBehavior", () => {
 			entriesAtom,
 			() => {},
 			() => {},
+			undefined,
 		)
 
 		// ordinal desc
@@ -149,5 +151,43 @@ describe("AbookEntryListBehavior", () => {
 		await store.set(behavior.setEntrySelection, e1, false)
 		selected = await store.get(behavior.selectedEntries)
 		expect(selected).toHaveLength(0)
+	})
+
+	test("clears selection when selected entry disappears after refresh", async () => {
+		const e1 = makeEntry({
+			id: "1",
+			name: "Keep",
+			ordinal: 1,
+			disposition: AbookEntryDisposition.PLAYABLE_AUDIO,
+		})
+		const e2 = makeEntry({
+			id: "2",
+			name: "Remove",
+			ordinal: 2,
+			disposition: AbookEntryDisposition.COVER_IMAGE,
+		})
+
+		const entriesAtom = atom(Promise.resolve([e1, e2]))
+		const behavior = new AbookEntryListBehavior(
+			entriesAtom,
+			() => {},
+			() => {},
+			undefined,
+		)
+
+		await store.set(behavior.setEntrySelection, e2, true)
+		const initiallySelected = await store.get(behavior.selectedEntries)
+		expect(initiallySelected.map((entry) => entry.id)).toEqual(["2"])
+
+		// simulate removal + refresh
+		store.set(entriesAtom, Promise.resolve([e1]))
+		const afterRefreshSelected = await store.get(behavior.selectedEntries)
+		expect(afterRefreshSelected).toHaveLength(0)
+		const hasSelection = await store.get(behavior.isAtLeastOneEntrySelected)
+		expect(hasSelection).toBe(false)
+		const shownSelectedAfterRefresh = await store.get(
+			behavior.shownSelectedEntries,
+		)
+		expect(shownSelectedAfterRefresh).toHaveLength(0)
 	})
 })

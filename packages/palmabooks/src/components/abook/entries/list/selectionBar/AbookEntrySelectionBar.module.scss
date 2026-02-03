@@ -1,9 +1,10 @@
 @use "@teawithsand/mlui/dist/_mantine" as mantine;
 
-.topBar {
-	padding: mantine.rem(12);
+.selectionBar {
+	padding: mantine.rem(8) mantine.rem(12);
 	background-color: var(--mantine-color-white);
 	border-bottom: 1px solid var(--mantine-color-gray-3);
+	margin: 0;
 
 	@include mantine.dark {
 		background-color: var(--mantine-color-dark-7);
@@ -11,10 +12,15 @@
 	}
 }
 
-.filterButton {
-	flex-shrink: 0;
+.selectionBar__content {
+	width: 100%;
 }
 
-.refreshButton {
+.selectionBar__status {
+	flex: 1;
+	min-width: 0;
+}
+
+.selectionBar__actions {
 	flex-shrink: 0;
 }

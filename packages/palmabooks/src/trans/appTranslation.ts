@@ -180,6 +180,19 @@ export interface AppTranslation {
 				noEntriesSubtext: string
 				noMatchingEntries: string
 			}
+			selectionBar: {
+				noSelection: string
+				selectedCount: (count: number) => string
+				selectAll: string
+				clearSelection: string
+				deleteAction: string
+			}
+			selectionDeleteModal: {
+				title: string
+				message: (count: number) => string
+				deleteButton: string
+				cancelButton: string
+			}
 			searchPlaceholder: string
 			sortLabel: string
 			getSortOptionLabel: (option: string) => string

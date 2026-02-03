@@ -1,16 +1,19 @@
 import { Abook, AbookEntry, WithId } from "@teawithsand/booklibr"
-import { atom, Atom } from "@teawithsand/fstate"
-import { useMemo } from "react"
+import { Atom } from "@teawithsand/fstate"
 import {
 	AutonomousAbookEntryShowModal,
 	useAbookEntryPreviewModal,
 } from "../show"
 import { AbookEntryList } from "./AbookEntryList"
+import { AbookEntrySelectionShortcuts } from "./AbookEntrySelectionShortcuts"
 
 export interface AutonomousAbookEntryListProps {
 	readonly entriesAtom: Atom<Promise<WithId<AbookEntry>[]>>
 	readonly abookAtom: Atom<Promise<WithId<Abook | null>>>
 	onRefresh: () => void
+	readonly onDeleteSelectedEntries?: (
+		entries: WithId<AbookEntry>[],
+	) => void | Promise<void>
 }
 
 /**
@@ -22,6 +25,7 @@ export const AutonomousAbookEntryList = ({
 	entriesAtom,
 	abookAtom,
 	onRefresh,
+	onDeleteSelectedEntries,
 }: AutonomousAbookEntryListProps) => {
 	const {
 		opened,
@@ -30,25 +34,22 @@ export const AutonomousAbookEntryList = ({
 		closeModal,
 	} = useAbookEntryPreviewModal()
 
-	// TODO(teaiwthsand): figure out if this will really work, as this is quite finicky
-	const entryDataWithIdAtom = useMemo(() => {
-		if (!modalEntry) return atom(Promise.resolve({ id: "", data: null }))
-		return atom(Promise.resolve(modalEntry))
-	}, [modalEntry])
-
 	return (
 		<>
 			<AbookEntryList
 				entriesAtom={entriesAtom}
 				onRefresh={onRefresh}
 				onEntryClick={openModal}
-			/>
+				onDeleteSelectedEntries={onDeleteSelectedEntries}
+			>
+				<AbookEntrySelectionShortcuts />
+			</AbookEntryList>
 			{modalEntry && (
 				<AutonomousAbookEntryShowModal
 					opened={opened}
 					onClose={closeModal}
 					abookDataWithIdAtom={abookAtom}
-					entryDataWithIdAtom={entryDataWithIdAtom}
+					entry={modalEntry}
 					onEntryModified={() => {
 						onRefresh()
 					}}
