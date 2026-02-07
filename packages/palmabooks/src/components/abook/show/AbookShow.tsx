@@ -6,6 +6,7 @@ import {
 	IconList,
 	IconNotes,
 	IconTrash,
+	IconUpload,
 } from "@tabler/icons-react"
 import { Abook } from "@teawithsand/booklibr"
 import {
@@ -20,7 +21,7 @@ import {
 	Title,
 	useBreakpoint,
 } from "@teawithsand/mlui"
-import { ReactNode } from "react"
+import { ReactNode, useMemo } from "react"
 import styles from "./AbookShow.module.scss"
 
 export interface AbookShowProps {
@@ -28,6 +29,7 @@ export interface AbookShowProps {
 	readonly onEdit?: () => void
 	readonly onDelete?: () => void
 	readonly onViewEntries?: () => void
+	readonly onUploadEntries?: () => void
 }
 
 const ResponsiveIconButton = ({
@@ -68,6 +70,7 @@ export const AbookShow = ({
 	onEdit,
 	onDelete,
 	onViewEntries,
+	onUploadEntries,
 }: AbookShowProps) => {
 	const { resolve } = useTransResolver()
 
@@ -77,6 +80,23 @@ export const AbookShow = ({
 
 	const totalDuration = aggregate.totalDurationMillis
 	const hasValidDuration = totalDuration !== undefined && totalDuration >= 0
+
+	const totalSizeBytes = useMemo(() => {
+		let total = 0
+		let hasAnySize = false
+
+		for (const entry of data.entries.values()) {
+			const size = entry.aggregate.blobSize
+			if (size !== null && size >= 0) {
+				total += size
+				hasAnySize = true
+			}
+		}
+
+		return hasAnySize ? total : undefined
+	}, [data.entries])
+
+	const formattedTotalSize = resolve((t) => t.util.formatSize(totalSizeBytes))
 
 	return (
 		<Box className={styles.container}>
@@ -135,18 +155,37 @@ export const AbookShow = ({
 								</Text>
 								<Text size="sm" c="dimmed">
 									{aggregate.totalEntries ?? 0}
+									{totalSizeBytes !== undefined && (
+										<>
+											{" ("}
+											{formattedTotalSize}
+											{")"}
+										</>
+									)}
 								</Text>
 							</Group>
-							{onViewEntries && (
-								<Button
-									variant="light"
-									size="xs"
-									onClick={onViewEntries}
-									leftSection={<IconList size={14} />}
-								>
-									{resolve((t) => t.abook.show.viewEntries)}
-								</Button>
-							)}
+							<Group gap="xs">
+								{onViewEntries && (
+									<Button
+										variant="light"
+										size="xs"
+										onClick={onViewEntries}
+										leftSection={<IconList size={14} />}
+									>
+										{resolve((t) => t.abook.show.viewEntries)}
+									</Button>
+								)}
+								{onUploadEntries && (
+									<Button
+										variant="light"
+										size="xs"
+										onClick={onUploadEntries}
+										leftSection={<IconUpload size={14} />}
+									>
+										{resolve((t) => t.abook.show.uploadEntries)}
+									</Button>
+								)}
+							</Group>
 						</Group>
 
 						{hasValidDuration && (

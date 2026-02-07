@@ -2,6 +2,7 @@ import {
 	AbookCreatePage,
 	AbookEditPage,
 	AbookEntriesPage,
+	AbookEntriesUploadPage,
 	AbookListPage,
 	AbookShowPage,
 	AboutPage,
@@ -54,6 +55,13 @@ const routes: RouteDefinition[] = [
 		content: {
 			type: RouteContentType.COMPONENT,
 			component: AbookEntriesPage,
+		},
+	},
+	{
+		path: Routes.abookEntriesUpload.path,
+		content: {
+			type: RouteContentType.COMPONENT,
+			component: AbookEntriesUploadPage,
 		},
 	},
 	{

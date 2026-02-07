@@ -1,5 +1,6 @@
 export * from "./create"
 export * from "./edit"
 export * from "./entries"
+export * from "./entriesUpload"
 export * from "./list"
 export * from "./show"

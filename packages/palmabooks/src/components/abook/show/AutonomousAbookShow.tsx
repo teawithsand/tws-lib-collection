@@ -44,6 +44,14 @@ export const AutonomousAbookShow = ({
 		}
 	}, [abookWithId?.id, navigation])
 
+	const handleUploadEntries = useCallback(() => {
+		if (abookWithId?.id) {
+			navigation.navigate(
+				Routes.abookEntriesUpload.navigate(String(abookWithId.id)),
+			)
+		}
+	}, [abookWithId?.id, navigation])
+
 	if (!abookWithId || !abookWithId.data) {
 		return <AbookNotFound />
 	}
@@ -55,6 +63,7 @@ export const AutonomousAbookShow = ({
 				onEdit={handleEdit}
 				onDelete={handleDelete}
 				onViewEntries={handleViewEntries}
+				onUploadEntries={handleUploadEntries}
 			/>
 			<AutonomousAbookDeleteModal
 				opened={deleteModal.opened}

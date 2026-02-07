@@ -19,6 +19,8 @@ export const translationEnUs: Readonly<AppTranslation> = {
 		error: "Error",
 		cancel: "Cancel",
 		edit: "Edit",
+		remove: "Remove",
+		get_errors: "Get errors",
 	},
 	util: {
 		formatSize,
@@ -150,7 +152,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			tabs: {
 				picking: "Pick files",
 				checking: "Adjust them",
-				uploading: "Upload",
+				uploading: "Store in app",
 			},
 			notifications: {
 				filesRejected: {
@@ -160,10 +162,21 @@ export const translationEnUs: Readonly<AppTranslation> = {
 				},
 			},
 			uploadTab: {
-				prompt: "Do you want to add files to the ABook?",
+				prompt: "Do you want to store files in the app?",
+				filesCountSummary: (count: number) =>
+					`Files to store: ${count}`,
+				filesCountLabel: "Files to store",
+				filesCountAfterLabel: "Files after storing",
 				newFilesSize: (bytes: number | undefined) =>
 					`New files size: ${formatSize(bytes)}`,
-				uploadButton: "Upload",
+				newFilesSizeLabel: "New files size",
+				totalSizeAfter: (bytes: number | undefined) =>
+					`Total app storage after storing: ${formatSize(bytes)}`,
+				totalSizeAfterLabel: "Total app storage after storing",
+				freeSpaceAfter: (bytes: number | undefined) =>
+					`Free space after storing: ${formatSize(bytes)}`,
+				freeSpaceAfterLabel: "Free space after storing",
+				uploadButton: "Store in app",
 				emptyState: "There are no files!",
 			},
 		},
@@ -215,6 +228,7 @@ export const translationEnUs: Readonly<AppTranslation> = {
 			noDescription: "No description available",
 			entries: "Entries",
 			viewEntries: "View Entries",
+			uploadEntries: "Store Entries",
 			duration: "Duration",
 			created: "Created",
 			lastPlayed: "Last Played",

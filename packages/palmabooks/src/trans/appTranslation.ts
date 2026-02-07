@@ -7,6 +7,8 @@ export interface AppTranslation {
 		error: string
 		cancel: string
 		edit: string
+		remove: string
+		get_errors: string
 	}
 	util: {
 		formatSize: (bytes: number | undefined) => string
@@ -112,7 +114,15 @@ export interface AppTranslation {
 			}
 			uploadTab: {
 				prompt: string
+				filesCountSummary: (count: number) => string
+				filesCountLabel: string
+				filesCountAfterLabel: string
 				newFilesSize: (bytes: number | undefined) => string
+				newFilesSizeLabel: string
+				totalSizeAfter: (bytes: number | undefined) => string
+				totalSizeAfterLabel: string
+				freeSpaceAfter: (bytes: number | undefined) => string
+				freeSpaceAfterLabel: string
 				uploadButton: string
 				emptyState: string
 			}
@@ -153,6 +163,7 @@ export interface AppTranslation {
 			noDescription: string
 			entries: string
 			viewEntries: string
+			uploadEntries: string
 			duration: string
 			created: string
 			lastPlayed: string

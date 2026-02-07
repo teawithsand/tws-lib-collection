@@ -69,6 +69,14 @@ export class Routes {
 		navigate: (id: string) => `/abook/${id}/entries`,
 	}
 
+	/**
+	 * Upload files to existing audiobook entries page route
+	 */
+	public static readonly abookEntriesUpload: RouteConfig = {
+		path: "/abook/:id/entries/upload",
+		navigate: (id: string) => `/abook/${id}/entries/upload`,
+	}
+
 	// ===== NOT IMPLEMENTED IN MVP =====
 	// Uncomment these when implementing the features
 
@@ -117,6 +125,7 @@ export class Routes {
 			Routes.abookShow,
 			Routes.abookEdit,
 			Routes.abookEntries,
+			Routes.abookEntriesUpload,
 			Routes.settings,
 			Routes.storage,
 		]
